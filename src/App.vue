@@ -1,19 +1,9 @@
-<script setup lang="ts">
-import HelloWorld from '@/components/HelloWorld.vue'
-import { login } from '@/api/user/index'
-
-const login23 = async (password: string, username: string) => {
-  const res = await login({ password, username })
-  if (res.code === 200) {
-    console.log(`output->`, res)
-  }
-}
-
-login23('123456', 'huangyuanyin')
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <HelloWorld />
+  <router-view></router-view>
 </template>
 
-<style scoped></style>
+<style lang="scss">
+@import '../src/style/base.scss';
+</style>
