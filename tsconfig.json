@@ -6,13 +6,14 @@
     "lib": ["ESNext", "ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     },
 
     /* Bundler mode */
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
