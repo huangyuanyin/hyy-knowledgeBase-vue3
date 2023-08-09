@@ -1,5 +1,5 @@
 import { useUserStore } from '@/store/user'
-import { LoginForm, UseLoginOptions } from '../type/login'
+import { LoginForm, UseLoginOptions } from '@/type/loginType'
 
 export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, options: UseLoginOptions) => {
   const state = reactive({
@@ -9,39 +9,47 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
   const userStore = useUserStore()
 
   const validateForm = async (formRef: { validate: () => Promise<boolean> | boolean }) => {
-    try {
-      const valid = await formRef?.validate()
-      return valid
-    } catch (error) {
-      console.error('校验失败', error)
-      return false
+    const isValid: boolean = await formRef?.validate()
+    return isValid
+  }
+
+  const showError = (message: string): void => {
+    ElMessage.error(message)
+  }
+
+  const handleLoginSuccess = (res: any): void => {
+    if (res.code === 1000) {
+      userStore.setToken(res.token)
+      userStore.setIsAuth(true)
+      userStore.setUserInfo(res.token)
+    } else {
+      showError(res.msg)
     }
   }
 
   const login = async (formRef: { validate: () => Promise<boolean> | boolean }, params = {}) => {
-    try {
-      const valid = await validateForm(formRef)
-      if (!valid) return
-      state.loading = true
-      const res = await options.api({ ...loginForm, ...params })
-      state.loading = false
-      if (res.code === 1000) {
-        userStore.setToken(res.token)
-        userStore.setIsAuth(true)
-      } else {
-        ElMessage.error(res.msg)
-      }
-    } catch (error) {
-      console.error('登录失败', error)
-    }
+    validateForm(formRef)
+      .then((isValid: boolean) => {
+        if (!isValid) return
+        state.loading = true
+        return options.api({ ...loginForm, ...params }) as Promise<any>
+      })
+      .then((res: any) => {
+        state.loading = false
+        handleLoginSuccess(res)
+      })
+      .catch((error: any) => {
+        console.error('Form validation failed', error)
+        state.loading = false
+      })
   }
 
-  const logout = () => {
+  const logout = (): void => {
     userStore.setToken('')
     userStore.setIsAuth(false)
   }
 
-  const isLoggedIn = computed(() => userStore.isAuth)
+  const isLoggedIn = computed<boolean>(() => userStore.isAuth)
 
   return {
     ...toRefs(state),

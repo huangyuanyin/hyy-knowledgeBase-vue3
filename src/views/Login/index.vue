@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { loginApi } from '@/api/user/index'
 import { useLogin } from './hooks/useLogin'
-import { LoginForm, UseLoginOptions } from './type/login'
+import { LoginForm, UseLoginOptions } from '@/type/loginType'
 
 const form: LoginForm = reactive({
   username: '',
@@ -90,4 +90,4 @@ const handleLogin = async () => {
   }
 }
 </style>
-@/views/Login/types/login ./type/login ../../type/login @/views/Login/type/login @/views/Login/Hooks/useLogin
+@/views/Login/types/login ./type/login ../../type/login @/views/Login/type/login @/views/Login/Hooks/useLogin ../../type/login @/type/loginType

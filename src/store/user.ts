@@ -1,17 +1,8 @@
-import { defineStore } from 'pinia'
+import jwt_decode from 'jwt-decode'
+import { State, UserInfo } from '@/type/userType'
 
-interface UserInfo {
-  name: string
-  age: number
-}
-
-interface State {
-  token: string
-  isAuth: boolean
-  userInfo: UserInfo[]
-}
-
-export const useUserStore = defineStore('user', {
+export const useUserStore = defineStore({
+  id: 'user',
   state: (): State => ({
     token: '',
     isAuth: false,
@@ -20,10 +11,13 @@ export const useUserStore = defineStore('user', {
   actions: {
     setToken(token: string) {
       this.token = token
-      localStorage.setItem('token', this.token)
+    },
+    setUserInfo(token: string) {
+      this.userInfo = token ? (jwt_decode(token) as UserInfo[]) : []
     },
     setIsAuth(isAuth: boolean) {
       this.isAuth = isAuth
     }
-  }
+  },
+  persist: true
 })
