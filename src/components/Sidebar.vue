@@ -287,11 +287,10 @@ const toLink = () => {
           background-color: #d8dad9;
           border-radius: 6px;
           color: #262626;
-        }
-        img {
-          width: 16px;
-          height: 16px;
-          &:hover {
+          img {
+            width: 16px;
+            height: 16px;
+            min-width: 16px;
             content: url('@/assets/icons/moreIcon1_after.svg');
           }
         }

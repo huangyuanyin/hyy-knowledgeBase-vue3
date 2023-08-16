@@ -19,5 +19,8 @@
     width: 210px;
     background-color: #fafafa;
   }
+  &-right {
+    padding: 26px 36px;
+  }
 }
 </style>

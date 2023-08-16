@@ -18,3 +18,13 @@ export const libraryOperationData = [
   { type: 'divider' },
   { type: 'item', icon: 'src/assets/icons/deleteIcon.svg', label: '删除' }
 ]
+
+export const commonLibraryData = [
+  { type: 'item', icon: 'src/assets/icons/commonUseIcon.svg', label: '移除常用' },
+  { type: 'divider' },
+  { type: 'item', icon: 'src/assets/icons/limitsIcon.svg', label: '权限' },
+  { type: 'item', icon: 'src/assets/icons/renameIcon.svg', label: '重命名' },
+  { type: 'item', icon: 'src/assets/icons/menuIcon.svg', label: '更多设置' },
+  { type: 'divider' },
+  { type: 'item', icon: 'src/assets/icons/deleteIcon.svg', label: '删除' }
+]
