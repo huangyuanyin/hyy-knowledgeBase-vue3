@@ -1,0 +1,10 @@
+<svg width="16" height="16" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" class="larkui-icon larkui-icon-comment-more icon ant-menu-item-icon">
+  <g fill="none" fill-rule="evenodd">
+    <path
+      d="M74 143c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15Zm54 0c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15Zm54 0c8.284 0 15-6.716 15-15 0-8.284-6.716-15-15-15-8.284 0-15 6.716-15 15 0 8.284 6.716 15 15 15Z"
+      fill="currentColor"
+      fill-rule="nonzero"
+    ></path>
+    <circle stroke="currentColor" stroke-width="21.333" cx="128" cy="128" r="103.111"></circle>
+  </g>
+</svg>

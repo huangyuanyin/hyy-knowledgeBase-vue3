@@ -1,9 +1,14 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import Layout from '@/views/Layout/index.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    component: () => import('@/views/Home/index.vue')
+    redirect: '/dashboard'
+  },
+  {
+    path: '/dashboard',
+    component: Layout
   },
   {
     path: '/login',

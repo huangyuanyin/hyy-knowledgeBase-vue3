@@ -2,6 +2,12 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } f
 import { baseUrlList, errorMessages } from '@/data/requestData'
 import { HttpMethod } from '@/data/enums'
 
+declare module 'axios' {
+  interface AxiosRequestConfig {
+    paramsHeaderState?: boolean
+  }
+}
+
 const createAxiosInstance = (baseUrlType: keyof typeof baseUrlList): AxiosInstance => {
   const instance = axios.create({
     baseURL: baseUrlList[baseUrlType],
@@ -9,10 +15,8 @@ const createAxiosInstance = (baseUrlType: keyof typeof baseUrlList): AxiosInstan
   })
 
   instance.interceptors.request.use(
-    (config: AxiosRequestConfig | any) => {
-      if (config && config.headers.token) {
-        config.headers.token = '123'
-      }
+    async (config: AxiosRequestConfig | any) => {
+      config = await modifyRequestConfig(config)
       return config
     },
     (error: AxiosError) => {
@@ -35,21 +39,40 @@ const createAxiosInstance = (baseUrlType: keyof typeof baseUrlList): AxiosInstan
   return instance
 }
 
+const modifyRequestConfig = (config: AxiosRequestConfig): AxiosRequestConfig => {
+  const { url, method, paramsHeaderState, params } = config
+  if (url !== 'forum/login/') {
+    const userStorage = JSON.parse(localStorage.getItem('user') || '{}')
+    const Authorization = userStorage.token || ''
+    config.headers = {
+      ...config.headers,
+      Authorization
+    }
+  }
+  if (method === 'get' && paramsHeaderState && params) {
+    Object.entries(params).forEach(([key, element]) => {
+      config.headers[key] = element
+    })
+    config.params = {}
+  }
+  return config
+}
+
 export const http = {
   request<T = any>(method: HttpMethod, url: string, data?: Object, baseUrlType: keyof typeof baseUrlList = 'base', config?: AxiosRequestConfig): Promise<T> {
     const service = createAxiosInstance(baseUrlType)
     return service[method](url, data, config)
   },
-  get<T = any>(url: string, baseUrlType: keyof typeof baseUrlList = 'base', config?: AxiosRequestConfig): Promise<T> {
-    return this.request<T>('get', url, undefined, baseUrlType, config)
+  get<T = any>(url: string, params?: object, baseUrlType: keyof typeof baseUrlList = 'base', config?: AxiosRequestConfig): Promise<T> {
+    return this.request('get', url, params, baseUrlType, config)
   },
-  post<T = any>(url: string, data?: Object, baseUrlType: keyof typeof baseUrlList = 'base', config?: AxiosRequestConfig): Promise<T> {
-    return this.request<T>('post', url, data, baseUrlType, config)
+  post<T = any>(url: string, data?: object, baseUrlType: keyof typeof baseUrlList = 'base', config?: AxiosRequestConfig): Promise<T> {
+    return this.request('post', url, data, baseUrlType, config)
   },
-  put<T = any>(url: string, data?: Object, baseUrlType: keyof typeof baseUrlList = 'base', config?: AxiosRequestConfig): Promise<T> {
-    return this.request<T>('put', url, data, baseUrlType, config)
+  put<T = any>(url: string, data?: object, baseUrlType: keyof typeof baseUrlList = 'base', config?: AxiosRequestConfig): Promise<T> {
+    return this.request('put', url, data, baseUrlType, config)
   },
-  delete<T = any>(url: string, baseUrlType: keyof typeof baseUrlList = 'base', config?: AxiosRequestConfig): Promise<T> {
-    return this.request<T>('delete', url, undefined, baseUrlType, config)
+  delete<T = any>(url: string, params?: object, baseUrlType: keyof typeof baseUrlList = 'base', config?: AxiosRequestConfig): Promise<T> {
+    return this.request('delete', url, { params }, baseUrlType, config)
   }
 }

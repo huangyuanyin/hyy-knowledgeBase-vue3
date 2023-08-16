@@ -1,0 +1,160 @@
+<script lang="ts" setup>
+import { MenuItem, OperationPopoverProps } from '@/type/operationPopoverType'
+
+const props = withDefaults(defineProps<OperationPopoverProps>(), {
+  placement: 'bottom-start',
+  width: 164,
+  trigger: 'hover',
+  hideAfter: 100,
+  showArrow: false,
+  menuItems: Array as () => MenuItem[]
+})
+</script>
+
+<template>
+  <el-popover
+    popper-class="addOperationPopver"
+    :placement="props.placement"
+    :width="props.width"
+    :trigger="props.trigger"
+    :hide-after="props.hideAfter"
+    :show-arrow="props.showArrow"
+  >
+    <template #reference>
+      <div class="search-add">
+        <i-ep-Plus />
+      </div>
+    </template>
+    <div class="addOperation_Wrap">
+      <ul>
+        <template v-for="(item, _index) in props.menuItems" :key="'menuItems' + _index">
+          <li v-if="item.type === 'item'">
+            <div class="add-icon">
+              <img :src="item.icon as string" alt="" />
+            </div>
+            <span>{{ item.label }}</span>
+          </li>
+          <li v-else-if="item.type === 'divider'" class="divider"></li>
+        </template>
+      </ul>
+    </div>
+  </el-popover>
+</template>
+
+<style lang="scss" scoped>
+.addOperationPopver {
+  padding: 0 !important;
+
+  .addOperation_Wrap {
+    padding: 3px 0;
+    ul {
+      padding: 2px 8px;
+      list-style: none;
+      li {
+        height: 36px;
+        line-height: 36px;
+        margin: 2px 0;
+        display: flex;
+        span {
+          font-size: 14px;
+          color: #262626;
+        }
+        .add-icon {
+          height: 34px;
+          width: 36px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          img {
+            width: 18px;
+            min-width: 18px;
+            height: 18px;
+          }
+        }
+        &:hover {
+          cursor: pointer;
+          background-color: #eff0f0;
+          border-radius: 6px;
+        }
+      }
+      .divider {
+        margin: 4px 12px;
+        height: 1px;
+        line-height: 0;
+        padding: 0;
+        background-color: rgba(0, 0, 0, 0.06);
+      }
+    }
+  }
+}
+.search-add {
+  min-width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #e7e9e8;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffff;
+  box-sizing: border-box;
+  svg {
+    color: #585a5a;
+  }
+  &:hover {
+    background-color: #eff0f0;
+  }
+}
+</style>
+
+<style lang="scss">
+.addOperationPopver {
+  padding: 0 !important;
+  .addOperation_Wrap {
+    padding: 3px 0;
+    ul {
+      padding: 2px 8px;
+      list-style: none;
+      li {
+        height: 36px;
+        line-height: 36px;
+        margin: 2px 0;
+        display: flex;
+        span {
+          font-size: 14px;
+          color: #262626;
+        }
+        .add-icon {
+          height: 34px;
+          width: 36px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          img {
+            width: 18px;
+            min-width: 18px;
+            height: 18px;
+          }
+        }
+        &:hover {
+          cursor: pointer;
+          background-color: #eff0f0;
+          border-radius: 6px;
+        }
+      }
+      .divider {
+        margin: 4px 12px;
+        height: 1px;
+        line-height: 0;
+        padding: 0;
+        background-color: rgba(0, 0, 0, 0.06);
+      }
+    }
+  }
+}
+</style>
+@/type/operationPopoverType

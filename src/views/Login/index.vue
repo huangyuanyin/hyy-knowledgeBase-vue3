@@ -20,9 +20,7 @@ const loginOptions: UseLoginOptions = {
 
 const { loading, login } = useLogin(form, loginOptions)
 
-const handleLogin = async () => {
-  await login(formRef.value, form)
-}
+const handleLogin = () => login(formRef.value, form)
 </script>
 
 <template>
