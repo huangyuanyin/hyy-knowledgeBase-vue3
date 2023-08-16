@@ -1,4 +1,3 @@
-import { http } from '@/utils/request'
 import { libraryParams, libraryRes } from './type'
 
 export function getLibraryApi(params: libraryParams) {

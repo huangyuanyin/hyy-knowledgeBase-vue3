@@ -1,4 +1,3 @@
-import { http } from '@/utils/request'
 import { LoginParams, LoginRes } from './type'
 
 export function loginApi(data: LoginParams) {

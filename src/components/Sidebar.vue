@@ -1,10 +1,26 @@
 <script lang="ts" setup>
-import { useLibrary } from '@/hooks/useLibrary'
 import { libraryOperationData } from '@/data/data'
+
+const state = reactive({
+  defaultMenu: 'dashboard',
+  headerActive: false
+})
 
 const { libraryList, getLibrary } = useLibrary()
 
-getLibrary()
+onMounted(() => {
+  getLibrary()
+})
+
+watchEffect(() => {
+  const routerName = router.currentRoute.value.name
+  state.defaultMenu = routerName.toString().toLowerCase()
+  routerName === 'Library' ? (state.headerActive = true) : (state.headerActive = false)
+})
+
+const toLink = () => {
+  router.push({ name: 'Library' })
+}
 </script>
 
 <template>
@@ -28,28 +44,24 @@ getLibrary()
         </div>
         <SidebarSearch />
         <div class="siderbar-menu">
-          <el-menu default-active="dashboard" class="menu-list" active-text-color="#262626">
+          <el-menu :default-active="state.defaultMenu" class="menu-list" active-text-color="#262626" router>
             <el-menu-item index="dashboard">
               <i-ep-Stopwatch />
               <span>开始</span>
             </el-menu-item>
-            <el-menu-item index="2">
+            <el-menu-item index="notes">
               <i-ep-Discount />
               <span>小记</span>
             </el-menu-item>
-            <el-menu-item index="3">
+            <el-menu-item index="collections">
               <i-ep-Star />
               <span>收藏</span>
-            </el-menu-item>
-            <el-menu-item index="4">
-              <i-ep-Memo />
-              <span>公共区</span>
             </el-menu-item>
           </el-menu>
         </div>
       </div>
       <div class="siderbar-library">
-        <div class="tree-header">
+        <div :class="['tree-header', state.headerActive ? 'tree-header-active' : '']" @click="toLink">
           <div class="tree-header-left">
             <span class="header-left-icon"><i-ep-CaretRight /></span>
             <span class="header-title">知识库</span>
@@ -220,6 +232,10 @@ getLibrary()
           color: #8a8f8d;
         }
       }
+    }
+    .tree-header-active {
+      background-color: #eff0f0;
+      border-radius: 6px;
     }
     :deep(.el-tree) {
       background-color: #fafafa;

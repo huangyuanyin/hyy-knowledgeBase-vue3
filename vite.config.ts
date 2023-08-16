@@ -7,11 +7,9 @@ import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import { join } from 'path'
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
-    // 自动导入
     AutoImport({
       resolvers: [
         ElementPlusResolver(),
@@ -20,10 +18,8 @@ export default defineConfig({
         })
       ],
       imports: ['vue', 'vue-router', 'pinia'],
-      include: [
-        /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
-        /\.vue\??/ // .vue
-      ],
+      include: [/\.[tj]sx?$/, /\.vue\??/],
+      dirs: ['./src/components', './src/hooks', './src/utils', './src/router'],
       dts: 'src/auto-imports.d.ts'
     }),
     Components({
