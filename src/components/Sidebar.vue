@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { getLibraryApi } from '@/api/library'
 import { libraryOperationData } from '@/data/data'
 
 const state = reactive({
@@ -6,11 +7,9 @@ const state = reactive({
   headerActive: false
 })
 
-const { libraryList, getLibrary } = useLibrary()
+const { libraryList, fetchLibrary } = useLibraryApi(getLibraryApi, { Public: 1 })
 
-onMounted(() => {
-  getLibrary()
-})
+fetchLibrary()
 
 watchEffect(() => {
   const routerName = router.currentRoute.value.name

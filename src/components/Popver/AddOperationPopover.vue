@@ -9,6 +9,8 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
   showArrow: false,
   menuItems: Array as () => MenuItem[]
 })
+
+const isShowsLibraryDialog = ref(false)
 </script>
 
 <template>
@@ -28,7 +30,7 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
     <div class="addOperation_Wrap">
       <ul>
         <template v-for="(item, _index) in props.menuItems" :key="'menuItems' + _index">
-          <li v-if="item.type === 'item'">
+          <li v-if="item.type === 'item'" @click="isShowsLibraryDialog = true">
             <div class="add-icon">
               <img :src="item.icon as string" alt="" />
             </div>
@@ -39,6 +41,8 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
       </ul>
     </div>
   </el-popover>
+
+  <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
 </template>
 
 <style lang="scss" scoped>
@@ -157,4 +161,3 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
   }
 }
 </style>
-@/type/operationPopoverType

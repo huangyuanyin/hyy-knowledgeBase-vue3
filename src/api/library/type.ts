@@ -10,5 +10,5 @@ interface Category {
 
 export interface libraryRes {
   code: number
-  data: Category[]
+  data: Category[] | number
 }
