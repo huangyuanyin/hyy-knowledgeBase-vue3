@@ -8,8 +8,10 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AddOperationPopover: typeof import('./src/components/Popver/AddOperationPopover.vue')['default']
+    CooperatePopver: typeof import('./src/components/Popver/CooperatePopver.vue')['default']
     CustomSvgIcon: typeof import('./src/components/CustomSvgIcon/CustomSvgIcon.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
+    ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
     ElCheckboxGroup: typeof import('element-plus/es')['ElCheckboxGroup']
@@ -41,6 +43,7 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTree: typeof import('element-plus/es')['ElTree']
     IEpAdd: typeof import('~icons/ep/add')['default']
+    IEpArrowDown: typeof import('~icons/ep/arrow-down')['default']
     IEpArrowRight: typeof import('~icons/ep/arrow-right')['default']
     IEpArrowRightBold: typeof import('~icons/ep/arrow-right-bold')['default']
     IEpAvatar: typeof import('~icons/ep/avatar')['default']
@@ -55,11 +58,13 @@ declare module 'vue' {
     LibraryCard: typeof import('./src/components/Card/LibraryCard.vue')['default']
     LibraryDialog: typeof import('./src/components/Dialog/LibraryDialog.vue')['default']
     LibraryOperationPopver: typeof import('./src/components/Popver/LibraryOperationPopver.vue')['default']
+    ModuleItem: typeof import('./src/components/Item/ModuleItem.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Sidebar: typeof import('./src/components/Sidebar.vue')['default']
     SidebarSearch: typeof import('./src/components/SidebarSearch.vue')['default']
     SvgIcon: typeof import('./src/components/SvgIcon/SvgIcon.vue')['default']
+    SwitchModuleItem: typeof import('./src/components/Item/SwitchModuleItem.vue')['default']
     UserPopver: typeof import('./src/components/Popver/UserPopver.vue')['default']
   }
   export interface ComponentCustomProperties {

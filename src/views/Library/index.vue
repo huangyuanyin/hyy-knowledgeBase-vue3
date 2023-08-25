@@ -5,13 +5,6 @@ import { commonLibraryData } from '@/data/data'
 const { libraryList, fetchLibrary } = useLibraryApi(getLibraryApi, { Public: 1 })
 fetchLibrary()
 
-const state = reactive({
-  moduleType: 'my'
-})
-const changeType = (type: string) => {
-  state.moduleType = type
-}
-
 const cardList = ref([
   {
     name: '信安世纪',
@@ -47,6 +40,9 @@ const cardList = ref([
 <template>
   <div class="Library_wrap">
     <div class="header">知识库</div>
+    <div style="display: flex; justify-content: flex-end">
+      <CooperatePopver :menuItems="commonLibraryData" />
+    </div>
     <div class="commonList">
       <div class="commonList_header">常用</div>
       <div class="list">
@@ -70,12 +66,7 @@ const cardList = ref([
     </div>
     <div class="library_box">
       <div class="libraryList">
-        <div class="module">
-          <div class="module-button">
-            <label :class="[state.moduleType === 'my' ? 'module-active' : '']" @click="changeType('my')"><div>我个人的</div></label>
-            <label :class="[state.moduleType === 'public' ? 'module-active' : '']" @click="changeType('public')"><div>公共的</div></label>
-          </div>
-        </div>
+        <SwitchModuleItem />
         <div class="content">
           <div class="libraryList_header">
             <span>我的知识库</span>
@@ -200,37 +191,10 @@ const cardList = ref([
     }
   }
   .library_box {
-    margin-top: 20px;
+    margin-top: 28px;
     .libraryList {
       margin-bottom: 4px;
 
-      .module {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 16px;
-        &-button {
-          padding: 3px;
-          background-color: rgba(0, 0, 0, 0.04);
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          label {
-            font-size: 14px;
-            border-radius: 6px;
-            min-height: 28px;
-            padding: 2px 16px;
-            cursor: pointer;
-            text-align: center;
-            line-height: 28px;
-            transition: background-color 0.3s, color 0.3s;
-          }
-        }
-        .module-active {
-          background-color: #fff;
-          box-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.08), 0 2px 6px 0 rgba(0, 0, 0, 0.04), 0 4px 8px 1px rgba(0, 0, 0, 0.02);
-        }
-      }
       .content {
         &:hover {
           .right {

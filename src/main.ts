@@ -13,3 +13,5 @@ const app = createApp(App)
 app.use(router).use(pinia)
 app.component('SvgIcon', SvgIcon)
 app.mount('#app')
+
+import './permission'

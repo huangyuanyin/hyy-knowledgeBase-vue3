@@ -5,7 +5,7 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
   placement: 'bottom-start',
   width: 164,
   trigger: 'hover',
-  hideAfter: 100,
+  hideAfter: 200,
   showArrow: false,
   menuItems: Array as () => MenuItem[]
 })
@@ -23,9 +23,11 @@ const isShowsLibraryDialog = ref(false)
     :show-arrow="props.showArrow"
   >
     <template #reference>
-      <div class="search-add">
-        <i-ep-Plus />
-      </div>
+      <slot>
+        <div class="search-add">
+          <i-ep-Plus />
+        </div>
+      </slot>
     </template>
     <div class="addOperation_Wrap">
       <ul>
@@ -117,6 +119,7 @@ const isShowsLibraryDialog = ref(false)
 <style lang="scss">
 .addOperationPopver {
   padding: 0 !important;
+  border-radius: 8px !important;
   .addOperation_Wrap {
     padding: 3px 0;
     ul {

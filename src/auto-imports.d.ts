@@ -77,6 +77,7 @@ declare global {
   const useLink: typeof import('vue-router')['useLink']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
+  const useSelectUserApi: typeof import('./hooks/useSelectUserApi')['useSelectUserApi']
   const useSlots: typeof import('vue')['useSlots']
   const viteEnvD: typeof import('./vite-env.d')['default']
   const watch: typeof import('vue')['watch']

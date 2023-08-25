@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Layout from '@/views/Layout/index.vue'
+import { setupRouterInterceptor } from '@/permission'
 
 const pages = import.meta.glob('@/views/**/page.ts', {
   eager: true,
@@ -35,7 +36,11 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import('@/views/Login/index.vue')
+    component: () => import('@/views/Login/index.vue'),
+    meta: {
+      title: '登录',
+      is_login: true
+    }
   }
 ]
 
@@ -43,5 +48,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes
 })
+
+router.beforeEach(setupRouterInterceptor)
 
 export default router
