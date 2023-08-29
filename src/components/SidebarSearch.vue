@@ -1,5 +1,13 @@
 <script lang="ts" setup>
 import { menuItemsData } from '@/data/data'
+import { MenuItem } from '@/type/operationPopoverType'
+
+const props = defineProps({
+  menuItems: {
+    type: Array as PropType<MenuItem[]>,
+    default: () => menuItemsData
+  }
+})
 </script>
 
 <template>
@@ -9,7 +17,7 @@ import { menuItemsData } from '@/data/data'
         <i-ep-Search />
       </template>
     </el-input>
-    <AddOperationPopover :menuItems="menuItemsData" />
+    <AddOperationPopover :menuItems="props.menuItems" />
   </div>
 </template>
 

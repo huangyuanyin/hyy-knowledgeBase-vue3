@@ -1,18 +1,36 @@
 <script lang="ts" setup>
-const moduleType = ref('my')
+interface Button {
+  type: string
+  name: string
+}
+
+type ModuleType = 'operation' | 'search'
+
+const props = defineProps<{
+  moduleType: ModuleType
+  moduleGenreData: Button[]
+  moduleGenre: string
+}>()
+
+if (!props.moduleType) {
+  console.error('moduleType is required but not provided.')
+}
+
+const moduleGenreLocal = ref(props.moduleGenre)
 
 const changeType = (type: string) => {
-  moduleType.value = type
+  moduleGenreLocal.value = type
 }
 </script>
 
 <template>
   <div class="SwitchModuleItem-wrap">
     <div class="module-button">
-      <label :class="[moduleType === 'my' ? 'module-active' : '']" @click="changeType('my')"><div>我个人的</div></label>
-      <label :class="[moduleType === 'public' ? 'module-active' : '']" @click="changeType('public')"><div>公共的</div></label>
+      <label v-for="item in props.moduleGenreData" :key="item.type" :class="[moduleGenreLocal === item.type ? 'module-active' : '']" @click="changeType(item.type)">
+        {{ item.name }}
+      </label>
     </div>
-    <div class="module-operation">
+    <div class="module-operation" v-if="props.moduleType === 'operation'">
       <div class="addIcon">
         <img src="src/assets/icons/addIcon.svg" alt="" class="moreIcon" />
         <img src="src/assets/icons/downIcon.svg" alt="" />
@@ -25,6 +43,17 @@ const changeType = (type: string) => {
         <span>
           <img src="src/assets/icons/listStyleIcon.svg" alt="" />
         </span>
+      </div>
+    </div>
+    <div class="module-search" v-if="props.moduleType === 'search'">
+      <div class="search-item">
+        <span>类型 <img src="src/assets/icons/downIcon.svg" alt="" /></span>
+      </div>
+      <div class="search-item">
+        <span>归属 <img src="src/assets/icons/downIcon.svg" alt="" /></span>
+      </div>
+      <div class="search-item">
+        <span>创建者 <img src="src/assets/icons/downIcon.svg" alt="" /></span>
       </div>
     </div>
   </div>
@@ -107,6 +136,28 @@ const changeType = (type: string) => {
   .module-active {
     background-color: #fff;
     box-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.08), 0 2px 6px 0 rgba(0, 0, 0, 0.04), 0 4px 8px 1px rgba(0, 0, 0, 0.02);
+  }
+  .module-search {
+    display: flex;
+    align-items: center;
+    .search-item {
+      display: flex;
+      align-items: center;
+      margin-left: 8px;
+      span {
+        font-size: 14px;
+        color: #585a5a;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        img {
+          width: 16px;
+          height: 16px;
+          margin-left: 4px;
+        }
+      }
+    }
   }
 }
 </style>

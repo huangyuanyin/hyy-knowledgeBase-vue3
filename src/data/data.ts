@@ -10,6 +10,19 @@ export const menuItemsData = [
   { type: 'item', icon: 'src/assets/icons/importIcon.svg', label: '导入...' }
 ]
 
+export const sidebarSearchMenuItemsData = [
+  { type: 'item', icon: 'src/assets/icons/documentIcon.svg', label: '文档' },
+  { type: 'item', icon: 'src/assets/icons/formIcon.svg', label: '表格' },
+  { type: 'item', icon: 'src/assets/icons/mindmapIcon.svg', label: '思维导图' },
+  { type: 'item', icon: 'src/assets/icons/pptIcon.svg', label: '幻灯片' },
+  { type: 'divider' },
+  { type: 'item', icon: 'src/assets/icons/templateIcon.svg', label: '从模板新建' },
+  { type: 'item', icon: 'src/assets/icons/importIcon.svg', label: '导入...' },
+  { type: 'divider' },
+  { type: 'item', icon: 'src/assets/icons/groupIcon.svg', label: '新建分组' },
+  { type: 'item', icon: 'src/assets/icons/linkIcon.svg', label: '添加链接' }
+]
+
 export const moduleAddMenuData = [
   { type: 'item', icon: 'src/assets/icons/documentIcon.svg', label: '新建文档' },
   { type: 'item', icon: 'src/assets/icons/formIcon.svg', label: '新建表格' },

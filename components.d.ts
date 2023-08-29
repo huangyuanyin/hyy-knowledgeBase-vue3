@@ -10,6 +10,8 @@ declare module 'vue' {
     AddOperationPopover: typeof import('./src/components/Popver/AddOperationPopover.vue')['default']
     CooperatePopver: typeof import('./src/components/Popver/CooperatePopver.vue')['default']
     CustomSvgIcon: typeof import('./src/components/CustomSvgIcon/CustomSvgIcon.vue')['default']
+    Directory: typeof import('./src/components/Directory.vue')['default']
+    DirectorySidebar: typeof import('./src/components/DirectorySidebar.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElButton: typeof import('element-plus/es')['ElButton']

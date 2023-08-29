@@ -39,7 +39,7 @@ const handleMouseLeave = (documentId: number): void => {
       </template>
     </div>
     <div class="docTitle">文档</div>
-    <SwitchModuleItem />
+    <SwitchModuleItem :moduleType="'search'" />
     <table class="docTable">
       <tbody>
         <tr class="docItem" v-for="document in documentsData" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">

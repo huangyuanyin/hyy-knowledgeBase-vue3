@@ -20,6 +20,13 @@ watchEffect(() => {
 const toLink = () => {
   router.push({ name: 'Library' })
 }
+
+const username = JSON.parse(localStorage.getItem('user')).userInfo.username
+
+const handleClickLibrary = (val: any) => {
+  // router.push({ path: '/' + username })
+  router.push({ path: '/directory' })
+}
 </script>
 
 <template>
@@ -67,7 +74,7 @@ const toLink = () => {
           </div>
           <div class="tree-header-right"><i-ep-ArrowRight /></div>
         </div>
-        <el-tree :data="libraryList" node-key="id" default-expand-all :expand-on-click-node="false">
+        <el-tree :data="libraryList" node-key="id" default-expand-all :expand-on-click-node="false" @node-click="handleClickLibrary">
           <template #default="{ data }">
             <span class="custom-tree-node">
               <div style="display: flex; align-items: center; flex: 1">
@@ -78,7 +85,7 @@ const toLink = () => {
                 </span>
               </div>
               <LibraryOperationPopver :menuItems="libraryOperationData">
-                <span class="more-icon">
+                <span class="more-icon" @click.stop>
                   <img src="@/assets/icons/moreIcon1.svg" alt="" />
                 </span>
               </LibraryOperationPopver>

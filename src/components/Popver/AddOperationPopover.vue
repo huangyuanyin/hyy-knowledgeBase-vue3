@@ -73,9 +73,9 @@ const isShowsLibraryDialog = ref(false)
           align-items: center;
           justify-content: center;
           img {
-            width: 18px;
-            min-width: 18px;
-            height: 18px;
+            width: 20px;
+            min-width: 20px;
+            height: 20px;
           }
         }
         &:hover {
@@ -142,9 +142,9 @@ const isShowsLibraryDialog = ref(false)
           align-items: center;
           justify-content: center;
           img {
-            width: 18px;
-            min-width: 18px;
-            height: 18px;
+            width: 20px;
+            min-width: 20px;
+            height: 20px;
           }
         }
         &:hover {

@@ -66,7 +66,20 @@ const cardList = ref([
     </div>
     <div class="library_box">
       <div class="libraryList">
-        <SwitchModuleItem />
+        <SwitchModuleItem
+          :moduleType="'operation'"
+          :moduleGenre="'my'"
+          :moduleGenreData="[
+            {
+              type: 'my',
+              name: '我个人的'
+            },
+            {
+              type: 'public',
+              name: '公共的'
+            }
+          ]"
+        />
         <div class="content">
           <div class="libraryList_header">
             <span>我的知识库</span>
