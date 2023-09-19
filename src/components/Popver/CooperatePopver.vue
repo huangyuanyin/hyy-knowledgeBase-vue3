@@ -19,7 +19,7 @@ const userList = ref([])
 const selectedUserList = ref([])
 const isShowUserOperationPopver = ref(false)
 
-const querySearch = async (queryString: string, cb: any) => {
+const querySearch = async (queryString: string, cb: (result: any[]) => void): Promise<any> => {
   userList.value = []
   if (queryString) {
     const { selectUserList } = await useSelectUserApi(selectUserInfoApi, { name: queryString })

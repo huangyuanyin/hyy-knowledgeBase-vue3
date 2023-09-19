@@ -19,7 +19,7 @@ export default defineConfig({
       ],
       imports: ['vue', 'vue-router', 'pinia'],
       include: [/\.[tj]sx?$/, /\.vue\??/],
-      dirs: ['./src/components', './src/hooks', './src/utils', './src/router'],
+      dirs: ['./src/components', './src/hooks', './src/utils', './src/router', './src/api', './src/store'],
       dts: 'src/auto-imports.d.ts'
     }),
     Components({

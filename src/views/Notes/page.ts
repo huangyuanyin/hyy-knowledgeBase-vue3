@@ -1,3 +1,4 @@
 export default {
-  title: '小记'
+  title: '小记',
+  asideComponent: 'Sidebar'
 }

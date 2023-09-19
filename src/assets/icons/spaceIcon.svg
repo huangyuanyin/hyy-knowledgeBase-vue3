@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 58 (84663) - https://sketch.com -->
+    <title>编组 7</title>
+    <desc>Created with Sketch.</desc>
+    <g id="控件" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="空间工作台-导航栏" transform="translate(-127.000000, -16.000000)">
+            <g id="编组-7" transform="translate(127.000000, 16.000000)">
+                <rect id="矩形" fill="#6CA4EA" x="0" y="0" width="32" height="32" rx="2.28571429"></rect>
+                <path d="M7.54691816,12.4804066 L15.5469182,16.1257193 L15.5469182,24.4362606 L7.54691816,20.7909479 L7.54691816,12.4804066 Z M24.6897753,12.4804066 L24.6897753,20.7909479 L16.6897753,24.4362606 L16.6897753,16.1257193 L24.6897753,12.4804066 Z M16,7.42857143 L24.5714286,11.4984469 L16,15.4285714 L7.42857143,11.4984469 L16,7.42857143 Z" id="形状结合" fill="#FFFFFF"></path>
+            </g>
+        </g>
+    </g>
+</svg>

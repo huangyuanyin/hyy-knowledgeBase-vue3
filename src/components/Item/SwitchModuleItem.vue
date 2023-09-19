@@ -8,8 +8,8 @@ type ModuleType = 'operation' | 'search'
 
 const props = defineProps<{
   moduleType: ModuleType
-  moduleGenreData: Button[]
-  moduleGenre: string
+  moduleGenreData?: Button[]
+  moduleGenre?: string
 }>()
 
 if (!props.moduleType) {
@@ -25,35 +25,37 @@ const changeType = (type: string) => {
 
 <template>
   <div class="SwitchModuleItem-wrap">
-    <div class="module-button">
-      <label v-for="item in props.moduleGenreData" :key="item.type" :class="[moduleGenreLocal === item.type ? 'module-active' : '']" @click="changeType(item.type)">
-        {{ item.name }}
-      </label>
-    </div>
+    <slot name="left">
+      <div class="module-button">
+        <label v-for="item in props.moduleGenreData" :key="item.type" :class="[moduleGenreLocal === item.type ? 'module-active' : '']" @click="changeType(item.type)">
+          {{ item.name }}
+        </label>
+      </div>
+    </slot>
     <div class="module-operation" v-if="props.moduleType === 'operation'">
       <div class="addIcon">
-        <img src="src/assets/icons/addIcon.svg" alt="" class="moreIcon" />
-        <img src="src/assets/icons/downIcon.svg" alt="" />
+        <img src="/src/assets/icons/addIcon.svg" alt="" class="moreIcon" />
+        <img src="/src/assets/icons/downIcon.svg" alt="" />
       </div>
       <div class="styleIcon">
         <span class="">
-          <img src="src/assets/icons/cardStyleIcon.svg" alt="" class="moreIcon" />
+          <img src="/src/assets/icons/cardStyleIcon.svg" alt="" class="moreIcon" />
         </span>
         <div class="divider"></div>
         <span>
-          <img src="src/assets/icons/listStyleIcon.svg" alt="" />
+          <img src="/src/assets/icons/listStyleIcon.svg" alt="" />
         </span>
       </div>
     </div>
     <div class="module-search" v-if="props.moduleType === 'search'">
       <div class="search-item">
-        <span>类型 <img src="src/assets/icons/downIcon.svg" alt="" /></span>
+        <span>类型 <img src="/src/assets/icons/downIcon.svg" alt="" /></span>
       </div>
       <div class="search-item">
-        <span>归属 <img src="src/assets/icons/downIcon.svg" alt="" /></span>
+        <span>归属 <img src="/src/assets/icons/downIcon.svg" alt="" /></span>
       </div>
       <div class="search-item">
-        <span>创建者 <img src="src/assets/icons/downIcon.svg" alt="" /></span>
+        <span>创建者 <img src="/src/assets/icons/downIcon.svg" alt="" /></span>
       </div>
     </div>
   </div>

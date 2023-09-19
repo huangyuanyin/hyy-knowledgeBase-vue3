@@ -11,6 +11,10 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
 })
 
 const isShowsLibraryDialog = ref(false)
+
+const handle = () => {
+  isShowsLibraryDialog.value = true
+}
 </script>
 
 <template>
@@ -32,7 +36,7 @@ const isShowsLibraryDialog = ref(false)
     <div class="addOperation_Wrap">
       <ul>
         <template v-for="(item, _index) in props.menuItems" :key="'menuItems' + _index">
-          <li v-if="item.type === 'item'" @click="isShowsLibraryDialog = true">
+          <li v-if="item.type === 'item'" @click="handle()">
             <div class="add-icon">
               <img :src="item.icon as string" alt="" />
             </div>

@@ -2,7 +2,8 @@ export const baseUrlList = {
   base: import.meta.env.VITE_BASE_URL,
   login: import.meta.env.VITE_BASE_LOGIN_URL,
   drawer: import.meta.env.VITE_BASE_DRAWER_URL,
-  user: import.meta.env.VITE_BASE_USER_URL
+  user: import.meta.env.VITE_BASE_USER_URL,
+  question: import.meta.env.VITE_BASE_QUESTION_URL
 }
 
 export const errorMessages = {

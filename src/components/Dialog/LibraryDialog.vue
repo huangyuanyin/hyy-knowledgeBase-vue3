@@ -40,7 +40,7 @@ const { dialogVisible, dialogFormRef: libraryFormRef, dialogForm: libraryForm, h
       <el-form-item label="基本信息" prop="name">
         <div class="form-name">
           <div class="bookIcon">
-            <img src="@/assets/icons/bookIcon.svg" alt="" />
+            <img src="/src/assets/icons/bookIcon.svg" alt="" />
           </div>
           <el-input v-model="libraryForm.name" placeholder="知识库名称" maxlength="10" show-word-limit />
         </div>

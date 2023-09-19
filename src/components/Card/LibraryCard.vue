@@ -15,15 +15,15 @@ const props = defineProps({
     <div class="card-content">
       <div class="header">
         <div class="header-left">
-          <img src="@/assets/icons/bookIcon.svg" alt="" class="bookIcon" />
+          <img src="/src/assets/icons/bookIcon.svg" alt="" class="bookIcon" />
         </div>
         <div class="header-right">
           <div style="display: flex; align-items: center">
             <span>{{ card.name }}</span>
-            <span class="publicIcon"><img src="@/assets/icons/publicIcon.svg" alt="" /></span>
+            <span class="publicIcon"><img src="/src/assets/icons/publicIcon.svg" alt="" /></span>
           </div>
           <LibraryOperationPopver :menuItems="commonLibraryData">
-            <span class="moreIcon"><img src="@/assets/icons/moreIcon1_after.svg" alt="" /></span>
+            <span class="moreIcon"><img src="/src/assets/icons/moreIcon1_after.svg" alt="" /></span>
           </LibraryOperationPopver>
         </div>
       </div>

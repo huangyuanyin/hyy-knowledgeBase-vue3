@@ -7,6 +7,7 @@ const pages = import.meta.glob('@/views/**/page.ts', {
   import: 'default'
 })
 const pageComps = import.meta.glob('@/views/**/index.vue')
+
 const routeList: Array<RouteRecordRaw> = Object.entries(pages).map(([path, meta]) => {
   let pageJsPath = path
   path = path.replace('/src/views', '').replace('/page.ts', '').toLowerCase()
@@ -22,6 +23,72 @@ const routeList: Array<RouteRecordRaw> = Object.entries(pages).map(([path, meta]
   } as RouteRecordRaw
 })
 
+const customRoutes = [
+  {
+    path: '/:spaceName/dashboard',
+    name: 'Space-Dashboard',
+    component: pageComps['/src/views/Dashboard/index.vue'] as Component,
+    meta: {
+      title: '空间·开始',
+      asideComponent: 'SpaceSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/collections',
+    name: 'Space-Collections',
+    component: pageComps['/src/views/Collections/index.vue'] as Component,
+    meta: {
+      title: '空间·收藏',
+      asideComponent: 'SpaceSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/public',
+    name: 'Space-Public',
+    component: pageComps['/src/views/Public/index.vue'] as Component,
+    meta: {
+      title: '空间·公共区',
+      asideComponent: 'SpaceSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/library',
+    name: 'Space-Library',
+    component: pageComps['/src/views/Library/index.vue'] as Component,
+    meta: {
+      title: '空间·知识库',
+      asideComponent: 'SpaceSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/team',
+    name: 'Space-Team',
+    component: pageComps['/src/views/Team/index.vue'] as Component,
+    meta: {
+      title: '空间·团队',
+      asideComponent: 'SpaceSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/directory',
+    name: 'Space-Directory',
+    component: pageComps['/src/views/Directory/index.vue'] as Component,
+    meta: {
+      title: '知识库详情',
+      asideComponent: 'DirectorySidebar'
+    }
+  },
+  {
+    path: '/:spaceName/organize/dashboard',
+    name: 'Organize-Dashboard',
+    component: pageComps['/src/views/Organize/Dashboard/index.vue'] as Component,
+    meta: {
+      title: '空间管理·开始',
+      asideComponent: 'OrganizeSidebar'
+    }
+  }
+]
+
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -31,7 +98,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'Layout',
     component: Layout,
-    children: [...routeList]
+    children: [...routeList, ...customRoutes]
   },
   {
     path: '/login',

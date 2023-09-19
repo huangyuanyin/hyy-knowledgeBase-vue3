@@ -1,3 +1,4 @@
 export default {
-  title: '收藏'
+  title: '收藏',
+  asideComponent: 'Sidebar'
 }

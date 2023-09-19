@@ -17,7 +17,7 @@ const props = defineProps({
         <i-ep-Search />
       </template>
     </el-input>
-    <AddOperationPopover :menuItems="props.menuItems" />
+    <AddOperationPopver :menu-items="props.menuItems" />
   </div>
 </template>
 

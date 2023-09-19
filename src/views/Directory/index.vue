@@ -1,4 +1,26 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+interface Tree {
+  id: number
+  articleId: number
+  label: string
+  type: string
+  children?: Tree[]
+}
+
+const dataSource = ref<Tree[]>([])
+
+const forumStore = useForumStore()
+const fetchForumList = async () => {
+  await forumStore.getForum(4)
+}
+
+onMounted(async () => {
+  await fetchForumList()
+  dataSource.value = forumStore.forumList
+})
+
+console.log(`目录....`, dataSource.value)
+</script>
 
 <template>
   <div class="Directory-wrap">
@@ -7,7 +29,7 @@
         <div class="header">
           <div class="header-left">
             <div class="bookIcon">
-              <img src="src/assets/icons/bookIcon.svg" alt="" class="bookIcon" />
+              <img src="/src/assets/icons/bookIcon.svg" alt="" class="bookIcon" />
             </div>
             <span>11111111</span>
           </div>
@@ -39,6 +61,23 @@
           <div class="welcome-item left">
             <span>知识库就像书一样，让多篇文档结构化，方便知识的创作与沉淀</span>
           </div>
+        </div>
+        <div class="list" v-if="dataSource.length">
+          <el-tree :data="dataSource" node-key="id" :props="{ class: 'forumList' }" default-expand-all>
+            <template #default="{ node, data }">
+              <span class="list-node">
+                <div class="title">
+                  <div :class="['icon', !data.children?.length ? 'no-icon' : '']">
+                    <img src="@/assets/icons/miniDropDownIcon.svg" alt="" v-if="data.children?.length && node.expanded" />
+                    <img class="foldIcon" src="@/assets/icons/miniDropDownIcon.svg" alt="" v-if="data.children?.length && !node.expanded" />
+                  </div>
+                  <span>{{ data.label }}</span>
+                </div>
+                <span class="line" v-if="data.type !== 'l'"></span>
+                <span class="time" v-if="data.type !== 'l'">2018-02-03 14:20</span>
+              </span>
+            </template>
+          </el-tree>
         </div>
       </div>
     </div>
@@ -167,6 +206,84 @@
         }
         .left {
           text-indent: 2em;
+        }
+      }
+      .list {
+        margin-top: 60px;
+        padding: 0 8px;
+        width: 100%;
+        :deep(.el-tree) {
+          background-color: transparent;
+        }
+        :deep(.el-tree-node__expand-icon) {
+          display: none;
+        }
+        :deep(.forumList) {
+          width: 100%;
+          .el-tree-node__content {
+            position: relative;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            border-radius: 6px;
+            height: 34px;
+            color: #262626;
+            padding-right: 6px;
+            border: 1.5px solid transparent;
+            margin-bottom: 2px;
+          }
+          .list-node {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .title {
+              display: flex;
+              align-items: center;
+              font-size: 15px;
+              font-family: Chinese Quote, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Helvetica Neue, Helvetica, Arial,
+                sans-serif;
+              .icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 24px;
+                height: 24px;
+                transition: transform 0.2s ease;
+                border-radius: 6px;
+                margin-right: 4px;
+                transition: background 0.35s ease-in-out;
+                img {
+                  width: 16px;
+                  min-width: 16px;
+                  height: 16px;
+                }
+                &:hover {
+                  background-color: #d8dad9;
+                }
+                .foldIcon {
+                  transform: rotate(-90deg);
+                  transition: transform 0.3s;
+                }
+              }
+              .no-icon {
+                &:hover {
+                  background-color: transparent;
+                }
+              }
+            }
+            .line {
+              flex: 1;
+              margin: 0 16px;
+              border-top: 1px dashed #d8dad9;
+            }
+            .time {
+              font-size: 14px;
+              color: #8a8f8d;
+              font-family: Chinese Quote, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Helvetica Neue, Helvetica, Arial,
+                sans-serif;
+            }
+          }
         }
       }
     }

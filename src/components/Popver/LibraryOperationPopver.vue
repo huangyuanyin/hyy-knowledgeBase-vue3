@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
     <ul>
       <template v-for="(item, _index) in props.menuItems" :key="'menuItems' + _index">
         <li class="operation_item" v-if="item.type === 'item'">
-          <img :src="item.icon as string" alt="" />
+          <img v-if="item.icon" :src="item.icon as string" alt="" />
           <span :style="{ color: item.label === '删除' ? '#df2a3f' : '#262626' }">{{ item.label }}</span>
         </li>
         <li class="divider" v-else-if="item.type === 'divider'"></li>
@@ -72,5 +72,7 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
 <style lang="scss">
 .libraryOperationPopver {
   padding: 0 !important;
+  min-width: 110px !important;
+  border-radius: 8px !important;
 }
 </style>
