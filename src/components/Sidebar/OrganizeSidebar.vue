@@ -1,12 +1,12 @@
 <template>
   <div class="OrganizeSidebar_wrap">
-    <div class="back">
+    <div class="back" @click="toBack">
       <img src="/src/assets/icons/arrowRightIcon.svg" alt="" />
       <span>返回空间</span>
     </div>
     <div class="title">
       <img src="/src/assets/icons/spaceIcon.svg" alt="" />
-      <span>小黄</span>
+      <span>{{ $route.query.name || '未知' }}</span>
     </div>
     <div class="menu">
       <el-tree :data="organizeMenu" node-key="id" highlight-current @node-click="handleClickNode">
@@ -27,11 +27,14 @@
 </template>
 
 <script lang="ts" setup>
+const route = useRoute()
+
 const organizeMenu = [
   {
     id: 1,
     title: '空间总览',
     icon: '/src/assets/icons/organize/spaceIcon.svg',
+    url: '/dashboard',
     children: []
   },
   {
@@ -74,6 +77,7 @@ const organizeMenu = [
         id: 401,
         title: '空间信息',
         icon: '',
+        url: '/settings',
         children: []
       },
       {
@@ -99,6 +103,7 @@ const organizeMenu = [
 ]
 
 const expandedNodes = ref([])
+
 const handleClickNode = (node) => {
   if (isNodeExpanded(node)) {
     // 如果节点已展开，收缩它
@@ -110,10 +115,27 @@ const handleClickNode = (node) => {
     // 如果节点未展开，展开它
     expandedNodes.value.push(node)
   }
+  if (node?.url) {
+    toLink(node.url)
+  }
 }
 
 const isNodeExpanded = (node) => {
   return expandedNodes.value.includes(node)
+}
+
+const toLink = (val) => {
+  router.push({
+    path: `/${route.path.split('/')[1]}/organize${val}`,
+    query: route.query
+  })
+}
+
+const toBack = () => {
+  router.push({
+    path: `/${route.path.split('/')[1]}/dashboard`,
+    query: route.query
+  })
 }
 </script>
 

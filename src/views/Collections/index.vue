@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { documentsData } from '@/data/data'
 const isShowsGroupDialog = ref(false)
 const groupActive = ref(0)
 const groups = ref([
@@ -50,7 +51,7 @@ const toSelectGroup = (val: any) => {
         </div>
       </div>
       <div class="right">
-        <TableComp :header="['名称', '归属', '收藏时间']" type="star" />
+        <TableComp :header="['名称', '归属', '收藏时间', '']" type="star" :data="documentsData" />
       </div>
     </div>
   </div>

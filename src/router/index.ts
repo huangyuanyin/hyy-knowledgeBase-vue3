@@ -70,6 +70,42 @@ const customRoutes = [
     }
   },
   {
+    path: '/:spaceName/team/book',
+    name: 'Team-Book',
+    component: pageComps['/src/views/Team/Book/index.vue'] as Component,
+    meta: {
+      title: '团队·知识库',
+      asideComponent: 'SpaceSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/team/dynamic',
+    name: 'Team-Dynamic',
+    component: pageComps['/src/views/Team/Dynamic/index.vue'] as Component,
+    meta: {
+      title: '团队·动态',
+      asideComponent: 'SpaceSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/team/Topic',
+    name: 'Team-Topic',
+    component: pageComps['/src/views/Team/Topic/index.vue'] as Component,
+    meta: {
+      title: '团队·话题',
+      asideComponent: 'SpaceSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/team/member',
+    name: 'Team-Member',
+    component: pageComps['/src/views/Team/Member/index.vue'] as Component,
+    meta: {
+      title: '团队·成员',
+      asideComponent: 'SpaceSidebar'
+    }
+  },
+  {
     path: '/:spaceName/directory',
     name: 'Space-Directory',
     component: pageComps['/src/views/Directory/index.vue'] as Component,
@@ -84,6 +120,15 @@ const customRoutes = [
     component: pageComps['/src/views/Organize/Dashboard/index.vue'] as Component,
     meta: {
       title: '空间管理·开始',
+      asideComponent: 'OrganizeSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/organize/settings',
+    name: 'Organize-Settings',
+    component: pageComps['/src/views/Organize/SpaceSetting/SpaceInfo/index.vue'] as Component,
+    meta: {
+      title: '空间管理·信息',
       asideComponent: 'OrganizeSidebar'
     }
   }

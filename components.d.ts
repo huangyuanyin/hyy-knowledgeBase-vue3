@@ -49,6 +49,8 @@ declare module 'vue' {
     ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTree: typeof import('element-plus/es')['ElTree']
+    ElUpload: typeof import('element-plus/es')['ElUpload']
+    Empty: typeof import('./src/components/Empty/index.vue')['default']
     GroupDialog: typeof import('./src/components/Dialog/GroupDialog.vue')['default']
     IEpAdd: typeof import('~icons/ep/add')['default']
     IEpArrowDown: typeof import('~icons/ep/arrow-down')['default']
@@ -63,6 +65,7 @@ declare module 'vue' {
     IEpSearch: typeof import('~icons/ep/search')['default']
     IEpStar: typeof import('~icons/ep/star')['default']
     IEpStopwatch: typeof import('~icons/ep/stopwatch')['default']
+    IEpUpload: typeof import('~icons/ep/upload')['default']
     LibraryCard: typeof import('./src/components/Card/LibraryCard.vue')['default']
     LibraryDialog: typeof import('./src/components/Dialog/LibraryDialog.vue')['default']
     LibraryOperationPopver: typeof import('./src/components/Popver/LibraryOperationPopver.vue')['default']
@@ -82,6 +85,7 @@ declare module 'vue' {
     SvgIcon: typeof import('./src/components/SvgIcon/SvgIcon.vue')['default']
     SwitchModuleItem: typeof import('./src/components/Item/SwitchModuleItem.vue')['default']
     TableComp: typeof import('./src/components/Table/TableComp.vue')['default']
+    TeamHeader: typeof import('./src/components/Header/TeamHeader.vue')['default']
     UserPopver: typeof import('./src/components/Popver/UserPopver.vue')['default']
   }
   export interface ComponentCustomProperties {

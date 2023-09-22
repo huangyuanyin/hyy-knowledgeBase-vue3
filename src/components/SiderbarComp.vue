@@ -1,61 +1,8 @@
-<template>
-  <div class="SiderbarComp-wrap">
-    <div class="first-comp">
-      <div class="top-box">
-        <SidebarUserItem />
-        <SidebarSearch />
-        <SidebarMenuItem :menuItems="menuItems" />
-      </div>
-      <div class="content-box">
-        <div class="library" v-for="(item, index) in props.contentItems" :key="index">
-          <div :class="['header', state.headerActive === index ? 'header-active' : '']" @click="toLink(item.type)">
-            <div class="header-left">
-              <span class="header-icon"><i-ep-CaretRight /></span>
-              <span class="header-title">{{ item.title }}</span>
-            </div>
-            <div class="header-right"><i-ep-ArrowRight /></div>
-          </div>
-          <el-tree :data="item.libraryList" node-key="id" default-expand-all :expand-on-click-node="false" @node-click="handleClickLibrary" :empty-text="item.emptyText">
-            <template #default="{ data }">
-              <span class="custom-tree-node">
-                <div style="display: flex; align-items: center; flex: 1">
-                  <img :src="item.icon" alt="" />
-                  <span class="title">{{ data.name }}</span>
-                  <span class="type-icon">
-                    <img :src="item.typeIcon" alt="" />
-                  </span>
-                </div>
-                <LibraryOperationPopver :menuItems="libraryOperationData">
-                  <span class="more-icon" @click.stop>
-                    <img src="@/assets/icons/moreIcon1.svg" alt="" />
-                  </span>
-                </LibraryOperationPopver>
-              </span>
-            </template>
-          </el-tree>
-        </div>
-      </div>
-    </div>
-    <div class="divider" v-if="infoStore.currentSidebar === 'SpaceSidebar'"></div>
-    <div class="last-comp">
-      <div class="more-item" v-if="infoStore.currentSidebar === 'SpaceSidebar'">
-        <img src="/src/assets/icons/settingIcon.svg" alt="" />
-        <span>空间管理</span>
-      </div>
-      <MorePopver :menuItems="moreOperationData">
-        <div class="more-item">
-          <img src="/src/assets/icons/moreIcon2.svg" alt="" />
-          <span>更多</span>
-        </div>
-      </MorePopver>
-    </div>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import { libraryOperationData, moreOperationData } from '@/data/data'
 import { MenuItem } from '@/type/operationPopoverType'
 import { contentItemsData, moreMenuItemsData } from '@/data/data'
+import { getSpacesApi } from '@/api/spaces/index'
 
 interface ContentItem {
   title: string
@@ -91,7 +38,8 @@ const route = useRoute()
 const infoStore = useInfoStore()
 
 const state = reactive({
-  headerActive: null
+  headerActive: null,
+  currentGroup: null
 })
 
 watch(
@@ -106,7 +54,12 @@ watch(
           state.headerActive = 0
           break
         case 'team':
-          state.headerActive = 1
+          if (route.path.split('/').length >= 4 && route.path.split('/')[2] === 'team') {
+            state.headerActive = null
+            state.currentGroup = Number(route.query.id)
+          } else {
+            state.headerActive = 1
+          }
           break
         default:
           state.headerActive = null
@@ -151,22 +104,101 @@ const toLink = (type) => {
 }
 
 const handleClickLibrary = (val: any) => {
-  const query = {
-    id: val.id,
-    name: val.name
-  }
-  switch (infoStore.currentSidebar) {
-    case 'Sidebar':
-      router.push({ path: '/directory', query })
-      break
-    case 'SpaceSidebar':
-      router.push({ path: '/space/directory', query })
-      break
-    default:
-      break
+  if (val.groupname) {
+    router.push({
+      path: `/space3/team/book`,
+      query: {
+        name: val.groupname,
+        id: val.id
+      }
+    })
+    state.currentGroup = val.groupkey
+  } else {
+    const query = {
+      id: val.id,
+      name: val.name
+    }
+    switch (infoStore.currentSidebar) {
+      case 'Sidebar':
+        router.push({ path: '/directory', query })
+        break
+      case 'SpaceSidebar':
+        router.push({ path: '/space/directory', query })
+        break
+      default:
+        break
+    }
   }
 }
+
+const { spacesList, getSpaces } = useSpacesApi(getSpacesApi, {}, false)
+getSpaces().then(() => {
+  bus.emit('TriggerSettingData', spacesList.value)
+})
 </script>
+
+<template>
+  <div class="SiderbarComp-wrap">
+    <div class="first-comp">
+      <div class="top-box">
+        <SidebarUserItem />
+        <SidebarSearch />
+        <SidebarMenuItem :menuItems="menuItems" />
+      </div>
+      <div class="content-box">
+        <div class="library" v-for="(item, index) in props.contentItems" :key="index">
+          <div :class="['header', state.headerActive === index ? 'header-active' : '']" @click="toLink(item.type)">
+            <div class="header-left">
+              <span class="header-icon"><i-ep-CaretRight /></span>
+              <span class="header-title">{{ item.title }}</span>
+            </div>
+            <div class="header-right"><i-ep-ArrowRight /></div>
+          </div>
+          <el-tree
+            :data="item.libraryList"
+            node-key="id"
+            :current-node-key="state.currentGroup"
+            default-expand-all
+            :highlight-current="item.title === '团队' ? true : false"
+            :expand-on-click-node="false"
+            @node-click="handleClickLibrary"
+            :empty-text="item.emptyText"
+          >
+            <template #default="{ data }">
+              <span :class="['custom-tree-node']">
+                <div style="display: flex; align-items: center; flex: 1">
+                  <img :src="item.icon" alt="" />
+                  <span class="title">{{ data.groupname }}</span>
+                  <span class="type-icon">
+                    <img :src="item.typeIcon" alt="" />
+                  </span>
+                </div>
+                <LibraryOperationPopver :menuItems="libraryOperationData">
+                  <span class="more-icon" @click.stop>
+                    <img src="@/assets/icons/moreIcon1.svg" alt="" />
+                  </span>
+                </LibraryOperationPopver>
+              </span>
+            </template>
+          </el-tree>
+        </div>
+      </div>
+    </div>
+    <div class="divider" v-if="infoStore.currentSidebar === 'SpaceSidebar'"></div>
+    <div class="last-comp">
+      <div class="more-item" v-if="infoStore.currentSidebar === 'SpaceSidebar'">
+        <img src="/src/assets/icons/settingIcon.svg" alt="" />
+        <span>空间管理</span>
+      </div>
+      <MorePopver :menuItems="moreOperationData">
+        <div class="more-item">
+          <img src="/src/assets/icons/moreIcon2.svg" alt="" />
+          <span>更多</span>
+        </div>
+      </MorePopver>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .SiderbarComp-wrap {
@@ -250,6 +282,14 @@ const handleClickLibrary = (val: any) => {
         }
         :deep(.el-tree) {
           background-color: #fafafa;
+          .el-tree__empty-text {
+            width: 100%;
+          }
+        }
+        :deep(.is-current) {
+          .el-tree-node__content {
+            background-color: #eff0f0 !important;
+          }
         }
         :deep(.el-tree-node__content) {
           height: 32px;
@@ -374,3 +414,4 @@ const handleClickLibrary = (val: any) => {
   }
 }
 </style>
+@/api/spaces/index

@@ -4,7 +4,7 @@ import { MenuItem, OperationPopoverProps } from '@/type/operationPopoverType'
 const props = withDefaults(defineProps<OperationPopoverProps>(), {
   placement: 'bottom',
   width: 312,
-  trigger: 'click',
+  trigger: 'hover',
   hideAfter: 200,
   showArrow: false,
   menuItems: () => [] as MenuItem[],
@@ -13,18 +13,19 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
 
 const route = useRoute()
 const infoStore = useInfoStore()
+const spacesList = ref([])
 
 const state = reactive({
   currentSpaceName: route.query.name || ''
 })
 
-const spacesList = [
-  { id: 1, icon: '/src/assets/icons/spaceIcon.svg', name: '就叫小黄好了1', member: '1成员', nickName: 'xiaohuang' },
-  { id: 2, icon: '/src/assets/icons/spaceIcon.svg', name: '就叫小黄好了2', member: '2成员', nickName: 'zhangsan' },
-  { id: 3, icon: '/src/assets/icons/spaceIcon.svg', name: '就叫小黄好了3', member: '3成员', nickName: 'lisi' },
-  { id: 4, icon: '/src/assets/icons/spaceIcon.svg', name: '就叫小黄好了4', member: '4成员', nickName: 'wangwu' },
-  { id: 5, icon: '/src/assets/icons/spaceIcon.svg', name: '就叫小黄好了5', member: '5成员', nickName: 'haha' }
-]
+// const spacesList = [
+//   { id: 1, icon: '/src/assets/icons/spaceIcon.svg', name: '就叫小黄好了1', member: '1成员', nickName: 'xiaohuang' },
+//   { id: 2, icon: '/src/assets/icons/spaceIcon.svg', name: '就叫小黄好了2', member: '2成员', nickName: 'zhangsan' },
+//   { id: 3, icon: '/src/assets/icons/spaceIcon.svg', name: '就叫小黄好了3', member: '3成员', nickName: 'lisi' },
+//   { id: 4, icon: '/src/assets/icons/spaceIcon.svg', name: '就叫小黄好了4', member: '4成员', nickName: 'wangwu' },
+//   { id: 5, icon: '/src/assets/icons/spaceIcon.svg', name: '就叫小黄好了5', member: '5成员', nickName: 'haha' }
+// ]
 
 const toLink = (type, val?) => {
   switch (type) {
@@ -33,20 +34,33 @@ const toLink = (type, val?) => {
       break
     case 'space':
       router.push({
-        path: `/${val.nickName}/dashboard`,
+        path: `/${val.spacekey}/dashboard`,
         query: {
-          name: val.name,
+          name: val.spacename,
           id: val.id
         }
       })
       break
     case 'add':
-      router.push(`/${val.nickName}/organize/dashboard`)
+      router.push(`/${val.spacekey}/organize/dashboard`)
+      break
+    case 'set':
+      router.push({
+        path: `/${infoStore.currentSpaceName}/organize/dashboard`,
+        query: route.query
+      })
       break
     default:
       break
   }
 }
+
+onMounted(async () => {
+  bus.on('TriggerSettingData', (res) => {
+    console.log(`output->res`, res)
+    spacesList.value = res
+  })
+})
 </script>
 
 <template>
@@ -87,11 +101,11 @@ const toLink = (type, val?) => {
           <div class="menuItem" v-for="space in spacesList" :key="space.id" @click="toLink('space', space)">
             <div class="left">
               <div class="img">
-                <img class="spaceIcon" :src="space.icon" alt="" />
+                <img class="spaceIcon" :src="space.icon || '/src/assets/icons/spaceIcon.svg'" alt="" />
               </div>
               <div class="content">
-                <p>{{ space.name }}</p>
-                <p class="member">{{ space.member }}</p>
+                <p>{{ space.spacename }}</p>
+                <p class="member">{{ space.member || 0 }}成员</p>
               </div>
             </div>
           </div>
@@ -136,7 +150,7 @@ const toLink = (type, val?) => {
                 <span>管理员</span>
                 <img src="@/assets/img/img.jpg" />
               </div>
-              <div class="button">
+              <div class="button" @click="toLink('set')">
                 <img class="settingIcon" src="/src/assets/icons/settingIcon.svg" alt="" />
                 <img class="settingIcon_active" src="/src/assets/icons/settingIcon_active.svg " alt="" />
                 <span>空间管理</span>
@@ -150,14 +164,14 @@ const toLink = (type, val?) => {
           <div class="menuItem" v-for="space in spacesList" :key="space.id" @click="toLink('space', space)">
             <div class="left">
               <div class="img">
-                <img class="spaceIcon" :src="space.icon" alt="" />
+                <img class="spaceIcon" :src="space.icon || '/src/assets/icons/spaceIcon.svg'" alt="" />
               </div>
               <div class="content">
-                <p>{{ space.name }}</p>
-                <p class="member">{{ space.member }}</p>
+                <p>{{ space.spacename }}</p>
+                <p class="member">{{ space.member || 0 }}成员</p>
               </div>
             </div>
-            <div class="right" v-if="infoStore.currentSpaceName === space.nickName">
+            <div class="right" v-if="infoStore.currentSpaceName === space.spacekey">
               <img src="@/assets/icons/selectIcon.svg" alt="" />
             </div>
           </div>

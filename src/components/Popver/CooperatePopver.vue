@@ -133,14 +133,7 @@ const onShowUserOperationPopver = (val: boolean) => {
             </div>
           </div>
         </div>
-        <div class="userlist-empty" v-else>
-          <div class="empty">
-            <div class="empty-img">
-              <img src="@/assets/img/cooperate.png" alt="" />
-            </div>
-            <p>暂无文档协作者</p>
-          </div>
-        </div>
+        <Empty text="暂无文档协作者" height="244px" v-else />
         <div class="share">
           <p>拿到链接的人可获得编辑权限</p>
           <div class="share-button">
@@ -185,35 +178,6 @@ const onShowUserOperationPopver = (val: boolean) => {
           &:hover {
             border-color: #0bd07d;
           }
-        }
-      }
-    }
-    .userlist-empty {
-      height: 244px;
-      padding-top: 40px;
-      padding-bottom: 56px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      box-sizing: border-box;
-      border-bottom: 1px solid #eff0f0;
-      .empty {
-        &-img {
-          width: 110px;
-          height: 110px;
-          padding: 15.28px 0 11.68px 12.83px;
-          margin-bottom: 16px;
-          box-sizing: border-box;
-          img {
-            width: 97.78px;
-            height: 83.04px;
-          }
-        }
-        p {
-          color: #8a8f8d;
-          font-size: 14px;
         }
       }
     }
@@ -330,6 +294,7 @@ const onShowUserOperationPopver = (val: boolean) => {
     }
     .share {
       padding: 20px;
+      border-top: 1px solid #eff0f0;
       p {
         font-size: 14px;
         color: #262626;

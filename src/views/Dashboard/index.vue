@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { moduleData, moduleAddMenuData } from '@/data/data'
+import { moduleData, documentsData, moduleAddMenuData } from '@/data/data'
 
 const isShowsLibraryDialog = ref(false)
 
@@ -40,7 +40,7 @@ const handleModule = (id: number): void => {
         }
       ]"
     />
-    <TableComp />
+    <TableComp :data="documentsData" type="dashboard" />
   </div>
 
   <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
