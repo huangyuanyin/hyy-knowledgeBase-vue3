@@ -105,7 +105,7 @@ onMounted(async () => {
               </div>
               <div class="content">
                 <p>{{ space.spacename }}</p>
-                <p class="member">{{ space.member || 0 }}成员</p>
+                <p class="member">{{ space.member_count || 0 }}成员</p>
               </div>
             </div>
           </div>
@@ -168,7 +168,7 @@ onMounted(async () => {
               </div>
               <div class="content">
                 <p>{{ space.spacename }}</p>
-                <p class="member">{{ space.member || 0 }}成员</p>
+                <p class="member">{{ space.member_count || 0 }}成员</p>
               </div>
             </div>
             <div class="right" v-if="infoStore.currentSpaceName === space.spacekey">

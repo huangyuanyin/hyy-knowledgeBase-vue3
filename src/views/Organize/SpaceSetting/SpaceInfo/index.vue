@@ -1,6 +1,10 @@
 <script lang="ts" setup>
 import { FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
+import { getSpacesDetailApi, editSpacesApi } from '@/api/spaces/index'
+
+const route = useRoute()
+const spaceId = ref(Number(route.query.id) || null)
 
 interface SpaceForm {
   spacename: string
@@ -27,17 +31,6 @@ const rules = reactive<FormRules<SpaceForm>>({
   ]
 })
 
-const submitForm = async (formEl: FormInstance | undefined) => {
-  if (!formEl) return
-  await formEl.validate((valid, fields) => {
-    if (valid) {
-      console.log('submit!', spaceForm)
-    } else {
-      console.log('error submit!', fields)
-    }
-  })
-}
-
 const toUploadImg = (uploadFile) => {
   if (uploadFile) {
     const reader = new FileReader()
@@ -47,6 +40,33 @@ const toUploadImg = (uploadFile) => {
     reader.readAsDataURL(uploadFile['raw'])
   }
 }
+
+const submitForm = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  await formEl.validate((valid) => {
+    if (valid) {
+      editSpaces(spaceForm, spaceId.value)
+    }
+  })
+}
+
+const editSpaces = async (params, id) => {
+  let res = await editSpacesApi(params, id)
+  if (res.code === 1000) {
+    ElMessage.success('更新成功')
+  }
+}
+
+const getDetailSpaces = async (id: number) => {
+  let res = await getSpacesDetailApi(id)
+  spaceForm.spacename = res.data.spacename
+  spaceForm.spacekey = res.data.spacekey
+  console.log(`output->id`, res)
+}
+
+onMounted(() => {
+  getDetailSpaces(spaceId.value)
+})
 </script>
 
 <template>
@@ -58,7 +78,10 @@ const toUploadImg = (uploadFile) => {
           <el-input v-model="spaceForm.spacename" placeholder="如：就叫小黄好了" />
         </el-form-item>
         <el-form-item label="空间地址" prop="spacekey">
-          <el-input v-model="spaceForm.spacekey" />
+          <el-input v-model="spaceForm.spacekey" clearable>
+            <template #prepend>http://10.4.150.55:8080/</template>
+            <template #append>/dashboard</template>
+          </el-input>
         </el-form-item>
         <el-form-item label="空间描述">
           <el-input v-model="spaceForm.desc" type="textarea" rows="7" placeholder="如：让天下没有难做的生意" />
@@ -102,7 +125,7 @@ const toUploadImg = (uploadFile) => {
       }
       .el-input {
         height: 40px;
-        max-width: 348px;
+        max-width: 448px;
       }
       :deep(.el-form-item.is-error .el-input__wrapper) {
         border-color: #f56c6c;
@@ -114,6 +137,11 @@ const toUploadImg = (uploadFile) => {
         box-shadow: none;
         &:hover {
           border-color: #0bd07d;
+        }
+      }
+      :deep(.el-input-group) {
+        .el-input__wrapper {
+          border-radius: 0px !important;
         }
       }
       .icon-tag {

@@ -1,37 +1,73 @@
 <script lang="ts" setup>
+import { getGroupsApi } from '@/api/groups'
+import { getBookStacksApi } from '@/api/bookstacks'
+
 const props = defineProps({
   isShow: Boolean
 })
 
 const emit = defineEmits(['closeDialog'])
 
-const publicList = ref([
+const infoStore = useInfoStore()
+const userStore = useUserStore()
+const route = useRoute()
+const spaceId = ref(route.query.id)
+const selectGroupName = ref('')
+const teamList = ref([])
+const publicList = [
   {
-    author: '就叫小黄好了',
-    img: 'src/assets/img/img.jpg',
-    public: '1'
+    id: '0',
+    label: '仅协作者可访问'
   },
   {
-    author: '公共区',
-    img: 'src/assets/icons/publicArea.svg',
-    public: '0'
+    id: '1',
+    label: '空间所有成员可访问'
   }
-])
-
-const formData = {
+]
+const spaceData = ref({
   name: '',
+  stacks: '',
+  slug: new Date().getTime().toString(),
+  avatar: '',
   description: '',
-  public: '1'
-}
+  creator: userStore.userInfo.nickname,
+  public: '1',
+  group: '',
+  space: spaceId.value
+})
 
 watch(
   () => props.isShow,
-  (newVal: boolean) => {
+  async (newVal: boolean) => {
     dialogVisible.value = newVal
+    if (newVal) {
+      const { groupsList, getGroups } = await useGroupsApi(getGroupsApi, { space: spaceId.value })
+      getGroups()
+      teamList.value = groupsList.value
+    }
+    console.log(`output->infoStore.currentSidebar`, teamList.value)
   }
 )
 
-const { dialogVisible, dialogFormRef: libraryFormRef, dialogForm: libraryForm, handleClose, handleSubmit } = useFormDialog({ isShow: ref(props.isShow), emit, formData })
+const {
+  dialogVisible,
+  dialogFormRef: libraryFormRef,
+  dialogForm: libraryForm,
+  handleClose,
+  handleSubmit
+} = useFormDialog({ isShow: ref(props.isShow), emit, formData: spaceData.value })
+
+const selectTeam = async (val) => {
+  selectGroupName.value = teamList.value.filter((item) => item.id === val)[0].groupname
+  const params = {
+    group: val,
+    space: spaceId.value
+  }
+  const { bookstacksList, getBookstacks } = await useBookstacksApi(getBookStacksApi, params, false)
+  await getBookstacks()
+  spaceData.value.stacks = bookstacksList.value.filter((item) => item.is_default === '1')[0].id
+  console.log(`output->spaceData.value.stacks`, bookstacksList.value, spaceData.value.stacks, spaceData.value)
+}
 </script>
 
 <template>
@@ -48,18 +84,48 @@ const { dialogVisible, dialogFormRef: libraryFormRef, dialogForm: libraryForm, h
       <el-form-item label="" class="form-description" prop="description">
         <el-input v-model="libraryForm.description" type="textarea" :autosize="{ minRows: 4 }" placeholder="知识库简介（选填）" />
       </el-form-item>
-      <el-form-item label="新建至">
-        <el-select v-model="libraryForm.public" prop="public">
+      <el-form-item label="新建至" v-if="infoStore.currentSidebar === 'Sidebar'">
+        <el-select v-model="libraryForm.group" prop="public">
           <template #prefix>
-            <img class="prefix-icon" src="@/assets/img/img.jpg" />
+            <img class="prefix-icon" src="/src/assets/icons/library/publicIcon.svg" />
           </template>
-          <el-option :label="item.author" :value="item.public" v-for="(item, index) in publicList" :key="'publicList' + index">
+          <el-option :label="item.author" :value="item.id" v-for="(item, index) in teamList" :key="'teamList' + index">
             <div class="form-public">
               <div class="form-public-left">
                 <img :src="item.img" />
                 <span style="float: left">{{ item.author }}</span>
               </div>
               <img class="selectIcon" src="@/assets/icons/selectIcon.svg" />
+            </div>
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="新建至" v-if="infoStore.currentSidebar === 'SpaceSidebar'">
+        <el-select v-model="libraryForm.group" prop="group" @change="selectTeam">
+          <template #prefix>
+            <img v-if="selectGroupName === '公共区'" class="prefix-icon" src="/src/assets/icons/library/publicIcon.svg" />
+            <img v-else class="prefix-icon" src="/src/assets/icons/teamIcon.svg" />
+          </template>
+          <el-option :label="item.groupname" :value="item.id" v-for="(item, index) in teamList" :key="'teamList' + index">
+            <div class="form-public">
+              <div class="form-public-left">
+                <img v-if="item.groupname === '公共区'" src="/src/assets/icons/library/publicIcon.svg" />
+                <img v-else :src="item.icon || '/src/assets/icons/teamIcon.svg'" />
+                <span style="float: left">{{ item.groupname }}</span>
+              </div>
+              <img v-if="item.id === libraryForm.group" class="selectIcon" src="@/assets/icons/selectIcon.svg" />
+            </div>
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="公开性" class="public-item" v-if="infoStore.currentSidebar === 'SpaceSidebar'">
+        <el-select v-model="libraryForm.public" prop="group">
+          <el-option :label="item.label" :value="item.id" v-for="(item, index) in publicList" :key="'publicList' + index">
+            <div class="form-public">
+              <div class="form-public-left">
+                <span style="float: left">{{ item.label }}</span>
+              </div>
+              <img v-if="item.id === libraryForm.public" class="selectIcon" src="@/assets/icons/selectIcon.svg" />
             </div>
           </el-option>
         </el-select>
@@ -90,13 +156,16 @@ const { dialogVisible, dialogFormRef: libraryFormRef, dialogForm: libraryForm, h
     img {
       width: 24px;
       height: 24px;
-      border-radius: 24px;
+      // border-radius: 24px;
       margin-right: 12px;
     }
     span {
       font-size: 14px;
     }
   }
+}
+.public-item {
+  margin-top: 24px;
 }
 </style>
 

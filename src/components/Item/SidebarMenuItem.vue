@@ -11,6 +11,7 @@ const props = defineProps({
     default: () => []
   }
 })
+
 const route = useRoute()
 const state = reactive({
   defaultMenu: 'dashboard'
@@ -18,6 +19,7 @@ const state = reactive({
 
 watchEffect(() => {
   const routerName = router.currentRoute.value.name
+  console.log(`output-> routerName `, routerName)
   state.defaultMenu = route.meta.asideComponent === 'Sidebar' ? routerName.toString().toLowerCase() : routerName.toString().toLowerCase().split('-')[1]
 })
 

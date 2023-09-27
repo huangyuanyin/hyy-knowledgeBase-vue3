@@ -1,5 +1,6 @@
 export interface libraryParams {
-  Public: 0 | 1
+  space: string
+  creator?: string
 }
 
 interface Category {

@@ -11,7 +11,7 @@ fetchLibrary()
     <!-- <div style="display: flex; justify-content: flex-end">
       <CooperatePopver :menuItems="commonLibraryData" />
     </div> -->
-    <CommonList :libraryList="libraryList" />
+    <CommonList :list="libraryList" />
     <div class="library_box">
       <div class="libraryList">
         <SwitchModuleItem

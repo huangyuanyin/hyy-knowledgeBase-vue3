@@ -1,23 +1,3 @@
-<template>
-  <div class="O-Dashboard_wrap">
-    <div class="header">空间概览</div>
-    <div class="start-box">
-      <span>开始</span>
-      <div class="itemList">
-        <div class="item" v-for="(item, index) in startBoxItem" :key="'startBoxItem' + index">
-          <a>
-            <span>{{ item.title }}</span>
-            <p>{{ item.description }}</p>
-          </a>
-        </div>
-      </div>
-    </div>
-    <div class="detail-box">
-      <span>使用情况</span>
-    </div>
-  </div>
-</template>
-
 <script lang="ts" setup>
 const startBoxItem = [
   {
@@ -38,6 +18,26 @@ const startBoxItem = [
   }
 ]
 </script>
+
+<template>
+  <div class="O-Dashboard_wrap">
+    <div class="header">空间概览</div>
+    <div class="start-box">
+      <span>开始</span>
+      <div class="itemList">
+        <div class="item" v-for="(item, index) in startBoxItem" :key="'startBoxItem' + index">
+          <a>
+            <span>{{ item.title }}</span>
+            <p>{{ item.description }}</p>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="detail-box">
+      <span>使用情况</span>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .O-Dashboard_wrap {

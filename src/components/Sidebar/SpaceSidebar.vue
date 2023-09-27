@@ -1,15 +1,11 @@
-<template>
-  <Suspense>
-    <SiderbarComp :sectionType="'space'" :menuItems="menuItems" :contentItems="contentItems" :moreMenuItems="moreMenuItems" />
-  </Suspense>
-</template>
-
 <script lang="ts" setup>
 import { getLibraryApi } from '@/api/library'
 import { getGroupsApi } from '@/api/groups'
+import { getQuickLinksApi } from '@/api/quickLinks'
 
-const libraryList = ref([])
-const groupsList = ref([])
+const route = useRoute()
+const userStore = useUserStore()
+const spaceId = ref(route.query.id) // 当前空间id
 
 const menuItems = [
   { index: 'dashboard', icon: 'actionIcon', label: '开始' },
@@ -24,7 +20,7 @@ const contentItems = ref([
     icon: '/src/assets/icons/bookIcon.svg',
     typeIcon: '/src/assets/icons/publicIcon.svg',
     emptyText: '暂无常用知识库',
-    libraryList: libraryList
+    libraryList: []
   },
   {
     title: '团队',
@@ -32,7 +28,7 @@ const contentItems = ref([
     icon: '/src/assets/icons/teamIcon.svg',
     typeIcon: '/src/assets/icons/privateIcon.svg',
     emptyText: '暂无常用团队',
-    libraryList: groupsList.value
+    libraryList: []
   }
 ])
 
@@ -42,15 +38,19 @@ const moreMenuItems = [
 ]
 
 onMounted(async () => {
-  const { groupsList, getGroups } = await useGroupsApi(getGroupsApi, { space: 1 })
+  const { libraryList, fetchLibrary } = useLibraryApi(getLibraryApi, { space: spaceId.value })
+  await fetchLibrary()
+  contentItems.value[0].libraryList = libraryList.value
+  const { groupsList, getGroups } = await useGroupsApi(getGroupsApi, { space: spaceId.value })
   getGroups()
-  groupsList.value = groupsList.value
-  console.log(`output->useGroupsApi(getGroupsApi, { Space: 1 })`, groupsList.value)
-  contentItems.value[1].libraryList = groupsList.value
-  const { libraryList, fetchLibrary } = useLibraryApi(getLibraryApi, { Public: 1 })
-  fetchLibrary()
-  libraryList.value = libraryList
+  contentItems.value[1].libraryList = groupsList.value.filter((item) => item.is_default !== '1')
 })
 </script>
+
+<template>
+  <Suspense>
+    <SiderbarComp :sectionType="'space'" :menuItems="menuItems" :contentItems="contentItems" :moreMenuItems="moreMenuItems" />
+  </Suspense>
+</template>
 
 <style lang="scss" scoped></style>

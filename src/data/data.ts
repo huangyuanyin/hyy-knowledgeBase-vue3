@@ -10,6 +10,19 @@ export const menuItemsData = [
   { type: 'item', icon: '/src/assets/icons/importIcon.svg', label: '导入...' }
 ]
 
+export const spaceMenuItemsData = [
+  { type: 'item', icon: '/src/assets/icons/documentIcon.svg', label: '文档' },
+  { type: 'item', icon: '/src/assets/icons/formIcon.svg', label: '表格' },
+  { type: 'item', icon: '/src/assets/icons/mindmapIcon.svg', label: '思维导图' },
+  { type: 'item', icon: '/src/assets/icons/pptIcon.svg', label: '幻灯片' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/bookIcon.svg', label: '知识库' },
+  { type: 'item', icon: '/src/assets/icons/teamIcon.svg', label: '团队' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/templateIcon.svg', label: '从模板新建' },
+  { type: 'item', icon: '/src/assets/icons/importIcon.svg', label: '导入...' }
+]
+
 export const sidebarSearchMenuItemsData = [
   { type: 'item', icon: '/src/assets/icons/documentIcon.svg', label: '文档' },
   { type: 'item', icon: '/src/assets/icons/formIcon.svg', label: '表格' },
@@ -180,117 +193,6 @@ export const documentsData = [
     username: '就叫小黄好了',
     library: '让4月3让3让3',
     time: '08-18 16:43'
-  }
-]
-
-export const teamsData = [
-  {
-    id: 1,
-    icon: '/src/assets/icons/documentIcon.svg',
-    groupname: '无标题文档',
-    creator: '就叫小黄好了',
-    description: '雾霾搜索',
-    create_datetime: '08-18 16:43',
-    member: '1'
-  },
-  {
-    id: 2,
-    icon: '/src/assets/icons/documentIcon.svg',
-    groupname: '无标题文档',
-    creator: '就叫小黄好了',
-    description: '',
-    create_datetime: '08-18 16:43',
-    member: '1'
-  },
-  {
-    id: 3,
-    icon: '/src/assets/icons/documentIcon.svg',
-    groupname: '无标题文档',
-    creator: '就叫小黄好了',
-    description: '',
-    create_datetime: '08-18 16:43',
-    member: '1'
-  },
-  {
-    id: 4,
-    icon: '/src/assets/icons/documentIcon.svg',
-    groupname: '无标题文档',
-    creator: '就叫小黄好了',
-    description: '',
-    create_datetime: '08-18 16:43',
-    member: '1'
-  },
-  {
-    id: 5,
-    icon: '/src/assets/icons/documentIcon.svg',
-    groupname: '无标题文档',
-    creator: '就叫小黄好了',
-    description: '',
-    create_datetime: '08-18 16:43',
-    member: '1'
-  },
-  {
-    id: 6,
-    icon: '/src/assets/icons/documentIcon.svg',
-    groupname: '无标题文档',
-    creator: '就叫小黄好了',
-    description: '',
-    create_datetime: '08-18 16:43',
-    member: '1'
-  },
-  {
-    id: 7,
-    icon: '/src/assets/icons/documentIcon.svg',
-    groupname: '无标题文档',
-    creator: '就叫小黄好了',
-    description: '',
-    create_datetime: '08-18 16:43',
-    member: '1'
-  },
-  {
-    id: 8,
-    icon: '/src/assets/icons/documentIcon.svg',
-    groupname: '无标题文档',
-    creator: '就叫小黄好了',
-    description: '',
-    create_datetime: '08-18 16:43',
-    member: '1'
-  },
-  {
-    id: 9,
-    icon: '/src/assets/icons/documentIcon.svg',
-    groupname: '无标题文档',
-    creator: '就叫小黄好了',
-    description: '',
-    create_datetime: '08-18 16:43',
-    member: '1'
-  },
-  {
-    id: 10,
-    icon: '/src/assets/icons/documentIcon.svg',
-    groupname: '无标题文档',
-    creator: '就叫小黄好了',
-    description: '',
-    create_datetime: '08-18 16:43',
-    member: '1'
-  },
-  {
-    id: 11,
-    icon: '/src/assets/icons/documentIcon.svg',
-    groupname: '无标题文档',
-    creator: '就叫小黄好了',
-    description: '',
-    create_datetime: '08-18 16:43',
-    member: '1'
-  },
-  {
-    id: 12,
-    icon: '/src/assets/icons/documentIcon.svg',
-    groupname: '无标题文档',
-    creator: '就叫小黄好了',
-    description: '',
-    create_datetime: '08-18 16:43',
-    member: '1'
   }
 ]
 

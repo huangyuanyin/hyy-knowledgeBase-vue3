@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { commonLibraryData } from '@/data/data'
 
-type CommonLibraryItem = { name: string }
+type CommonLibraryItem = {
+  title: string
+}
 
 const props = defineProps({
-  libraryList: {
+  list: {
     type: Array as () => Array<CommonLibraryItem>,
     default: () => []
   }
@@ -15,12 +17,12 @@ const props = defineProps({
   <div class="CommonList_wrap">
     <div class="header">常用</div>
     <div class="list">
-      <div class="item_box" v-for="(item, index) in props.libraryList" :key="index">
+      <div class="item_box" v-for="(item, index) in props.list" :key="index">
         <div class="item active">
           <div class="item-left">
             <img src="/src/assets/icons/bookIcon.svg" alt="" class="bookIcon" />
             <div class="title">
-              <span>{{ item.name }}</span>
+              <span>{{ item.title }}</span>
               <img src="/src/assets/icons/publicIcon.svg" alt="" class="publicIcon" />
             </div>
           </div>

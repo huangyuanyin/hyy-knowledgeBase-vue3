@@ -25,6 +25,7 @@ export const useFormDialog = ({ isShow, emit, formData, formRules = {} }: UseFor
 
   const handleSubmit = async () => {
     try {
+      console.log(`output->dialogForm`, dialogForm)
       await dialogFormRef.value.validate()
       const { libraryList, fetchLibrary } = useLibraryApi(addLibraryApi, dialogForm)
       fetchLibrary()

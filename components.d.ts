@@ -85,6 +85,7 @@ declare module 'vue' {
     SvgIcon: typeof import('./src/components/SvgIcon/SvgIcon.vue')['default']
     SwitchModuleItem: typeof import('./src/components/Item/SwitchModuleItem.vue')['default']
     TableComp: typeof import('./src/components/Table/TableComp.vue')['default']
+    TeamDialog: typeof import('./src/components/Dialog/TeamDialog.vue')['default']
     TeamHeader: typeof import('./src/components/Header/TeamHeader.vue')['default']
     UserPopver: typeof import('./src/components/Popver/UserPopver.vue')['default']
   }

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { libraryOperationData, moreOperationData } from '@/data/data'
+import { libraryOperationData, moreOperationData, menuItemsData, spaceMenuItemsData } from '@/data/data'
 import { MenuItem } from '@/type/operationPopoverType'
 import { contentItemsData, moreMenuItemsData } from '@/data/data'
 import { getSpacesApi } from '@/api/spaces/index'
@@ -39,7 +39,8 @@ const infoStore = useInfoStore()
 
 const state = reactive({
   headerActive: null,
-  currentGroup: null
+  currentGroup: null,
+  operatData: []
 })
 
 watch(
@@ -49,6 +50,7 @@ watch(
     infoStore.setCurrentMenu(route.path.split('/')[2] || route.path.split('/')[1])
     infoStore.setCurrentSidebar(route.meta.asideComponent.toString())
     if (infoStore.currentSidebar === 'SpaceSidebar') {
+      state.operatData = spaceMenuItemsData
       switch (infoStore.currentMenu) {
         case 'library':
           state.headerActive = 0
@@ -72,6 +74,7 @@ watch(
         icon: ''
       })
     } else {
+      state.operatData = menuItemsData
       infoStore.currentMenu === 'library' ? (state.headerActive = 0) : (state.headerActive = null)
     }
   },
@@ -142,7 +145,7 @@ getSpaces().then(() => {
     <div class="first-comp">
       <div class="top-box">
         <SidebarUserItem />
-        <SidebarSearch />
+        <SidebarSearch :menuItems="state.operatData" />
         <SidebarMenuItem :menuItems="menuItems" />
       </div>
       <div class="content-box">
@@ -168,7 +171,7 @@ getSpaces().then(() => {
               <span :class="['custom-tree-node']">
                 <div style="display: flex; align-items: center; flex: 1">
                   <img :src="item.icon" alt="" />
-                  <span class="title">{{ data.groupname }}</span>
+                  <span class="title">{{ data.name || data.groupname }}</span>
                   <span class="type-icon">
                     <img :src="item.typeIcon" alt="" />
                   </span>

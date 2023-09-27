@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { addQuickLinksApi, deleteQuickLinksApi } from '@/api/quickLinks'
 const props = defineProps({
   header: {
     type: Array,
@@ -14,6 +15,8 @@ const props = defineProps({
   }
 })
 
+const userStore = useUserStore()
+const listStore = useListStore()
 const editTableOperation = [
   {
     type: 'item',
@@ -46,6 +49,42 @@ const handleMouseEnter = (documentId: number): void => {
 const handleMouseLeave = (documentId: number): void => {
   if (hoveredDocument.value === documentId) {
     hoveredDocument.value = null
+  }
+}
+
+// 添加/移除常用
+const toQuickLink = (type, val) => {
+  if (type === 'add') {
+    const params = {
+      title: val.groupname,
+      target_id: String(val.id),
+      target_type: 'Group',
+      user: userStore.userInfo.username,
+      space: val.space
+    }
+    addQuickLinks(params)
+  } else {
+    const params = {
+      user: userStore.userInfo.username,
+      space: val.space
+    }
+    deleteQuickLinks(val.is_common_id, params)
+  }
+}
+
+const deleteQuickLinks = async (id, params) => {
+  let res = await deleteQuickLinksApi(id, params)
+  if (res.code === 1000) {
+    listStore.setRefreshQuickListStatus(true)
+    ElMessage.success('移除成功')
+  }
+}
+
+const addQuickLinks = async (params) => {
+  let res = await addQuickLinksApi(params)
+  if (res.code === 1000) {
+    listStore.setRefreshQuickListStatus(true)
+    ElMessage.success('添加成功')
   }
 }
 </script>
@@ -120,7 +159,7 @@ const handleMouseLeave = (documentId: number): void => {
       <tr class="docItem" v-for="document in props.data" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">
         <td class="item-title">
           <div>
-            <img :src="document.icon" alt="" />
+            <img :src="document.icon || '/src/assets/icons/teamIcon.svg'" alt="" />
             <div class="item-title-right">
               <el-tooltip effect="light" :content="document.groupname" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
                 <span>{{ document.groupname }}</span>
@@ -132,15 +171,18 @@ const handleMouseLeave = (documentId: number): void => {
           <span class="desc">{{ document.description }}</span>
         </td>
         <td class="item-user">
-          <span class="username">{{ document.member }}成员</span>
+          <span class="username">{{ document.member_count }} 人</span>
         </td>
         <td class="item-time">
           <span>{{ document.create_datetime }}</span>
         </td>
         <td class="item-operation more">
-          <el-tooltip effect="dark" content="取消常用" :offset="6" placement="top" :show-arrow="false">
-            <span class="pinIcon">
-              <img src="@/assets/icons/pinIcon.svg" alt="" />
+          <el-tooltip effect="dark" :content="document.is_common_id ? '取消常用' : '添加常用'" :offset="6" placement="top" :show-arrow="false">
+            <span class="pinIcon" v-if="document.is_common_id">
+              <img src="@/assets/icons/pinIcon.svg" alt="" @click="toQuickLink('delete', document)" />
+            </span>
+            <span class="pinIcon" v-else>
+              <img src="@/assets/icons/pinOutIcon.svg" alt="" @click="toQuickLink('add', document)" />
             </span>
           </el-tooltip>
           <span class="moreIcon">
@@ -175,6 +217,7 @@ const handleMouseLeave = (documentId: number): void => {
       border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     }
     .item-title {
+      min-width: 200px;
       div {
         display: flex;
         align-items: center;
@@ -210,6 +253,7 @@ const handleMouseLeave = (documentId: number): void => {
       }
     }
     .item-user {
+      min-width: 100px;
       font-size: 14px;
       color: #8a8f8d;
       height: 65px;
@@ -230,11 +274,13 @@ const handleMouseLeave = (documentId: number): void => {
       color: #8a8f8d;
       height: 65px;
       box-sizing: border-box;
+      min-width: 200px;
     }
     .item-time {
       min-width: 120px;
       font-size: 14px;
       color: #8a8f8d;
+      min-width: 200px;
     }
     .item-operation {
       span {

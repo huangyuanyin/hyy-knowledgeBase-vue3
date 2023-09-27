@@ -1,4 +1,9 @@
-type Spaces = {
+export interface spaceParams {
+  spacename: string
+  spacekey: string
+}
+
+interface Spaces {
   id: number
   spacename: string
   spacekey: string
@@ -9,5 +14,5 @@ type Spaces = {
 
 export interface spacesRes {
   code: number
-  data: Spaces[]
+  data: Spaces
 }
