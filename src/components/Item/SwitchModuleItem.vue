@@ -7,14 +7,10 @@ interface Button {
 type ModuleType = 'operation' | 'search'
 
 const props = defineProps<{
-  moduleType: ModuleType
+  moduleType?: ModuleType
   moduleGenreData?: Button[]
   moduleGenre?: string
 }>()
-
-if (!props.moduleType) {
-  console.error('moduleType is required but not provided.')
-}
 
 const moduleGenreLocal = ref(props.moduleGenre)
 
@@ -32,32 +28,34 @@ const changeType = (type: string) => {
         </label>
       </div>
     </slot>
-    <div class="module-operation" v-if="props.moduleType === 'operation'">
-      <div class="addIcon">
-        <img src="/src/assets/icons/addIcon.svg" alt="" class="moreIcon" />
-        <img src="/src/assets/icons/downIcon.svg" alt="" />
+    <slot name="right">
+      <div class="module-operation" v-if="props.moduleType === 'operation'">
+        <div class="addIcon">
+          <img src="/src/assets/icons/addIcon.svg" alt="" class="moreIcon" />
+          <img src="/src/assets/icons/downIcon.svg" alt="" />
+        </div>
+        <div class="styleIcon">
+          <span class="">
+            <img src="/src/assets/icons/cardStyleIcon.svg" alt="" class="moreIcon" />
+          </span>
+          <div class="divider"></div>
+          <span>
+            <img src="/src/assets/icons/listStyleIcon.svg" alt="" />
+          </span>
+        </div>
       </div>
-      <div class="styleIcon">
-        <span class="">
-          <img src="/src/assets/icons/cardStyleIcon.svg" alt="" class="moreIcon" />
-        </span>
-        <div class="divider"></div>
-        <span>
-          <img src="/src/assets/icons/listStyleIcon.svg" alt="" />
-        </span>
+      <div class="module-search" v-if="props.moduleType === 'search'">
+        <div class="search-item">
+          <span>类型 <img src="/src/assets/icons/downIcon.svg" alt="" /></span>
+        </div>
+        <div class="search-item">
+          <span>归属 <img src="/src/assets/icons/downIcon.svg" alt="" /></span>
+        </div>
+        <div class="search-item">
+          <span>创建者 <img src="/src/assets/icons/downIcon.svg" alt="" /></span>
+        </div>
       </div>
-    </div>
-    <div class="module-search" v-if="props.moduleType === 'search'">
-      <div class="search-item">
-        <span>类型 <img src="/src/assets/icons/downIcon.svg" alt="" /></span>
-      </div>
-      <div class="search-item">
-        <span>归属 <img src="/src/assets/icons/downIcon.svg" alt="" /></span>
-      </div>
-      <div class="search-item">
-        <span>创建者 <img src="/src/assets/icons/downIcon.svg" alt="" /></span>
-      </div>
-    </div>
+    </slot>
   </div>
 </template>
 

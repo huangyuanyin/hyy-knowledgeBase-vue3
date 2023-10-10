@@ -18,7 +18,7 @@ export const useFormDialog = ({ isShow, emit, formData, formRules = {} }: UseFor
   const dialogFormRef = ref<FormInstance>()
   const dialogForm = reactive<RuleForm>(formData)
   const dialogFormRules = formRules
-
+  console.log(`output->dialogForm`, dialogForm)
   watch(isShow, (newVal) => {
     dialogVisible.value = newVal
   })

@@ -17,12 +17,14 @@
       <SwitchModuleItem moduleType="operation">
         <template v-slot:left> <span class="title">知识库</span> </template>
       </SwitchModuleItem>
-      <LibraryTable title="知识库分组" :show-delete="false" :show-move="false" />
+      <LibraryTable title="知识库分组" :show-delete="false" :show-move="false" :cardList="libraryTable" />
     </div>
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+const libraryTable = ref([])
+</script>
 
 <style lang="scss" scoped>
 .Public_wrap {

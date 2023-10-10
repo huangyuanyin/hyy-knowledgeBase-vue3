@@ -1,11 +1,55 @@
 <script lang="ts" setup>
 import { sidebarSearchMenuItemsData } from '@/data/data'
-const toLink = (path: string) => {
-  router.push(path)
+
+const route = useRoute()
+const forumStore = useForumStore()
+const infoStore = useInfoStore()
+const dataSource = ref([])
+const SpaceType = ref<string>('') // 空间类型：个人 公共
+const nickName = ref<string>(infoStore.currentSpaceInfo.nickname || route.fullPath.split('/')[1])
+
+watchEffect(() => {
+  SpaceType.value = route.fullPath.split('/')[1].includes('directory') ? '个人' : '公共'
+})
+
+const toLink = (type?: string) => {
+  if (type === 'link') {
+    switch (SpaceType.value) {
+      case '个人':
+        router.push('/library')
+        break
+      case '公共':
+        router.push({
+          path: `/${nickName.value}/public`,
+          query: {
+            sid: route.query.sid,
+            sname: route.query.sname
+          }
+        })
+        break
+      default:
+        break
+    }
+  } else {
+    switch (SpaceType.value) {
+      case '个人':
+        router.push('/')
+        break
+      case '公共':
+        router.push({
+          path: `/${nickName.value}/dashboard`,
+          query: {
+            sid: route.query.sid,
+            sname: route.query.sname
+          }
+        })
+        break
+      default:
+        break
+    }
+  }
 }
 
-const forumStore = useForumStore()
-const dataSource = ref([])
 const fetchForumList = async () => {
   await forumStore.getForum(4)
 }
@@ -20,15 +64,16 @@ onMounted(async () => {
   <div class="DirectorySidebar-wrap">
     <div class="header-box">
       <div class="header">
-        <img class="favicon" src="/src/assets/favicon.ico" @click="toLink('/')" />
+        <img v-if="SpaceType === '个人'" class="favicon" src="/src/assets/favicon.ico" @click="toLink('back')" />
+        <img v-else class="favicon" src="/src/assets/icons/spaceIcon.svg" @click="toLink('back')" />
         <img class="rightArrowIcon" src="/src/assets/icons/rightArrowIcon.svg" alt="" />
-        <span @click="toLink('/library')">个人知识库</span>
+        <span @click="toLink('link')">{{ SpaceType === '个人' ? '个人知识库' : '公共区' }}</span>
       </div>
       <div class="library-name">
         <div class="left">
           <img class="bookIcon" src="/src/assets/icons/bookIcon.svg" alt="" />
           <div class="name">
-            <span>{{ $route.query.name }}</span>
+            <span>{{ $route.query.lname }}</span>
             <img class="privateIcon" src="/src/assets/icons/privateIcon.svg" alt="" />
           </div>
         </div>

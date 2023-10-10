@@ -1,33 +1,79 @@
 <script lang="ts" setup>
 import { commonLibraryData } from '@/data/data'
+import { deleteQuickLinksApi } from '@/api/quickLinks'
 
 type CommonLibraryItem = {
-  title: string
+  name?: string
+  title?: string
 }
 
 const props = defineProps({
+  type: {
+    type: String,
+    default: 'library'
+  },
   list: {
     type: Array as () => Array<CommonLibraryItem>,
     default: () => []
   }
 })
+
+const commonTeamData = [
+  { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '移除常用', nick: 'removeCommon' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/team/settingIcon.svg', label: '团队设置', nick: 'teamSetting' },
+  { type: 'item', icon: '/src/assets/icons/team/editIcon.svg', label: '退出团队', nick: 'quitTeam' }
+]
+const route = useRoute()
+const listStore = useListStore()
+const userStore = useUserStore()
+const infoStore = useInfoStore()
+
+const removeCommon = (item: any) => {
+  const params = {
+    user: userStore.userInfo.username,
+    space: item.space
+  }
+  deleteQuickLinks(item.id, params)
+}
+
+// 移除常用
+const deleteQuickLinks = async (id, params) => {
+  let res = await deleteQuickLinksApi(id, params)
+  if (res.code === 1000) {
+    listStore.setRefreshQuickListStatus(true)
+    ElMessage.success('移除成功')
+  }
+}
+
+const toLink = (item) => {
+  router.push({
+    path: `/${infoStore.currentSpaceName}/team/book`,
+    query: {
+      sid: item.space,
+      sname: route.query.sname,
+      gid: item.target_id,
+      gname: item.title
+    }
+  })
+}
 </script>
 
 <template>
   <div class="CommonList_wrap">
     <div class="header">常用</div>
     <div class="list">
-      <div class="item_box" v-for="(item, index) in props.list" :key="index">
+      <div class="item_box" v-for="(item, index) in props.list" :key="index" @click="toLink(item)">
         <div class="item active">
           <div class="item-left">
             <img src="/src/assets/icons/bookIcon.svg" alt="" class="bookIcon" />
             <div class="title">
-              <span>{{ item.title }}</span>
+              <span>{{ item.name || item.title }}</span>
               <img src="/src/assets/icons/publicIcon.svg" alt="" class="publicIcon" />
             </div>
           </div>
-          <LibraryOperationPopver :menuItems="commonLibraryData">
-            <div class="item-right">
+          <LibraryOperationPopver :menuItems="type === 'library' ? commonLibraryData : commonTeamData" :height="40" @removeCommon="removeCommon(item)">
+            <div class="item-right" @click.stop>
               <img src="/src/assets/icons/moreIcon1_after.svg" alt="" class="moreIcon" />
             </div>
           </LibraryOperationPopver>

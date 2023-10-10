@@ -1,14 +1,22 @@
 <script lang="ts" setup>
 import { MenuItem, OperationPopoverProps } from '@/type/operationPopoverType'
 
+const emit = defineEmits()
+
 const props = withDefaults(defineProps<OperationPopoverProps>(), {
   placement: 'bottom-start',
   width: 138,
+  height: 40,
   trigger: 'click',
+  showAfter: 100,
   hideAfter: 100,
   showArrow: false,
   menuItems: Array as () => MenuItem[]
 })
+
+const toHandle = (item: MenuItem) => {
+  emit(item.nick, item)
+}
 </script>
 
 <template>
@@ -17,6 +25,7 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
     :placement="props.placement"
     :width="props.width"
     :trigger="props.trigger"
+    :show-after="props.showAfter"
     :hide-after="props.hideAfter"
     :show-arrow="props.showArrow"
   >
@@ -25,7 +34,7 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
     </template>
     <ul>
       <template v-for="(item, _index) in props.menuItems" :key="'menuItems' + _index">
-        <li class="operation_item" v-if="item.type === 'item'">
+        <li class="operation_item" v-if="item.type === 'item'" :style="{ height: props.height + 'px', 'line-height': props.height + 'px' }" @click="toHandle(item)">
           <img v-if="item.icon" :src="item.icon as string" alt="" />
           <span :style="{ color: item.label === '删除' ? '#df2a3f' : '#262626' }">{{ item.label }}</span>
         </li>
@@ -44,8 +53,6 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
       padding: 6px 10px !important;
       display: flex;
       align-items: center;
-      height: 40px;
-      line-height: 40px;
       img {
         width: 16px;
         height: 16px;

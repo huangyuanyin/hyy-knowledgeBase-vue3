@@ -7,9 +7,9 @@ interface Tree {
   children?: Tree[]
 }
 
+const forumStore = useForumStore()
 const dataSource = ref<Tree[]>([])
 
-const forumStore = useForumStore()
 const fetchForumList = async () => {
   await forumStore.getForum(4)
 }

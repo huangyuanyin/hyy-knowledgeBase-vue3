@@ -1,19 +1,33 @@
 <script lang="ts" setup>
+import { v4 as uuidv4 } from 'uuid'
+import { FormInstance } from 'element-plus'
 import { getGroupsApi } from '@/api/groups'
 import { getBookStacksApi } from '@/api/bookstacks'
+import { addLibraryApi } from '@/api/library'
+
+interface RuleForm {
+  [key: string]: any
+}
 
 const props = defineProps({
-  isShow: Boolean
+  isShow: Boolean,
+  stackId: {
+    type: String,
+    default: ''
+  }
 })
 
-const emit = defineEmits(['closeDialog'])
+const emit = defineEmits(['closeDialog', 'getBookStacks'])
 
 const infoStore = useInfoStore()
 const userStore = useUserStore()
+const dataStore = useDataStore()
 const route = useRoute()
-const spaceId = ref(route.query.id)
+const spaceId = ref(route.query.sid) // 当前空间id
+const groupId = ref(route.query.gid) // 当前团队id
 const selectGroupName = ref('')
 const teamList = ref([])
+const stacksList = ref([]) // 知识库分组集合
 const publicList = [
   {
     id: '0',
@@ -24,54 +38,98 @@ const publicList = [
     label: '空间所有成员可访问'
   }
 ]
-const spaceData = ref({
+const dialogVisible = ref(false)
+const libraryFormRef = ref<FormInstance>()
+const libraryForm = reactive<RuleForm>({
   name: '',
-  stacks: '',
-  slug: new Date().getTime().toString(),
+  slug: uuidv4(),
   avatar: '',
   description: '',
   creator: userStore.userInfo.nickname,
   public: '1',
-  group: '',
-  space: spaceId.value
+  space: spaceId.value,
+  group: groupId.value,
+  stacks: ''
 })
 
 watch(
   () => props.isShow,
   async (newVal: boolean) => {
+    libraryForm.stacks = props.stackId
     dialogVisible.value = newVal
     if (newVal) {
-      const { groupsList, getGroups } = await useGroupsApi(getGroupsApi, { space: spaceId.value })
+      const { groupsList, getGroups } = await useGroupsApi(getGroupsApi, { space: spaceId.value, group: groupId.value })
       getGroups()
       teamList.value = groupsList.value
+      getBookStacks(groupId.value)
     }
     console.log(`output->infoStore.currentSidebar`, teamList.value)
   }
 )
 
-const {
-  dialogVisible,
-  dialogFormRef: libraryFormRef,
-  dialogForm: libraryForm,
-  handleClose,
-  handleSubmit
-} = useFormDialog({ isShow: ref(props.isShow), emit, formData: spaceData.value })
-
-const selectTeam = async (val) => {
-  selectGroupName.value = teamList.value.filter((item) => item.id === val)[0].groupname
-  const params = {
-    group: val,
-    space: spaceId.value
+const toSubmit = async () => {
+  try {
+    console.log(`知识库表单提交`, libraryForm)
+    await libraryFormRef.value.validate()
+    await addLibrary()
+  } catch (error) {
+    // error
   }
-  const { bookstacksList, getBookstacks } = await useBookstacksApi(getBookStacksApi, params, false)
-  await getBookstacks()
-  spaceData.value.stacks = bookstacksList.value.filter((item) => item.is_default === '1')[0].id
-  console.log(`output->spaceData.value.stacks`, bookstacksList.value, spaceData.value.stacks, spaceData.value)
+}
+
+const handleResetForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.resetFields()
+}
+
+const toClose = async () => {
+  handleResetForm(libraryFormRef.value)
+  dialogVisible.value = false
+  emit('closeDialog', false)
+}
+
+// 如果当前团队与选择的团队不一直被，就默认选中第一个知识库分组
+const handleStackId = (val) => {
+  if (val === groupId.value) {
+    libraryForm.stacks = props.stackId ? props.stackId : stacksList.value.filter((item) => item.is_default === '1')[0].id
+  } else {
+    libraryForm.stacks = stacksList.value.filter((item) => item.is_default === '1')[0]?.id || ''
+  }
+}
+
+// 切换团队
+const toSelectTeam = async (val) => {
+  selectGroupName.value = teamList.value.filter((item) => item.id == val)[0].groupname
+  await getBookStacks(val)
+  await handleStackId(val)
+  console.log(`output->libraryForm.value.stacks`, stacksList.value, libraryForm.stacks, libraryForm)
+}
+
+// 新建知识库
+const addLibrary = async () => {
+  let res = await addLibraryApi(libraryForm)
+  if (res.code === 1000) {
+    toClose()
+    ElMessage.success('新建成功')
+    dataStore.setIsGetBookStacks(true)
+  }
+}
+
+// 获取知识库分组列表
+const getBookStacks = async (val) => {
+  const params = {
+    space: spaceId.value,
+    group: val
+  }
+  let res = await getBookStacksApi(params)
+  if (res.code === 1000) {
+    stacksList.value = res.data as any
+  }
 }
 </script>
 
 <template>
-  <el-dialog class="libraryDialog" v-model="dialogVisible" title="新建知识库" width="424" :before-close="handleClose">
+  <el-dialog class="libraryDialog" v-model="dialogVisible" title="新建知识库" width="424" :before-close="toClose">
     <el-form ref="libraryFormRef" :model="libraryForm" label-width="120px" label-position="top">
       <el-form-item label="基本信息" prop="name">
         <div class="form-name">
@@ -101,19 +159,19 @@ const selectTeam = async (val) => {
         </el-select>
       </el-form-item>
       <el-form-item label="新建至" v-if="infoStore.currentSidebar === 'SpaceSidebar'">
-        <el-select v-model="libraryForm.group" prop="group" @change="selectTeam">
+        <el-select v-model="libraryForm.group" prop="group" @change="toSelectTeam">
           <template #prefix>
             <img v-if="selectGroupName === '公共区'" class="prefix-icon" src="/src/assets/icons/library/publicIcon.svg" />
             <img v-else class="prefix-icon" src="/src/assets/icons/teamIcon.svg" />
           </template>
-          <el-option :label="item.groupname" :value="item.id" v-for="(item, index) in teamList" :key="'teamList' + index">
+          <el-option :label="item.groupname" :value="String(item.id)" v-for="(item, index) in teamList" :key="'teamList' + index">
             <div class="form-public">
               <div class="form-public-left">
                 <img v-if="item.groupname === '公共区'" src="/src/assets/icons/library/publicIcon.svg" />
                 <img v-else :src="item.icon || '/src/assets/icons/teamIcon.svg'" />
                 <span style="float: left">{{ item.groupname }}</span>
               </div>
-              <img v-if="item.id === libraryForm.group" class="selectIcon" src="@/assets/icons/selectIcon.svg" />
+              <img v-if="item.id == libraryForm.group" class="selectIcon" src="@/assets/icons/selectIcon.svg" />
             </div>
           </el-option>
         </el-select>
@@ -130,10 +188,22 @@ const selectTeam = async (val) => {
           </el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="分组" class="public-item" v-if="groupId == libraryForm.group">
+        <el-select v-model="libraryForm.stacks">
+          <el-option :label="item.name" :value="String(item.id)" v-for="(item, index) in stacksList" :key="'stacksList' + index">
+            <div class="form-public">
+              <div class="form-public-left">
+                <span style="float: left">{{ item.name }}</span>
+              </div>
+              <img v-if="item.id == libraryForm.stacks" class="selectIcon" src="@/assets/icons/selectIcon.svg" />
+            </div>
+          </el-option>
+        </el-select>
+      </el-form-item>
     </el-form>
     <template #footer>
       <span class="library-footer">
-        <el-button :class="['submit', libraryForm.name ? '' : 'submit-disabled']" type="primary" @click="handleSubmit" :disabled="!libraryForm.name"> 新建 </el-button>
+        <el-button :class="['submit', libraryForm.name ? '' : 'submit-disabled']" type="primary" @click="toSubmit" :disabled="!libraryForm.name"> 新建 </el-button>
       </span>
     </template>
   </el-dialog>

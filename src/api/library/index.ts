@@ -8,3 +8,7 @@ export function getLibraryApi(params: libraryParams) {
 export function addLibraryApi(data: libraryParams) {
   return http.post<libraryRes>('books/', data, 'base')
 }
+
+export function deleteLibraryApi(id: number, data: libraryParams) {
+  return http.delete<libraryRes>(`books/${id}`, data, 'base')
+}

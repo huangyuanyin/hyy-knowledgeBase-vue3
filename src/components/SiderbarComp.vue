@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { libraryOperationData, moreOperationData, menuItemsData, spaceMenuItemsData } from '@/data/data'
+import { libraryOperationData, teamOperationData, moreOperationData, menuItemsData, spaceMenuItemsData } from '@/data/data'
 import { MenuItem } from '@/type/operationPopoverType'
 import { contentItemsData, moreMenuItemsData } from '@/data/data'
 import { getSpacesApi } from '@/api/spaces/index'
@@ -40,6 +40,7 @@ const infoStore = useInfoStore()
 const state = reactive({
   headerActive: null,
   currentGroup: null,
+  currentSpace: infoStore.currentSpaceInfo.nickname || route.path.split('/')[1],
   operatData: []
 })
 
@@ -58,7 +59,8 @@ watch(
         case 'team':
           if (route.path.split('/').length >= 4 && route.path.split('/')[2] === 'team') {
             state.headerActive = null
-            state.currentGroup = Number(route.query.id)
+            state.currentGroup = Number(route.query.gid)
+            console.log(`output->state.currentGroup1212`, state.currentGroup)
           } else {
             state.headerActive = 1
           }
@@ -69,8 +71,8 @@ watch(
       }
       infoStore.setCurrentSpaceInfo({
         nickname: infoStore.currentSpaceName,
-        name: route.query.name.toString(),
-        id: Number(route.query.id),
+        name: route.query.sname.toString(),
+        id: Number(route.query.sid),
         icon: ''
       })
     } else {
@@ -84,6 +86,10 @@ watch(
 )
 
 const toLink = (type) => {
+  const query = {
+    sid: route.query.sid,
+    sname: route.query.sname
+  }
   switch (infoStore.currentSidebar) {
     case 'Sidebar':
       router.push({ name: 'Library' })
@@ -92,12 +98,12 @@ const toLink = (type) => {
       if (type === 'team') {
         router.push({
           name: 'Space-Team',
-          query: route.query
+          query
         })
       } else {
         router.push({
           name: 'Space-Library',
-          query: route.query
+          query
         })
       }
       break
@@ -109,24 +115,28 @@ const toLink = (type) => {
 const handleClickLibrary = (val: any) => {
   if (val.groupname) {
     router.push({
-      path: `/space3/team/book`,
+      path: `/${state.currentSpace}/team/book`,
       query: {
-        name: val.groupname,
-        id: val.id
+        ...route.query,
+        gname: val.groupname,
+        gid: val.id
       }
     })
     state.currentGroup = val.groupkey
   } else {
     const query = {
-      id: val.id,
-      name: val.name
+      lid: val.id,
+      lname: val.name,
+      sid: route.query.sid,
+      sname: route.query.sname
     }
+    console.log(`output->infoStore`, state.currentSpace)
     switch (infoStore.currentSidebar) {
       case 'Sidebar':
         router.push({ path: '/directory', query })
         break
       case 'SpaceSidebar':
-        router.push({ path: '/space/directory', query })
+        router.push({ path: `/${state.currentSpace}/directory`, query })
         break
       default:
         break
@@ -176,7 +186,7 @@ getSpaces().then(() => {
                     <img :src="item.typeIcon" alt="" />
                   </span>
                 </div>
-                <LibraryOperationPopver :menuItems="libraryOperationData">
+                <LibraryOperationPopver :menuItems="item.type !== 'team' ? libraryOperationData : teamOperationData">
                   <span class="more-icon" @click.stop>
                     <img src="@/assets/icons/moreIcon1.svg" alt="" />
                   </span>

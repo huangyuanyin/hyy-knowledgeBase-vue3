@@ -1,0 +1,159 @@
+<script lang="ts" setup>
+import { deleteLibraryApi } from '@/api/library'
+
+const props = defineProps({
+  isShow: {
+    type: Boolean,
+    default: false
+  },
+  deleteInfo: {
+    type: Object as any,
+    default: () => ({})
+  }
+})
+const emit = defineEmits(['closeDialog'])
+
+const dataStore = useDataStore()
+const visible = ref(false)
+const inputName = ref('')
+
+watch(
+  () => props.isShow,
+  (newVal: boolean) => {
+    visible.value = newVal
+  }
+)
+
+// 删除知识库
+const deleteLibrary = async (val) => {
+  if (inputName.value !== props.deleteInfo.slug) {
+    return ElMessage.error('输入的路径名称错误, 请重新输入')
+  }
+  const params = {
+    space: val.space,
+    group: val.group,
+    stack: val.stack
+  }
+  let res = await deleteLibraryApi(val.id, params)
+  if (res.code === 1000) {
+    closeDialog()
+    ElMessage.success('删除成功')
+    dataStore.setIsGetBookStacks(true)
+  }
+}
+
+const closeDialog = () => {
+  visible.value = false
+  inputName.value = ''
+  emit('closeDialog', false)
+}
+</script>
+
+<template>
+  <el-dialog class="deleteLibraryDialog" v-model="visible" width="520px" @close="closeDialog">
+    <template #header="{ titleId, titleClass }">
+      <div class="header">
+        <h4 :id="titleId" :class="titleClass">删除知识库</h4>
+      </div>
+    </template>
+    <div class="body">
+      <div class="desc">
+        <div>正在删除知识库 <span class="highlight_name">项目文档</span>，该操作不可逆，一旦操作成功，知识库下的所有内容将会删除。请输入下面内容再次确认操作。</div>
+      </div>
+      <div class="tip">
+        请在下方输入框中输入 "<span>{{ props.deleteInfo.slug }}</span
+        >"以确认操作
+      </div>
+      <div class="input">
+        <el-input v-model="inputName" :placeholder="props.deleteInfo.slug" />
+      </div>
+      <div class="button">
+        <el-button :disabled="!inputName" :class="[!inputName ? 'is_disabled' : '']" @click="deleteLibrary(deleteInfo)">
+          <span class="text">确定删除 {{ props.deleteInfo.name }}</span>
+        </el-button>
+      </div>
+    </div>
+  </el-dialog>
+</template>
+
+<style lang="scss" scoped>
+.deleteLibraryDialog {
+  border-radius: 8px;
+  .header {
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.85);
+  }
+  .body {
+    font-size: 14px;
+    box-sizing: border-box;
+    .desc {
+      margin-bottom: 16px;
+      padding: 15px;
+      box-sizing: border-box;
+      background-color: #f9efcd;
+      border: 1px solid #f5d480;
+      border-radius: 6px;
+      div {
+        font-size: 14px;
+        line-height: 24px;
+        color: #262626;
+        font-variant: tabular-nums;
+        font-feature-settings: 'tnum';
+        word-wrap: break-word;
+        .highlight_name {
+          font-size: 14px;
+          line-height: 22px;
+          color: #df2a3f;
+        }
+      }
+    }
+    .tip {
+      line-height: 40px;
+      color: #262626;
+      font-size: 14px;
+    }
+    .input {
+      line-height: 40px;
+      font-size: 14px;
+      margin-bottom: 16px;
+      .el-input__wrapper {
+        border-radius: 6px;
+        border: 1px solid #d9d9d9;
+        box-shadow: none;
+        &:hover {
+          border-color: #0bd07d;
+        }
+      }
+    }
+    .button {
+      line-height: 40px;
+      font-size: 14px;
+      width: 100%;
+      .el-button {
+        width: 100%;
+        border-radius: 6px;
+        margin-left: 12px;
+        margin-left: 0px;
+        .text {
+          color: #df2a3f;
+        }
+        &:hover {
+          background-color: #e4495b;
+          border-color: #e4495b;
+          .text {
+            color: #fff;
+          }
+        }
+      }
+      .is_disabled {
+        &:hover {
+          background-color: #fff !important;
+          .text {
+            color: #df2a3f;
+          }
+        }
+      }
+    }
+  }
+}
+</style>

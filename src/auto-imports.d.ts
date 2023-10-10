@@ -75,6 +75,7 @@ declare global {
   const useBookstacksApi: typeof import('./hooks/useBookstacksApi')['useBookstacksApi']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
+  const useDataStore: typeof import('./store/data')['useDataStore']
   const useDialog: typeof import('./hooks/useDialog')['default']
   const useFormDialog: typeof import('./hooks/useFormDialog')['useFormDialog']
   const useForumApi: typeof import('./hooks/useForumApi')['useForumApi']

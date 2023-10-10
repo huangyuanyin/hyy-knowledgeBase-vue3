@@ -5,11 +5,11 @@ import { getQuickLinksApi } from '@/api/quickLinks'
 const route = useRoute()
 const userStore = useUserStore()
 const listStore = useListStore()
-const spaceId = ref(route.query.id)
+const spaceId = ref(route.query.sid)
 const teamInput = ref('')
 const isShowsTeamDialog = ref(false)
-const teamList = ref([]) // 全部团队列表
-const commonTeamList = ref([]) // 常用团队列表
+const groupsList = ref([]) // 当前空间下全部团队
+const commonTeamList = ref([]) // 当前空间下常用团队列表
 
 watch(
   () => listStore.refreshQuickListStatus,
@@ -20,6 +20,20 @@ watch(
   }
 )
 
+// 获取当前空间下的全部团队
+const getGroups = async () => {
+  const params = {
+    space: spaceId.value
+  }
+  let res = await getGroupsApi(params)
+  console.log(`output->getGroupsApi`, getGroupsApi)
+  if (res.code === 1000) {
+    groupsList.value = res.data || ([] as any)
+    groupsList.value = groupsList.value.filter((item) => item.is_default !== '1')
+    console.log(`output->groupsList`, groupsList.value)
+  }
+}
+
 // 获取常用列表
 const getQuickLinks = async () => {
   const params = {
@@ -28,10 +42,10 @@ const getQuickLinks = async () => {
   }
   let res = await getQuickLinksApi(params)
   if (res.code === 1000) {
-    commonTeamList.value = res.data || []
+    commonTeamList.value = res.data || ([] as any)
     listStore.setRefreshQuickListStatus(false)
-    // 遍历全部团队列表和常用团队列表，如果id和target_id相同，就把is_common设置为true,否则设置为false
-    teamList.value.forEach((item) => {
+    // 遍历团队列表和常用团队列表，如果id和target_id相同，就把is_common设置为true,否则设置为false
+    groupsList.value.forEach((item) => {
       item.is_common_id = null
       commonTeamList.value.forEach((val) => {
         if (item.id === Number(val.target_id)) {
@@ -39,18 +53,13 @@ const getQuickLinks = async () => {
         }
       })
     })
-    console.log(`output->常用列表`, teamList.value)
   }
 }
 
 onMounted(async () => {
-  const { groupsList, getGroups } = await useGroupsApi(getGroupsApi, { space: spaceId.value })
-  teamList.value = groupsList.value.filter((item) => item.is_default !== '1')
-  getGroups()
-  getQuickLinks()
+  await getGroups()
+  await getQuickLinks()
 })
-
-console.log(`output->第几个呢23232`)
 </script>
 
 <template>
@@ -72,8 +81,8 @@ console.log(`output->第几个呢23232`)
         </el-button>
       </div>
     </div>
-    <CommonList :list="commonTeamList" />
-    <TableComp :header="['名称', '简介', '成员', '加入时间', '']" type="team" :data="teamList" />
+    <CommonList :list="commonTeamList" type="team" v-if="commonTeamList.length" />
+    <TableComp :style="{ 'margin-top': commonTeamList.length ? '' : '26px' }" :header="['名称', '简介', '成员', '加入时间', '']" type="team" :data="groupsList" />
     <TeamDialog :isShow="isShowsTeamDialog" @closeDialog="isShowsTeamDialog = false" />
   </div>
 </template>

@@ -5,7 +5,7 @@ import { getQuickLinksApi } from '@/api/quickLinks'
 
 const route = useRoute()
 const userStore = useUserStore()
-const spaceId = ref(route.query.id) // 当前空间id
+const spaceId = ref(route.query.sid) // 当前空间id
 
 const menuItems = [
   { index: 'dashboard', icon: 'actionIcon', label: '开始' },

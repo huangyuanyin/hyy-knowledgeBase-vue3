@@ -2,6 +2,14 @@ export interface groupsParams {
   space: number
 }
 
+export interface groupsData {
+  groupname: string
+  groupkey: string
+  space: string
+  members: any[]
+  description: string
+}
+
 interface GroupItem {
   id: number
   groupname: string
@@ -13,4 +21,5 @@ interface GroupItem {
 export interface groupsRes {
   code: number
   data: GroupItem[] | number
+  msg?: string
 }

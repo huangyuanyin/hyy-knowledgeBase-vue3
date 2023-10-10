@@ -4,12 +4,14 @@ export interface MenuItem {
   type?: string
   icon?: string
   label?: string
+  nick?: string
   desc?: string
 }
 
 export interface OperationPopoverProps {
   placement?: Placement
   width?: number
+  height?: number
   trigger?: TooltipTriggerType
   hideAfter?: number
   showArrow?: boolean

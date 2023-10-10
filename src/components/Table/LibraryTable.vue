@@ -1,4 +1,15 @@
 <script lang="ts" setup>
+import { WarningFilled } from '@element-plus/icons-vue'
+import { getLibraryApi } from '@/api/library'
+import { addBookStacksApi, deleteBookStacksApi, editBookStacksApi } from '@/api/bookstacks'
+
+type LibraryGroup = {
+  id: number
+  name: string
+  is_default: string
+  library?: any
+}
+
 const props = defineProps({
   title: {
     type: String,
@@ -11,65 +22,235 @@ const props = defineProps({
   showMove: {
     type: Boolean,
     default: true
+  },
+  group: {
+    type: Array as PropType<LibraryGroup[]>,
+    default: () => []
   }
 })
+const emit = defineEmits(['getBookStacks'])
 
-const cardList = ref([
+const route = useRoute()
+const isShowsLibraryDialog = ref(false)
+const editedName = ref('')
+const stackId = ref('') // 当前知识库分组id
+const processedGroup = ref([])
+const addOperation = [
   {
-    name: '信安世纪',
-    items: []
+    type: 'item',
+    label: '新建知识库',
+    nick: 'addLibrary',
+    icon: ''
   },
   {
-    name: '信安世纪',
-    items: [
-      { title: 'dasda', time: '07-27 13:54' },
-      { title: 'dasda', time: '07-27 13:54' },
-      { title: 'dasda', time: '07-27 13:54' }
-    ]
+    type: 'item',
+    label: '添加已有知识库...',
+    nick: 'addLibrary',
+    icon: ''
   },
   {
-    name: '信安世纪',
-    items: [
-      { title: 'dasda', time: '07-27 13:54' },
-      { title: 'dasda', time: '07-27 13:54' },
-      { title: 'dasda', time: '07-27 13:54' }
-    ]
+    type: 'divider'
   },
   {
-    name: '信安世纪',
-    items: [
-      { title: 'dasda', time: '07-27 13:54' },
-      { title: 'dasda', time: '07-27 13:54' },
-      { title: 'dasda', time: '07-27 13:54' }
-    ]
+    type: 'item',
+    label: '新建分组',
+    nick: 'addGroup',
+    icon: ''
   }
-])
+]
+
+watch(
+  () => props.group,
+  async (newVal) => {
+    if (newVal.length) {
+      await Promise.all(
+        props.group.map(async (item) => {
+          const library = await getLibrary(item.id)
+          item.library = library
+        })
+      )
+      processedGroup.value = props.group
+      processedGroup.value.map((item) => {
+        item.is_editing = false
+      })
+    }
+  },
+  {
+    immediate: true
+  }
+)
+
+const addBookStacks = async () => {
+  const params = {
+    space: route.query.sid,
+    group: route.query.gid,
+    name: '新建分组'
+  }
+  let res = await addBookStacksApi(params)
+  if (res.code === 1000) {
+    emit('getBookStacks')
+    ElMessage.success('新建分组成功')
+  }
+}
+
+const deleteBookStacks = async (id) => {
+  const params = {
+    space: route.query.sid,
+    group: route.query.gid
+  }
+  let res = await deleteBookStacksApi(id, params)
+  if (res.code === 1000) {
+    emit('getBookStacks')
+    ElMessage.success('删除成功')
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const getLibrary = async (id) => {
+  const params = {
+    space: route.query.sid,
+    group: route.query.gid,
+    stacks: id
+  }
+  let res = await getLibraryApi(params)
+  if (res.code === 1000) {
+    return res.data
+  }
+  return []
+}
+
+const toAddGroup = () => {
+  addBookStacks()
+}
+
+const toAddLibrary = (val: string) => {
+  isShowsLibraryDialog.value = true
+  stackId.value = val
+  console.log(`output->val`, stackId.value)
+}
+
+const toDeleteGroup = (val) => {
+  if (val.is_default === '1') return
+  deleteBookStacks(val.id)
+}
+
+const startEditing = (val: any) => {
+  editedName.value = val.name // 将当前名称放入输入框中
+  processedGroup.value.map((item) => {
+    if (item.id === val.id) {
+      item.is_editing = true
+    } else {
+      item.is_editing = false
+    }
+  })
+}
+
+const stopEditing = (val: any) => {
+  blur()
+  if (editedName.value !== val.name) {
+    editBookStacks(val)
+  }
+}
+
+const blur = () => {
+  processedGroup.value.map((item) => {
+    item.is_editing = false
+  })
+}
+
+const focus = (e) => {
+  e.target.select()
+}
+
+// 修改分组名称
+const editBookStacks = async (val: any) => {
+  const params = {
+    space: val.space,
+    group: val.group,
+    name: editedName.value
+  }
+  let res = await editBookStacksApi(val.id, params)
+  if (res.code === 1000) {
+    ElMessage.success('修改成功')
+    emit('getBookStacks')
+  }
+}
+
+// onMounted(() => {
+//   // bus.on('getLibraryList', (data: any) => {
+//   //   cardList.value = data
+//   // })
+// })
 </script>
 
 <template>
-  <div class="LibraryTable_wrap">
+  <div class="LibraryTable_wrap" v-for="(item, index) in processedGroup" :key="'props' + index">
     <div class="header">
-      <span>{{ props.title }}</span>
+      <div class="name" v-if="!item.is_editing">
+        <span @click="startEditing(item)">{{ item.name }}</span>
+      </div>
+      <el-input class="editName" v-else v-model="editedName" placeholder="" autofocus maxlength="40" @change="stopEditing(item)" @focus="focus($event)" @blur="blur" />
       <div class="right">
         <div class="divider"></div>
         <div class="operation">
-          <span class="item"><img src="/src/assets/icons/addIcon.svg" alt="" class="moreIcon" /></span>
-          <el-tooltip effect="dark" content="分组唯一，无法移动" placement="top" :show-arrow="false">
-            <span class="item upIcon" v-if="props.showDelete"><img src="/src/assets/icons/downIcon_disabled.svg" alt="" /></span>
+          <LibraryOperationPopver
+            :menuItems="addOperation"
+            placement="bottom-end"
+            trigger="hover"
+            :showAfter="600"
+            :width="140"
+            :height="32"
+            @addGroup="toAddGroup"
+            @addLibrary="toAddLibrary(item.id)"
+          >
+            <span class="item"><img src="/src/assets/icons/addIcon.svg" alt="" class="moreIcon" /></span>
+          </LibraryOperationPopver>
+          <el-tooltip effect="dark" :content="processedGroup.length === 1 ? '分组唯一，无法移动' : '向上移动'" placement="top" :show-arrow="false">
+            <span :class="['item', 'upIcon', processedGroup.length === 1 ? 'is_disabled' : '']" v-if="props.showDelete">
+              <img v-if="processedGroup.length === 1" src="/src/assets/icons/downIcon_disabled.svg" alt="" />
+              <img v-else src="/src/assets/icons/downIcon.svg" alt="" />
+            </span>
           </el-tooltip>
-          <el-tooltip effect="dark" content="分组唯一，无法移动" placement="top" :show-arrow="false">
-            <span class="item downIcon" v-if="props.showDelete"><img src="/src/assets/icons/downIcon_disabled.svg" alt="" /></span>
+          <el-tooltip effect="dark" :content="processedGroup.length === 1 ? '分组唯一，无法移动' : '向下移动'" placement="top" :show-arrow="false">
+            <span :class="['item', processedGroup.length === 1 ? 'is_disabled' : '']" v-if="props.showDelete">
+              <img v-if="processedGroup.length === 1" src="/src/assets/icons/downIcon_disabled.svg" alt="" />
+              <img v-else src="/src/assets/icons/downIcon.svg" alt="" />
+            </span>
           </el-tooltip>
+          <el-popconfirm
+            width="232"
+            confirm-button-text="确定"
+            cancel-button-text="取消"
+            confirm-button-type="success"
+            :icon="WarningFilled"
+            icon-color="#ecaa04"
+            title="该分组下如有知识库，可能会导致删除失败"
+            @confirm="toDeleteGroup(item)"
+          >
+            <template #reference>
+              <div>
+                <el-tooltip effect="dark" content="删除分组" placement="top" :show-arrow="false">
+                  <span class="item" v-if="props.showMove && item.is_default !== '1'">
+                    <img src="/src/assets/icons/deleteIcon.svg" alt="" />
+                  </span>
+                </el-tooltip>
+              </div>
+            </template>
+          </el-popconfirm>
           <el-tooltip effect="dark" content="默认分组，无法删除" placement="top" :show-arrow="false">
-            <span class="item deleteIcon" v-if="props.showMove"><img src="/src/assets/icons/deleteIcon_disabled.svg" alt="" /></span>
+            <span :class="['item', 'is_disabled']" v-if="props.showMove && item.is_default === '1'">
+              <img src="/src/assets/icons/deleteIcon_disabled.svg" alt="" />
+            </span>
           </el-tooltip>
         </div>
       </div>
     </div>
     <div class="content">
-      <LibraryCard :cardList="cardList" />
+      <LibraryCard :cardList="item.library" :stackId="item.id" />
     </div>
   </div>
+  <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" :stackId="String(stackId)" />
 </template>
 
 <style lang="scss" scoped>
@@ -81,6 +262,18 @@ const cardList = ref([
     position: relative;
     margin-bottom: 8px;
     padding-top: 8px;
+    .name {
+      :hover {
+        border-bottom: 1px solid #00b96b;
+      }
+    }
+    .editName {
+      width: 170px;
+      ::selection {
+        background-color: #d1ecf9;
+        color: #262626;
+      }
+    }
     span {
       font-size: 14px;
       min-width: 10px;
@@ -126,9 +319,7 @@ const cardList = ref([
         .upIcon {
           transform: rotate(180deg);
         }
-        .upIcon,
-        .downIcon,
-        .deleteIcon {
+        .is_disabled {
           &:hover {
             cursor: not-allowed;
           }

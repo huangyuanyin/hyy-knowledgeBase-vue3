@@ -16,7 +16,7 @@ const infoStore = useInfoStore()
 const spacesList = ref([])
 
 const state = reactive({
-  currentSpaceName: route.query.name || ''
+  currentSpaceName: route.query.sname || ''
 })
 
 // const spacesList = [
@@ -36,8 +36,8 @@ const toLink = (type, val?) => {
       router.push({
         path: `/${val.spacekey}/dashboard`,
         query: {
-          name: val.spacename,
-          id: val.id
+          sname: val.spacename,
+          sid: val.id
         }
       })
       break

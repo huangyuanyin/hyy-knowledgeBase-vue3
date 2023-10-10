@@ -3,7 +3,7 @@ import path from 'path'; import path from 'path'; import path from 'path';
   <div class="TeamHeader_wrap">
     <div class="left">
       <span class="teamIcon"> <img src="/src/assets/icons/teamIcon.svg" alt="" /></span>
-      <h3>{{ $route.query.name }}</h3>
+      <h3>{{ $route.query.gname }}</h3>
       <el-tooltip effect="dark" content="仅团队成员可访问" placement="bottom">
         <span class="privateIcon"><img src="/src/assets/icons/privateIcon.svg" alt="" /></span>
       </el-tooltip>

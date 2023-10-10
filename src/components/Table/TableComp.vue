@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { addQuickLinksApi, deleteQuickLinksApi } from '@/api/quickLinks'
+
 const props = defineProps({
   header: {
     type: Array,
@@ -17,6 +18,13 @@ const props = defineProps({
 
 const userStore = useUserStore()
 const listStore = useListStore()
+const libraryOperationData = [
+  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限' },
+  { type: 'item', icon: '/src/assets/icons/renameIcon.svg', label: '重命名' },
+  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除' }
+]
 const editTableOperation = [
   {
     type: 'item',
@@ -33,6 +41,10 @@ const editTableOperation = [
     label: '浏览器打开',
     icon: '/src/assets/icons/newTabOutlineIcon.svg'
   }
+]
+const commonTeamData = [
+  { type: 'item', icon: '/src/assets/icons/team/settingIcon.svg', label: '团队设置', nick: 'teamSetting' },
+  { type: 'item', icon: '/src/assets/icons/team/editIcon.svg', label: '退出团队', nick: 'quitTeam' }
 ]
 
 const hoveredDocument = ref<number | null>(null)
@@ -155,6 +167,41 @@ const addQuickLinks = async (params) => {
         </td>
       </tr>
     </tbody>
+    <tbody v-if="props.type === 'library'">
+      <tr class="docItem" v-for="document in props.data" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">
+        <td class="item-title">
+          <div>
+            <img :src="document.icon || '/src/assets/icons/bookIcon.svg'" alt="" />
+            <div class="item-title-right">
+              <el-tooltip effect="light" :content="document.name" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
+                <span>{{ document.name }}</span>
+              </el-tooltip>
+            </div>
+          </div>
+        </td>
+        <td class="item-user">
+          <span class="username">{{ ' 暂无 ' }}</span>
+        </td>
+        <td class="item-time">
+          <span>{{ document.update_datetime }}</span>
+        </td>
+        <td class="item-operation more">
+          <el-tooltip effect="dark" :content="document.is_common_id ? '取消常用' : '添加常用'" :offset="6" placement="top" :show-arrow="false">
+            <span class="pinIcon" v-if="document.is_common_id">
+              <img src="@/assets/icons/pinIcon.svg" alt="" @click="toQuickLink('delete', document)" />
+            </span>
+            <span class="pinIcon" v-else>
+              <img src="@/assets/icons/pinOutIcon.svg" alt="" @click="toQuickLink('add', document)" />
+            </span>
+          </el-tooltip>
+          <LibraryOperationPopver :menuItems="libraryOperationData" :width="126">
+            <span>
+              <img v-show="hoveredDocument === document.id" src="@/assets/icons/moreIcon1_after.svg" alt="" />
+            </span>
+          </LibraryOperationPopver>
+        </td>
+      </tr>
+    </tbody>
     <tbody v-if="props.type === 'team'">
       <tr class="docItem" v-for="document in props.data" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">
         <td class="item-title">
@@ -177,7 +224,7 @@ const addQuickLinks = async (params) => {
           <span>{{ document.create_datetime }}</span>
         </td>
         <td class="item-operation more">
-          <el-tooltip effect="dark" :content="document.is_common_id ? '取消常用' : '添加常用'" :offset="6" placement="top" :show-arrow="false">
+          <el-tooltip effect="dark" :content="document.is_common_id ? '取消常用' : '设为常用'" :offset="6" placement="top" :show-arrow="false">
             <span class="pinIcon" v-if="document.is_common_id">
               <img src="@/assets/icons/pinIcon.svg" alt="" @click="toQuickLink('delete', document)" />
             </span>
@@ -185,9 +232,11 @@ const addQuickLinks = async (params) => {
               <img src="@/assets/icons/pinOutIcon.svg" alt="" @click="toQuickLink('add', document)" />
             </span>
           </el-tooltip>
-          <span class="moreIcon">
-            <img src="@/assets/icons/moreIcon1_after.svg" alt="" />
-          </span>
+          <LibraryOperationPopver :menuItems="commonTeamData" :height="40">
+            <span class="moreIcon">
+              <img src="@/assets/icons/moreIcon1_after.svg" alt="" />
+            </span>
+          </LibraryOperationPopver>
         </td>
       </tr>
     </tbody>
@@ -299,6 +348,7 @@ const addQuickLinks = async (params) => {
         width: 28px;
         height: 28px;
         border-radius: 4px;
+        max-height: 26px;
         &:hover {
           background-color: #e7e9e8;
         }

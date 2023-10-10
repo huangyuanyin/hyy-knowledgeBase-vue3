@@ -6,40 +6,72 @@ const props = defineProps({
   cardList: {
     type: Array as PropType<LibraryCard[]>,
     required: true
+  },
+  stackId: {
+    type: String,
+    default: ''
   }
 })
+
+const isShowsLibraryDialog = ref(false)
+const isShowsDeleteDialog = ref(false)
+const deleteInfo = ref<{
+  id?: string
+  name?: string
+  slug?: string
+  space?: string
+  group?: string
+  stack?: string
+}>({})
+
+const toDeleteLibrary = (val) => {
+  isShowsDeleteDialog.value = true
+  deleteInfo.value = val
+}
 </script>
 
 <template>
-  <div class="LibraryCard-wrap" v-for="(card, cardIndex) in props.cardList" :key="cardIndex">
-    <div class="card-content">
-      <div class="header">
-        <div class="header-left">
-          <img src="/src/assets/icons/bookIcon.svg" alt="" class="bookIcon" />
-        </div>
-        <div class="header-right">
-          <div style="display: flex; align-items: center">
-            <span>{{ card.name }}</span>
-            <span class="publicIcon"><img src="/src/assets/icons/publicIcon.svg" alt="" /></span>
+  <template v-if="props.cardList.length">
+    <div class="LibraryCard-wrap" v-for="(card, cardIndex) in props.cardList" :key="cardIndex">
+      <div class="card-content">
+        <div class="header">
+          <div class="header-left">
+            <img src="/src/assets/icons/bookIcon.svg" alt="" class="bookIcon" />
           </div>
-          <LibraryOperationPopver :menuItems="commonLibraryData">
-            <span class="moreIcon"><img src="/src/assets/icons/moreIcon1_after.svg" alt="" /></span>
-          </LibraryOperationPopver>
-        </div>
-      </div>
-      <ul v-if="card.items.length">
-        <li v-for="(item, itemIndex) in card.items" :key="itemIndex">
-          <div class="cardItem">
-            <span class="title">{{ item.title }}</span>
-            <span class="time">{{ item.time }}</span>
+          <div class="header-right">
+            <div style="display: flex; align-items: center">
+              <span>{{ card.name }}</span>
+              <span class="publicIcon"><img src="/src/assets/icons/publicIcon.svg" alt="" /></span>
+            </div>
+            <LibraryOperationPopver :menuItems="commonLibraryData" @deleteLibrary="toDeleteLibrary(card)">
+              <span class="moreIcon"><img src="/src/assets/icons/moreIcon1_after.svg" alt="" /></span>
+            </LibraryOperationPopver>
           </div>
-        </li>
-      </ul>
-      <div class="empty" v-else>
-        <p>知识库暂无内容</p>
+        </div>
+        <ul v-if="card.items && card.items.length">
+          <li v-for="(item, itemIndex) in card.items" :key="itemIndex">
+            <div class="cardItem">
+              <span class="title">{{ item.title }}</span>
+              <span class="time">{{ item.time }}</span>
+            </div>
+          </li>
+        </ul>
+        <div class="empty" v-else>
+          <p>知识库暂无内容</p>
+        </div>
       </div>
     </div>
-  </div>
+  </template>
+  <template v-else>
+    <div class="addCard" @click="isShowsLibraryDialog = true">
+      <div>
+        <img src="/src/assets/icons/addIcon.svg" alt="" />
+        新建知识库
+      </div>
+    </div>
+  </template>
+  <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" :stackId="String(props.stackId)" />
+  <DeleteDialog :isShow="isShowsDeleteDialog" :deleteInfo="deleteInfo" @closeDialog="isShowsDeleteDialog = false" />
 </template>
 
 <style lang="scss" scoped>
@@ -163,6 +195,31 @@ const props = defineProps({
         color: #8a8f8d;
         font-size: 12px;
       }
+    }
+  }
+}
+.addCard {
+  cursor: pointer;
+  display: flex;
+  width: calc(33.33333% - 16px);
+  color: #8a8f8d;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 214px;
+  margin-left: 16px;
+  margin-bottom: 16px;
+  border-radius: 6px;
+  border: 1px dashed #e7e9e8;
+  div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 14px;
+    img {
+      width: 14px;
+      height: 14px;
+      margin-bottom: 8px;
     }
   }
 }

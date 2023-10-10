@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+import { v4 as uuidv4 } from 'uuid'
+import { FormInstance } from 'element-plus'
+import { addGroupsApi } from '@/api/groups'
+
 interface ListItem {
   value: string
   label: string
@@ -10,6 +14,9 @@ const props = defineProps({
 
 const emit = defineEmits(['closeDialog'])
 
+const route = useRoute()
+const infoStore = useInfoStore()
+const dialogVisible = ref(false)
 const loadingMember = ref(false)
 const options = ref<ListItem[]>([])
 const list = ref([
@@ -214,13 +221,21 @@ const list = ref([
     label: 'Wyoming'
   }
 ])
-const formData = {
+const teamFormRef = ref<FormInstance>()
+const teamForm = reactive({
   groupname: '',
-  groupkey: '',
-  space: '',
+  groupkey: uuidv4(),
+  space: String(route.query.sid),
   members: [],
   description: ''
-}
+})
+
+watch(
+  () => props.isShow,
+  (newVal: boolean) => {
+    dialogVisible.value = newVal
+  }
+)
 
 const remoteMethod = (query: string) => {
   if (query) {
@@ -236,14 +251,43 @@ const remoteMethod = (query: string) => {
   }
 }
 
-watch(
-  () => props.isShow,
-  (newVal: boolean) => {
-    dialogVisible.value = newVal
+const handleSubmit = async () => {
+  try {
+    await teamFormRef.value.validate()
+    addGroups()
+  } catch (error) {
+    // error
   }
-)
+}
 
-const { dialogVisible, dialogFormRef: teamFormRef, dialogForm: teamForm, handleClose, handleSubmit } = useFormDialog({ isShow: ref(props.isShow), emit, formData })
+// 新增团队
+const addGroups = async () => {
+  let res = await addGroupsApi(teamForm)
+  if (res.code === 1000) {
+    handleClose()
+    ElMessage.success('团队创建成功')
+    router.push({
+      path: `/${infoStore.currentSpaceName}/team/book`,
+      query: {
+        sid: route.query.sid,
+        sname: route.query.sname,
+        gid: res.data.id,
+        gname: res.data.groupname
+      }
+    })
+  }
+}
+
+const resetForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.resetFields()
+}
+
+const handleClose = async () => {
+  resetForm(teamFormRef.value)
+  dialogVisible.value = false
+  emit('closeDialog', false)
+}
 </script>
 
 <template>

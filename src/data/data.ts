@@ -54,6 +54,17 @@ export const libraryOperationData = [
   { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除' }
 ]
 
+export const teamOperationData = [
+  { type: 'item', icon: '/src/assets/icons/team/bookIcon.svg', label: '知识库' },
+  { type: 'item', icon: '/src/assets/icons/team/topicIcon.svg', label: '话题' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/team/removeCommonIcon.svg', label: '移除常用' },
+  { type: 'item', icon: '/src/assets/icons/team/reminderFreeIcon.svg', label: '动态免提醒' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/team/settingIcon.svg', label: '团队设置' },
+  { type: 'item', icon: '/src/assets/icons/team/editIcon.svg', label: '退出团队' }
+]
+
 export const moreOperationData = [
   { type: 'detailItem', icon: '/src/assets/icons/deleteIcon.svg', label: '回收站', desc: '找回删除的文档与内容' },
   { type: 'divider' },
@@ -62,13 +73,13 @@ export const moreOperationData = [
 ]
 
 export const commonLibraryData = [
-  { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '移除常用' },
+  { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '移除常用', nick: 'removeCommon' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限' },
-  { type: 'item', icon: '/src/assets/icons/renameIcon.svg', label: '重命名' },
-  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置' },
+  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限', nick: 'permission' },
+  { type: 'item', icon: '/src/assets/icons/renameIcon.svg', label: '重命名', nick: 'rename' },
+  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置', nick: 'moreSetting' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除' }
+  { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'deleteLibrary' }
 ]
 
 export const cooperateLink =

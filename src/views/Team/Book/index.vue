@@ -1,3 +1,42 @@
+<script lang="ts" setup>
+import { getBookStacksApi } from '@/api/bookstacks'
+
+interface BookGroup {
+  id: number
+  name: string
+  is_default: string
+}
+
+const route = useRoute()
+const dataStore = useDataStore()
+const bookGroup = ref<BookGroup[]>([])
+const spaceId = ref(route.query.sid)
+const groupId = ref(route.query.gid)
+
+watchEffect(() => {
+  if (dataStore.isGetBookStacks) {
+    getBookStacks()
+    dataStore.setIsGetBookStacks(false)
+  }
+})
+
+const getBookStacks = () => {
+  const params = {
+    space: spaceId.value,
+    group: groupId.value
+  }
+  getBookStacksApi(params).then((res) => {
+    if (res.code === 1000) {
+      bookGroup.value = res.data as unknown as BookGroup[]
+    }
+  })
+}
+
+onMounted(() => {
+  getBookStacks()
+})
+</script>
+
 <template>
   <div class="Book_wrap">
     <TeamHeader />
@@ -6,13 +45,17 @@
       <img src="/src/assets/icons/rightArrowIcon.svg" alt="" />
     </div>
     <SwitchModuleItem moduleType="operation">
-      <template v-slot:left> <span class="title">知识库</span> </template>
+      <template v-slot:left><span class="title">知识库</span></template>
     </SwitchModuleItem>
-    <LibraryTable title="知识库分组" :show-delete="false" :show-move="false" />
+    <div class="book_header" v-if="bookGroup.length > 1">
+      <div class="item" v-for="(item, index) in bookGroup" :key="'bookGroup' + index">
+        <div class="name">{{ item.name }}</div>
+        <div class="dot" v-if="index !== bookGroup.length - 1"></div>
+      </div>
+    </div>
+    <LibraryTable title="知识库" :group="bookGroup" @getBookStacks="getBookStacks" />
   </div>
 </template>
-
-<script lang="ts" setup></script>
 
 <style lang="scss" scoped>
 .Book_wrap {
@@ -38,6 +81,38 @@
     }
     img {
       transform: rotate(180deg);
+    }
+  }
+  .book_header {
+    display: flex;
+    border: 1px solid #e7e9e8;
+    border-radius: 6px;
+    padding: 8px 16px;
+    background-color: #fff;
+    margin-top: 8px;
+    box-sizing: border-box;
+    .item {
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      .name {
+        font-size: 12px;
+        cursor: pointer;
+        margin-right: 16px;
+        max-width: 154px;
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .dot {
+        display: block;
+        background-color: #e7e9e8;
+        width: 4px;
+        height: 4px;
+        border-radius: 2px;
+        margin-right: 16px;
+      }
     }
   }
 }

@@ -26,7 +26,7 @@ const currentSiderName = ref('')
 
 watchEffect(() => {
   currentSider.value = route.meta.asideComponent as string
-  currentSiderName.value = route.query?.name as string
+  currentSiderName.value = route.query?.sname as string
 })
 </script>
 

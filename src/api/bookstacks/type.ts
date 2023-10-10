@@ -1,6 +1,12 @@
 export interface bookstackParams {
-  space: string
-  group: string
+  space: string | number
+  group: string | number
+}
+
+export interface bookstackData {
+  name: string
+  space: string | number
+  group: string | number
 }
 
 interface Bookstack {
@@ -17,4 +23,5 @@ interface Bookstack {
 export interface bookstackRes {
   code: number
   data: Bookstack
+  msg?: string
 }
