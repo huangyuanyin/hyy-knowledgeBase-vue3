@@ -1,5 +1,5 @@
 export interface groupsParams {
-  space: number
+  space: number | string
 }
 
 export interface groupsData {
@@ -20,6 +20,6 @@ interface GroupItem {
 
 export interface groupsRes {
   code: number
-  data: GroupItem[] | number
+  data: any
   msg?: string
 }

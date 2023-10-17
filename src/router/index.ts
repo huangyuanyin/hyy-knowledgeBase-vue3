@@ -106,11 +106,29 @@ const customRoutes = [
     }
   },
   {
-    path: '/:spaceName/directory',
+    path: '/:spaceName/directory/index',
     name: 'Space-Directory',
     component: pageComps['/src/views/Directory/index.vue'] as Component,
     meta: {
       title: '知识库详情',
+      asideComponent: 'DirectorySidebar'
+    }
+  },
+  {
+    path: '/directory/index',
+    name: 'Directory',
+    component: pageComps['/src/views/Directory/index.vue'] as Component,
+    meta: {
+      title: '知识库详情',
+      asideComponent: 'DirectorySidebar'
+    }
+  },
+  {
+    path: '/:spaceName/directory/article',
+    name: 'Space-Article',
+    component: pageComps['/src/views/Article/index.vue'] as Component,
+    meta: {
+      title: '文章详情',
       asideComponent: 'DirectorySidebar'
     }
   },

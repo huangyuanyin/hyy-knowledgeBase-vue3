@@ -39,6 +39,7 @@ const deleteLibrary = async (val) => {
     closeDialog()
     ElMessage.success('删除成功')
     dataStore.setIsGetBookStacks(true)
+    dataStore.setIsGetLibrary(true)
   }
 }
 

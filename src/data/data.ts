@@ -55,14 +55,14 @@ export const libraryOperationData = [
 ]
 
 export const teamOperationData = [
-  { type: 'item', icon: '/src/assets/icons/team/bookIcon.svg', label: '知识库' },
-  { type: 'item', icon: '/src/assets/icons/team/topicIcon.svg', label: '话题' },
+  { type: 'item', icon: '/src/assets/icons/team/bookIcon.svg', label: '知识库', nick: 'toBook' },
+  { type: 'item', icon: '/src/assets/icons/team/topicIcon.svg', label: '话题', nick: 'toTopic' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/team/removeCommonIcon.svg', label: '移除常用' },
-  { type: 'item', icon: '/src/assets/icons/team/reminderFreeIcon.svg', label: '动态免提醒' },
+  { type: 'item', icon: '/src/assets/icons/team/removeCommonIcon.svg', label: '移除常用', nick: 'removeCommon' },
+  { type: 'item', icon: '/src/assets/icons/team/reminderFreeIcon.svg', label: '动态免提醒', nick: 'reminderFree' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/team/settingIcon.svg', label: '团队设置' },
-  { type: 'item', icon: '/src/assets/icons/team/editIcon.svg', label: '退出团队' }
+  { type: 'item', icon: '/src/assets/icons/team/settingIcon.svg', label: '团队设置', nick: 'teamSetting' },
+  { type: 'item', icon: '/src/assets/icons/team/editIcon.svg', label: '退出团队', nick: 'exitTeam' }
 ]
 
 export const moreOperationData = [
@@ -80,6 +80,21 @@ export const commonLibraryData = [
   { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置', nick: 'moreSetting' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'deleteLibrary' }
+]
+
+export const articleOperationData = [
+  { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '重命名', nick: 'removeCommon' },
+  { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '编辑文档', nick: 'removeCommon' },
+  { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '复制链接', nick: 'removeCommon' },
+  { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '在新标签页打开', nick: 'removeCommon' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '移除目录', nick: 'permission' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/renameIcon.svg', label: '复制', nick: 'rename' },
+  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '移动', nick: 'moveArticle' },
+  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '导出', nick: 'moreSetting' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'deleteArticle' }
 ]
 
 export const cooperateLink =

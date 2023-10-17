@@ -1,11 +1,13 @@
 import { useUserStore } from '@/store/user'
 import { LoginForm, UseLoginOptions } from '@/type/loginType'
+import CryptoJS from 'crypto-js'
 
 export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, options: UseLoginOptions) => {
   const state = reactive({
     loading: false
   })
 
+  const router = useRouter()
   const userStore = useUserStore()
 
   const validateForm = async (formRef: { validate: () => Promise<boolean> | boolean }) => {
@@ -19,9 +21,11 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
 
   const handleLoginSuccess = (res: any): void => {
     if (res.code === 1000) {
-      userStore.setToken(res.token)
+      userStore.setToken(res.data.token)
       userStore.setIsAuth(true)
-      userStore.setUserInfo(res.token)
+      userStore.setUserInfo(res.data)
+      ElMessage.success('登录成功')
+      router.push({ path: '/' })
     } else {
       showError(res.msg)
     }
@@ -32,7 +36,12 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
       .then((isValid: boolean) => {
         if (!isValid) return
         state.loading = true
-        return options.api({ ...loginForm, ...params }) as Promise<any>
+        const params = {
+          username: loginForm.username,
+          password: loginForm.password
+        }
+        params.password = CryptoJS.SHA512(loginForm.password).toString(CryptoJS.enc.Base64)
+        return options.api({ ...params }) as Promise<any>
       })
       .then((res: any) => {
         state.loading = false

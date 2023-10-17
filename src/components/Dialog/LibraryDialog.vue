@@ -42,13 +42,13 @@ const dialogVisible = ref(false)
 const libraryFormRef = ref<FormInstance>()
 const libraryForm = reactive<RuleForm>({
   name: '',
-  slug: uuidv4(),
+  slug: '',
   avatar: '',
   description: '',
   creator: userStore.userInfo.nickname,
   public: '1',
-  space: spaceId.value,
-  group: groupId.value,
+  space: '',
+  group: '',
   stacks: ''
 })
 
@@ -56,14 +56,21 @@ watch(
   () => props.isShow,
   async (newVal: boolean) => {
     libraryForm.stacks = props.stackId
+    libraryForm.slug = uuidv4()
     dialogVisible.value = newVal
+    groupId.value = route.query.gid
+    spaceId.value = route.query.sid
+    libraryForm.group = groupId.value
+    libraryForm.space = spaceId.value
     if (newVal) {
       const { groupsList, getGroups } = await useGroupsApi(getGroupsApi, { space: spaceId.value, group: groupId.value })
       getGroups()
       teamList.value = groupsList.value
-      getBookStacks(groupId.value)
+      await getBookStacks(groupId.value)
+      if (libraryForm.stacks === 'undefined') {
+        libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || ''
+      }
     }
-    console.log(`output->infoStore.currentSidebar`, teamList.value)
   }
 )
 
@@ -91,7 +98,10 @@ const toClose = async () => {
 // 如果当前团队与选择的团队不一直被，就默认选中第一个知识库分组
 const handleStackId = (val) => {
   if (val === groupId.value) {
-    libraryForm.stacks = props.stackId ? props.stackId : stacksList.value.filter((item) => item.is_default === '1')[0].id
+    if (props.stackId === 'undefined') {
+      return (libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || '')
+    }
+    libraryForm.stacks = props.stackId ? props.stackId : String(stacksList.value.filter((item) => item.is_default === '1')[0].id)
   } else {
     libraryForm.stacks = stacksList.value.filter((item) => item.is_default === '1')[0]?.id || ''
   }
@@ -112,6 +122,7 @@ const addLibrary = async () => {
     toClose()
     ElMessage.success('新建成功')
     dataStore.setIsGetBookStacks(true)
+    dataStore.setIsGetLibrary(true)
   }
 }
 

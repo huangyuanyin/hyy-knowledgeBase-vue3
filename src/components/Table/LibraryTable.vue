@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { WarningFilled } from '@element-plus/icons-vue'
 import { getLibraryApi } from '@/api/library'
-import { addBookStacksApi, deleteBookStacksApi, editBookStacksApi } from '@/api/bookstacks'
+import { addBookStacksApi, deleteBookStacksApi, editBookStacksApi, getBookStacksApi } from '@/api/bookstacks'
 
 type LibraryGroup = {
   id: number
@@ -31,6 +31,7 @@ const props = defineProps({
 const emit = defineEmits(['getBookStacks'])
 
 const route = useRoute()
+const dataStore = useDataStore()
 const isShowsLibraryDialog = ref(false)
 const editedName = ref('')
 const stackId = ref('') // 当前知识库分组id
@@ -45,7 +46,7 @@ const addOperation = [
   {
     type: 'item',
     label: '添加已有知识库...',
-    nick: 'addLibrary',
+    nick: 'addExistLibrary',
     icon: ''
   },
   {
@@ -79,6 +80,43 @@ watch(
     immediate: true
   }
 )
+
+watchEffect(async () => {
+  if (dataStore.isGetLibrary) {
+    await Promise.all(
+      props.group.map(async (item) => {
+        const library = await getLibrary(item.id)
+        item.library = library
+      })
+    )
+    processedGroup.value = props.group
+    processedGroup.value.map((item) => {
+      item.is_editing = false
+    })
+    dataStore.setIsGetLibrary(false)
+  }
+  if (dataStore.isGetBookStacks) {
+    const params = {
+      space: route.query.sid,
+      group: route.query.gid
+    }
+    let res = await getBookStacksApi(params)
+    if (res.code === 1000) {
+      await Promise.all(
+        res.data.map(async (item) => {
+          const library = await getLibrary(item.id)
+          item.library = library
+        })
+      )
+      processedGroup.value = res.data
+      processedGroup.value.map((item) => {
+        item.is_editing = false
+      })
+      dataStore.setIsGetLibrary(false)
+    }
+    dataStore.setIsGetBookStacks(false)
+  }
+})
 
 const addBookStacks = async () => {
   const params = {
@@ -127,7 +165,6 @@ const toAddGroup = () => {
 const toAddLibrary = (val: string) => {
   isShowsLibraryDialog.value = true
   stackId.value = val
-  console.log(`output->val`, stackId.value)
 }
 
 const toDeleteGroup = (val) => {
@@ -177,11 +214,14 @@ const editBookStacks = async (val: any) => {
   }
 }
 
-// onMounted(() => {
-//   // bus.on('getLibraryList', (data: any) => {
-//   //   cardList.value = data
-//   // })
-// })
+const toMoveGroup = (val: any) => {
+  console.log(`output->val`, val)
+  ElMessage.warning('功能暂未开放，敬请期待')
+}
+
+const toExistLibrary = () => {
+  ElMessage.warning('功能暂未开放，敬请期待')
+}
 </script>
 
 <template>
@@ -203,17 +243,18 @@ const editBookStacks = async (val: any) => {
             :height="32"
             @addGroup="toAddGroup"
             @addLibrary="toAddLibrary(item.id)"
+            @addExistLibrary="toExistLibrary"
           >
             <span class="item"><img src="/src/assets/icons/addIcon.svg" alt="" class="moreIcon" /></span>
           </LibraryOperationPopver>
           <el-tooltip effect="dark" :content="processedGroup.length === 1 ? '分组唯一，无法移动' : '向上移动'" placement="top" :show-arrow="false">
-            <span :class="['item', 'upIcon', processedGroup.length === 1 ? 'is_disabled' : '']" v-if="props.showDelete">
+            <span :class="['item', 'upIcon', processedGroup.length === 1 ? 'is_disabled' : '']" v-if="props.showDelete" @click="toMoveGroup(item)">
               <img v-if="processedGroup.length === 1" src="/src/assets/icons/downIcon_disabled.svg" alt="" />
               <img v-else src="/src/assets/icons/downIcon.svg" alt="" />
             </span>
           </el-tooltip>
           <el-tooltip effect="dark" :content="processedGroup.length === 1 ? '分组唯一，无法移动' : '向下移动'" placement="top" :show-arrow="false">
-            <span :class="['item', processedGroup.length === 1 ? 'is_disabled' : '']" v-if="props.showDelete">
+            <span :class="['item', processedGroup.length === 1 ? 'is_disabled' : '']" v-if="props.showDelete" @click="toMoveGroup(item)">
               <img v-if="processedGroup.length === 1" src="/src/assets/icons/downIcon_disabled.svg" alt="" />
               <img v-else src="/src/assets/icons/downIcon.svg" alt="" />
             </span>

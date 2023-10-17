@@ -1,4 +1,19 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+const userStore = useUserStore()
+
+const toExit = () => {
+  localStorage.removeItem('user')
+  router.push('/login')
+}
+
+const toSetting = () => {
+  ElMessage.warning('功能暂未开放，敬请期待')
+}
+
+const toUserInfo = () => {
+  ElMessage.warning('功能暂未开放，敬请期待')
+}
+</script>
 
 <template>
   <el-popover popper-class="userPopver" placement="bottom-start" :width="305" :hide-after="100" :show-arrow="false" trigger="hover">
@@ -15,24 +30,24 @@
           <li class="sidebar-top-right-userPopver-content-list-item user-item">
             <div class="sidebar-top-right-userPopver-content-list-item-header">
               <img src="@/assets/img/img.jpg" />
-              <span class="sidebar-top-right-userPopver-top-name">张三</span>
+              <span class="sidebar-top-right-userPopver-top-name">{{ userStore.userInfo.name }}</span>
             </div>
           </li>
           <li class="sidebar-top-right-userPopver-content-list-line"></li>
-          <li class="sidebar-top-right-userPopver-content-list-item">
+          <li class="sidebar-top-right-userPopver-content-list-item" @click="toUserInfo">
             <div class="sidebar-top-right-userPopver-content-list-item-li">
               <svg-icon iconName="icon-gerenzhongxin" className="gerenzhongxin_svg"></svg-icon>
               <span>个人中心</span>
             </div>
           </li>
-          <li class="sidebar-top-right-userPopver-content-list-item">
+          <li class="sidebar-top-right-userPopver-content-list-item" @click="toSetting">
             <div class="sidebar-top-right-userPopver-content-list-item-li">
               <svg-icon iconName="icon-shezhi" className="shezhi_svg"></svg-icon>
               <span>账户设置</span>
             </div>
           </li>
           <li class="sidebar-top-right-userPopver-content-list-line"></li>
-          <li class="sidebar-top-right-userPopver-content-list-item">
+          <li class="sidebar-top-right-userPopver-content-list-item" @click="toExit">
             <div class="sidebar-top-right-userPopver-content-list-item-li">
               <svg-icon iconName="icon-tuichu" className="tuichu_svg"></svg-icon>
               <span>退出登录</span>

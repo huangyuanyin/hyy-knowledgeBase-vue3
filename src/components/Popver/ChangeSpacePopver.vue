@@ -14,6 +14,7 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
 const route = useRoute()
 const infoStore = useInfoStore()
 const spacesList = ref([])
+const isShowsSpaceDialog = ref(false)
 
 const state = reactive({
   currentSpaceName: route.query.sname || ''
@@ -109,7 +110,7 @@ onMounted(async () => {
               </div>
             </div>
           </div>
-          <div class="menuItem">
+          <div class="menuItem" @click="isShowsSpaceDialog = true">
             <div class="left">
               <img class="addIcon" src="@/assets/icons/addIcon2.svg" alt="" />
               <div class="content">
@@ -175,7 +176,7 @@ onMounted(async () => {
               <img src="@/assets/icons/selectIcon.svg" alt="" />
             </div>
           </div>
-          <div class="menuItem" @click="toLink('add')">
+          <div class="menuItem" @click="isShowsSpaceDialog = true">
             <div class="left">
               <img class="addIcon" src="@/assets/icons/addIcon2.svg" alt="" />
               <div class="content">
@@ -201,6 +202,7 @@ onMounted(async () => {
       </template>
     </div>
   </el-popover>
+  <SpaceDialog :isShow="isShowsSpaceDialog" @closeDialog="isShowsSpaceDialog = false"></SpaceDialog>
 </template>
 
 <style lang="scss" scoped>

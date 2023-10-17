@@ -3,6 +3,13 @@ export interface spaceParams {
   spacekey: string
 }
 
+export interface spaceData {
+  spacename: string
+  spacekey: string
+  spacetype: string
+  creator?: string
+}
+
 interface Spaces {
   id: number
   spacename: string
@@ -15,4 +22,5 @@ interface Spaces {
 export interface spacesRes {
   code: number
   data: Spaces
+  msg?: string
 }

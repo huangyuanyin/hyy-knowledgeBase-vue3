@@ -8,7 +8,7 @@ const listStore = useListStore()
 const spaceId = ref(route.query.sid)
 const teamInput = ref('')
 const isShowsTeamDialog = ref(false)
-const groupsList = ref([]) // 当前空间下全部团队
+const groupsList = ref([]) // 当前空间下除公共区外全部团队
 const commonTeamList = ref([]) // 当前空间下常用团队列表
 
 watch(
@@ -23,14 +23,13 @@ watch(
 // 获取当前空间下的全部团队
 const getGroups = async () => {
   const params = {
-    space: spaceId.value
+    space: spaceId.value,
+    is_default: '0'
   }
   let res = await getGroupsApi(params)
   console.log(`output->getGroupsApi`, getGroupsApi)
   if (res.code === 1000) {
     groupsList.value = res.data || ([] as any)
-    groupsList.value = groupsList.value.filter((item) => item.is_default !== '1')
-    console.log(`output->groupsList`, groupsList.value)
   }
 }
 
@@ -38,7 +37,8 @@ const getGroups = async () => {
 const getQuickLinks = async () => {
   const params = {
     space: spaceId.value,
-    user: userStore.userInfo.username
+    user: JSON.parse(localStorage.getItem('user')).userInfo.username || '',
+    target_type: 'Group'
   }
   let res = await getQuickLinksApi(params)
   if (res.code === 1000) {
@@ -96,6 +96,7 @@ onMounted(async () => {
     justify-content: space-between;
     height: 30px;
     line-height: 30px;
+    margin-bottom: 22px;
     font-size: 18px;
     color: #262626;
     font-family: Chinese Quote, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Helvetica Neue, Helvetica, Arial, sans-serif;

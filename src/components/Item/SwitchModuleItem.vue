@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { addBookStacksApi } from '@/api/bookstacks'
+
 interface Button {
   type: string
   name: string
@@ -12,10 +14,61 @@ const props = defineProps<{
   moduleGenre?: string
 }>()
 
+const route = useRoute()
+const dataStore = useDataStore()
 const moduleGenreLocal = ref(props.moduleGenre)
+const isShowsLibraryDialog = ref(false)
+const viewType = ref('group')
+const addOperation = [
+  {
+    type: 'item',
+    label: '新建知识库',
+    nick: 'addLibrary',
+    icon: ''
+  },
+  {
+    type: 'divider'
+  },
+  {
+    type: 'item',
+    label: '新建分组',
+    nick: 'addGroup',
+    icon: ''
+  }
+]
 
 const changeType = (type: string) => {
   moduleGenreLocal.value = type
+}
+
+const toChangeView = (type: string) => {
+  if (viewType.value === type) return
+  viewType.value = type
+  ElMessage.warning('功能暂未开放，敬请期待')
+  viewType.value = 'group'
+}
+
+// 新建知识库分组
+const toAddGroup = () => {
+  addBookStacks()
+}
+
+// 调用新建知识库分组接口
+const addBookStacks = async () => {
+  const params = {
+    space: route.query.sid,
+    group: route.query.gid,
+    name: '新建分组'
+  }
+  let res = await addBookStacksApi(params)
+  if (res.code === 1000) {
+    ElMessage.success('新建分组成功')
+    dataStore.setIsGetBookStacks(true)
+  }
+}
+
+const toAddLibrary = () => {
+  isShowsLibraryDialog.value = true
 }
 </script>
 
@@ -30,18 +83,33 @@ const changeType = (type: string) => {
     </slot>
     <slot name="right">
       <div class="module-operation" v-if="props.moduleType === 'operation'">
-        <div class="addIcon">
-          <img src="/src/assets/icons/addIcon.svg" alt="" class="moreIcon" />
-          <img src="/src/assets/icons/downIcon.svg" alt="" />
-        </div>
+        <LibraryOperationPopver
+          :menuItems="addOperation"
+          placement="bottom-end"
+          trigger="hover"
+          :showAfter="600"
+          :width="140"
+          :height="32"
+          @addGroup="toAddGroup"
+          @addLibrary="toAddLibrary()"
+        >
+          <div class="addIcon">
+            <img src="/src/assets/icons/addIcon.svg" alt="" class="moreIcon" />
+            <img src="/src/assets/icons/downIcon.svg" alt="" />
+          </div>
+        </LibraryOperationPopver>
         <div class="styleIcon">
-          <span class="">
-            <img src="/src/assets/icons/cardStyleIcon.svg" alt="" class="moreIcon" />
-          </span>
+          <el-tooltip effect="dark" content="分组视图" placement="top" :show-arrow="false">
+            <span :class="[viewType === 'group' ? 'is_selected' : '']" @click="toChangeView('group')">
+              <img src="/src/assets/icons/cardStyleIcon.svg" alt="" class="moreIcon" />
+            </span>
+          </el-tooltip>
           <div class="divider"></div>
-          <span>
-            <img src="/src/assets/icons/listStyleIcon.svg" alt="" />
-          </span>
+          <el-tooltip effect="dark" content="列表视图" placement="top" :show-arrow="false">
+            <span :class="[viewType === 'list' ? 'is_selected' : '']" @click="toChangeView('list')">
+              <img src="/src/assets/icons/listStyleIcon.svg" alt="" />
+            </span>
+          </el-tooltip>
         </div>
       </div>
       <div class="module-search" v-if="props.moduleType === 'search'">
@@ -57,6 +125,8 @@ const changeType = (type: string) => {
       </div>
     </slot>
   </div>
+
+  <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" :stackId="String(stackId)" />
 </template>
 
 <style lang="scss" scoped>
@@ -122,6 +192,9 @@ const changeType = (type: string) => {
         &:hover {
           background-color: #eff0f0;
         }
+      }
+      .is_selected {
+        background-color: #eff0f0;
       }
       div {
         display: flex;

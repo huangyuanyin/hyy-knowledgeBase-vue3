@@ -8,7 +8,6 @@ interface ContentItem {
   title: string
   type: string
   icon: string
-  typeIcon: string
   emptyText: string
   libraryList: any
 }
@@ -36,13 +35,17 @@ const props = defineProps({
 
 const route = useRoute()
 const infoStore = useInfoStore()
-
+const dataStore = useDataStore()
 const state = reactive({
   headerActive: null,
   currentGroup: null,
   currentSpace: infoStore.currentSpaceInfo.nickname || route.path.split('/')[1],
   operatData: []
 })
+const typeIcon = {
+  '0': '/src/assets/icons/privateIcon.svg',
+  '1': '/src/assets/icons/publicIcon.svg'
+}
 
 watch(
   () => route.path,
@@ -123,6 +126,7 @@ const handleClickLibrary = (val: any) => {
       }
     })
     state.currentGroup = val.groupkey
+    dataStore.setIsGetBookStacks(true)
   } else {
     const query = {
       lid: val.id,
@@ -133,15 +137,40 @@ const handleClickLibrary = (val: any) => {
     console.log(`output->infoStore`, state.currentSpace)
     switch (infoStore.currentSidebar) {
       case 'Sidebar':
-        router.push({ path: '/directory', query })
+        router.push({ path: '/directory/index', query })
         break
       case 'SpaceSidebar':
-        router.push({ path: `/${state.currentSpace}/directory`, query })
+        router.push({ path: `/${state.currentSpace}/directory/index`, query })
         break
       default:
         break
     }
   }
+}
+
+const toBook = (val) => {
+  console.log(`output->val`, val)
+  router.push({
+    path: `/${state.currentSpace}/team/book`,
+    query: {
+      sid: route.query.sid,
+      sname: route.query.sname,
+      gname: val.groupname,
+      gid: val.id
+    }
+  })
+}
+
+const toTopic = (val) => {
+  router.push({
+    path: `/${state.currentSpace}/team/topic`,
+    query: {
+      sid: route.query.sid,
+      sname: route.query.sname,
+      gname: val.groupname,
+      gid: val.id
+    }
+  })
 }
 
 const { spacesList, getSpaces } = useSpacesApi(getSpacesApi, {}, false)
@@ -183,10 +212,10 @@ getSpaces().then(() => {
                   <img :src="item.icon" alt="" />
                   <span class="title">{{ data.name || data.groupname }}</span>
                   <span class="type-icon">
-                    <img :src="item.typeIcon" alt="" />
+                    <img :src="typeIcon[data.public]" alt="" />
                   </span>
                 </div>
-                <LibraryOperationPopver :menuItems="item.type !== 'team' ? libraryOperationData : teamOperationData">
+                <LibraryOperationPopver :menuItems="item.type !== 'team' ? libraryOperationData : teamOperationData" @toBook="toBook(data)" @toTopic="toTopic(data)">
                   <span class="more-icon" @click.stop>
                     <img src="@/assets/icons/moreIcon1.svg" alt="" />
                   </span>

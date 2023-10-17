@@ -12,8 +12,8 @@ export const useUserStore = defineStore({
     setToken(token: string) {
       this.token = token
     },
-    setUserInfo(token: string) {
-      this.userInfo = token ? (jwt_decode(token) as UserInfo[]) : []
+    setUserInfo(info: object) {
+      this.userInfo = info
     },
     setIsAuth(isAuth: boolean) {
       this.isAuth = isAuth

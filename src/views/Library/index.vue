@@ -1,17 +1,68 @@
 <script lang="ts" setup>
 import { getLibraryApi } from '@/api/library'
+import { getQuickLinksApi } from '@/api/quickLinks'
 
+const route = useRoute()
 const infoStore = useInfoStore()
+const dataStore = useDataStore()
 const currentSidebar = ref(infoStore.currentSidebar) // 当前类型：个人、公共
-const libraryTable = ref([])
+const commonList = ref([]) // 前空间下的常用列表
+const libarayList = ref([]) // 当前空间下的知识库列表
 const libraryInput = ref('')
 const isShowsLibraryDialog = ref(false)
 
+watch(
+  () => dataStore.isGetQuickList,
+  (newVal) => {
+    if (newVal) {
+      getQuickLinks()
+    }
+  }
+)
+
+// 获取当前空间下的常用列表
+const getQuickLinks = async () => {
+  const params = {
+    target_type: 'Book',
+    space: route.query.sid // 测试默认个人空间的id
+  }
+  let res = await getQuickLinksApi(params)
+  if (res.code === 1000) {
+    commonList.value = res.data || ([] as any)
+    dataStore.setIsGetQuickList(false)
+    // 遍历知识库列表和常用知识库列表，如果id和target_id相同，就把is_common设置为true,否则设置为false
+    libarayList.value.forEach((item) => {
+      item.is_common_id = null
+      commonList.value.forEach((val) => {
+        if (item.id === Number(val.target_id)) {
+          item.is_common_id = val.id
+        }
+      })
+    })
+  }
+}
+
+// 获取当前空间下的知识库列表
+const getLibrary = async () => {
+  let params = {}
+  if (currentSidebar.value === 'Sidebar') {
+    params = {
+      public: currentSidebar.value === 'Sidebar' ? '0' : '1'
+    }
+  } else {
+    params = {
+      space: route.query.sid
+    }
+  }
+  let res = await getLibraryApi(params)
+  if (res.code === 1000) {
+    libarayList.value = res.data || ([] as any)
+  }
+}
+
 onMounted(async () => {
-  const { libraryList, fetchLibrary } = await useLibraryApi(getLibraryApi, { Public: 1 })
-  await fetchLibrary()
-  libraryTable.value = libraryList.value
-  bus.emit('getLibraryList', libraryTable.value)
+  await getLibrary()
+  await getQuickLinks()
 })
 </script>
 
@@ -21,7 +72,7 @@ onMounted(async () => {
     <!-- <div style="display: flex; justify-content: flex-end">
       <CooperatePopver :menuItems="commonLibraryData" />
     </div> -->
-    <CommonList :list="libraryTable" />
+    <CommonList :list="commonList" />
     <div class="library_box">
       <div class="libraryList">
         <SwitchModuleItem
@@ -70,8 +121,8 @@ onMounted(async () => {
             </div>
           </template>
         </SwitchModuleItem>
-        <LibraryTable v-if="currentSidebar === 'Sidebar'" :cardList="libraryTable" />
-        <TableComp v-else :header="['名称', '归属', '更新时间', '']" type="library" :data="libraryTable" />
+        <commonList v-if="currentSidebar === 'Sidebar'" :cardList="commonList" />
+        <TableComp v-else :header="['名称', '归属', '更新时间', '']" type="library" :data="libarayList" />
         <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
       </div>
     </div>

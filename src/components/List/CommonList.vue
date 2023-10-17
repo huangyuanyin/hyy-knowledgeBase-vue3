@@ -5,6 +5,7 @@ import { deleteQuickLinksApi } from '@/api/quickLinks'
 type CommonLibraryItem = {
   name?: string
   title?: string
+  public: string
 }
 
 const props = defineProps({
@@ -28,6 +29,7 @@ const route = useRoute()
 const listStore = useListStore()
 const userStore = useUserStore()
 const infoStore = useInfoStore()
+const dataStore = useDataStore()
 
 const removeCommon = (item: any) => {
   const params = {
@@ -43,19 +45,32 @@ const deleteQuickLinks = async (id, params) => {
   if (res.code === 1000) {
     listStore.setRefreshQuickListStatus(true)
     ElMessage.success('移除成功')
+    dataStore.setIsGetQuickList(true)
   }
 }
 
 const toLink = (item) => {
-  router.push({
-    path: `/${infoStore.currentSpaceName}/team/book`,
-    query: {
-      sid: item.space,
-      sname: route.query.sname,
-      gid: item.target_id,
-      gname: item.title
-    }
-  })
+  if (item.target_typ === 'Group') {
+    router.push({
+      path: `/${infoStore.currentSpaceName}/team/book`,
+      query: {
+        sid: item.space,
+        sname: route.query.sname,
+        gid: item.target_id,
+        gname: item.title
+      }
+    })
+  } else {
+    router.push({
+      path: `/${infoStore.currentSpaceName}/directory/index`,
+      query: {
+        sid: item.space,
+        sname: route.query.sname,
+        lid: item.id,
+        lname: item.title
+      }
+    })
+  }
 }
 </script>
 
@@ -69,7 +84,8 @@ const toLink = (item) => {
             <img src="/src/assets/icons/bookIcon.svg" alt="" class="bookIcon" />
             <div class="title">
               <span>{{ item.name || item.title }}</span>
-              <img src="/src/assets/icons/publicIcon.svg" alt="" class="publicIcon" />
+              <img v-if="item.public === '1'" src="/src/assets/icons/publicIcon.svg" alt="" class="publicIcon" />
+              <img v-else src="/src/assets/icons/privateIcon.svg" alt="" class="publicIcon" />
             </div>
           </div>
           <LibraryOperationPopver :menuItems="type === 'library' ? commonLibraryData : commonTeamData" :height="40" @removeCommon="removeCommon(item)">

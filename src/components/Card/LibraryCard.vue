@@ -41,12 +41,20 @@ const toDeleteLibrary = (val) => {
           <div class="header-right">
             <div style="display: flex; align-items: center">
               <span>{{ card.name }}</span>
-              <span class="publicIcon"><img src="/src/assets/icons/publicIcon.svg" alt="" /></span>
+              <el-tooltip effect="dark" content="共享知识库" placement="top" :show-arrow="false">
+                <span class="publicIcon" v-if="card.public === '0'"><img src="/src/assets/icons/publicIcon.svg" alt="" /></span>
+              </el-tooltip>
+              <el-tooltip effect="dark" content="私密知识库" placement="top" :show-arrow="false">
+                <span class="publicIcon" v-if="card.public === '1'"><img src="/src/assets/icons/privateIcon.svg" alt="" /></span>
+              </el-tooltip>
             </div>
             <LibraryOperationPopver :menuItems="commonLibraryData" @deleteLibrary="toDeleteLibrary(card)">
               <span class="moreIcon"><img src="/src/assets/icons/moreIcon1_after.svg" alt="" /></span>
             </LibraryOperationPopver>
           </div>
+        </div>
+        <div class="desc">
+          <p>{{ card.description }}</p>
         </div>
         <ul v-if="card.items && card.items.length">
           <li v-for="(item, itemIndex) in card.items" :key="itemIndex">
@@ -95,9 +103,11 @@ const toDeleteLibrary = (val) => {
       }
     }
     .header {
-      height: 64px;
+      height: 24px;
       display: flex;
       align-items: center;
+      margin-top: 16px;
+      margin-bottom: 8px;
       &-left {
         height: 32px;
         display: flex;
@@ -138,6 +148,12 @@ const toDeleteLibrary = (val) => {
           box-sizing: border-box;
         }
       }
+    }
+    .desc {
+      margin-left: 40px;
+      font-size: 12px;
+      color: #8a8f8d;
+      margin-bottom: 16px;
     }
     ul {
       min-height: 116px;

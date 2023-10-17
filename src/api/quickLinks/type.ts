@@ -15,4 +15,5 @@ export interface quickLinksData {
 export interface quickLinksRes {
   code: number
   data: quickLinksData
+  msg?: string
 }

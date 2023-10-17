@@ -5,5 +5,7 @@ interface LibraryCardItem {
 
 export interface LibraryCard {
   name: string
+  public: string
+  description: string
   items: LibraryCardItem[]
 }

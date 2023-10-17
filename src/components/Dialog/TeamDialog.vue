@@ -266,15 +266,17 @@ const addGroups = async () => {
   if (res.code === 1000) {
     handleClose()
     ElMessage.success('团队创建成功')
-    router.push({
-      path: `/${infoStore.currentSpaceName}/team/book`,
-      query: {
-        sid: route.query.sid,
-        sname: route.query.sname,
-        gid: res.data.id,
-        gname: res.data.groupname
-      }
-    })
+    setTimeout(() => {
+      router.push({
+        path: `/${infoStore.currentSpaceName}/team/book`,
+        query: {
+          sid: route.query.sid,
+          sname: route.query.sname,
+          gid: res.data.id,
+          gname: res.data.groupname
+        }
+      })
+    }, 2000)
   }
 }
 

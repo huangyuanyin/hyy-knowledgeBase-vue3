@@ -5,5 +5,6 @@ export interface LoginParams {
 
 export interface LoginRes {
   code: number
-  token: string
+  data: object
+  msg: string
 }

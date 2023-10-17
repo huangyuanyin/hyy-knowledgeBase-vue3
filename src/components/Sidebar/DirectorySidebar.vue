@@ -1,15 +1,18 @@
 <script lang="ts" setup>
-import { sidebarSearchMenuItemsData } from '@/data/data'
+import { sidebarSearchMenuItemsData, articleOperationData } from '@/data/data'
+import { getArticleApi } from '@/api/article'
 
 const route = useRoute()
-const forumStore = useForumStore()
 const infoStore = useInfoStore()
+const bookId = ref(route.query.lid || '') // 当前知识库id
 const dataSource = ref([])
 const SpaceType = ref<string>('') // 空间类型：个人 公共
 const nickName = ref<string>(infoStore.currentSpaceInfo.nickname || route.fullPath.split('/')[1])
+const showMoveDialog = ref(false)
 
 watchEffect(() => {
   SpaceType.value = route.fullPath.split('/')[1].includes('directory') ? '个人' : '公共'
+  console.log(`output->route.`, route.name)
 })
 
 const toLink = (type?: string) => {
@@ -30,7 +33,7 @@ const toLink = (type?: string) => {
       default:
         break
     }
-  } else {
+  } else if (type === 'back') {
     switch (SpaceType.value) {
       case '个人':
         router.push('/')
@@ -47,16 +50,47 @@ const toLink = (type?: string) => {
       default:
         break
     }
+  } else if (type === 'index') {
+    router.push({
+      path: `/${nickName.value}/directory/index`,
+      query: {
+        sid: route.query.sid,
+        sname: route.query.sname,
+        lid: route.query.lid,
+        lname: route.query.lname
+      }
+    })
   }
 }
 
-const fetchForumList = async () => {
-  await forumStore.getForum(4)
+// 获取目录
+const getArticle = async () => {
+  const params = {
+    book: bookId.value as string
+  }
+  let res = await getArticleApi(params)
+  if (res.code === 1000) {
+    dataSource.value = res.data || ([] as any)
+  }
+}
+
+const toArticleDetail = (val) => {
+  router.push({
+    path: `/${nickName.value}/directory/article`,
+    query: {
+      ...route.query,
+      aid: val.id,
+      aname: val.title
+    }
+  })
+}
+
+const moveArticle = (val) => {
+  showMoveDialog.value = true
 }
 
 onMounted(async () => {
-  await fetchForumList()
-  dataSource.value = forumStore.forumList
+  await getArticle()
 })
 </script>
 
@@ -86,7 +120,7 @@ onMounted(async () => {
       <SidebarSearch :menuItems="sidebarSearchMenuItemsData" />
     </div>
     <div class="directory-list">
-      <div class="index">
+      <div :class="['index', route.name === 'Space-Directory' ? 'is_selected' : '']" @click="toLink('index')">
         <img class="indexIcon" src="/src/assets/icons/indexIcon.svg" alt="" />
         <span>首页</span>
       </div>
@@ -101,12 +135,20 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-    <div class="empty" v-if="!forumStore.forumList.length">
+    <div class="empty" v-if="!dataSource.length">
       <img src="@/assets/img/empty.png" alt="" />
       <div>知识库为空，你可以<span>新建文档</span></div>
     </div>
     <div class="list" v-else>
-      <el-tree :data="dataSource" node-key="id" :props="{ class: 'forumList' }" default-expand-all highlight-current>
+      <el-tree
+        :data="dataSource"
+        node-key="id"
+        :current-node-key="Number(route.query.aid)"
+        :props="{ class: 'forumList' }"
+        default-expand-all
+        highlight-current
+        @node-click="toArticleDetail"
+      >
         <template #default="{ node, data }">
           <span class="list-node">
             <div class="title">
@@ -114,12 +156,14 @@ onMounted(async () => {
                 <img src="/src/assets/icons/miniDropDownIcon.svg" alt="" v-if="data.children?.length && node.expanded" />
                 <img class="foldIcon" src="/src/assets/icons/miniDropDownIcon.svg" alt="" v-if="data.children?.length && !node.expanded" />
               </div>
-              <span>{{ data.label }}</span>
+              <span>{{ data.title }}</span>
             </div>
             <div class="button">
-              <span class="moreIcon" @click.stop>
-                <img src="/src/assets/icons/moreIcon1_after.svg" alt="" />
-              </span>
+              <LibraryOperationPopver :menuItems="articleOperationData" :height="32" :width="150" @moveArticle="moveArticle(data)">
+                <span class="moreIcon" @click.stop>
+                  <img src="/src/assets/icons/moreIcon1_after.svg" alt="" />
+                </span>
+              </LibraryOperationPopver>
               <span class="addIcon" @click.stop>
                 <img src="/src/assets/icons/addIcon.svg" alt="" />
               </span>
@@ -129,6 +173,7 @@ onMounted(async () => {
       </el-tree>
     </div>
   </div>
+  <MoveDialog :isShow="showMoveDialog" @closeDialog="showMoveDialog = false" />
 </template>
 
 <style lang="scss" scoped>
@@ -250,6 +295,9 @@ onMounted(async () => {
       &:hover {
         background-color: #eff0f0;
       }
+    }
+    .is_selected {
+      background-color: #eff0f0;
     }
     .directory {
       display: flex;

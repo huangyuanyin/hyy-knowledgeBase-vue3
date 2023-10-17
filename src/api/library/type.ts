@@ -1,5 +1,6 @@
 export interface libraryParams {
-  space: string
+  space?: string
+  group?: string
   creator?: string
 }
 

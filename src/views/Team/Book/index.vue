@@ -13,23 +13,23 @@ const bookGroup = ref<BookGroup[]>([])
 const spaceId = ref(route.query.sid)
 const groupId = ref(route.query.gid)
 
-watchEffect(() => {
-  if (dataStore.isGetBookStacks) {
+watch(
+  () => route.query.gid,
+  (newVal) => {
+    groupId.value = newVal
     getBookStacks()
-    dataStore.setIsGetBookStacks(false)
   }
-})
+)
 
-const getBookStacks = () => {
+const getBookStacks = async () => {
   const params = {
     space: spaceId.value,
     group: groupId.value
   }
-  getBookStacksApi(params).then((res) => {
-    if (res.code === 1000) {
-      bookGroup.value = res.data as unknown as BookGroup[]
-    }
-  })
+  let res = await getBookStacksApi(params)
+  if (res.code === 1000) {
+    bookGroup.value = res.data as unknown as BookGroup[]
+  }
 }
 
 onMounted(() => {
