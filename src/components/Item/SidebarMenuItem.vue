@@ -3,6 +3,7 @@ interface MenuItem {
   index: string
   icon: string
   label: string
+  id?: number
 }
 
 const props = defineProps({
@@ -28,16 +29,25 @@ const getActiveIconPath = (iconName) => `/src/assets/icons/${iconName}_active.sv
 
 const toLink = (menuItem: MenuItem) => {
   const queryParams = {
-    ...route.query
+    sid: route.query.sid,
+    sname: route.query.sname
   }
 
   switch (route.meta.asideComponent) {
     case 'SpaceSidebar':
-      const path = route.path.split('/')[1]
-      router.push({
-        path: `/${path}/${menuItem.index}`,
-        query: queryParams
-      })
+      if (menuItem.index === 'public') {
+        const path = route.path.split('/')[1]
+        router.push({
+          path: `/${path}/${menuItem.index}`,
+          query: { ...queryParams, gid: menuItem.id, gname: menuItem.label }
+        })
+      } else {
+        const path = route.path.split('/')[1]
+        router.push({
+          path: `/${path}/${menuItem.index}`,
+          query: queryParams
+        })
+      }
       break
     default:
       router.push({

@@ -10,11 +10,31 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
   menuItems: Array as () => MenuItem[]
 })
 
+const route = useRoute()
+const infoStore = useInfoStore()
+const stackId = ref('')
 const isShowsLibraryDialog = ref(false)
+const isShowTeamDialog = ref(false)
 
-const handle = () => {
-  isShowsLibraryDialog.value = true
+const toHandle = (val) => {
+  switch (val.label) {
+    case '知识库':
+      isShowsLibraryDialog.value = true
+      break
+    case '团队':
+      isShowTeamDialog.value = true
+      break
+    default:
+      ElMessage.warning('功能暂未开放，敬请期待')
+      break
+  }
 }
+
+onMounted(() => {
+  if (infoStore.currentSidebar === 'SpaceSidebar') {
+    stackId.value = String(route.query.gid)
+  }
+})
 </script>
 
 <template>
@@ -36,7 +56,7 @@ const handle = () => {
     <div class="addOperation_Wrap">
       <ul>
         <template v-for="(item, _index) in props.menuItems" :key="'menuItems' + _index">
-          <li v-if="item.type === 'item'" @click="handle()">
+          <li v-if="item.type === 'item'" @click="toHandle(item)">
             <div class="add-icon">
               <img :src="item.icon as string" alt="" />
             </div>
@@ -47,8 +67,8 @@ const handle = () => {
       </ul>
     </div>
   </el-popover>
-
-  <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
+  <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" :stackId="String(stackId)" />
+  <TeamDialog :isShow="isShowTeamDialog" @closeDialog="isShowTeamDialog = false" />
 </template>
 
 <style lang="scss" scoped>

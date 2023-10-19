@@ -56,6 +56,8 @@ const addSpace = async () => {
         }
       })
     }, 3000)
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 

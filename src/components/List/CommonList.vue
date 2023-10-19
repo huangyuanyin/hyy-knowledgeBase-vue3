@@ -30,7 +30,17 @@ const listStore = useListStore()
 const userStore = useUserStore()
 const infoStore = useInfoStore()
 const dataStore = useDataStore()
+const isShowsDeleteDialog = ref(false)
+const deleteInfo = ref<{
+  id?: string
+  name?: string
+  slug?: string
+  space?: string
+  group?: string
+  stack?: string
+}>({})
 
+// 移除常用
 const removeCommon = (item: any) => {
   const params = {
     user: userStore.userInfo.username,
@@ -39,30 +49,35 @@ const removeCommon = (item: any) => {
   deleteQuickLinks(item.id, params)
 }
 
-// 移除常用
+// 删除知识库
+const deleteLibrary = (item: any) => {
+  isShowsDeleteDialog.value = true
+  deleteInfo.value = item
+  deleteInfo.value.name = item.title
+  deleteInfo.value.id = item.target_id
+}
+
+// 移除常用接口
 const deleteQuickLinks = async (id, params) => {
   let res = await deleteQuickLinksApi(id, params)
   if (res.code === 1000) {
-    listStore.setRefreshQuickListStatus(true)
-    ElMessage.success('移除成功')
-    dataStore.setIsGetQuickList(true)
+    if (props.type === 'library') {
+      listStore.setRefreshQuickListStatus(true)
+      ElMessage.success('移除成功')
+      dataStore.setIsGetQuickList(true)
+    } else {
+      listStore.setRefreshQuickListStatus(true)
+      ElMessage.success('移除成功')
+      dataStore.setIsGetTeamQuickList(true)
+    }
   }
 }
 
 const toLink = (item) => {
-  if (item.target_typ === 'Group') {
+  console.log(`output->item.target_typ`, item)
+  if (infoStore.currentSidebar === 'Sidebar') {
     router.push({
-      path: `/${infoStore.currentSpaceName}/team/book`,
-      query: {
-        sid: item.space,
-        sname: route.query.sname,
-        gid: item.target_id,
-        gname: item.title
-      }
-    })
-  } else {
-    router.push({
-      path: `/${infoStore.currentSpaceName}/directory/index`,
+      path: `/directory/index`,
       query: {
         sid: item.space,
         sname: route.query.sname,
@@ -70,6 +85,28 @@ const toLink = (item) => {
         lname: item.title
       }
     })
+  } else {
+    if (item.target_type === 'group') {
+      router.push({
+        path: `/${infoStore.currentSpaceName}/team/book`,
+        query: {
+          sid: item.space,
+          sname: route.query.sname,
+          gid: item.target_id,
+          gname: item.title
+        }
+      })
+    } else {
+      router.push({
+        path: `/${infoStore.currentSpaceName}/directory/index`,
+        query: {
+          sid: item.space,
+          sname: route.query.sname,
+          lid: item.id,
+          lname: item.title
+        }
+      })
+    }
   }
 }
 </script>
@@ -88,7 +125,12 @@ const toLink = (item) => {
               <img v-else src="/src/assets/icons/privateIcon.svg" alt="" class="publicIcon" />
             </div>
           </div>
-          <LibraryOperationPopver :menuItems="type === 'library' ? commonLibraryData : commonTeamData" :height="40" @removeCommon="removeCommon(item)">
+          <LibraryOperationPopver
+            :menuItems="type === 'library' ? commonLibraryData : commonTeamData"
+            :height="40"
+            @removeCommon="removeCommon(item)"
+            @deleteLibrary="deleteLibrary(item)"
+          >
             <div class="item-right" @click.stop>
               <img src="/src/assets/icons/moreIcon1_after.svg" alt="" class="moreIcon" />
             </div>
@@ -97,6 +139,7 @@ const toLink = (item) => {
       </div>
     </div>
   </div>
+  <DeleteDialog :isShow="isShowsDeleteDialog" :deleteInfo="deleteInfo" @closeDialog="isShowsDeleteDialog = false" />
 </template>
 
 <style lang="scss" scoped>

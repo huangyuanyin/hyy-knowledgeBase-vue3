@@ -16,8 +16,8 @@ export const spaceMenuItemsData = [
   { type: 'item', icon: '/src/assets/icons/mindmapIcon.svg', label: '思维导图' },
   { type: 'item', icon: '/src/assets/icons/pptIcon.svg', label: '幻灯片' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/bookIcon.svg', label: '知识库' },
-  { type: 'item', icon: '/src/assets/icons/teamIcon.svg', label: '团队' },
+  { type: 'item', icon: '/src/assets/icons/bookIcon.svg', label: '知识库', nick: 'toAddBook' },
+  { type: 'item', icon: '/src/assets/icons/teamIcon.svg', label: '团队', nick: 'toAddTeam' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/templateIcon.svg', label: '从模板新建' },
   { type: 'item', icon: '/src/assets/icons/importIcon.svg', label: '导入...' }
@@ -46,12 +46,12 @@ export const moduleAddMenuData = [
 ]
 
 export const libraryOperationData = [
-  { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '移除常用' },
+  { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '移除常用', nick: 'toRemoveCommon' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限' },
   { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除' }
+  { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteLibrary' }
 ]
 
 export const teamOperationData = [
@@ -74,6 +74,16 @@ export const moreOperationData = [
 
 export const commonLibraryData = [
   { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '移除常用', nick: 'removeCommon' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限', nick: 'permission' },
+  { type: 'item', icon: '/src/assets/icons/renameIcon.svg', label: '重命名', nick: 'rename' },
+  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置', nick: 'moreSetting' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'deleteLibrary' }
+]
+
+export const notCommonLibraryData = [
+  { type: 'item', icon: '/src/assets/icons/pinOutIcon.svg', label: '常用', nick: 'addCommon' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限', nick: 'permission' },
   { type: 'item', icon: '/src/assets/icons/renameIcon.svg', label: '重命名', nick: 'rename' },

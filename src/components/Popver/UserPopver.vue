@@ -1,8 +1,11 @@
 <script lang="ts" setup>
 const userStore = useUserStore()
+const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('user')).userInfo.avatar || '@/assets/img/img.jpg')
 
 const toExit = () => {
   localStorage.removeItem('user')
+  localStorage.removeItem('personalSpaceId')
+  localStorage.removeItem('personalGroupId')
   router.push('/login')
 }
 
@@ -20,7 +23,7 @@ const toUserInfo = () => {
     <template #reference>
       <slot>
         <span class="sidebar-top-right-headimg">
-          <img src="@/assets/img/img.jpg" />
+          <img :src="avatar" />
         </span>
       </slot>
     </template>
@@ -29,7 +32,7 @@ const toUserInfo = () => {
         <ul class="sidebar-top-right-userPopver-content-list">
           <li class="sidebar-top-right-userPopver-content-list-item user-item">
             <div class="sidebar-top-right-userPopver-content-list-item-header">
-              <img src="@/assets/img/img.jpg" />
+              <img :src="avatar" />
               <span class="sidebar-top-right-userPopver-top-name">{{ userStore.userInfo.name }}</span>
             </div>
           </li>

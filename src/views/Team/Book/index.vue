@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { getBookStacksApi } from '@/api/bookstacks'
+import { getLibraryApi } from '@/api/library'
+import { getQuickLinksApi } from '@/api/quickLinks'
 
 interface BookGroup {
   id: number
@@ -10,6 +12,8 @@ interface BookGroup {
 const route = useRoute()
 const dataStore = useDataStore()
 const bookGroup = ref<BookGroup[]>([])
+const libarayList = ref([])
+const commonList = ref([])
 const spaceId = ref(route.query.sid)
 const groupId = ref(route.query.gid)
 
@@ -18,6 +22,15 @@ watch(
   (newVal) => {
     groupId.value = newVal
     getBookStacks()
+  }
+)
+
+watch(
+  () => dataStore.isGetQuickList,
+  (newVal) => {
+    if (newVal) {
+      getQuickLinks()
+    }
   }
 )
 
@@ -32,8 +45,43 @@ const getBookStacks = async () => {
   }
 }
 
-onMounted(() => {
-  getBookStacks()
+// 获取当前团队下的知识库列表
+const getLibrary = async () => {
+  let params = {}
+  params = {
+    space: route.query.sid,
+    group: route.query.gid
+  }
+  let res = await getLibraryApi(params)
+  if (res.code === 1000) {
+    libarayList.value = res.data || ([] as any)
+  }
+}
+
+// 获取该空间下常用知识库列表
+const getQuickLinks = async () => {
+  const params = {
+    target_type: 'book',
+    space: route.query.sid
+  }
+  let res = await getQuickLinksApi(params)
+  if (res.code === 1000) {
+    commonList.value = res.data || ([] as any)
+    libarayList.value.forEach((item) => {
+      item.is_common_id = null
+      commonList.value.forEach((val) => {
+        if (item.id === Number(val.target_id)) {
+          item.is_common_id = val.id
+        }
+      })
+    })
+  }
+}
+
+onMounted(async () => {
+  await getBookStacks()
+  await getLibrary()
+  await getQuickLinks()
 })
 </script>
 
@@ -53,7 +101,7 @@ onMounted(() => {
         <div class="dot" v-if="index !== bookGroup.length - 1"></div>
       </div>
     </div>
-    <LibraryTable title="知识库" :group="bookGroup" @getBookStacks="getBookStacks" />
+    <LibraryTable title="知识库" :commonList="commonList" :group="bookGroup" @getBookStacks="getBookStacks" />
   </div>
 </template>
 

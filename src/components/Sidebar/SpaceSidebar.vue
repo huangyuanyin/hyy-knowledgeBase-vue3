@@ -1,20 +1,19 @@
 <script lang="ts" setup>
-import { getLibraryApi } from '@/api/library'
 import { getGroupsApi } from '@/api/groups'
 import { getQuickLinksApi } from '@/api/quickLinks'
 
 const route = useRoute()
-const userStore = useUserStore()
+const dataStore = useDataStore()
 const spaceId = ref(route.query.sid) // 当前空间id
-
-const menuItems = [
+const menuItems = ref([
   { index: 'dashboard', icon: 'actionIcon', label: '开始' },
   { index: 'collections', icon: 'startIcon', label: '收藏' },
-  { index: 'public', icon: 'publicAreaIcon', label: '公共区' }
-]
+  { id: null, index: 'public', icon: 'publicAreaIcon', label: '公共区' }
+])
 
 const contentItems = ref([
   {
+    id: null,
     title: '知识库',
     type: 'library',
     icon: '/src/assets/icons/bookIcon.svg',
@@ -23,6 +22,7 @@ const contentItems = ref([
     libraryList: []
   },
   {
+    id: null,
     title: '团队',
     type: 'team',
     icon: '/src/assets/icons/teamIcon.svg',
@@ -37,13 +37,58 @@ const moreMenuItems = [
   { icon: '/src/assets/icons/moreIcon2.svg', label: '更多' }
 ]
 
+watch(
+  () => dataStore.isGetTeamQuickList,
+  (newVal) => {
+    if (newVal) {
+      getCommonTeam()
+      dataStore.setIsGetTeamQuickList(false)
+    }
+  }
+)
+
+watch(
+  () => dataStore.isGetQuickList,
+  (newVal) => {
+    if (newVal) {
+      getCommonLibrary()
+      dataStore.setIsGetQuickList(false)
+    }
+  }
+)
+
+// 获取常用知识库列表
+const getCommonLibrary = async () => {
+  const params = {
+    space: route.query.sid,
+    user: JSON.parse(localStorage.getItem('user')).userInfo.username,
+    target_type: 'book'
+  }
+  let res = await getQuickLinksApi(params)
+  if (res.code === 1000) {
+    contentItems.value[0].libraryList = res.data || ([] as any)
+  }
+}
+
+// 获取常用团队列表
+const getCommonTeam = async () => {
+  const params = {
+    space: route.query.sid,
+    user: JSON.parse(localStorage.getItem('user')).userInfo.username,
+    target_type: 'group'
+  }
+  let res = await getQuickLinksApi(params)
+  if (res.code === 1000) {
+    contentItems.value[1].libraryList = res.data || ([] as any)
+  }
+}
+
 onMounted(async () => {
-  const { libraryList, fetchLibrary } = useLibraryApi(getLibraryApi, { space: spaceId.value })
-  await fetchLibrary()
-  contentItems.value[0].libraryList = libraryList.value
+  await getCommonLibrary()
+  await getCommonTeam()
   const { groupsList, getGroups } = await useGroupsApi(getGroupsApi, { space: spaceId.value })
   getGroups()
-  contentItems.value[1].libraryList = groupsList.value.filter((item) => item.is_default !== '1')
+  menuItems.value[2].id = groupsList.value.filter((item) => item.is_default === '1')[0].id
 })
 </script>
 

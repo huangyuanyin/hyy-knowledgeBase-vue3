@@ -40,6 +40,8 @@ const deleteLibrary = async (val) => {
     ElMessage.success('删除成功')
     dataStore.setIsGetBookStacks(true)
     dataStore.setIsGetLibrary(true)
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 
@@ -59,7 +61,11 @@ const closeDialog = () => {
     </template>
     <div class="body">
       <div class="desc">
-        <div>正在删除知识库 <span class="highlight_name">项目文档</span>，该操作不可逆，一旦操作成功，知识库下的所有内容将会删除。请输入下面内容再次确认操作。</div>
+        <div>
+          正在删除知识库
+          <span class="highlight_name">{{ deleteInfo.name }}</span>
+          ，该操作不可逆，一旦操作成功，知识库下的所有内容将会删除。请输入下面内容再次确认操作。
+        </div>
       </div>
       <div class="tip">
         请在下方输入框中输入 "<span>{{ props.deleteInfo.slug }}</span

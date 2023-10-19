@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { getBookStacksApi } from '@/api/bookstacks'
 import { getLibraryApi } from '@/api/library'
 import { getQuickLinksApi } from '@/api/quickLinks'
 
@@ -8,6 +9,7 @@ const dataStore = useDataStore()
 const currentSidebar = ref(infoStore.currentSidebar) // 当前类型：个人、公共
 const commonList = ref([]) // 前空间下的常用列表
 const libarayList = ref([]) // 当前空间下的知识库列表
+const bookGroup = ref([]) // 当前空间&&当前团队下的知识库分组
 const libraryInput = ref('')
 const isShowsLibraryDialog = ref(false)
 
@@ -23,8 +25,8 @@ watch(
 // 获取当前空间下的常用列表
 const getQuickLinks = async () => {
   const params = {
-    target_type: 'Book',
-    space: route.query.sid // 测试默认个人空间的id
+    target_type: 'book',
+    space: currentSidebar.value === 'Sidebar' ? localStorage.getItem('personalSpaceId') : route.query.sid
   }
   let res = await getQuickLinksApi(params)
   if (res.code === 1000) {
@@ -57,12 +59,32 @@ const getLibrary = async () => {
   let res = await getLibraryApi(params)
   if (res.code === 1000) {
     libarayList.value = res.data || ([] as any)
+    console.log(`output-> libarayList.value`, libarayList.value)
+  }
+}
+
+const filterGroupFromPublic = (list) => {
+  return list.filter((item) => item.group_name !== '公共区')
+}
+
+// 获取当前空间&&当前团队下的知识库分组
+const getBookStacks = async () => {
+  const params = {
+    space: localStorage.getItem('personalSpaceId'),
+    group: localStorage.getItem('personalGroupId')
+  }
+  let res = await getBookStacksApi(params)
+  if (res.code === 1000) {
+    bookGroup.value = res.data || ([] as any)
   }
 }
 
 onMounted(async () => {
   await getLibrary()
   await getQuickLinks()
+  if (infoStore.currentSidebar === 'Sidebar') {
+    await getBookStacks()
+  }
 })
 </script>
 
@@ -86,7 +108,7 @@ onMounted(async () => {
             },
             {
               type: 'public',
-              name: '公共的'
+              name: '邀请协作的'
             }
           ]"
         />
@@ -121,8 +143,9 @@ onMounted(async () => {
             </div>
           </template>
         </SwitchModuleItem>
-        <commonList v-if="currentSidebar === 'Sidebar'" :cardList="commonList" />
-        <TableComp v-else :header="['名称', '归属', '更新时间', '']" type="library" :data="libarayList" />
+        <!-- <commonList v-if="currentSidebar === 'Sidebar'" :cardList="commonList" /> -->
+        <LibraryTable v-if="currentSidebar === 'Sidebar'" title="知识库" :commonList="commonList" :group="bookGroup" @getBookStacks="getBookStacks" />
+        <TableComp v-else :header="['名称', '归属', '更新时间', '']" type="library" :data="filterGroupFromPublic(libarayList)" />
         <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
       </div>
     </div>

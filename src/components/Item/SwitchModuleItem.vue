@@ -16,6 +16,9 @@ const props = defineProps<{
 
 const route = useRoute()
 const dataStore = useDataStore()
+const infoStore = useInfoStore()
+const spaceId = ref(infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalSpaceId') : route.query.sid)
+const groupId = ref(infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalGroupId') : route.query.gid)
 const moduleGenreLocal = ref(props.moduleGenre)
 const isShowsLibraryDialog = ref(false)
 const viewType = ref('group')
@@ -38,6 +41,7 @@ const addOperation = [
 ]
 
 const changeType = (type: string) => {
+  return ElMessage.warning('功能暂未开放，敬请期待')
   moduleGenreLocal.value = type
 }
 
@@ -56,14 +60,16 @@ const toAddGroup = () => {
 // 调用新建知识库分组接口
 const addBookStacks = async () => {
   const params = {
-    space: route.query.sid,
-    group: route.query.gid,
+    space: spaceId.value,
+    group: groupId.value,
     name: '新建分组'
   }
   let res = await addBookStacksApi(params)
   if (res.code === 1000) {
     ElMessage.success('新建分组成功')
     dataStore.setIsGetBookStacks(true)
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 

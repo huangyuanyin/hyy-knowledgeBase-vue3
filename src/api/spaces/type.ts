@@ -1,6 +1,7 @@
 export interface spaceParams {
-  spacename: string
-  spacekey: string
+  spacename?: string
+  spacekey?: string
+  permusername?: string
 }
 
 export interface spaceData {

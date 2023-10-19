@@ -1,7 +1,7 @@
 import { spaceParams, spaceData, spacesRes } from './type'
 
-export function getSpacesApi() {
-  return http.get<spacesRes>('spaces/', {}, 'base')
+export function getSpacesApi(params: spaceParams) {
+  return http.get<spacesRes>('spaces/', { params }, 'base')
 }
 
 export function getSpacesDetailApi(id?: number) {

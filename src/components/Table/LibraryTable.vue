@@ -26,14 +26,21 @@ const props = defineProps({
   group: {
     type: Array as PropType<LibraryGroup[]>,
     default: () => []
+  },
+  commonList: {
+    type: Array,
+    default: () => []
   }
 })
 const emit = defineEmits(['getBookStacks'])
 
 const route = useRoute()
 const dataStore = useDataStore()
+const infoStore = useInfoStore()
 const isShowsLibraryDialog = ref(false)
 const editedName = ref('')
+const spaceId = ref(infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalSpaceId') : route.query.sid)
+const groupId = ref(infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalGroupId') : route.query.gid)
 const stackId = ref('') // 当前知识库分组id
 const processedGroup = ref([])
 const addOperation = [
@@ -59,6 +66,23 @@ const addOperation = [
     icon: ''
   }
 ]
+const addLibraryOperation = [
+  {
+    type: 'item',
+    label: '新建知识库',
+    nick: 'addLibrary',
+    icon: ''
+  },
+  {
+    type: 'divider'
+  },
+  {
+    type: 'item',
+    label: '新建分组',
+    nick: 'addGroup',
+    icon: ''
+  }
+]
 
 watch(
   () => props.group,
@@ -68,11 +92,40 @@ watch(
         props.group.map(async (item) => {
           const library = await getLibrary(item.id)
           item.library = library
+          item.library.map((it) => {
+            it.is_common_id = null
+            props.commonList.map((val: any) => {
+              if (it.id === Number(val.target_id)) {
+                it.is_common_id = val.id
+              }
+            })
+          })
         })
       )
       processedGroup.value = props.group
       processedGroup.value.map((item) => {
         item.is_editing = false
+      })
+    }
+  },
+  {
+    immediate: true
+  }
+)
+
+watch(
+  () => props.commonList,
+  (newVal) => {
+    if (newVal.length) {
+      processedGroup.value.map((item) => {
+        item.library.map((it) => {
+          it.is_common_id = null
+          newVal.map((val: any) => {
+            if (it.id === Number(val.target_id)) {
+              it.is_common_id = val.id
+            }
+          })
+        })
       })
     }
   },
@@ -97,8 +150,8 @@ watchEffect(async () => {
   }
   if (dataStore.isGetBookStacks) {
     const params = {
-      space: route.query.sid,
-      group: route.query.gid
+      space: spaceId.value,
+      group: groupId.value
     }
     let res = await getBookStacksApi(params)
     if (res.code === 1000) {
@@ -120,8 +173,8 @@ watchEffect(async () => {
 
 const addBookStacks = async () => {
   const params = {
-    space: route.query.sid,
-    group: route.query.gid,
+    space: spaceId.value,
+    group: groupId.value,
     name: '新建分组'
   }
   let res = await addBookStacksApi(params)
@@ -133,8 +186,8 @@ const addBookStacks = async () => {
 
 const deleteBookStacks = async (id) => {
   const params = {
-    space: route.query.sid,
-    group: route.query.gid
+    space: spaceId.value,
+    group: groupId.value
   }
   let res = await deleteBookStacksApi(id, params)
   if (res.code === 1000) {
@@ -147,8 +200,8 @@ const deleteBookStacks = async (id) => {
 
 const getLibrary = async (id) => {
   const params = {
-    space: route.query.sid,
-    group: route.query.gid,
+    space: spaceId.value,
+    group: groupId.value,
     stacks: id
   }
   let res = await getLibraryApi(params)
@@ -235,7 +288,7 @@ const toExistLibrary = () => {
         <div class="divider"></div>
         <div class="operation">
           <LibraryOperationPopver
-            :menuItems="addOperation"
+            :menuItems="infoStore.currentSidebar === 'Sidebar' ? addLibraryOperation : addOperation"
             placement="bottom-end"
             trigger="hover"
             :showAfter="600"

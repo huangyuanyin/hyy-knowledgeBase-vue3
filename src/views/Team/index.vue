@@ -37,8 +37,8 @@ const getGroups = async () => {
 const getQuickLinks = async () => {
   const params = {
     space: spaceId.value,
-    user: JSON.parse(localStorage.getItem('user')).userInfo.username || '',
-    target_type: 'Group'
+    user: JSON.parse(localStorage.getItem('user')).userInfo.username,
+    target_type: 'group'
   }
   let res = await getQuickLinksApi(params)
   if (res.code === 1000) {

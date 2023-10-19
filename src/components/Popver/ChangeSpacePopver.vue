@@ -14,19 +14,13 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
 const route = useRoute()
 const infoStore = useInfoStore()
 const spacesList = ref([])
+const personalSpaceName = ref(JSON.parse(localStorage.getItem('user')).userInfo.name || '')
+const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('user')).userInfo.avatar || '@/assets/img/img.jpg')
 const isShowsSpaceDialog = ref(false)
 
 const state = reactive({
   currentSpaceName: route.query.sname || ''
 })
-
-// const spacesList = [
-//   { id: 1, icon: '/src/assets/icons/spaceIcon.svg', name: '就叫小黄好了1', member: '1成员', nickName: 'xiaohuang' },
-//   { id: 2, icon: '/src/assets/icons/spaceIcon.svg', name: '就叫小黄好了2', member: '2成员', nickName: 'zhangsan' },
-//   { id: 3, icon: '/src/assets/icons/spaceIcon.svg', name: '就叫小黄好了3', member: '3成员', nickName: 'lisi' },
-//   { id: 4, icon: '/src/assets/icons/spaceIcon.svg', name: '就叫小黄好了4', member: '4成员', nickName: 'wangwu' },
-//   { id: 5, icon: '/src/assets/icons/spaceIcon.svg', name: '就叫小黄好了5', member: '5成员', nickName: 'haha' }
-// ]
 
 const toLink = (type, val?) => {
   switch (type) {
@@ -57,9 +51,8 @@ const toLink = (type, val?) => {
 }
 
 onMounted(async () => {
-  bus.on('TriggerSettingData', (res) => {
-    console.log(`output->res`, res)
-    spacesList.value = res
+  bus.on('TriggerSettingData', (res: any) => {
+    spacesList.value = res.filter((item) => item.spacetype !== 'personal')
   })
 })
 </script>
@@ -85,10 +78,10 @@ onMounted(async () => {
           <div class="menuItem" @click="toLink('my', null)">
             <div class="left">
               <div class="img">
-                <img src="@/assets/img/img.jpg" />
+                <img :src="avatar" />
               </div>
               <div class="content">
-                <p>就叫小黄好了</p>
+                <p>{{ personalSpaceName }}</p>
                 <p class="tag">我自己</p>
               </div>
             </div>
@@ -149,7 +142,7 @@ onMounted(async () => {
               </div>
               <div class="admin">
                 <span>管理员</span>
-                <img src="@/assets/img/img.jpg" />
+                <img :src="avatar" />
               </div>
               <div class="button" @click="toLink('set')">
                 <img class="settingIcon" src="/src/assets/icons/settingIcon.svg" alt="" />
@@ -190,10 +183,10 @@ onMounted(async () => {
           <div class="menuItem" @click="toLink('my', null)">
             <div class="left">
               <div class="img">
-                <img src="@/assets/img/img.jpg" />
+                <img :src="avatar" />
               </div>
               <div class="content">
-                <p>就叫小黄好了</p>
+                <p>{{ personalSpaceName }}</p>
                 <p class="tag">我自己</p>
               </div>
             </div>

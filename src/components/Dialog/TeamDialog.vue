@@ -276,7 +276,7 @@ const addGroups = async () => {
           gname: res.data.groupname
         }
       })
-    }, 2000)
+    }, 1000)
   }
 }
 

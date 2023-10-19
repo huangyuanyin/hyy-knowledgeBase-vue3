@@ -17,13 +17,87 @@
       <SwitchModuleItem moduleType="operation">
         <template v-slot:left> <span class="title">知识库</span> </template>
       </SwitchModuleItem>
-      <LibraryTable title="知识库分组" :show-delete="false" :show-move="false" :cardList="libraryTable" />
+      <LibraryTable title="知识库" :commonList="commonList" :group="bookGroup" @getBookStacks="getBookStacks" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-const libraryTable = ref([])
+import { getBookStacksApi } from '@/api/bookstacks'
+import { getLibraryApi } from '@/api/library'
+import { getQuickLinksApi } from '@/api/quickLinks'
+
+interface BookGroup {
+  id: number
+  name: string
+  is_default: string
+}
+
+const route = useRoute()
+const dataStore = useDataStore()
+const bookGroup = ref([])
+const commonList = ref([])
+const libarayList = ref([])
+
+watch(
+  () => dataStore.isGetQuickList,
+  (newVal) => {
+    if (newVal) {
+      getQuickLinks()
+    }
+  }
+)
+
+const getBookStacks = async () => {
+  const params = {
+    space: route.query.sid,
+    group: route.query.gid
+  }
+  let res = await getBookStacksApi(params)
+  if (res.code === 1000) {
+    bookGroup.value = res.data as unknown as BookGroup[]
+  }
+}
+
+// 获取当前空间下的常用列表
+const getQuickLinks = async () => {
+  const params = {
+    target_type: 'book',
+    space: route.query.sid
+  }
+  let res = await getQuickLinksApi(params)
+  if (res.code === 1000) {
+    commonList.value = res.data || ([] as any)
+    // 遍历知识库列表和常用知识库列表，如果id和target_id相同，就把is_common设置为true,否则设置为false
+    libarayList.value.forEach((item) => {
+      item.is_common_id = null
+      commonList.value.forEach((val) => {
+        if (item.id === Number(val.target_id)) {
+          item.is_common_id = val.id
+        }
+      })
+    })
+  }
+}
+
+// 获取当前空间下的知识库列表
+const getLibrary = async () => {
+  let params = {}
+  params = {
+    space: route.query.sid,
+    group: route.query.gid
+  }
+  let res = await getLibraryApi(params)
+  if (res.code === 1000) {
+    libarayList.value = res.data || ([] as any)
+  }
+}
+
+onMounted(async () => {
+  await getBookStacks()
+  await getLibrary()
+  await getQuickLinks()
+})
 </script>
 
 <style lang="scss" scoped>

@@ -7,6 +7,7 @@ export interface quickLinksData {
   title: string
   target_id: string
   target_type: string
+  slug: string
   user: string
   space: number
   [key: string]: any

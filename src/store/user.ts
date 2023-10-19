@@ -6,7 +6,7 @@ export const useUserStore = defineStore({
   state: (): State => ({
     token: '',
     isAuth: false,
-    userInfo: []
+    userInfo: {}
   }),
   actions: {
     setToken(token: string) {

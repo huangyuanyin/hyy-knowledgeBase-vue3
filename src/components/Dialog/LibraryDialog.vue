@@ -39,6 +39,7 @@ const publicList = [
   }
 ]
 const dialogVisible = ref(false)
+const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('user')).userInfo.avatar || '@/assets/img/img.jpg')
 const libraryFormRef = ref<FormInstance>()
 const libraryForm = reactive<RuleForm>({
   name: '',
@@ -59,15 +60,39 @@ watch(
     libraryForm.slug = uuidv4()
     dialogVisible.value = newVal
     groupId.value = route.query.gid
-    spaceId.value = route.query.sid
+    spaceId.value = infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalSpaceId') : route.query.sid
     libraryForm.group = groupId.value
     libraryForm.space = spaceId.value
-    if (newVal) {
+    if (newVal && infoStore.currentSidebar === 'SpaceSidebar') {
       const { groupsList, getGroups } = await useGroupsApi(getGroupsApi, { space: spaceId.value, group: groupId.value })
       getGroups()
       teamList.value = groupsList.value
+      console.log(`output->groupId.value`, props.stackId)
       await getBookStacks(groupId.value)
-      if (libraryForm.stacks === 'undefined') {
+      libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || ''
+      if (props.stackId === 'undefined' || props.stackId === '') {
+        teamList.value.map(async (it) => {
+          if (it.is_default === '1') {
+            libraryForm.group = String(it.id)
+            selectGroupName.value = it.groupname
+            await getBookStacks(it.id)
+            libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || ''
+          }
+        })
+        console.log(`output->libraryForm.stacks `, libraryForm.stacks, stacksList.value)
+      }
+    }
+    if (newVal && infoStore.currentSidebar === 'Sidebar') {
+      teamList.value = [
+        {
+          id: localStorage.getItem('personalGroupId'),
+          img: avatar.value,
+          groupname: JSON.parse(localStorage.getItem('user')).userInfo.name
+        }
+      ]
+      libraryForm.group = teamList.value[0].id
+      await getBookStacks(teamList.value[0].id)
+      if (props.stackId === 'undefined' || props.stackId === '') {
         libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || ''
       }
     }
@@ -112,7 +137,6 @@ const toSelectTeam = async (val) => {
   selectGroupName.value = teamList.value.filter((item) => item.id == val)[0].groupname
   await getBookStacks(val)
   await handleStackId(val)
-  console.log(`output->libraryForm.value.stacks`, stacksList.value, libraryForm.stacks, libraryForm)
 }
 
 // 新建知识库
@@ -129,7 +153,7 @@ const addLibrary = async () => {
 // 获取知识库分组列表
 const getBookStacks = async (val) => {
   const params = {
-    space: spaceId.value,
+    space: infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalSpaceId') : spaceId.value,
     group: val
   }
   let res = await getBookStacksApi(params)
@@ -156,13 +180,13 @@ const getBookStacks = async (val) => {
       <el-form-item label="新建至" v-if="infoStore.currentSidebar === 'Sidebar'">
         <el-select v-model="libraryForm.group" prop="public">
           <template #prefix>
-            <img class="prefix-icon" src="/src/assets/icons/library/publicIcon.svg" />
+            <img class="prefix-icon" :src="avatar" />
           </template>
-          <el-option :label="item.author" :value="item.id" v-for="(item, index) in teamList" :key="'teamList' + index">
+          <el-option :label="item.groupname" :value="item.id" v-for="(item, index) in teamList" :key="'teamList' + index">
             <div class="form-public">
               <div class="form-public-left">
                 <img :src="item.img" />
-                <span style="float: left">{{ item.author }}</span>
+                <span style="float: left">{{ item.groupname }}</span>
               </div>
               <img class="selectIcon" src="@/assets/icons/selectIcon.svg" />
             </div>
@@ -199,7 +223,7 @@ const getBookStacks = async (val) => {
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="分组" class="public-item" v-if="groupId == libraryForm.group">
+      <el-form-item label="分组" class="public-item">
         <el-select v-model="libraryForm.stacks">
           <el-option :label="item.name" :value="String(item.id)" v-for="(item, index) in stacksList" :key="'stacksList' + index">
             <div class="form-public">

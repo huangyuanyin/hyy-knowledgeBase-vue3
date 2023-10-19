@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { commonLibraryData } from '@/data/data'
+import { addQuickLinksApi, deleteQuickLinksApi } from '@/api/quickLinks'
+import { commonLibraryData, notCommonLibraryData } from '@/data/data'
 import { LibraryCard } from '@/type/card'
 
 const props = defineProps({
@@ -13,6 +14,10 @@ const props = defineProps({
   }
 })
 
+const route = useRoute()
+const infoStore = useInfoStore()
+const listStore = useListStore()
+const dataStore = useDataStore()
 const isShowsLibraryDialog = ref(false)
 const isShowsDeleteDialog = ref(false)
 const deleteInfo = ref<{
@@ -28,6 +33,84 @@ const toDeleteLibrary = (val) => {
   isShowsDeleteDialog.value = true
   deleteInfo.value = val
 }
+
+const removeCommon = (val) => {
+  const params = {
+    user: JSON.parse(localStorage.getItem('user')).userInfo.username || '',
+    space: val.space
+  }
+  deleteQuickLinks(val.is_common_id, params)
+}
+
+const deleteQuickLinks = async (id, params) => {
+  let res = await deleteQuickLinksApi(id, params)
+  if (res.code === 1000) {
+    listStore.setRefreshQuickListStatus(true)
+    ElMessage.success('移除成功')
+    dataStore.setIsGetQuickList(true)
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const addCommon = (val) => {
+  const params = {
+    title: val.name,
+    target_id: String(val.id),
+    target_type: 'book',
+    slug: val.slug,
+    user: JSON.parse(localStorage.getItem('user')).userInfo.username || '',
+    space: val.space
+  }
+  addQuickLinks(params)
+}
+
+const addQuickLinks = async (params) => {
+  let res = await addQuickLinksApi(params)
+  if (res.code === 1000) {
+    listStore.setRefreshQuickListStatus(true)
+    ElMessage.success('添加成功')
+    dataStore.setIsGetQuickList(true)
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const toLink = (item) => {
+  if (infoStore.currentSidebar === 'Sidebar') {
+    router.push({
+      path: `/directory/index`,
+      query: {
+        sid: item.space,
+        sname: route.query.sname,
+        lid: item.id,
+        lname: item.name
+      }
+    })
+  } else {
+    if (item.target_typ === 'group') {
+      router.push({
+        path: `/${infoStore.currentSpaceName}/team/book`,
+        query: {
+          sid: item.space,
+          sname: route.query.sname,
+          gid: item.target_id,
+          gname: item.title
+        }
+      })
+    } else {
+      router.push({
+        path: `/${infoStore.currentSpaceName}/directory/index`,
+        query: {
+          sid: item.space,
+          sname: route.query.sname,
+          lid: item.id,
+          lname: item.title || item.name
+        }
+      })
+    }
+  }
+}
 </script>
 
 <template>
@@ -39,7 +122,7 @@ const toDeleteLibrary = (val) => {
             <img src="/src/assets/icons/bookIcon.svg" alt="" class="bookIcon" />
           </div>
           <div class="header-right">
-            <div style="display: flex; align-items: center">
+            <div style="display: flex; align-items: center" @click="toLink(card)">
               <span>{{ card.name }}</span>
               <el-tooltip effect="dark" content="共享知识库" placement="top" :show-arrow="false">
                 <span class="publicIcon" v-if="card.public === '0'"><img src="/src/assets/icons/publicIcon.svg" alt="" /></span>
@@ -48,7 +131,12 @@ const toDeleteLibrary = (val) => {
                 <span class="publicIcon" v-if="card.public === '1'"><img src="/src/assets/icons/privateIcon.svg" alt="" /></span>
               </el-tooltip>
             </div>
-            <LibraryOperationPopver :menuItems="commonLibraryData" @deleteLibrary="toDeleteLibrary(card)">
+            <LibraryOperationPopver
+              :menuItems="card.is_common_id ? commonLibraryData : notCommonLibraryData"
+              @deleteLibrary="toDeleteLibrary(card)"
+              @removeCommon="removeCommon(card)"
+              @addCommon="addCommon(card)"
+            >
               <span class="moreIcon"><img src="/src/assets/icons/moreIcon1_after.svg" alt="" /></span>
             </LibraryOperationPopver>
           </div>

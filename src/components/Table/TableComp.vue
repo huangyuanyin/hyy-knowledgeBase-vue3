@@ -16,6 +16,9 @@ const props = defineProps({
   }
 })
 
+const route = useRoute()
+const router = useRouter()
+const infoStore = useInfoStore()
 const userStore = useUserStore()
 const listStore = useListStore()
 const dataStore = useDataStore()
@@ -73,36 +76,73 @@ const toQuickLink = (operation, val, type) => {
       title: val.groupname || val.name,
       target_id: String(val.id),
       target_type: type,
+      slug: val.slug,
       user: JSON.parse(localStorage.getItem('user')).userInfo.username || '',
       space: val.space
     }
-    addQuickLinks(params)
+    addQuickLinks(params, type)
   } else {
     const params = {
       user: userStore.userInfo.username,
       space: val.space
     }
-    deleteQuickLinks(val.is_common_id, params)
+    deleteQuickLinks(val.is_common_id, params, type)
   }
 }
 
-const deleteQuickLinks = async (id, params) => {
+const deleteQuickLinks = async (id, params, type) => {
   let res = await deleteQuickLinksApi(id, params)
   if (res.code === 1000) {
-    listStore.setRefreshQuickListStatus(true)
-    ElMessage.success('移除成功')
-    dataStore.setIsGetQuickList(true)
+    if (type === 'book') {
+      listStore.setRefreshQuickListStatus(true)
+      ElMessage.success('移除成功')
+      dataStore.setIsGetQuickList(true)
+    } else {
+      listStore.setRefreshQuickListStatus(true)
+      ElMessage.success('移除成功')
+      dataStore.setIsGetTeamQuickList(true)
+    }
   }
 }
 
-const addQuickLinks = async (params) => {
+const addQuickLinks = async (params, type) => {
   let res = await addQuickLinksApi(params)
   if (res.code === 1000) {
-    listStore.setRefreshQuickListStatus(true)
-    ElMessage.success('添加成功')
-    dataStore.setIsGetQuickList(true)
+    if (type === 'book') {
+      listStore.setRefreshQuickListStatus(true)
+      ElMessage.success('添加成功')
+      dataStore.setIsGetQuickList(true)
+    } else {
+      listStore.setRefreshQuickListStatus(true)
+      ElMessage.success('添加成功')
+      dataStore.setIsGetTeamQuickList(true)
+    }
   } else {
     ElMessage.error(res.msg)
+  }
+}
+
+const toLink = (val, type) => {
+  if (type === 'team') {
+    router.push({
+      path: `/${infoStore.currentSpaceName}/team/book`,
+      query: {
+        sid: val.space,
+        sname: route.query.sname,
+        gid: val.id,
+        gname: val.groupname
+      }
+    })
+  } else if (type === 'library') {
+    router.push({
+      path: `/${infoStore.currentSpaceName}/directory/index`,
+      query: {
+        sid: val.space,
+        sname: route.query.sname,
+        lid: val.id,
+        lname: val.name
+      }
+    })
   }
 }
 </script>
@@ -179,7 +219,7 @@ const addQuickLinks = async (params) => {
           <td class="item-title">
             <div>
               <img :src="document.icon || '/src/assets/icons/bookIcon.svg'" alt="" />
-              <div class="item-title-right">
+              <div class="item-title-right" @click="toLink(document, 'library')">
                 <el-tooltip effect="light" :content="document.name" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
                   <span>{{ document.name }}</span>
                 </el-tooltip>
@@ -187,7 +227,7 @@ const addQuickLinks = async (params) => {
             </div>
           </td>
           <td class="item-user">
-            <span class="username">{{ ' 暂无 ' }}</span>
+            <span class="username">{{ document.group_name }}</span>
           </td>
           <td class="item-time">
             <span>{{ document.update_datetime }}</span>
@@ -195,10 +235,10 @@ const addQuickLinks = async (params) => {
           <td class="item-operation more">
             <el-tooltip effect="dark" :content="document.is_common_id ? '取消常用' : '添加常用'" :offset="6" placement="top" :show-arrow="false">
               <span class="pinIcon" v-if="document.is_common_id">
-                <img src="@/assets/icons/pinIcon.svg" alt="" @click="toQuickLink('delete', document, 'Book')" />
+                <img src="@/assets/icons/pinIcon.svg" alt="" @click="toQuickLink('delete', document, 'book')" />
               </span>
               <span class="pinIcon" v-else>
-                <img src="@/assets/icons/pinOutIcon.svg" alt="" @click="toQuickLink('add', document, 'Book')" />
+                <img src="@/assets/icons/pinOutIcon.svg" alt="" @click="toQuickLink('add', document, 'book')" />
               </span>
             </el-tooltip>
             <LibraryOperationPopver :menuItems="libraryOperationData" :width="126">
@@ -214,7 +254,7 @@ const addQuickLinks = async (params) => {
           <td class="item-title">
             <div>
               <img :src="document.icon || '/src/assets/icons/teamIcon.svg'" alt="" />
-              <div class="item-title-right">
+              <div class="item-title-right" @click="toLink(document, 'team')">
                 <el-tooltip effect="light" :content="document.groupname" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
                   <span>{{ document.groupname }}</span>
                 </el-tooltip>
@@ -238,10 +278,10 @@ const addQuickLinks = async (params) => {
           <td class="item-operation more">
             <el-tooltip effect="dark" :content="document.is_common_id ? '取消常用' : '设为常用'" :offset="6" placement="top" :show-arrow="false">
               <span class="pinIcon" v-if="document.is_common_id">
-                <img src="@/assets/icons/pinIcon.svg" alt="" @click="toQuickLink('delete', document, 'Group')" />
+                <img src="@/assets/icons/pinIcon.svg" alt="" @click="toQuickLink('delete', document, 'group')" />
               </span>
               <span class="pinIcon" v-else>
-                <img src="@/assets/icons/pinOutIcon.svg" alt="" @click="toQuickLink('add', document, 'Group')" />
+                <img src="@/assets/icons/pinOutIcon.svg" alt="" @click="toQuickLink('add', document, 'group')" />
               </span>
             </el-tooltip>
             <LibraryOperationPopver :menuItems="commonTeamData" :height="40">

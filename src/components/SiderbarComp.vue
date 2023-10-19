@@ -3,6 +3,8 @@ import { libraryOperationData, teamOperationData, moreOperationData, menuItemsDa
 import { MenuItem } from '@/type/operationPopoverType'
 import { contentItemsData, moreMenuItemsData } from '@/data/data'
 import { getSpacesApi } from '@/api/spaces/index'
+import { getGroupsApi } from '@/api/groups'
+import { deleteQuickLinksApi } from '@/api/quickLinks'
 
 interface ContentItem {
   title: string
@@ -34,14 +36,26 @@ const props = defineProps({
 })
 
 const route = useRoute()
+const listStore = useListStore()
 const infoStore = useInfoStore()
 const dataStore = useDataStore()
+const userStore = useUserStore()
 const state = reactive({
   headerActive: null,
   currentGroup: null,
   currentSpace: infoStore.currentSpaceInfo.nickname || route.path.split('/')[1],
   operatData: []
 })
+const isShowsDeleteDialog = ref(false)
+const spacesList = ref([])
+const deleteInfo = ref<{
+  id?: string
+  name?: string
+  slug?: string
+  space?: string
+  group?: string
+  stack?: string
+}>({})
 const typeIcon = {
   '0': '/src/assets/icons/privateIcon.svg',
   '1': '/src/assets/icons/publicIcon.svg'
@@ -62,7 +76,7 @@ watch(
         case 'team':
           if (route.path.split('/').length >= 4 && route.path.split('/')[2] === 'team') {
             state.headerActive = null
-            state.currentGroup = Number(route.query.gid)
+            state.currentGroup = route.query.gid
             console.log(`output->state.currentGroup1212`, state.currentGroup)
           } else {
             state.headerActive = 1
@@ -116,25 +130,25 @@ const toLink = (type) => {
 }
 
 const handleClickLibrary = (val: any) => {
-  if (val.groupname) {
+  console.log(`output->val`, val)
+  if (val.target_type === 'group') {
     router.push({
       path: `/${state.currentSpace}/team/book`,
       query: {
         ...route.query,
-        gname: val.groupname,
-        gid: val.id
+        gname: val.title,
+        gid: val.target_id
       }
     })
-    state.currentGroup = val.groupkey
+    state.currentGroup = val.target_id
     dataStore.setIsGetBookStacks(true)
   } else {
     const query = {
       lid: val.id,
-      lname: val.name,
+      lname: val.name || val.title,
       sid: route.query.sid,
       sname: route.query.sname
     }
-    console.log(`output->infoStore`, state.currentSpace)
     switch (infoStore.currentSidebar) {
       case 'Sidebar':
         router.push({ path: '/directory/index', query })
@@ -173,9 +187,52 @@ const toTopic = (val) => {
   })
 }
 
-const { spacesList, getSpaces } = useSpacesApi(getSpacesApi, {}, false)
-getSpaces().then(() => {
-  bus.emit('TriggerSettingData', spacesList.value)
+const toRemoveCommon = (val) => {
+  console.log(`output->val`, val)
+  const params = {
+    user: JSON.parse(localStorage.getItem('user')).userInfo.username || '',
+    space: val.space
+  }
+  deleteQuickLinks(val.id, params)
+}
+
+const deleteQuickLinks = async (id, params) => {
+  let res = await deleteQuickLinksApi(id, params)
+  if (res.code === 1000) {
+    ElMessage.success('移除成功')
+    dataStore.setIsGetQuickList(true)
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const toDeleteLibrary = (item: any) => {
+  isShowsDeleteDialog.value = true
+  deleteInfo.value = item
+  deleteInfo.value.name = item.title
+  deleteInfo.value.id = item.target_id
+}
+
+const getSpaces = async () => {
+  const params = {
+    permusername: JSON.parse(localStorage.getItem('user')).userInfo.username || ''
+  }
+  let res = await getSpacesApi(params)
+  if (res.code === 1000) {
+    if (localStorage.getItem('personalSpaceId') === null) {
+      console.log(`output->1212`, 1212)
+      res.data.map((item) => {
+        if (item.spacetype === 'personal' && item.creator === userStore.userInfo.username) {
+          infoStore.setPersonalSpaceId(item.id)
+        }
+      })
+    }
+    bus.emit('TriggerSettingData', res.data)
+  }
+}
+
+onMounted(async () => {
+  await getSpaces()
 })
 </script>
 
@@ -198,7 +255,7 @@ getSpaces().then(() => {
           </div>
           <el-tree
             :data="item.libraryList"
-            node-key="id"
+            node-key="target_id"
             :current-node-key="state.currentGroup"
             default-expand-all
             :highlight-current="item.title === '团队' ? true : false"
@@ -210,12 +267,18 @@ getSpaces().then(() => {
               <span :class="['custom-tree-node']">
                 <div style="display: flex; align-items: center; flex: 1">
                   <img :src="item.icon" alt="" />
-                  <span class="title">{{ data.name || data.groupname }}</span>
+                  <span class="title">{{ data.name || data.groupname || data.title }}</span>
                   <span class="type-icon">
-                    <img :src="typeIcon[data.public]" alt="" />
+                    <img :src="typeIcon[data.public] || '/src/assets/icons/privateIcon.svg'" alt="" />
                   </span>
                 </div>
-                <LibraryOperationPopver :menuItems="item.type !== 'team' ? libraryOperationData : teamOperationData" @toBook="toBook(data)" @toTopic="toTopic(data)">
+                <LibraryOperationPopver
+                  :menuItems="item.type !== 'team' ? libraryOperationData : teamOperationData"
+                  @toBook="toBook(data)"
+                  @toTopic="toTopic(data)"
+                  @toDeleteLibrary="toDeleteLibrary(data)"
+                  @toRemoveCommon="toRemoveCommon(data)"
+                >
                   <span class="more-icon" @click.stop>
                     <img src="@/assets/icons/moreIcon1.svg" alt="" />
                   </span>
@@ -240,6 +303,7 @@ getSpaces().then(() => {
       </MorePopver>
     </div>
   </div>
+  <DeleteDialog :isShow="isShowsDeleteDialog" :deleteInfo="deleteInfo" @closeDialog="isShowsDeleteDialog = false" />
 </template>
 
 <style lang="scss" scoped>
