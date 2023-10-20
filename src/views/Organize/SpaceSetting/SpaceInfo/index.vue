@@ -3,22 +3,24 @@ import { FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { getSpacesDetailApi, editSpacesApi } from '@/api/spaces/index'
 
-const route = useRoute()
-const spaceId = ref(Number(route.query.id) || null)
-
 interface SpaceForm {
   spacename: string
   spacekey: string
+  spacetype: string
+  description: string
   icon: string
-  desc: string
 }
 
+const route = useRoute()
+const router = useRouter()
+const spaceId = ref(Number(route.query.sid) || null)
 const spaceFormRef = ref<FormInstance>()
 const spaceForm = reactive<SpaceForm>({
   spacename: '',
   spacekey: '',
-  icon: '',
-  desc: ''
+  spacetype: '',
+  description: '',
+  icon: ''
 })
 const rules = reactive<FormRules<SpaceForm>>({
   spacename: [
@@ -45,7 +47,9 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid) => {
     if (valid) {
-      editSpaces(spaceForm, spaceId.value)
+      const params = JSON.parse(JSON.stringify(spaceForm))
+      params.spacekey = route.path.split('/')[1]
+      editSpaces(params, spaceId.value)
     }
   })
 }
@@ -54,14 +58,22 @@ const editSpaces = async (params, id) => {
   let res = await editSpacesApi(params, id)
   if (res.code === 1000) {
     ElMessage.success('更新成功')
+    router.push({
+      path: `/${route.path.split('/')[1]}/organize/settings`,
+      query: {
+        sname: spaceForm.spacename,
+        sid: spaceId.value
+      }
+    })
   }
 }
 
 const getDetailSpaces = async (id: number) => {
   let res = await getSpacesDetailApi(id)
   spaceForm.spacename = res.data.spacename
-  spaceForm.spacekey = res.data.spacekey
-  console.log(`output->id`, res)
+  spaceForm.spacekey = 'http://10.4.150.55:8080/' + res.data.spacekey + '/dashboard'
+  spaceForm.spacetype = res.data.spacetype
+  spaceForm.description = res.data.description
 }
 
 onMounted(() => {
@@ -78,19 +90,16 @@ onMounted(() => {
           <el-input v-model="spaceForm.spacename" placeholder="如：就叫小黄好了" />
         </el-form-item>
         <el-form-item label="空间地址" prop="spacekey">
-          <el-input v-model="spaceForm.spacekey" clearable>
-            <template #prepend>http://10.4.150.55:8080/</template>
-            <template #append>/dashboard</template>
-          </el-input>
+          <el-input v-model="spaceForm.spacekey" disabled clearable></el-input>
         </el-form-item>
         <el-form-item label="空间描述">
-          <el-input v-model="spaceForm.desc" type="textarea" rows="7" placeholder="如：让天下没有难做的生意" />
+          <el-input v-model="spaceForm.description" type="textarea" rows="7" placeholder="如：让天下没有难做的生意" />
         </el-form-item>
         <el-form-item label="空间标识">
           <div class="icon-tag">
             <img v-if="!spaceForm.icon" src="/src/assets/icons/spaceIcon.svg" alt="" />
             <img v-else :src="spaceForm.icon" alt="" />
-            <el-upload v-model:file-list="spaceForm.icon" class="upload" action="" :auto-upload="false" :show-file-list="false" @change="toUploadImg">
+            <el-upload v-model="spaceForm.icon" class="upload" action="" :auto-upload="false" :show-file-list="false" @change="toUploadImg">
               <el-button class="upload-button"><i-ep-Upload></i-ep-Upload>上传图标</el-button>
               <template #tip>
                 <div class="upload-tip">支持文件格式：.png, .jpg...</div>

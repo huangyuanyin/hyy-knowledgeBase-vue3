@@ -55,8 +55,8 @@ watchEffect(() => {
     .name {
       font-size: 14px;
       font-weight: 500;
-      // 最大宽度115px，超出部分显示省略号
-      max-width: 100%;
+      width: 100%;
+      max-width: 115px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

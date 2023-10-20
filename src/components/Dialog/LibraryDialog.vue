@@ -57,7 +57,7 @@ watch(
   () => props.isShow,
   async (newVal: boolean) => {
     libraryForm.stacks = props.stackId
-    libraryForm.slug = uuidv4()
+    libraryForm.slug = uuidv4().replace(/-/g, '')
     dialogVisible.value = newVal
     groupId.value = route.query.gid
     spaceId.value = infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalSpaceId') : route.query.sid

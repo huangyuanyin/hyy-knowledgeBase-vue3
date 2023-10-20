@@ -6,10 +6,17 @@
     </div>
     <div class="title">
       <img src="/src/assets/icons/spaceIcon.svg" alt="" />
-      <span>{{ $route.query.name || '未知' }}</span>
+      <span>{{ $route.query.sname || '未知' }}</span>
     </div>
     <div class="menu">
-      <el-tree :data="organizeMenu" node-key="id" highlight-current @node-click="handleClickNode">
+      <el-tree
+        :data="organizeMenu"
+        node-key="nick"
+        :current-node-key="route.path.split('/')[route.path.split('/').length - 1]"
+        highlight-current
+        default-expand-all
+        @node-click="handleClickNode"
+      >
         <template #default="{ data }">
           <span class="custom-tree-node">
             <div>
@@ -27,81 +34,9 @@
 </template>
 
 <script lang="ts" setup>
+import { organizeMenu } from '@/data/data'
+
 const route = useRoute()
-
-const organizeMenu = [
-  {
-    id: 1,
-    title: '空间总览',
-    icon: '/src/assets/icons/organize/spaceIcon.svg',
-    url: '/dashboard',
-    children: []
-  },
-  {
-    id: 2,
-    title: '人员与权限',
-    icon: '/src/assets/icons/organize/memberIcon.svg',
-    children: [
-      {
-        id: 201,
-        title: '通讯录',
-        icon: '',
-        children: []
-      },
-      {
-        id: 202,
-        title: '权限设置',
-        icon: '',
-        children: []
-      },
-      {
-        id: 203,
-        title: '管理员设置',
-        icon: '',
-        children: []
-      }
-    ]
-  },
-  {
-    id: 3,
-    title: '团队管理',
-    icon: '/src/assets/icons/organize/teamIcon.svg',
-    children: []
-  },
-  {
-    id: 4,
-    title: '空间设置',
-    icon: '/src/assets/icons/organize/setIcon.svg',
-    children: [
-      {
-        id: 401,
-        title: '空间信息',
-        icon: '',
-        url: '/settings',
-        children: []
-      },
-      {
-        id: 402,
-        title: '偏好设置',
-        icon: '',
-        children: []
-      },
-      {
-        id: 403,
-        title: '高级设置',
-        icon: '',
-        children: []
-      }
-    ]
-  },
-  {
-    id: 5,
-    title: '回收站',
-    icon: '/src/assets/icons/organize/deleteIcon.svg',
-    children: []
-  }
-]
-
 const expandedNodes = ref([])
 
 const handleClickNode = (node) => {

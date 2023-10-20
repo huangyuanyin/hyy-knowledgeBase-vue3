@@ -142,11 +142,47 @@ const customRoutes = [
     }
   },
   {
+    path: '/:spaceName/organize/addressBook',
+    name: 'Organize-AddressBook',
+    component: pageComps['/src/views/Organize/PeoplePermissions/AddressBook/index.vue'] as Component,
+    meta: {
+      title: '空间管理·通讯录',
+      asideComponent: 'OrganizeSidebar'
+    }
+  },
+  {
     path: '/:spaceName/organize/settings',
     name: 'Organize-Settings',
     component: pageComps['/src/views/Organize/SpaceSetting/SpaceInfo/index.vue'] as Component,
     meta: {
       title: '空间管理·信息',
+      asideComponent: 'OrganizeSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/organize/advancedSet',
+    name: 'Organize-AdvancedSet',
+    component: pageComps['/src/views/Organize/SpaceSetting/AdvancedSet/index.vue'] as Component,
+    meta: {
+      title: '空间管理·高级设置',
+      asideComponent: 'OrganizeSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/organize/teamManage',
+    name: 'Organize-TeamManage',
+    component: pageComps['/src/views/Organize/TeamManage/index.vue'] as Component,
+    meta: {
+      title: '空间管理·团队管理',
+      asideComponent: 'OrganizeSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/organize/recycleBin',
+    name: 'Organize-RecycleBin',
+    component: pageComps['/src/views/Organize/RecycleBin/index.vue'] as Component,
+    meta: {
+      title: '空间管理·回收站',
       asideComponent: 'OrganizeSidebar'
     }
   }

@@ -17,6 +17,7 @@ const spacesList = ref([])
 const personalSpaceName = ref(JSON.parse(localStorage.getItem('user')).userInfo.name || '')
 const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('user')).userInfo.avatar || '@/assets/img/img.jpg')
 const isShowsSpaceDialog = ref(false)
+const isAdmin = ref(sessionStorage.getItem('isAdmin'))
 
 const state = reactive({
   currentSpaceName: route.query.sname || ''
@@ -123,7 +124,7 @@ onMounted(async () => {
             </div>
           </div>
           <div class="card-content">
-            <div class="content">
+            <div class="content" v-if="isAdmin == 'true'">
               <div class="type">
                 <span>标准版</span>
                 <span>升级</span>
@@ -148,6 +149,12 @@ onMounted(async () => {
                 <img class="settingIcon" src="/src/assets/icons/settingIcon.svg" alt="" />
                 <img class="settingIcon_active" src="/src/assets/icons/settingIcon_active.svg " alt="" />
                 <span>空间管理</span>
+              </div>
+            </div>
+            <div class="content-member" v-else>
+              <div class="admin">
+                <span>管理员</span>
+                <img :src="avatar" />
               </div>
             </div>
             <div class="divider"></div>
@@ -449,6 +456,30 @@ onMounted(async () => {
               .settingIcon_active {
                 display: flex;
               }
+            }
+          }
+        }
+        .content-member {
+          background: #fafafa;
+          border-radius: 6px;
+          border: 1px solid #e7e9e8;
+          padding: 10px 17px;
+          display: flex;
+          flex-direction: column;
+          .admin {
+            display: flex;
+            align-items: center;
+            span {
+              font-size: 12px;
+              color: #8a8f8d;
+              line-height: 24px;
+            }
+            img {
+              margin-left: 12px;
+              width: 16px;
+              min-width: 16px;
+              height: 16px;
+              border-radius: 8px;
             }
           }
         }

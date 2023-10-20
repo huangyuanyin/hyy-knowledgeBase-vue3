@@ -2,7 +2,7 @@
 import { libraryOperationData, teamOperationData, moreOperationData, menuItemsData, spaceMenuItemsData } from '@/data/data'
 import { MenuItem } from '@/type/operationPopoverType'
 import { contentItemsData, moreMenuItemsData } from '@/data/data'
-import { getSpacesApi } from '@/api/spaces/index'
+import { getSpacesApi, getSpacesDetailApi } from '@/api/spaces/index'
 import { getGroupsApi } from '@/api/groups'
 import { deleteQuickLinksApi } from '@/api/quickLinks'
 
@@ -47,7 +47,7 @@ const state = reactive({
   operatData: []
 })
 const isShowsDeleteDialog = ref(false)
-const spacesList = ref([])
+const isAdmin = ref(false)
 const deleteInfo = ref<{
   id?: string
   name?: string
@@ -77,7 +77,6 @@ watch(
           if (route.path.split('/').length >= 4 && route.path.split('/')[2] === 'team') {
             state.headerActive = null
             state.currentGroup = route.query.gid
-            console.log(`output->state.currentGroup1212`, state.currentGroup)
           } else {
             state.headerActive = 1
           }
@@ -87,7 +86,7 @@ watch(
           break
       }
       infoStore.setCurrentSpaceInfo({
-        nickname: infoStore.currentSpaceName,
+        nickname: infoStore.currentSpaceName || route.path.split('/')[1],
         name: route.query.sname.toString(),
         id: Number(route.query.sid),
         icon: ''
@@ -154,7 +153,12 @@ const handleClickLibrary = (val: any) => {
         router.push({ path: '/directory/index', query })
         break
       case 'SpaceSidebar':
-        router.push({ path: `/${state.currentSpace}/directory/index`, query })
+        router.push({
+          path: `/${state.currentSpace}/directory/index`,
+          query: {
+            ...query
+          }
+        })
         break
       default:
         break
@@ -187,8 +191,17 @@ const toTopic = (val) => {
   })
 }
 
+const toSpaceManager = () => {
+  router.push({
+    path: `/${infoStore.currentSpaceName}/organize/dashboard`,
+    query: {
+      sid: route.query.sid,
+      sname: route.query.sname
+    }
+  })
+}
+
 const toRemoveCommon = (val) => {
-  console.log(`output->val`, val)
   const params = {
     user: JSON.parse(localStorage.getItem('user')).userInfo.username || '',
     space: val.space
@@ -231,8 +244,30 @@ const getSpaces = async () => {
   }
 }
 
+const getSpacesDeatil = async () => {
+  let res = await getSpacesDetailApi(Number(route.query.sid))
+  if (res.code === 1000) {
+    // 循环res.data，找到item.permusername等于JSON.parse(localStorage.getItem('user')).userInfo.username的项，判断item.permtype是否为0，是则isAdmin为true,否则为false，找到则中止循环
+    res.data.members.map((item) => {
+      if (item.permusername === JSON.parse(localStorage.getItem('user')).userInfo.username) {
+        if (item.permtype === '0') {
+          isAdmin.value = true
+        } else {
+          isAdmin.value = false
+        }
+      }
+    })
+    sessionStorage.setItem('isAdmin', isAdmin.value.toString())
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
 onMounted(async () => {
   await getSpaces()
+  if (JSON.parse(localStorage.getItem('currentSidebar')) === 'SpaceSidebar') {
+    await getSpacesDeatil()
+  }
 })
 </script>
 
@@ -291,7 +326,7 @@ onMounted(async () => {
     </div>
     <div class="divider" v-if="infoStore.currentSidebar === 'SpaceSidebar'"></div>
     <div class="last-comp">
-      <div class="more-item" v-if="infoStore.currentSidebar === 'SpaceSidebar'">
+      <div class="more-item" v-if="infoStore.currentSidebar === 'SpaceSidebar' && isAdmin" @click="toSpaceManager">
         <img src="/src/assets/icons/settingIcon.svg" alt="" />
         <span>空间管理</span>
       </div>

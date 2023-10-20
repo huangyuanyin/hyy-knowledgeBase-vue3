@@ -224,7 +224,7 @@ const list = ref([
 const teamFormRef = ref<FormInstance>()
 const teamForm = reactive({
   groupname: '',
-  groupkey: uuidv4(),
+  groupkey: uuidv4().replace(/-/g, ''),
   space: String(route.query.sid),
   members: [],
   description: ''
