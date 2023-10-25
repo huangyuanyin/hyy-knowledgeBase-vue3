@@ -35,7 +35,7 @@ const props = defineProps({
   box-sizing: border-box;
   .empty {
     &-img {
-      width: 110px;
+      // width: 110px;
       height: 110px;
       padding: 15.28px 0 11.68px 12.83px;
       margin-bottom: 16px;

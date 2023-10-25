@@ -1,5 +1,5 @@
 export interface articleParams {
-  book: string
+  book_id: string
 }
 
 interface article {

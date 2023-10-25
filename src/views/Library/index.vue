@@ -22,6 +22,12 @@ watch(
   }
 )
 
+watchEffect(async () => {
+  if (dataStore.isGetLibrary) {
+    getLibrary()
+  }
+})
+
 // 获取当前空间下的常用列表
 const getQuickLinks = async () => {
   const params = {

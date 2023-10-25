@@ -1,9 +1,9 @@
 <template>
   <el-container class="layout-wrap">
     <el-aside v-if="currentSidebar" class="layout-wrap-left" :style="{ width: asideComponentWidth[asideComponent  as keyof typeof asideComponentWidth].with }">
-      <!-- <keep-alive> -->
-      <component :is="currentSidebar" />
-      <!-- </keep-alive> -->
+      <keep-alive>
+        <component :is="currentSidebar" />
+      </keep-alive>
     </el-aside>
     <el-main
       :class="['layout-wrap-right', asideComponent === 'DirectorySidebar' ? 'no-padding' : 'use-padding']"
@@ -35,6 +35,10 @@ const asideComponentWidth = {
   OrganizeSidebar: {
     with: '256px',
     padding: '48px 52px !important'
+  },
+  TeamSidebar: {
+    with: '256px',
+    padding: '48px 52px !important'
   }
 }
 
@@ -56,8 +60,6 @@ watch(route, (newRoute) => {
   asideComponent.value = newRoute.meta.asideComponent
   loadSidebar(asideComponent.value)
 })
-
-watchEffect(() => {})
 </script>
 
 <style lang="scss" scoped>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { getArticleApi } from '@/api/article'
+import { getArticleTreeApi } from '@/api/article'
 import { getGroupsApi } from '@/api/groups'
 import { getLibraryApi } from '@/api/library'
 
@@ -41,9 +41,9 @@ const closeDialog = () => {
 // 获取目录
 const getArticle = async () => {
   const params = {
-    book: bookId.value || ('1' as string)
+    book_id: bookId.value || ('1' as string)
   }
-  let res = await getArticleApi(params)
+  let res = await getArticleTreeApi(params)
   if (res.code === 1000) {
     dataSource.value = res.data || ([] as any)
   }

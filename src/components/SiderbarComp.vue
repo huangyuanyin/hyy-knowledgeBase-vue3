@@ -143,7 +143,7 @@ const handleClickLibrary = (val: any) => {
     dataStore.setIsGetBookStacks(true)
   } else {
     const query = {
-      lid: val.id,
+      lid: 64 || val.id,
       lname: val.name || val.title,
       sid: route.query.sid,
       sname: route.query.sname
@@ -167,14 +167,13 @@ const handleClickLibrary = (val: any) => {
 }
 
 const toBook = (val) => {
-  console.log(`output->val`, val)
   router.push({
     path: `/${state.currentSpace}/team/book`,
     query: {
       sid: route.query.sid,
       sname: route.query.sname,
-      gname: val.groupname,
-      gid: val.id
+      gname: val.title,
+      gid: val.target_id
     }
   })
 }
@@ -185,10 +184,14 @@ const toTopic = (val) => {
     query: {
       sid: route.query.sid,
       sname: route.query.sname,
-      gname: val.groupname,
-      gid: val.id
+      gname: val.title,
+      gid: val.target_id
     }
   })
+}
+
+const toReminderFree = (val) => {
+  ElMessage.warning('功能暂未开放，敬请期待')
 }
 
 const toSpaceManager = () => {
@@ -224,6 +227,18 @@ const toDeleteLibrary = (item: any) => {
   deleteInfo.value = item
   deleteInfo.value.name = item.title
   deleteInfo.value.id = item.target_id
+}
+
+const toTeamSetting = (val) => {
+  router.push({
+    path: `/${infoStore.currentSpaceName}/teamSetting/basic`,
+    query: {
+      gid: val.target_id,
+      gname: val.title,
+      sid: val.space,
+      sname: route.query.sname
+    }
+  })
 }
 
 const getSpaces = async () => {
@@ -311,8 +326,10 @@ onMounted(async () => {
                   :menuItems="item.type !== 'team' ? libraryOperationData : teamOperationData"
                   @toBook="toBook(data)"
                   @toTopic="toTopic(data)"
+                  @toReminderFree="toReminderFree(data)"
                   @toDeleteLibrary="toDeleteLibrary(data)"
                   @toRemoveCommon="toRemoveCommon(data)"
+                  @toTeamSetting="toTeamSetting(data)"
                 >
                   <span class="more-icon" @click.stop>
                     <img src="@/assets/icons/moreIcon1.svg" alt="" />

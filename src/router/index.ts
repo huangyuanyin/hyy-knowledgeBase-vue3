@@ -151,20 +151,20 @@ const customRoutes = [
     }
   },
   {
-    path: '/:spaceName/organize/settings',
-    name: 'Organize-Settings',
-    component: pageComps['/src/views/Organize/SpaceSetting/SpaceInfo/index.vue'] as Component,
+    path: '/:spaceName/organize/permission',
+    name: 'Organize-Permission',
+    component: pageComps['/src/views/Organize/PeoplePermissions/Permission/index.vue'] as Component,
     meta: {
-      title: '空间管理·信息',
+      title: '空间管理·权限设置',
       asideComponent: 'OrganizeSidebar'
     }
   },
   {
-    path: '/:spaceName/organize/advancedSet',
-    name: 'Organize-AdvancedSet',
-    component: pageComps['/src/views/Organize/SpaceSetting/AdvancedSet/index.vue'] as Component,
+    path: '/:spaceName/organize/administrator',
+    name: 'Organize-Administrator',
+    component: pageComps['/src/views/Organize/PeoplePermissions/Administrator/index.vue'] as Component,
     meta: {
-      title: '空间管理·高级设置',
+      title: '空间管理·管理员设置',
       asideComponent: 'OrganizeSidebar'
     }
   },
@@ -178,12 +178,75 @@ const customRoutes = [
     }
   },
   {
+    path: '/:spaceName/organize/settings',
+    name: 'Organize-Settings',
+    component: pageComps['/src/views/Organize/SpaceSetting/SpaceInfo/index.vue'] as Component,
+    meta: {
+      title: '空间管理·空间信息',
+      asideComponent: 'OrganizeSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/organize/preference',
+    name: 'Organize-Preference',
+    component: pageComps['/src/views/Organize/SpaceSetting/Preference/index.vue'] as Component,
+    meta: {
+      title: '空间管理·偏好设置',
+      asideComponent: 'OrganizeSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/organize/advancedSet',
+    name: 'Organize-AdvancedSet',
+    component: pageComps['/src/views/Organize/SpaceSetting/AdvancedSet/index.vue'] as Component,
+    meta: {
+      title: '空间管理·高级设置',
+      asideComponent: 'OrganizeSidebar'
+    }
+  },
+  {
     path: '/:spaceName/organize/recycleBin',
     name: 'Organize-RecycleBin',
     component: pageComps['/src/views/Organize/RecycleBin/index.vue'] as Component,
     meta: {
       title: '空间管理·回收站',
       asideComponent: 'OrganizeSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/teamSetting/basic',
+    name: 'Team-Basic',
+    component: pageComps['/src/views/TeamSetting/Basic/index.vue'] as Component,
+    meta: {
+      title: '团队管理·团队信息',
+      asideComponent: 'TeamSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/teamSetting/permission',
+    name: 'Team-Permission',
+    component: pageComps['/src/views/TeamSetting/Permission/index.vue'] as Component,
+    meta: {
+      title: '团队管理·权限',
+      asideComponent: 'TeamSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/teamSetting/settings',
+    name: 'Team-Settings',
+    component: pageComps['/src/views/TeamSetting/Settings/index.vue'] as Component,
+    meta: {
+      title: '团队管理·更多设置',
+      asideComponent: 'TeamSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/teamSetting/trash',
+    name: 'Team-Trash',
+    component: pageComps['/src/views/TeamSetting/Trash/index.vue'] as Component,
+    meta: {
+      title: '团队管理·回收站',
+      asideComponent: 'TeamSidebar'
     }
   }
 ]

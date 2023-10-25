@@ -48,6 +48,7 @@ declare module 'vue' {
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
+    ElTag: typeof import('element-plus/es')['ElTag']
     ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTree: typeof import('element-plus/es')['ElTree']
@@ -72,6 +73,7 @@ declare module 'vue' {
     LibraryDialog: typeof import('./src/components/Dialog/LibraryDialog.vue')['default']
     LibraryOperationPopver: typeof import('./src/components/Popver/LibraryOperationPopver.vue')['default']
     LibraryTable: typeof import('./src/components/Table/LibraryTable.vue')['default']
+    MemberDialog: typeof import('./src/components/Dialog/MemberDialog.vue')['default']
     ModuleItem: typeof import('./src/components/Item/ModuleItem.vue')['default']
     MorePopver: typeof import('./src/components/Popver/MorePopver.vue')['default']
     MoveDialog: typeof import('./src/components/Dialog/MoveDialog.vue')['default']
@@ -91,6 +93,7 @@ declare module 'vue' {
     TableComp: typeof import('./src/components/Table/TableComp.vue')['default']
     TeamDialog: typeof import('./src/components/Dialog/TeamDialog.vue')['default']
     TeamHeader: typeof import('./src/components/Header/TeamHeader.vue')['default']
+    TeamSidebar: typeof import('./src/components/Sidebar/TeamSidebar.vue')['default']
     UserPopver: typeof import('./src/components/Popver/UserPopver.vue')['default']
   }
   export interface ComponentCustomProperties {

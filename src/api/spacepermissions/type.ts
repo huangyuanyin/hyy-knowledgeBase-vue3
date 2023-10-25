@@ -1,9 +1,10 @@
 export interface SpacepermissionsParams {
-  space?: number
+  space?: string
 }
 
 export interface SpacepermissionsData {
-  [key: string]: any
+  permusername: Array<string>
+  space: string
 }
 
 export interface SpacepermissionsRes {

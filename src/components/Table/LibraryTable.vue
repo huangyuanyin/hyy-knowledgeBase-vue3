@@ -87,6 +87,7 @@ const addLibraryOperation = [
 watch(
   () => props.group,
   async (newVal) => {
+    console.log(`output->props.group`, props.group)
     if (newVal.length) {
       await Promise.all(
         props.group.map(async (item) => {
@@ -151,7 +152,7 @@ watchEffect(async () => {
   if (dataStore.isGetBookStacks) {
     const params = {
       space: spaceId.value,
-      group: groupId.value
+      group: infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalGroupId') : route.query.gid
     }
     let res = await getBookStacksApi(params)
     if (res.code === 1000) {
@@ -174,7 +175,7 @@ watchEffect(async () => {
 const addBookStacks = async () => {
   const params = {
     space: spaceId.value,
-    group: groupId.value,
+    group: infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalGroupId') : route.query.gid,
     name: '新建分组'
   }
   let res = await addBookStacksApi(params)
@@ -187,7 +188,7 @@ const addBookStacks = async () => {
 const deleteBookStacks = async (id) => {
   const params = {
     space: spaceId.value,
-    group: groupId.value
+    group: infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalGroupId') : route.query.gid
   }
   let res = await deleteBookStacksApi(id, params)
   if (res.code === 1000) {
@@ -201,7 +202,7 @@ const deleteBookStacks = async (id) => {
 const getLibrary = async (id) => {
   const params = {
     space: spaceId.value,
-    group: groupId.value,
+    group: infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalGroupId') : route.query.gid,
     stacks: id
   }
   let res = await getLibraryApi(params)

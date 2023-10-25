@@ -277,6 +277,8 @@ const addGroups = async () => {
         }
       })
     }, 1000)
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 

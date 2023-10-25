@@ -58,10 +58,10 @@ export const teamOperationData = [
   { type: 'item', icon: '/src/assets/icons/team/bookIcon.svg', label: '知识库', nick: 'toBook' },
   { type: 'item', icon: '/src/assets/icons/team/topicIcon.svg', label: '话题', nick: 'toTopic' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/team/removeCommonIcon.svg', label: '移除常用', nick: 'removeCommon' },
-  { type: 'item', icon: '/src/assets/icons/team/reminderFreeIcon.svg', label: '动态免提醒', nick: 'reminderFree' },
+  { type: 'item', icon: '/src/assets/icons/team/removeCommonIcon.svg', label: '移除常用', nick: 'toRemoveCommon' },
+  { type: 'item', icon: '/src/assets/icons/team/reminderFreeIcon.svg', label: '动态免提醒', nick: 'toReminderFree' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/team/settingIcon.svg', label: '团队设置', nick: 'teamSetting' },
+  { type: 'item', icon: '/src/assets/icons/team/settingIcon.svg', label: '团队设置', nick: 'toTeamSetting' },
   { type: 'item', icon: '/src/assets/icons/team/editIcon.svg', label: '退出团队', nick: 'exitTeam' }
 ]
 
@@ -93,16 +93,16 @@ export const notCommonLibraryData = [
 ]
 
 export const articleOperationData = [
-  { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '重命名', nick: 'removeCommon' },
-  { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '编辑文档', nick: 'removeCommon' },
-  { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '复制链接', nick: 'removeCommon' },
-  { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '在新标签页打开', nick: 'removeCommon' },
+  { type: 'item', icon: '/src/assets/icons/article/renameIcon.svg', label: '重命名', nick: 'removeCommon' },
+  { type: 'item', icon: '/src/assets/icons/article/editIcon.svg', label: '编辑文档', nick: 'removeCommon' },
+  { type: 'item', icon: '/src/assets/icons/article/copyLinkIcon.svg', label: '复制链接', nick: 'removeCommon' },
+  { type: 'item', icon: '/src/assets/icons/article/addTabIcon.svg', label: '在新标签页打开', nick: 'removeCommon' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '移除目录', nick: 'permission' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/renameIcon.svg', label: '复制', nick: 'rename' },
-  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '移动', nick: 'moveArticle' },
-  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '导出', nick: 'moreSetting' },
+  { type: 'item', icon: '/src/assets/icons/article/copyIcon.svg', label: '复制', nick: 'rename' },
+  { type: 'item', icon: '/src/assets/icons/article/moveIcon.svg', label: '移动', nick: 'moveArticle' },
+  { type: 'item', icon: '/src/assets/icons/article/exportIcon.svg', label: '导出', nick: 'moreSetting' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'deleteArticle' }
 ]
@@ -270,12 +270,16 @@ export const organizeMenu = [
       {
         id: 202,
         title: '权限设置',
+        url: '/permission',
+        nick: 'permission',
         icon: '',
         children: []
       },
       {
         id: 203,
         title: '管理员设置',
+        url: '/administrator',
+        nick: 'administrator',
         icon: '',
         children: []
       }
@@ -305,6 +309,8 @@ export const organizeMenu = [
       {
         id: 402,
         title: '偏好设置',
+        url: '/preference',
+        nick: 'preference',
         icon: '',
         children: []
       },

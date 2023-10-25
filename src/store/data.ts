@@ -3,6 +3,7 @@ export const useDataStore = defineStore('data', () => {
   const isGetLibrary = ref<Boolean>(false)
   const isGetQuickList = ref(false)
   const isGetTeamQuickList = ref(false)
+  const isRefreshSpaceMember = ref(false) // 刷新空间成员
 
   const setIsGetBookStacks = (val: boolean) => {
     isGetBookStacks.value = val
@@ -20,6 +21,10 @@ export const useDataStore = defineStore('data', () => {
     isGetTeamQuickList.value = val
   }
 
+  const setRefreshSpaceMember = (val: boolean) => {
+    isRefreshSpaceMember.value = val
+  }
+
   return {
     isGetBookStacks,
     setIsGetBookStacks,
@@ -28,6 +33,8 @@ export const useDataStore = defineStore('data', () => {
     isGetQuickList,
     setIsGetQuickList,
     isGetTeamQuickList,
-    setIsGetTeamQuickList
+    setIsGetTeamQuickList,
+    isRefreshSpaceMember,
+    setRefreshSpaceMember
   }
 })

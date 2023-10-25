@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { deleteGroupsApi } from '@/api/groups'
 import { deleteLibraryApi } from '@/api/library'
 import { deleteSpacesApi } from '@/api/spaces'
 
@@ -18,6 +19,8 @@ const props = defineProps({
 })
 const emit = defineEmits(['closeDialog'])
 
+const route = useRoute()
+const router = useRouter()
 const dataStore = useDataStore()
 const visible = ref(false)
 const inputName = ref('')
@@ -63,6 +66,26 @@ const toDelete = async (val) => {
     } else {
       ElMessage.error(res.msg)
     }
+  } else if (props.title === '删除团队') {
+    let res = await deleteGroupsApi(val.id)
+    if (res.code === 1000) {
+      closeDialog()
+      // 两秒后给出删除成功提示，1s后跳转到首页
+      setTimeout(() => {
+        ElMessage.success('删除成功，即将跳转到空间首页...')
+      }, 1000)
+      setTimeout(() => {
+        router.push({
+          path: `/${route.path.split('/')[1]}/dashboard`,
+          query: {
+            sid: route.query.sid,
+            sname: route.query.sname
+          }
+        })
+      }, 2000)
+    } else {
+      ElMessage.error(res.msg)
+    }
   }
 }
 
@@ -85,7 +108,7 @@ const closeDialog = () => {
         <div>
           正在{{ props.title }}
           <span class="highlight_name">{{ deleteInfo.name }}</span>
-          ，该操作不可逆，一旦操作成功，知识库下的所有内容将会删除。请输入下面内容再次确认操作。
+          ，该操作不可逆，一旦操作成功，该{{ props.title.substring(2) }}下的所有内容将会删除。请输入下面内容再次确认操作。
         </div>
       </div>
       <div class="tip">

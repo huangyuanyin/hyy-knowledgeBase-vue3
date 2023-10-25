@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { sidebarSearchMenuItemsData, articleOperationData } from '@/data/data'
-import { getArticleApi } from '@/api/article'
+import { getArticleTreeApi } from '@/api/article'
 
 const route = useRoute()
 const infoStore = useInfoStore()
+const articleStore = useArticleStore()
 const bookId = ref(route.query.lid || '') // 当前知识库id
 const dataSource = ref([])
 const SpaceType = ref<string>('') // 空间类型：个人 公共
@@ -66,11 +67,12 @@ const toLink = (type?: string) => {
 // 获取目录
 const getArticle = async () => {
   const params = {
-    book: bookId.value as string
+    book_id: bookId.value as string
   }
-  let res = await getArticleApi(params)
+  let res = await getArticleTreeApi(params)
   if (res.code === 1000) {
     dataSource.value = res.data || ([] as any)
+    console.log(`output->dataSource.value`, dataSource.value)
   }
 }
 
@@ -90,7 +92,11 @@ const moveArticle = (val) => {
 }
 
 onMounted(async () => {
-  await getArticle()
+  if (articleStore.articleList.length) {
+    dataSource.value = articleStore.articleList
+  } else {
+    await getArticle()
+  }
 })
 </script>
 

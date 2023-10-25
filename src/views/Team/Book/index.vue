@@ -37,7 +37,7 @@ watch(
 const getBookStacks = async () => {
   const params = {
     space: spaceId.value,
-    group: groupId.value
+    group: route.query.gid
   }
   let res = await getBookStacksApi(params)
   if (res.code === 1000) {

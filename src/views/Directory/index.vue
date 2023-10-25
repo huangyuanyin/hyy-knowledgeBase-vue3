@@ -1,25 +1,13 @@
 <script lang="ts" setup>
-interface Tree {
-  id: number
-  articleId: number
-  label: string
-  type: string
-  children?: Tree[]
-}
+const route = useRoute()
+const articleStore = useArticleStore()
+const bookId = computed(() => route.query.lid as string)
 
-const forumStore = useForumStore()
-const dataSource = ref<Tree[]>([])
-
-const fetchForumList = async () => {
-  await forumStore.getForum(4)
-}
-
-onMounted(async () => {
-  await fetchForumList()
-  dataSource.value = forumStore.forumList
+onBeforeMount(async () => {
+  if (articleStore.articleList.length === 0) {
+    articleStore.getArticleList(bookId.value)
+  }
 })
-
-console.log(`目录....`, dataSource.value)
 </script>
 
 <template>
@@ -54,7 +42,6 @@ console.log(`目录....`, dataSource.value)
         </div>
         <div class="welcome">
           <div class="welcome-item">
-            <!--空格-->
             <span> 👋 &ensp;</span>
             <span style="font-weight: 700">欢迎来到知识库</span>
           </div>
@@ -62,8 +49,8 @@ console.log(`目录....`, dataSource.value)
             <span>知识库就像书一样，让多篇文档结构化，方便知识的创作与沉淀</span>
           </div>
         </div>
-        <div class="list" v-if="dataSource.length">
-          <el-tree :data="dataSource" node-key="id" :props="{ class: 'forumList' }" default-expand-all>
+        <div class="list" v-if="articleStore.articleList.length">
+          <el-tree :data="articleStore.articleList" node-key="id" :props="{ class: 'forumList' }" default-expand-all>
             <template #default="{ node, data }">
               <span class="list-node">
                 <div class="title">
@@ -71,10 +58,10 @@ console.log(`目录....`, dataSource.value)
                     <img src="@/assets/icons/miniDropDownIcon.svg" alt="" v-if="data.children?.length && node.expanded" />
                     <img class="foldIcon" src="@/assets/icons/miniDropDownIcon.svg" alt="" v-if="data.children?.length && !node.expanded" />
                   </div>
-                  <span>{{ data.label }}</span>
+                  <span>{{ data.title }}</span>
                 </div>
                 <span class="line" v-if="data.type !== 'l'"></span>
-                <span class="time" v-if="data.type !== 'l'">2018-02-03 14:20</span>
+                <span class="time" v-if="data.type !== 'l'">{{ data.update_datetime }}</span>
               </span>
             </template>
           </el-tree>
