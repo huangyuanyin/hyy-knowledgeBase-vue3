@@ -92,6 +92,7 @@ declare global {
   const useLink: typeof import('vue-router')['useLink']
   const useListStore: typeof import('./store/list')['useListStore']
   const useQuickLinksApi: typeof import('./hooks/useQuickLinksApi')['useQuickLinksApi']
+  const useRefreshStore: typeof import('./store/refresh')['useRefreshStore']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
   const useSelectUserApi: typeof import('./hooks/useSelectUserApi')['useSelectUserApi']

@@ -224,7 +224,7 @@ const list = ref([
 const teamFormRef = ref<FormInstance>()
 const teamForm = reactive({
   groupname: '',
-  groupkey: uuidv4().replace(/-/g, ''),
+  groupkey: '',
   space: String(route.query.sid),
   members: [],
   description: ''
@@ -234,6 +234,7 @@ watch(
   () => props.isShow,
   (newVal: boolean) => {
     dialogVisible.value = newVal
+    teamForm.groupkey = uuidv4().replace(/-/g, '')
   }
 )
 

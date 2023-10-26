@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { v4 as uuidv4 } from 'uuid'
 import { FormInstance } from 'element-plus'
-import { getGroupsApi } from '@/api/groups'
 import { getBookStacksApi } from '@/api/bookstacks'
 import { addLibraryApi } from '@/api/library'
 
@@ -22,11 +21,10 @@ const emit = defineEmits(['closeDialog', 'getBookStacks'])
 const infoStore = useInfoStore()
 const userStore = useUserStore()
 const dataStore = useDataStore()
+const refreshStroe = useRefreshStore()
 const route = useRoute()
-const spaceId = ref(route.query.sid) // 当前空间id
-const groupId = ref(route.query.gid) // 当前团队id
 const selectGroupName = ref('')
-const teamList = ref([])
+const teamList = ref([]) // 当前空间下的全部团队
 const stacksList = ref([]) // 知识库分组集合
 const publicList = [
   {
@@ -56,56 +54,55 @@ const libraryForm = reactive<RuleForm>({
 watch(
   () => props.isShow,
   async (newVal: boolean) => {
-    libraryForm.stacks = props.stackId
-    libraryForm.slug = uuidv4().replace(/-/g, '')
     dialogVisible.value = newVal
-    groupId.value = route.query.gid
-    spaceId.value = infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalSpaceId') : route.query.sid
-    libraryForm.group = groupId.value
-    libraryForm.space = spaceId.value
-    if (newVal && infoStore.currentSidebar === 'SpaceSidebar') {
-      const { groupsList, getGroups } = await useGroupsApi(getGroupsApi, { space: spaceId.value, group: groupId.value })
-      getGroups()
-      teamList.value = groupsList.value
-      console.log(`output->groupId.value`, props.stackId)
-      await getBookStacks(groupId.value)
-      libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || ''
-      if (props.stackId === 'undefined' || props.stackId === '') {
-        teamList.value.map(async (it) => {
-          if (it.is_default === '1') {
-            libraryForm.group = String(it.id)
-            selectGroupName.value = it.groupname
-            await getBookStacks(it.id)
-            libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || ''
-          }
-        })
-        console.log(`output->libraryForm.stacks `, libraryForm.stacks, stacksList.value)
-      }
-    }
-    if (newVal && infoStore.currentSidebar === 'Sidebar') {
-      teamList.value = [
-        {
-          id: localStorage.getItem('personalGroupId'),
-          img: avatar.value,
-          groupname: JSON.parse(localStorage.getItem('user')).userInfo.name
+    if (newVal) {
+      await handleNewData()
+      if (infoStore.currentSidebar === 'SpaceSidebar') {
+        teamList.value = dataStore.teamList
+        if (libraryForm.stacks === '' || libraryForm.stacks === 'undefined') {
+          teamList.value.map(async (it) => {
+            if (it.is_default === '1') {
+              libraryForm.group = String(it.id)
+              selectGroupName.value = it.groupname
+              await getBookStacks(it.id)
+              libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || ''
+            }
+          })
+        } else {
+          await getBookStacks(libraryForm.group)
+          libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || ''
         }
-      ]
-      libraryForm.group = teamList.value[0].id
-      await getBookStacks(teamList.value[0].id)
-      if (props.stackId === 'undefined' || props.stackId === '') {
-        libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || ''
+      } else if (infoStore.currentSidebar === 'Sidebar') {
+        teamList.value = [
+          {
+            id: localStorage.getItem('personalGroupId'),
+            img: avatar.value,
+            groupname: JSON.parse(localStorage.getItem('user')).userInfo.name
+          }
+        ]
+        libraryForm.group = teamList.value[0].id
+        await getBookStacks(libraryForm.group)
+        if (libraryForm.stacks === 'undefined' || libraryForm.stacks === '') {
+          libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || ''
+        }
       }
     }
   }
 )
 
+const handleNewData = () => {
+  libraryForm.stacks = props.stackId || ''
+  libraryForm.slug = uuidv4().replace(/-/g, '')
+  libraryForm.group = String(route.query.gid) || ''
+  libraryForm.space = infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalSpaceId') : String(route.query.sid)
+}
+
 const toSubmit = async () => {
   try {
-    console.log(`知识库表单提交`, libraryForm)
     await libraryFormRef.value.validate()
     await addLibrary()
   } catch (error) {
-    // error
+    console.log(error)
   }
 }
 
@@ -122,7 +119,7 @@ const toClose = async () => {
 
 // 如果当前团队与选择的团队不一直被，就默认选中第一个知识库分组
 const handleStackId = (val) => {
-  if (val === groupId.value) {
+  if (val === libraryForm.group) {
     if (props.stackId === 'undefined') {
       return (libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || '')
     }
@@ -134,6 +131,7 @@ const handleStackId = (val) => {
 
 // 切换团队
 const toSelectTeam = async (val) => {
+  console.log(`output->val`, val)
   selectGroupName.value = teamList.value.filter((item) => item.id == val)[0].groupname
   await getBookStacks(val)
   await handleStackId(val)
@@ -145,20 +143,24 @@ const addLibrary = async () => {
   if (res.code === 1000) {
     toClose()
     ElMessage.success('新建成功')
-    dataStore.setIsGetBookStacks(true)
-    dataStore.setIsGetLibrary(true)
+    refreshStroe.setIsGetBookStacks(true)
+    refreshStroe.setIsGetLibrary(true)
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 
 // 获取知识库分组列表
 const getBookStacks = async (val) => {
   const params = {
-    space: infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalSpaceId') : spaceId.value,
+    space: infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalSpaceId') : libraryForm.space,
     group: val
   }
   let res = await getBookStacksApi(params)
   if (res.code === 1000) {
     stacksList.value = res.data as any
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 </script>

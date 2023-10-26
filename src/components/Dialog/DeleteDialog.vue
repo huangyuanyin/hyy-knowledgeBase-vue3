@@ -21,7 +21,7 @@ const emit = defineEmits(['closeDialog'])
 
 const route = useRoute()
 const router = useRouter()
-const dataStore = useDataStore()
+const refreshStroe = useRefreshStore()
 const visible = ref(false)
 const inputName = ref('')
 
@@ -47,8 +47,8 @@ const toDelete = async (val) => {
     if (res.code === 1000) {
       closeDialog()
       ElMessage.success('删除成功')
-      dataStore.setIsGetBookStacks(true)
-      dataStore.setIsGetLibrary(true)
+      refreshStroe.setIsGetBookStacks(true)
+      refreshStroe.setIsGetLibrary(true)
     } else {
       ElMessage.error(res.msg)
     }

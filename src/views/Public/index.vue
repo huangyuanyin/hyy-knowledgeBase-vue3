@@ -34,13 +34,13 @@ interface BookGroup {
 }
 
 const route = useRoute()
-const dataStore = useDataStore()
+const refreshStroe = useRefreshStore()
 const bookGroup = ref([])
 const commonList = ref([])
 const libarayList = ref([])
 
 watch(
-  () => dataStore.isGetQuickList,
+  () => refreshStroe.isGetQuickList,
   (newVal) => {
     if (newVal) {
       getQuickLinks()

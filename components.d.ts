@@ -13,6 +13,7 @@ declare module 'vue' {
     CooperatePopver: typeof import('./src/components/Popver/CooperatePopver.vue')['default']
     CustomSvgIcon: typeof import('./src/components/CustomSvgIcon/CustomSvgIcon.vue')['default']
     DeleteDialog: typeof import('./src/components/Dialog/DeleteDialog.vue')['default']
+    DeleteMemberDialog: typeof import('./src/components/Dialog/DeleteMemberDialog.vue')['default']
     Directory: typeof import('./src/components/Directory.vue')['default']
     DirectorySidebar: typeof import('./src/components/Sidebar/DirectorySidebar.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']

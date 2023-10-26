@@ -1,5 +1,5 @@
 export interface groupsParams {
-  space: number | string
+  space: string
 }
 
 export interface groupsData {

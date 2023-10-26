@@ -3,6 +3,7 @@ import { getGroupsApi } from '@/api/groups'
 import { getQuickLinksApi } from '@/api/quickLinks'
 
 const route = useRoute()
+const refreshStroe = useRefreshStore()
 const dataStore = useDataStore()
 const spaceId = ref(route.query.sid) // 当前空间id
 const menuItems = ref([
@@ -38,21 +39,21 @@ const moreMenuItems = [
 ]
 
 watch(
-  () => dataStore.isGetTeamQuickList,
+  () => refreshStroe.isGetTeamQuickList,
   (newVal) => {
     if (newVal) {
       getCommonTeam()
-      dataStore.setIsGetTeamQuickList(false)
+      refreshStroe.setIsGetTeamQuickList(false)
     }
   }
 )
 
 watch(
-  () => dataStore.isGetQuickList,
+  () => refreshStroe.isGetQuickList,
   (newVal) => {
     if (newVal) {
       getCommonLibrary()
-      dataStore.setIsGetQuickList(false)
+      refreshStroe.setIsGetQuickList(false)
     }
   }
 )
@@ -83,12 +84,22 @@ const getCommonTeam = async () => {
   }
 }
 
+// 获取当前空间下的全部团队
+const getGroups = async () => {
+  const params = {
+    space: String(spaceId.value)
+  }
+  let res = await getGroupsApi(params)
+  if (res.code === 1000) {
+    menuItems.value[2].id = res.data.filter((item) => item.is_default === '1')[0].id
+    dataStore.setTeamList(res.data)
+  }
+}
+
 onMounted(async () => {
   await getCommonLibrary()
   await getCommonTeam()
-  const { groupsList, getGroups } = await useGroupsApi(getGroupsApi, { space: spaceId.value })
-  getGroups()
-  menuItems.value[2].id = groupsList.value.filter((item) => item.is_default === '1')[0].id
+  await getGroups()
 })
 </script>
 

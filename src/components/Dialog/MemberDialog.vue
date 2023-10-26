@@ -18,7 +18,8 @@ const props = defineProps({
 const emit = defineEmits(['closeDialog'])
 
 const route = useRoute()
-const dataStore = useDataStore()
+const refreshStroe = useRefreshStore()
+const avatarUrl = import.meta.env.VITE_BASE_LOGIN_URL
 const dialogVisible = ref(false)
 const defaultProps = {
   children: 'children',
@@ -82,7 +83,7 @@ const addSpacepermissions = async () => {
   if (res.code === 1000) {
     ElMessage.success('添加成功')
     handleClose()
-    dataStore.setRefreshSpaceMember(true)
+    refreshStroe.setRefreshSpaceMember(true)
   } else {
     ElMessage.error(res.msg)
   }
@@ -154,7 +155,12 @@ const arrayToTree = (list: DeptList[], id: string) => {
           </div> -->
           <el-table ref="memberTableRef" :data="memberList" style="width: 100%" row-key="user_id" @selection-change="handleSelectionChange" empty-text="该部门下暂无可添加成员">
             <el-table-column type="selection" width="55" :reserve-selection="true" />
-            <el-table-column property="name" label="姓名" width="120" />
+            <el-table-column property="name" label="姓名" width="120">
+              <template #default="{ row }">
+                <img class="avatar" :src="avatarUrl + row.avatar" />
+                <label>{{ row.name }}</label>
+              </template>
+            </el-table-column>
             <el-table-column property="is_active" label="账号状态" width="120">
               <template #default="{ row }">
                 <el-tag v-if="row.is_active === 1" type="success">正常</el-tag>
@@ -246,6 +252,19 @@ const arrayToTree = (list: DeptList[], id: string) => {
     color: #8a8f8d;
     font-size: 14px;
   }
+  .el-table {
+    .cell {
+      display: flex;
+      align-items: center;
+      margin: 5px 0;
+    }
+    .avatar {
+      width: 24px;
+      height: 24px;
+      margin-right: 6px;
+      border-radius: 12px;
+    }
+  }
   .el-dialog__title {
     font-size: 16px;
     color: rgba(0, 0, 0, 0.85);
@@ -253,14 +272,6 @@ const arrayToTree = (list: DeptList[], id: string) => {
   .el-dialog__body {
     padding-top: 14px;
     padding-bottom: 14px;
-  }
-  .el-form-item {
-    margin-bottom: 12px;
-    border-radius: 6px;
-    label {
-      color: rgba(0, 0, 0, 0.85);
-      font-size: 14px;
-    }
   }
   .el-input,
   .el-select {

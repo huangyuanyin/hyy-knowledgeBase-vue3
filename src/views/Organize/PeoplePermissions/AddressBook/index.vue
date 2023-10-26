@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import { getSpacepermissionsApi } from '@/api/spacepermissions'
+import { deleteSpacepermissionsApi, getSpacepermissionsApi } from '@/api/spacepermissions'
 
 const route = useRoute()
-const dataStore = useDataStore()
+const refreshStroe = useRefreshStore()
 const searchInput = ref('')
 const memberData = ref([])
 const isShowTeamDialog = ref(false)
 
 watchEffect(() => {
-  if (dataStore.isRefreshSpaceMember) {
+  if (refreshStroe.isRefreshSpaceMember) {
     getSpacepermissions()
-    dataStore.setRefreshSpaceMember(false)
+    refreshStroe.setRefreshSpaceMember(false)
   }
 })
 
@@ -24,6 +24,40 @@ const getSpacepermissions = async () => {
   } else {
     ElMessage.error(res.msg)
   }
+}
+
+const deleteSpacepermissions = async (id: number) => {
+  const res = await deleteSpacepermissionsApi(id)
+  if (res.code === 1000) {
+    getSpacepermissions()
+    ElMessage.success('删除成功')
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const toExit = (data: any) => {
+  ElMessageBox.confirm(`确定删除晓飞吗？删除后对方就无法再访问本团队`, '确定删除该成员？', {
+    confirmButtonText: '删除',
+    cancelButtonText: '取消',
+    customClass: 'deleteMemberDialog',
+    confirmButtonClass: 'deleteButton',
+    cancelButtonClass: 'cancelButton',
+    appendTo: '.AddressBook_wrap',
+    showClose: false,
+    type: 'warning'
+  })
+    .then(() => {
+      deleteSpacepermissions(data.id)
+    })
+    .catch(() => {
+      ElMessage.info('取消删除')
+    })
+}
+
+const toDetail = (data: any) => {
+  console.log(`output->data`, data)
+  ElMessage.warning('功能暂未开放，敬请期待')
 }
 
 onMounted(() => {
@@ -73,9 +107,9 @@ onMounted(() => {
         <el-table-column prop="mobile" label="手机号" width="150" />
         <el-table-column prop="update_datetime" label="加入时间" width="200" />
         <el-table-column fixed="right" label="操作">
-          <template #default>
-            <el-button link type="primary" size="small" @click="handleClick">详情</el-button>
-            <el-button link type="danger" size="small">离开</el-button>
+          <template #default="{ row }">
+            <el-button link type="primary" size="small" @click="toDetail(row)">详情</el-button>
+            <el-button link type="danger" size="small" @click="toExit(row)">离开</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -122,6 +156,28 @@ onMounted(() => {
           background-color: #009456;
         }
       }
+    }
+  }
+  :deep(.deleteMemberDialog) {
+    .deleteButton,
+    .cancelButton {
+      margin-left: 8px;
+      border-radius: 6px;
+      box-shadow: none;
+      height: 32px;
+      padding: 4px 15px;
+      font-size: 14px;
+      margin-top: 24px;
+    }
+    .deleteButton {
+      color: #df2a3f;
+      background: #fff;
+      border-color: #df2a3f;
+    }
+    .cancelButton {
+      color: #262626;
+      background: #fff;
+      border-color: #e7e9e8;
     }
   }
 }

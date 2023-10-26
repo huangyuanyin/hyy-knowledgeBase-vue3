@@ -10,7 +10,7 @@ interface BookGroup {
 }
 
 const route = useRoute()
-const dataStore = useDataStore()
+const refreshStroe = useRefreshStore()
 const bookGroup = ref<BookGroup[]>([])
 const libarayList = ref([])
 const commonList = ref([])
@@ -26,7 +26,7 @@ watch(
 )
 
 watch(
-  () => dataStore.isGetQuickList,
+  () => refreshStroe.isGetQuickList,
   (newVal) => {
     if (newVal) {
       getQuickLinks()

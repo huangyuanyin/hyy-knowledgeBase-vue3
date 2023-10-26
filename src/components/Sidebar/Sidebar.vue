@@ -2,6 +2,7 @@
 import { getGroupsApi } from '@/api/groups'
 import { getQuickLinksApi } from '@/api/quickLinks'
 
+const refreshStroe = useRefreshStore()
 const dataStore = useDataStore()
 const menuItems = [
   { index: 'dashboard', icon: 'actionIcon', label: '开始' },
@@ -20,25 +21,24 @@ const contentItems = ref([
 ])
 
 watch(
-  () => dataStore.isGetQuickList,
+  () => refreshStroe.isGetQuickList,
   (newVal) => {
     if (newVal) {
       getCommonLibrary()
-      dataStore.setIsGetQuickList(false)
+      refreshStroe.setIsGetQuickList(false)
     }
   }
 )
 
 // 获取个人空间下的团队列表
 const getGroups = async () => {
-  console.log(`output->23232`, 23232)
   const params = {
     space: localStorage.getItem('personalSpaceId')
   }
   let res = await getGroupsApi(params)
   if (res.code === 1000) {
     contentItems.value[0].id = res.data[0].id
-    console.log(`output->hhhh`, params.space, res.data[0].id)
+    dataStore.setTeamList(res.data)
     localStorage.setItem('personalGroupId', res.data[0].id)
   }
 }

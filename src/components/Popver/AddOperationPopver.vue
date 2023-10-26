@@ -32,7 +32,7 @@ const toHandle = (val) => {
 
 onMounted(() => {
   if (infoStore.currentSidebar === 'SpaceSidebar') {
-    stackId.value = String(route.query.gid)
+    stackId.value = String(route.query.gid) || ''
   }
 })
 </script>

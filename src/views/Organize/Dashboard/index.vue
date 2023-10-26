@@ -1,26 +1,6 @@
 <script lang="ts" setup>
-const startBoxItem = [
-  {
-    title: '管理通讯录',
-    description: '导入或邀请成员加入空间协作',
-    url: '/addressBook'
-  },
-  {
-    title: '管理团队',
-    description: '通过团队来组织项目和人员',
-    url: '/teamManage'
-  },
-  {
-    title: '权限设置',
-    description: '通过权限来保障空间安全',
-    url: '/permission'
-  },
-  {
-    title: '偏好设置',
-    description: '通过偏好来设置多彩空间',
-    url: '/preference'
-  }
-]
+import { spaceStartBox } from '@/data/data'
+
 const route = useRoute()
 
 const toLink = (val) => {
@@ -37,7 +17,7 @@ const toLink = (val) => {
     <div class="start-box">
       <span>开始</span>
       <div class="itemList">
-        <div class="item" v-for="(item, index) in startBoxItem" :key="'startBoxItem' + index" @click="toLink(item)">
+        <div class="item" v-for="(item, index) in spaceStartBox" :key="'spaceStartBox' + index" @click="toLink(item)">
           <a>
             <span>{{ item.title }}</span>
             <p>{{ item.description }}</p>

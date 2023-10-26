@@ -15,13 +15,14 @@ const props = defineProps<{
 }>()
 
 const route = useRoute()
-const dataStore = useDataStore()
+const refreshStroe = useRefreshStore()
 const infoStore = useInfoStore()
 const spaceId = ref(infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalSpaceId') : route.query.sid)
 const groupId = ref(infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalGroupId') : route.query.gid)
 const moduleGenreLocal = ref(props.moduleGenre)
 const isShowsLibraryDialog = ref(false)
 const viewType = ref('group')
+const stackId = ref('2')
 const addOperation = [
   {
     type: 'item',
@@ -67,7 +68,7 @@ const addBookStacks = async () => {
   let res = await addBookStacksApi(params)
   if (res.code === 1000) {
     ElMessage.success('新建分组成功')
-    dataStore.setIsGetBookStacks(true)
+    refreshStroe.setIsGetBookStacks(true)
   } else {
     ElMessage.error(res.msg)
   }

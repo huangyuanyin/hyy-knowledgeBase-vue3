@@ -333,3 +333,26 @@ export const organizeMenu = [
     children: []
   }
 ]
+
+export const spaceStartBox = [
+  {
+    title: '管理通讯录',
+    description: '导入或邀请成员加入空间协作',
+    url: '/addressBook'
+  },
+  {
+    title: '管理团队',
+    description: '通过团队来组织项目和人员',
+    url: '/teamManage'
+  },
+  {
+    title: '权限设置',
+    description: '通过权限来保障空间安全',
+    url: '/permission'
+  },
+  {
+    title: '偏好设置',
+    description: '通过偏好来设置多彩空间',
+    url: '/preference'
+  }
+]

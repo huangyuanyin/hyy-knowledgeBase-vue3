@@ -21,7 +21,7 @@ const router = useRouter()
 const infoStore = useInfoStore()
 const userStore = useUserStore()
 const listStore = useListStore()
-const dataStore = useDataStore()
+const refreshStroe = useRefreshStore()
 const isShowTeamDialog = ref(false)
 const libraryOperationData = [
   { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限' },
@@ -96,11 +96,11 @@ const deleteQuickLinks = async (id, params, type) => {
     if (type === 'book') {
       listStore.setRefreshQuickListStatus(true)
       ElMessage.success('移除成功')
-      dataStore.setIsGetQuickList(true)
+      refreshStroe.setIsGetQuickList(true)
     } else {
       listStore.setRefreshQuickListStatus(true)
       ElMessage.success('移除成功')
-      dataStore.setIsGetTeamQuickList(true)
+      refreshStroe.setIsGetTeamQuickList(true)
     }
   }
 }
@@ -111,11 +111,11 @@ const addQuickLinks = async (params, type) => {
     if (type === 'book') {
       listStore.setRefreshQuickListStatus(true)
       ElMessage.success('添加成功')
-      dataStore.setIsGetQuickList(true)
+      refreshStroe.setIsGetQuickList(true)
     } else {
       listStore.setRefreshQuickListStatus(true)
       ElMessage.success('添加成功')
-      dataStore.setIsGetTeamQuickList(true)
+      refreshStroe.setIsGetTeamQuickList(true)
     }
   } else {
     ElMessage.error(res.msg)

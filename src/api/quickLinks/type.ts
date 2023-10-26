@@ -1,6 +1,6 @@
 export interface quickLinksParams {
-  space: number
-  user: string
+  space: string
+  target_type: string
 }
 
 export interface quickLinksData {

@@ -17,7 +17,7 @@ const props = defineProps({
 const route = useRoute()
 const infoStore = useInfoStore()
 const listStore = useListStore()
-const dataStore = useDataStore()
+const refreshStroe = useRefreshStore()
 const isShowsLibraryDialog = ref(false)
 const isShowsDeleteDialog = ref(false)
 const deleteInfo = ref<{
@@ -47,7 +47,7 @@ const deleteQuickLinks = async (id, params) => {
   if (res.code === 1000) {
     listStore.setRefreshQuickListStatus(true)
     ElMessage.success('移除成功')
-    dataStore.setIsGetQuickList(true)
+    refreshStroe.setIsGetQuickList(true)
   } else {
     ElMessage.error(res.msg)
   }
@@ -70,7 +70,7 @@ const addQuickLinks = async (params) => {
   if (res.code === 1000) {
     listStore.setRefreshQuickListStatus(true)
     ElMessage.success('添加成功')
-    dataStore.setIsGetQuickList(true)
+    refreshStroe.setIsGetQuickList(true)
   } else {
     ElMessage.error(res.msg)
   }

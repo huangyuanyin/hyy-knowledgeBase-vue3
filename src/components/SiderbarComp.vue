@@ -3,7 +3,6 @@ import { libraryOperationData, teamOperationData, moreOperationData, menuItemsDa
 import { MenuItem } from '@/type/operationPopoverType'
 import { contentItemsData, moreMenuItemsData } from '@/data/data'
 import { getSpacesApi, getSpacesDetailApi } from '@/api/spaces/index'
-import { getGroupsApi } from '@/api/groups'
 import { deleteQuickLinksApi } from '@/api/quickLinks'
 
 interface ContentItem {
@@ -36,9 +35,8 @@ const props = defineProps({
 })
 
 const route = useRoute()
-const listStore = useListStore()
 const infoStore = useInfoStore()
-const dataStore = useDataStore()
+const refreshStroe = useRefreshStore()
 const userStore = useUserStore()
 const state = reactive({
   headerActive: null,
@@ -140,7 +138,7 @@ const handleClickLibrary = (val: any) => {
       }
     })
     state.currentGroup = val.target_id
-    dataStore.setIsGetBookStacks(true)
+    refreshStroe.setIsGetBookStacks(true)
   } else {
     const query = {
       lid: 64 || val.id,
@@ -216,7 +214,7 @@ const deleteQuickLinks = async (id, params) => {
   let res = await deleteQuickLinksApi(id, params)
   if (res.code === 1000) {
     ElMessage.success('移除成功')
-    dataStore.setIsGetQuickList(true)
+    refreshStroe.setIsGetQuickList(true)
   } else {
     ElMessage.error(res.msg)
   }

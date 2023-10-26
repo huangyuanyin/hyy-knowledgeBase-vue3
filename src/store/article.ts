@@ -1,17 +1,3 @@
-// export const useArticleStore = defineStore('article', () => {
-//   const articleTree = ref([])
-
-//   const setArticleTree = (val: any) => {
-//     console.log(`output->val`, val)
-//     articleTree.value = val
-//   }
-
-//   return {
-//     articleTree,
-//     setArticleTree
-//   }
-// })
-
 import { getArticleTreeApi } from '@/api/article'
 
 interface Article {

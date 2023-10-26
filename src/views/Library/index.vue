@@ -5,16 +5,17 @@ import { getQuickLinksApi } from '@/api/quickLinks'
 
 const route = useRoute()
 const infoStore = useInfoStore()
+const refreshStroe = useRefreshStore()
 const dataStore = useDataStore()
 const currentSidebar = ref(infoStore.currentSidebar) // 当前类型：个人、公共
-const commonList = ref([]) // 前空间下的常用列表
+const commonList = ref([]) // 当前空间下的常用列表
 const libarayList = ref([]) // 当前空间下的知识库列表
 const bookGroup = ref([]) // 当前空间&&当前团队下的知识库分组
 const libraryInput = ref('')
 const isShowsLibraryDialog = ref(false)
 
 watch(
-  () => dataStore.isGetQuickList,
+  () => refreshStroe.isGetQuickList,
   (newVal) => {
     if (newVal) {
       getQuickLinks()
@@ -23,7 +24,7 @@ watch(
 )
 
 watchEffect(async () => {
-  if (dataStore.isGetLibrary) {
+  if (refreshStroe.isGetLibrary) {
     getLibrary()
   }
 })
@@ -32,12 +33,12 @@ watchEffect(async () => {
 const getQuickLinks = async () => {
   const params = {
     target_type: 'book',
-    space: currentSidebar.value === 'Sidebar' ? localStorage.getItem('personalSpaceId') : route.query.sid
+    space: currentSidebar.value === 'Sidebar' ? localStorage.getItem('personalSpaceId') : String(route.query.sid)
   }
   let res = await getQuickLinksApi(params)
   if (res.code === 1000) {
     commonList.value = res.data || ([] as any)
-    dataStore.setIsGetQuickList(false)
+    refreshStroe.setIsGetQuickList(false)
     // 遍历知识库列表和常用知识库列表，如果id和target_id相同，就把is_common设置为true,否则设置为false
     libarayList.value.forEach((item) => {
       item.is_common_id = null
@@ -47,6 +48,9 @@ const getQuickLinks = async () => {
         }
       })
     })
+    dataStore.setCommonLibraryList(commonList.value)
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 
@@ -149,7 +153,6 @@ onMounted(async () => {
             </div>
           </template>
         </SwitchModuleItem>
-        <!-- <commonList v-if="currentSidebar === 'Sidebar'" :cardList="commonList" /> -->
         <LibraryTable v-if="currentSidebar === 'Sidebar'" title="知识库" :commonList="commonList" :group="bookGroup" @getBookStacks="getBookStacks" />
         <TableComp v-else :header="['名称', '归属', '更新时间', '']" type="library" :data="filterGroupFromPublic(libarayList)" />
         <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />

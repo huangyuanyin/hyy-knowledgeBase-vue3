@@ -29,7 +29,7 @@ const route = useRoute()
 const listStore = useListStore()
 const userStore = useUserStore()
 const infoStore = useInfoStore()
-const dataStore = useDataStore()
+const refreshStroe = useRefreshStore()
 const isShowsDeleteDialog = ref(false)
 const deleteInfo = ref<{
   id?: string
@@ -64,11 +64,11 @@ const deleteQuickLinks = async (id, params) => {
     if (props.type === 'library') {
       listStore.setRefreshQuickListStatus(true)
       ElMessage.success('移除成功')
-      dataStore.setIsGetQuickList(true)
+      refreshStroe.setIsGetQuickList(true)
     } else {
       listStore.setRefreshQuickListStatus(true)
       ElMessage.success('移除成功')
-      dataStore.setIsGetTeamQuickList(true)
+      refreshStroe.setIsGetTeamQuickList(true)
     }
   }
 }

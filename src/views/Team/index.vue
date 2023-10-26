@@ -3,7 +3,7 @@ import { getGroupsApi } from '@/api/groups'
 import { getQuickLinksApi } from '@/api/quickLinks'
 
 const route = useRoute()
-const userStore = useUserStore()
+const dataStore = useDataStore()
 const listStore = useListStore()
 const spaceId = ref(route.query.sid)
 const teamInput = ref('')
@@ -20,14 +20,13 @@ watch(
   }
 )
 
-// 获取当前空间下的全部团队
+// 获取当前空间下的全部团队（除去公共区）
 const getGroups = async () => {
   const params = {
-    space: spaceId.value,
+    space: String(spaceId.value),
     is_default: '0'
   }
   let res = await getGroupsApi(params)
-  console.log(`output->getGroupsApi`, getGroupsApi)
   if (res.code === 1000) {
     groupsList.value = res.data || ([] as any)
   }

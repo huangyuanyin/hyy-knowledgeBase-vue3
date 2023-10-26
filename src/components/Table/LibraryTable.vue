@@ -35,7 +35,7 @@ const props = defineProps({
 const emit = defineEmits(['getBookStacks'])
 
 const route = useRoute()
-const dataStore = useDataStore()
+const refreshStroe = useRefreshStore()
 const infoStore = useInfoStore()
 const isShowsLibraryDialog = ref(false)
 const editedName = ref('')
@@ -136,7 +136,7 @@ watch(
 )
 
 watchEffect(async () => {
-  if (dataStore.isGetLibrary) {
+  if (refreshStroe.isGetLibrary) {
     await Promise.all(
       props.group.map(async (item) => {
         const library = await getLibrary(item.id)
@@ -147,9 +147,9 @@ watchEffect(async () => {
     processedGroup.value.map((item) => {
       item.is_editing = false
     })
-    dataStore.setIsGetLibrary(false)
+    refreshStroe.setIsGetLibrary(false)
   }
-  if (dataStore.isGetBookStacks) {
+  if (refreshStroe.isGetBookStacks) {
     const params = {
       space: spaceId.value,
       group: infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalGroupId') : route.query.gid
@@ -166,9 +166,9 @@ watchEffect(async () => {
       processedGroup.value.map((item) => {
         item.is_editing = false
       })
-      dataStore.setIsGetLibrary(false)
+      refreshStroe.setIsGetLibrary(false)
     }
-    dataStore.setIsGetBookStacks(false)
+    refreshStroe.setIsGetBookStacks(false)
   }
 })
 
