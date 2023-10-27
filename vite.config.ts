@@ -6,6 +6,7 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import { join } from 'path'
+import { createStyleImportPlugin, VxeTableResolve } from 'vite-plugin-style-import'
 
 export default defineConfig({
   plugins: [
@@ -33,6 +34,9 @@ export default defineConfig({
     Icons({
       autoInstall: true
     })
+    // createStyleImportPlugin({
+    //   resolves: [VxeTableResolve()]
+    // })
   ],
   resolve: {
     alias: [

@@ -17,7 +17,7 @@ import path from 'path'; import path from 'path'; import path from 'path';
       </div>
     </div>
     <div class="right">
-      <span><img src="/src/assets/icons/settingIcon.svg" alt="" /></span>
+      <span @click="toTeamSetting"><img src="/src/assets/icons/settingIcon.svg" alt="" /></span>
     </div>
   </div>
 </template>
@@ -25,6 +25,7 @@ import path from 'path'; import path from 'path'; import path from 'path';
 <script lang="ts" setup>
 const route = useRoute()
 const router = useRouter()
+const infoStore = useInfoStore()
 const currentItem = ref('book')
 const headerItem = [
   {
@@ -59,6 +60,18 @@ const toLink = (val) => {
   router.push({
     path: `/${route.path.split('/')[1]}/team/${val}`,
     query: route.query
+  })
+}
+
+const toTeamSetting = () => {
+  router.push({
+    path: `/${infoStore.currentSpaceName}/teamSetting/basic`,
+    query: {
+      gid: route.query.gid,
+      gname: route.query.gname,
+      sid: route.query.sid,
+      sname: route.query.sname
+    }
   })
 }
 </script>

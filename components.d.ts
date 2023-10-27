@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AddMemberDialog: typeof import('./src/components/Dialog/addMemberDialog.vue')['default']
     AddOperationPopver: typeof import('./src/components/Popver/AddOperationPopver.vue')['default']
     ChangeSpacePopver: typeof import('./src/components/Popver/ChangeSpacePopver.vue')['default']
     CommonList: typeof import('./src/components/List/CommonList.vue')['default']

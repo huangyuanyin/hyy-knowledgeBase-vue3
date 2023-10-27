@@ -3,6 +3,7 @@ export interface SpacepermissionsParams {
 }
 
 export interface SpacepermissionsData {
+  [x: string]: any
   permusername: Array<string>
   space: string
 }

@@ -4,6 +4,7 @@ export const useRefreshStore = defineStore('refresh', () => {
   const isGetQuickList = ref(false)
   const isGetTeamQuickList = ref(false)
   const isRefreshSpaceMember = ref(false) // 刷新空间成员
+  const isRefreshTeamMember = ref(false) // 刷新团队成员
 
   const setIsGetBookStacks = (val: boolean) => {
     isGetBookStacks.value = val
@@ -25,6 +26,10 @@ export const useRefreshStore = defineStore('refresh', () => {
     isRefreshSpaceMember.value = val
   }
 
+  const setRefreshTeamMember = (val: boolean) => {
+    isRefreshTeamMember.value = val
+  }
+
   return {
     isGetBookStacks,
     setIsGetBookStacks,
@@ -35,6 +40,8 @@ export const useRefreshStore = defineStore('refresh', () => {
     isGetTeamQuickList,
     setIsGetTeamQuickList,
     isRefreshSpaceMember,
-    setRefreshSpaceMember
+    setRefreshSpaceMember,
+    isRefreshTeamMember,
+    setRefreshTeamMember
   }
 })
