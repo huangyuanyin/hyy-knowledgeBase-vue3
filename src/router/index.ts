@@ -248,6 +248,69 @@ const customRoutes = [
       title: '团队管理·回收站',
       asideComponent: 'TeamSidebar'
     }
+  },
+  {
+    path: '/:spaceName/bookSetting/basic',
+    name: 'Book-Basic',
+    component: pageComps['/src/views/Book/Basic/index.vue'] as Component,
+    meta: {
+      title: '知识库管理·信息',
+      asideComponent: 'BookSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/bookSetting/collaborators',
+    name: 'Book-Collaborators',
+    component: pageComps['/src/views/Book/Collaborators/index.vue'] as Component,
+    meta: {
+      title: '知识库管理·权限',
+      asideComponent: 'BookSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/bookSetting/settings',
+    name: 'Book-Advanced',
+    component: pageComps['/src/views/Book/Advanced/index.vue'] as Component,
+    meta: {
+      title: '知识库管理·更多设置',
+      asideComponent: 'BookSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/bookSetting/toc',
+    name: 'Book-Toc',
+    component: pageComps['/src/views/Book/Toc/index.vue'] as Component,
+    meta: {
+      title: '知识库管理·目录管理',
+      asideComponent: 'BookSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/bookSetting/docs',
+    name: 'Book-Docs',
+    component: pageComps['/src/views/Book/Docs/index.vue'] as Component,
+    meta: {
+      title: '知识库管理·文档管理',
+      asideComponent: 'BookSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/bookSetting/webhooks',
+    name: 'Book-Webhooks',
+    component: pageComps['/src/views/Book/Webhooks/index.vue'] as Component,
+    meta: {
+      title: '知识库管理·消息推送',
+      asideComponent: 'BookSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/bookSetting/trash',
+    name: 'Book-Trash',
+    component: pageComps['/src/views/Book/Trash/index.vue'] as Component,
+    meta: {
+      title: '知识库管理·回收站',
+      asideComponent: 'BookSidebar'
+    }
   }
 ]
 

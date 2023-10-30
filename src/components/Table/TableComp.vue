@@ -24,9 +24,9 @@ const listStore = useListStore()
 const refreshStroe = useRefreshStore()
 const isShowTeamDialog = ref(false)
 const libraryOperationData = [
-  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限' },
+  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限', nick: 'toBookSetting2' },
   { type: 'item', icon: '/src/assets/icons/renameIcon.svg', label: '重命名' },
-  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置' },
+  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置', nick: 'toBookSetting' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除' }
 ]
@@ -144,6 +144,10 @@ const toLink = (val, type) => {
       }
     })
   }
+}
+
+const toBookSetting = (val) => {
+  console.log(`output->val`, val)
 }
 </script>
 

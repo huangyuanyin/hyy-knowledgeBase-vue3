@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AddMemberDialog: typeof import('./src/components/Dialog/addMemberDialog.vue')['default']
     AddOperationPopver: typeof import('./src/components/Popver/AddOperationPopver.vue')['default']
+    BookSidebar: typeof import('./src/components/Sidebar/BookSidebar.vue')['default']
     ChangeSpacePopver: typeof import('./src/components/Popver/ChangeSpacePopver.vue')['default']
     CommonList: typeof import('./src/components/List/CommonList.vue')['default']
     CooperatePopver: typeof import('./src/components/Popver/CooperatePopver.vue')['default']
@@ -32,6 +33,7 @@ declare module 'vue' {
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElIcon: typeof import('element-plus/es')['ElIcon']
+    ElImage: typeof import('element-plus/es')['ElImage']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElMain: typeof import('element-plus/es')['ElMain']
     ElMenu: typeof import('element-plus/es')['ElMenu']

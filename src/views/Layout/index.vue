@@ -39,6 +39,10 @@ const asideComponentWidth = {
   TeamSidebar: {
     with: '256px',
     padding: '48px 52px !important'
+  },
+  BookSidebar: {
+    with: '256px',
+    padding: '48px 52px !important'
   }
 }
 

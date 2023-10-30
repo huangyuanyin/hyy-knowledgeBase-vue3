@@ -48,8 +48,8 @@ export const moduleAddMenuData = [
 export const libraryOperationData = [
   { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '移除常用', nick: 'toRemoveCommon' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限' },
-  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置' },
+  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限', nick: 'toPermission' },
+  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置', nick: 'toMoreSetting' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteLibrary' }
 ]

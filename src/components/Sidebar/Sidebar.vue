@@ -32,6 +32,7 @@ watch(
 
 // 获取个人空间下的团队列表
 const getGroups = async () => {
+  console.log(`output->localStorage.getItem('personalSpaceId')`, localStorage.getItem('personalSpaceId'))
   const params = {
     space: localStorage.getItem('personalSpaceId')
   }
@@ -47,18 +48,22 @@ const getGroups = async () => {
 const getCommonLibrary = async () => {
   const params = {
     space: localStorage.getItem('personalSpaceId'),
-    target_type: 'book'
+    target_type: 'book',
+    user: JSON.parse(localStorage.getItem('user')).userInfo.username || ''
   }
   let res = await getQuickLinksApi(params)
   if (res.code === 1000) {
     contentItems.value[0].libraryList = res.data || ([] as any)
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 
-onMounted(async () => {
-  await getGroups()
-  await getGroups()
-  await getCommonLibrary()
+onMounted(() => {
+  nextTick(async () => {
+    await getGroups()
+    await getCommonLibrary()
+  })
 })
 </script>
 

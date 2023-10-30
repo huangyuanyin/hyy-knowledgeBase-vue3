@@ -239,6 +239,18 @@ const toTeamSetting = (val) => {
   })
 }
 
+const toMoreSetting = (val) => {
+  router.push({
+    path: `/${infoStore.currentSpaceName}/bookSetting/basic`,
+    query: {
+      lid: val.target_id,
+      lname: val.title,
+      sid: route.query.sid,
+      sname: route.query.sname
+    }
+  })
+}
+
 const getSpaces = async () => {
   const params = {
     permusername: JSON.parse(localStorage.getItem('user')).userInfo.username || ''
@@ -246,7 +258,6 @@ const getSpaces = async () => {
   let res = await getSpacesApi(params)
   if (res.code === 1000) {
     if (localStorage.getItem('personalSpaceId') === null) {
-      console.log(`output->1212`, 1212)
       res.data.map((item) => {
         if (item.spacetype === 'personal' && item.creator === userStore.userInfo.username) {
           infoStore.setPersonalSpaceId(item.id)
@@ -328,6 +339,7 @@ onMounted(async () => {
                   @toDeleteLibrary="toDeleteLibrary(data)"
                   @toRemoveCommon="toRemoveCommon(data)"
                   @toTeamSetting="toTeamSetting(data)"
+                  @toMoreSetting="toMoreSetting(data)"
                 >
                   <span class="more-icon" @click.stop>
                     <img src="@/assets/icons/moreIcon1.svg" alt="" />
