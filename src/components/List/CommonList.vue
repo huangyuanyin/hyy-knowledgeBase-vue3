@@ -23,7 +23,7 @@ const commonTeamData = [
   { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '移除常用', nick: 'removeCommon' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/team/settingIcon.svg', label: '团队设置', nick: 'toTeamSetting' },
-  { type: 'item', icon: '/src/assets/icons/team/editIcon.svg', label: '退出团队', nick: 'quitTeam' }
+  { type: 'item', icon: '/src/assets/icons/team/editIcon.svg', label: '退出团队', nick: 'toQuitTeam' }
 ]
 const route = useRoute()
 const listStore = useListStore()
@@ -55,6 +55,14 @@ const deleteLibrary = (item: any) => {
   deleteInfo.value = item
   deleteInfo.value.name = item.title
   deleteInfo.value.id = item.target_id
+}
+
+const toTeamSetting = (item: any) => {
+  useLink(router, route, 'comTeamSet', item)
+}
+
+const toQuitTeam = (item: any) => {
+  useLink(router, route, 'comTeamQuit', item)
 }
 
 // 移除常用接口
@@ -130,6 +138,8 @@ const toLink = (item) => {
             :height="40"
             @removeCommon="removeCommon(item)"
             @deleteLibrary="deleteLibrary(item)"
+            @toTeamSetting="toTeamSetting(item)"
+            @toQuitTeam="toQuitTeam(item)"
           >
             <div class="item-right" @click.stop>
               <img src="/src/assets/icons/moreIcon1_after.svg" alt="" class="moreIcon" />

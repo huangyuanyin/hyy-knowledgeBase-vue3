@@ -62,7 +62,7 @@ export const teamOperationData = [
   { type: 'item', icon: '/src/assets/icons/team/reminderFreeIcon.svg', label: '动态免提醒', nick: 'toReminderFree' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/team/settingIcon.svg', label: '团队设置', nick: 'toTeamSetting' },
-  { type: 'item', icon: '/src/assets/icons/team/editIcon.svg', label: '退出团队', nick: 'exitTeam' }
+  { type: 'item', icon: '/src/assets/icons/team/editIcon.svg', label: '退出团队', nick: 'toQuitTeam' }
 ]
 
 export const moreOperationData = [

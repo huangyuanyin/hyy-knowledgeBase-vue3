@@ -40,10 +40,7 @@ const closeDialog = () => {
 
 // 获取目录
 const getArticle = async () => {
-  const params = {
-    book_id: bookId.value || ('1' as string)
-  }
-  let res = await getArticleTreeApi(params)
+  let res = await getArticleTreeApi(bookId.value || ('1' as string))
   if (res.code === 1000) {
     dataSource.value = res.data || ([] as any)
   }

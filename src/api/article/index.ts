@@ -1,5 +1,5 @@
-import { articleParams, articleRes } from './type'
+import { articleRes } from './type'
 
-export function getArticleTreeApi(params: articleParams) {
-  return http.get<articleRes>('article_tree/', { params }, 'base')
+export function getArticleTreeApi(id: string) {
+  return http.get<articleRes>(`article_tree/${id}/`, {}, 'base')
 }

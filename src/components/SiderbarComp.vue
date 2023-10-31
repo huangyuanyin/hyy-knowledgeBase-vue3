@@ -228,27 +228,15 @@ const toDeleteLibrary = (item: any) => {
 }
 
 const toTeamSetting = (val) => {
-  router.push({
-    path: `/${infoStore.currentSpaceName}/teamSetting/basic`,
-    query: {
-      gid: val.target_id,
-      gname: val.title,
-      sid: val.space,
-      sname: route.query.sname
-    }
-  })
+  useLink(router, route, 'comTeamSet', val)
+}
+
+const toQuitTeam = (val) => {
+  useLink(router, route, 'comTeamQuit', val)
 }
 
 const toMoreSetting = (val) => {
-  router.push({
-    path: `/${infoStore.currentSpaceName}/bookSetting/basic`,
-    query: {
-      lid: val.target_id,
-      lname: val.title,
-      sid: route.query.sid,
-      sname: route.query.sname
-    }
-  })
+  useLink(router, route, 'comBookSet', val)
 }
 
 const getSpaces = async () => {
@@ -339,6 +327,7 @@ onMounted(async () => {
                   @toDeleteLibrary="toDeleteLibrary(data)"
                   @toRemoveCommon="toRemoveCommon(data)"
                   @toTeamSetting="toTeamSetting(data)"
+                  @toQuitTeam="toQuitTeam(data)"
                   @toMoreSetting="toMoreSetting(data)"
                 >
                   <span class="more-icon" @click.stop>

@@ -66,10 +66,7 @@ const toLink = (type?: string) => {
 
 // 获取目录
 const getArticle = async () => {
-  const params = {
-    book_id: bookId.value as string
-  }
-  let res = await getArticleTreeApi(params)
+  let res = await getArticleTreeApi(bookId.value as string)
   if (res.code === 1000) {
     dataSource.value = res.data || ([] as any)
     console.log(`output->dataSource.value`, dataSource.value)

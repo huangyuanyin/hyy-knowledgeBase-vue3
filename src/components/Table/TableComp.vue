@@ -49,7 +49,7 @@ const editTableOperation = [
 ]
 const commonTeamData = [
   { type: 'item', icon: '/src/assets/icons/team/settingIcon.svg', label: '团队设置', nick: 'toTeamSetting' },
-  { type: 'item', icon: '/src/assets/icons/team/editIcon.svg', label: '退出团队', nick: 'quitTeam' }
+  { type: 'item', icon: '/src/assets/icons/team/editIcon.svg', label: '退出团队', nick: 'toQuitTeam' }
 ]
 
 const hoveredDocument = ref<number | null>(null)
@@ -148,6 +148,14 @@ const toLink = (val, type) => {
 
 const toBookSetting = (val) => {
   console.log(`output->val`, val)
+}
+
+const toTeamSetting = (val: any) => {
+  useLink(router, route, 'teamSet', val)
+}
+
+const toQuitTeam = (val: any) => {
+  useLink(router, route, 'teamQuit', val)
 }
 </script>
 
@@ -288,7 +296,7 @@ const toBookSetting = (val) => {
                 <img src="@/assets/icons/pinOutIcon.svg" alt="" @click="toQuickLink('add', document, 'group')" />
               </span>
             </el-tooltip>
-            <LibraryOperationPopver :menuItems="commonTeamData" :height="40">
+            <LibraryOperationPopver :menuItems="commonTeamData" :height="40" @toTeamSetting="toTeamSetting(document)" @toQuitTeam="toQuitTeam(document)">
               <span class="moreIcon">
                 <img src="@/assets/icons/moreIcon1_after.svg" alt="" />
               </span>

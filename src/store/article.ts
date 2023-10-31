@@ -16,10 +16,7 @@ export const useArticleStore = defineStore('article', () => {
   const articleList: Ref<Article[]> = ref([]) // 目录树
 
   const getArticleList = async (bookId) => {
-    const params = {
-      book_id: bookId // 知识库id
-    }
-    const res = await getArticleTreeApi(params)
+    const res = await getArticleTreeApi(bookId)
     if (res.code === 1000) {
       articleList.value = res.data || ([] as any)
     } else {

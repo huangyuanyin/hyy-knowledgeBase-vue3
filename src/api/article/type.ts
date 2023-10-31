@@ -1,7 +1,3 @@
-export interface articleParams {
-  book_id: string
-}
-
 interface article {
   id: number
   title: string
