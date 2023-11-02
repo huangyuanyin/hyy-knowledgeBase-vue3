@@ -3,6 +3,7 @@ import { getGroupsApi } from '@/api/groups'
 import { getQuickLinksApi } from '@/api/quickLinks'
 
 const route = useRoute()
+const listStore = useListStore()
 const refreshStroe = useRefreshStore()
 const dataStore = useDataStore()
 const spaceId = ref(route.query.sid) // 当前空间id
@@ -54,6 +55,18 @@ watch(
     if (newVal) {
       getCommonLibrary()
       refreshStroe.setIsGetQuickList(false)
+    }
+  }
+)
+
+watch(
+  () => listStore.refreshQuickListStatus,
+  (newVal) => {
+    if (newVal) {
+      console.log(`output->12121`, 12121)
+      getCommonTeam()
+      getCommonLibrary()
+      listStore.setRefreshQuickListStatus(false)
     }
   }
 )

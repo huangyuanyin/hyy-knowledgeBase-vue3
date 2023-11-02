@@ -19,7 +19,7 @@ const handleModule = (id: number): void => {
     <div class="title">开始</div>
     <div class="module">
       <template v-for="module in moduleData" :key="module.id">
-        <AddOperationPopver :menuItems="moduleAddMenuData" :width="259" v-if="module.id === 1">
+        <AddOperationPopver v-if="module.id === 1" :menuItems="moduleAddMenuData" :width="259" @toAddArticle="toAddArticle">
           <ModuleItem :module="module" />
         </AddOperationPopver>
         <ModuleItem :module="module" v-else @click="handleModule(module.id)" />

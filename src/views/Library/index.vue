@@ -5,6 +5,7 @@ import { getQuickLinksApi } from '@/api/quickLinks'
 
 const route = useRoute()
 const infoStore = useInfoStore()
+const listStore = useListStore()
 const refreshStroe = useRefreshStore()
 const dataStore = useDataStore()
 const currentSidebar = ref(infoStore.currentSidebar) // 当前类型：个人、公共
@@ -23,14 +24,22 @@ watch(
   }
 )
 
-watchEffect(async () => {
-  if (refreshStroe.isGetLibrary) {
-    getLibrary()
+watch(
+  () => refreshStroe.isGetLibrary,
+  (newVal) => {
+    if (newVal) {
+      getLibrary()
+    }
   }
+)
+
+watchEffect(() => {
+  currentSidebar.value = infoStore.currentSidebar
 })
 
 // 获取当前空间下的常用列表
 const getQuickLinks = async () => {
+  console.log(`output->personalSpaceId`, localStorage.getItem('personalSpaceId'))
   const params = {
     target_type: 'book',
     space: currentSidebar.value === 'Sidebar' ? localStorage.getItem('personalSpaceId') : String(route.query.sid)

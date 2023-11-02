@@ -4,6 +4,7 @@ import { MenuItem } from '@/type/operationPopoverType'
 import { contentItemsData, moreMenuItemsData } from '@/data/data'
 import { getSpacesApi, getSpacesDetailApi } from '@/api/spaces/index'
 import { deleteQuickLinksApi } from '@/api/quickLinks'
+import { getTeamMemberApi } from '@/api/member'
 
 interface ContentItem {
   title: string
@@ -36,8 +37,10 @@ const props = defineProps({
 
 const route = useRoute()
 const infoStore = useInfoStore()
+const listStore = useListStore()
 const refreshStroe = useRefreshStore()
 const userStore = useUserStore()
+const user = ref(JSON.parse(localStorage.getItem('user')).userInfo.username || '')
 const state = reactive({
   headerActive: null,
   currentGroup: null,
@@ -127,21 +130,13 @@ const toLink = (type) => {
 }
 
 const handleClickLibrary = (val: any) => {
-  console.log(`output->val`, val)
   if (val.target_type === 'group') {
-    router.push({
-      path: `/${state.currentSpace}/team/book`,
-      query: {
-        ...route.query,
-        gname: val.title,
-        gid: val.target_id
-      }
-    })
+    isHasTeamPermission(val)
     state.currentGroup = val.target_id
     refreshStroe.setIsGetBookStacks(true)
   } else {
     const query = {
-      lid: 64 || val.id,
+      lid: val.target_id,
       lname: val.name || val.title,
       sid: route.query.sid,
       sname: route.query.sname
@@ -154,7 +149,9 @@ const handleClickLibrary = (val: any) => {
         router.push({
           path: `/${state.currentSpace}/directory/index`,
           query: {
-            ...query
+            ...query,
+            gid: val.group_id,
+            gname: val.group_name
           }
         })
         break
@@ -188,6 +185,37 @@ const toTopic = (val) => {
   })
 }
 
+// 判断是否有权限访问团队
+const isHasTeamPermission = (val) => {
+  getTeamMember(val)
+}
+
+const getTeamMember = async (val) => {
+  const user = JSON.parse(localStorage.getItem('user')).userInfo.username
+  const params = {
+    group: val.target_id
+  }
+  let res = await getTeamMemberApi(params)
+  if (res.code === 1000) {
+    const isHasPermission = res.data.some((item) => item.username === user)
+    if (isHasPermission) {
+      router.push({
+        path: `/${infoStore.currentSpaceName}/team/book`,
+        query: {
+          sid: route.query.sid,
+          sname: route.query.sname,
+          gid: val.target_id,
+          gname: val.title
+        }
+      })
+    } else {
+      ElMessage.error('您没有权限访问该团队')
+    }
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
 const toReminderFree = (val) => {
   ElMessage.warning('功能暂未开放，敬请期待')
 }
@@ -204,7 +232,7 @@ const toSpaceManager = () => {
 
 const toRemoveCommon = (val) => {
   const params = {
-    user: JSON.parse(localStorage.getItem('user')).userInfo.username || '',
+    user: user.value,
     space: val.space
   }
   deleteQuickLinks(val.id, params)
@@ -215,6 +243,7 @@ const deleteQuickLinks = async (id, params) => {
   if (res.code === 1000) {
     ElMessage.success('移除成功')
     refreshStroe.setIsGetQuickList(true)
+    listStore.setRefreshQuickListStatus(true)
   } else {
     ElMessage.error(res.msg)
   }
@@ -239,16 +268,21 @@ const toMoreSetting = (val) => {
   useLink(router, route, 'comBookSet', val)
 }
 
+const toPermission = (val) => {
+  useLink(router, route, 'comBookPermission', val)
+}
+
+// 获取当前用户下所能访问的空间
 const getSpaces = async () => {
   const params = {
-    permusername: JSON.parse(localStorage.getItem('user')).userInfo.username || ''
+    permusername: user.value
   }
   let res = await getSpacesApi(params)
   if (res.code === 1000) {
     if (localStorage.getItem('personalSpaceId') === null) {
       res.data.map((item) => {
         if (item.spacetype === 'personal' && item.creator === userStore.userInfo.username) {
-          infoStore.setPersonalSpaceId(item.id)
+          infoStore.setPersonalSpaceId(item.id) // 个人空间id
         }
       })
     }
@@ -261,7 +295,7 @@ const getSpacesDeatil = async () => {
   if (res.code === 1000) {
     // 循环res.data，找到item.permusername等于JSON.parse(localStorage.getItem('user')).userInfo.username的项，判断item.permtype是否为0，是则isAdmin为true,否则为false，找到则中止循环
     res.data.members.map((item) => {
-      if (item.permusername === JSON.parse(localStorage.getItem('user')).userInfo.username) {
+      if (item.permusername === user.value) {
         if (item.permtype === '0') {
           isAdmin.value = true
         } else {
@@ -269,6 +303,10 @@ const getSpacesDeatil = async () => {
         }
       }
     })
+    if (res.data.creator === user.value) {
+      isAdmin.value = true
+    }
+    sessionStorage.setItem('spaceInfo', JSON.stringify(res.data))
     sessionStorage.setItem('isAdmin', isAdmin.value.toString())
   } else {
     ElMessage.error(res.msg)
@@ -328,6 +366,7 @@ onMounted(async () => {
                   @toRemoveCommon="toRemoveCommon(data)"
                   @toTeamSetting="toTeamSetting(data)"
                   @toQuitTeam="toQuitTeam(data)"
+                  @toPermission="toPermission(data)"
                   @toMoreSetting="toMoreSetting(data)"
                 >
                   <span class="more-icon" @click.stop>

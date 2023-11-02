@@ -26,16 +26,7 @@ const route = useRoute()
 const selectGroupName = ref('')
 const teamList = ref([]) // 当前空间下的全部团队
 const stacksList = ref([]) // 知识库分组集合
-const publicList = [
-  {
-    id: '0',
-    label: '仅协作者可访问'
-  },
-  {
-    id: '1',
-    label: '空间所有成员可访问'
-  }
-]
+const publicList = ref([])
 const dialogVisible = ref(false)
 const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('user')).userInfo.avatar || '@/assets/img/img.jpg')
 const libraryFormRef = ref<FormInstance>()
@@ -45,9 +36,9 @@ const libraryForm = reactive<RuleForm>({
   avatar: '',
   description: '',
   creator: userStore.userInfo.nickname,
-  public: '1',
+  public: '',
   space: '',
-  group: '',
+  group: '1',
   stacks: ''
 })
 
@@ -89,6 +80,26 @@ watch(
     }
   }
 )
+
+watchEffect(() => {
+  if (selectGroupName.value === '公共区') {
+    publicList.value = [
+      {
+        id: '1',
+        label: '空间所有成员可访问'
+      }
+    ]
+    libraryForm.public = '1'
+  } else {
+    publicList.value = [
+      {
+        id: '0',
+        label: '仅协作者可访问'
+      }
+    ]
+    libraryForm.public = '0'
+  }
+})
 
 const handleNewData = () => {
   libraryForm.stacks = props.stackId || ''

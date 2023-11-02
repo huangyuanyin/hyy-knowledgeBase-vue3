@@ -1,19 +1,31 @@
 <script lang="ts" setup>
 import { sidebarSearchMenuItemsData, articleOperationData } from '@/data/data'
-import { getArticleTreeApi } from '@/api/article'
+import { addArticleApi, deleteArticleApi, editArticleApi, getArticleTreeApi } from '@/api/article'
 
 const route = useRoute()
 const infoStore = useInfoStore()
 const articleStore = useArticleStore()
-const bookId = ref(route.query.lid || '') // 当前知识库id
+const bookId = ref('') // 当前知识库id
 const dataSource = ref([])
 const SpaceType = ref<string>('') // 空间类型：个人 公共
+const group_name = ref<string>('')
 const nickName = ref<string>(infoStore.currentSpaceInfo.nickname || route.fullPath.split('/')[1])
 const showMoveDialog = ref(false)
+const reName = ref('')
+const reNameId = ref(null)
+const reNameParent = ref(null)
+const toLinkId = ref(null) // 删除完成后跳转的id
+const toLinkName = ref('')
 
 watchEffect(() => {
-  SpaceType.value = route.fullPath.split('/')[1].includes('directory') ? '个人' : '公共'
-  console.log(`output->route.`, route.name)
+  nextTick(async () => {
+    SpaceType.value = route.fullPath.split('/')[1].includes('directory') ? '个人' : '公共'
+    group_name.value = route.query.gname as string
+    bookId.value = route.query.lid as string
+    if (bookId.value) {
+      await getArticle()
+    }
+  })
 })
 
 const toLink = (type?: string) => {
@@ -23,13 +35,27 @@ const toLink = (type?: string) => {
         router.push('/library')
         break
       case '公共':
-        router.push({
-          path: `/${nickName.value}/public`,
-          query: {
-            sid: route.query.sid,
-            sname: route.query.sname
-          }
-        })
+        if (group_name.value === '公共区') {
+          router.push({
+            path: `/${nickName.value}/public`,
+            query: {
+              sid: route.query.sid,
+              sname: route.query.sname,
+              gid: route.query.gid,
+              gname: route.query.gname
+            }
+          })
+        } else {
+          router.push({
+            path: `/${nickName.value}/team/book`,
+            query: {
+              sid: route.query.sid,
+              sname: route.query.sname,
+              gid: route.query.gid,
+              gname: route.query.gname
+            }
+          })
+        }
         break
       default:
         break
@@ -52,15 +78,29 @@ const toLink = (type?: string) => {
         break
     }
   } else if (type === 'index') {
-    router.push({
-      path: `/${nickName.value}/directory/index`,
-      query: {
-        sid: route.query.sid,
-        sname: route.query.sname,
-        lid: route.query.lid,
-        lname: route.query.lname
-      }
-    })
+    if (SpaceType.value === '个人') {
+      router.push({
+        path: `/directory/index`,
+        query: {
+          sid: route.query.sid,
+          sname: route.query.sname,
+          lid: route.query.lid,
+          lname: route.query.lname
+        }
+      })
+    } else {
+      router.push({
+        path: `/${nickName.value}/directory/index`,
+        query: {
+          sid: route.query.sid,
+          sname: route.query.sname,
+          lid: route.query.lid,
+          lname: route.query.lname,
+          gid: route.query.gid,
+          gname: route.query.gname
+        }
+      })
+    }
   }
 }
 
@@ -69,31 +109,199 @@ const getArticle = async () => {
   let res = await getArticleTreeApi(bookId.value as string)
   if (res.code === 1000) {
     dataSource.value = res.data || ([] as any)
-    console.log(`output->dataSource.value`, dataSource.value)
+    // 取出res.data中的第一项的id
+    if (res.data.length) {
+      toLinkId.value = res.data[0].id
+      toLinkName.value = res.data[0].title
+    }
   }
 }
 
 const toArticleDetail = (val) => {
-  router.push({
-    path: `/${nickName.value}/directory/article`,
-    query: {
-      ...route.query,
-      aid: val.id,
-      aname: val.title
-    }
-  })
+  if (SpaceType.value === '个人') {
+    router.push({
+      path: `/directory/article`,
+      query: {
+        ...route.query,
+        aid: val.id,
+        aname: val.title
+      }
+    })
+  } else {
+    router.push({
+      path: `/${nickName.value}/directory/article`,
+      query: {
+        ...route.query,
+        aid: val.id,
+        aname: val.title
+      }
+    })
+  }
 }
 
 const moveArticle = (val) => {
   showMoveDialog.value = true
 }
 
-onMounted(async () => {
-  if (articleStore.articleList.length) {
-    dataSource.value = articleStore.articleList
-  } else {
-    await getArticle()
+// 重命名
+const toRename = (val) => {
+  console.log(`output->val`, val)
+  reNameId.value = val.id
+  reNameParent.value = val.parent
+  reName.value = val.title
+}
+
+const handleRename = () => {
+  console.log(`output->232`, 232)
+  editArticle()
+}
+
+const toAddArticle = (val) => {
+  addArticle('doc', val.id)
+}
+
+const addArticle = async (type, parent) => {
+  const spaceType = route.path.split('/').length === 3 ? '个人' : '公共'
+  const params = {
+    title: '新建文档',
+    book: route.query.lid as string,
+    space: spaceType === '个人' ? localStorage.getItem('personalSpaceId') : (route.query.sid as string),
+    type,
+    body: '',
+    parent
   }
+  let res = await addArticleApi(params)
+  if (res.code === 1000) {
+    if (spaceType === '个人') {
+      router.push({
+        path: `/directory/article`,
+        query: {
+          ...route.query,
+          aid: res.data.id,
+          aname: res.data.title
+        }
+      })
+    } else {
+      router.push({
+        path: `/${route.path.split('/')[1]}/directory/article`,
+        query: {
+          ...route.query,
+          aid: res.data.id,
+          aname: res.data.title
+        }
+      })
+    }
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const editArticle = async () => {
+  const spaceType = route.path.split('/').length === 3 ? '个人' : '公共'
+  const params = {
+    title: reName.value,
+    book: route.query.lid as string,
+    space: spaceType === '个人' ? localStorage.getItem('personalSpaceId') : (route.query.sid as string)
+  }
+  let res = await editArticleApi(reNameId.value, params)
+  if (res.code === 1000) {
+    reNameId.value = null
+    if (spaceType === '个人') {
+      router.push({
+        path: `/directory/article`,
+        query: {
+          ...route.query,
+          aid: res.data.id,
+          aname: res.data.title
+        }
+      })
+    } else {
+      router.push({
+        path: `/${route.path.split('/')[1]}/directory/article`,
+        query: {
+          ...route.query,
+          aid: res.data.id,
+          aname: res.data.title
+        }
+      })
+    }
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const deleteArticle = async (id) => {
+  const spaceType = route.path.split('/').length === 3 ? '个人' : '公共'
+  let res = await deleteArticleApi(id)
+  if (res.code === 1000) {
+    ElMessage.success('删除成功')
+    await getArticle()
+    if (id != route.query.aid) return
+    if (dataSource.value.length === 0) {
+      router.push({
+        path: `/${route.path.split('/')[1]}/directory/index`,
+        query: {
+          sid: route.query.sid,
+          sname: route.query.sname,
+          gid: route.query.gid,
+          gname: route.query.gname,
+          lid: route.query.lid,
+          lname: route.query.lname
+        }
+      })
+    } else {
+      if (spaceType === '个人') {
+        router.push({
+          path: `/directory/article`,
+          query: {
+            ...route.query,
+            aid: toLinkId.value,
+            aname: toLinkName.value
+          }
+        })
+      } else {
+        router.push({
+          path: `/${route.path.split('/')[1]}/directory/article`,
+          query: {
+            ...route.query,
+            aid: toLinkId.value,
+            aname: toLinkName.value
+          }
+        })
+      }
+    }
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const toDeleteArticle = (val) => {
+  ElMessageBox.confirm(`确认删除【${val.title}】 无标题文档0 吗？`, '', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    confirmButtonClass: 'submitBtn',
+    cancelButtonClass: 'cancelBtn',
+    customClass: 'deleteArticleDialog',
+    type: 'warning',
+    showClose: false
+  })
+    .then(() => {
+      deleteArticle(val.id)
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消操作'
+      })
+    })
+}
+
+onMounted(async () => {
+  // if (articleStore.articleList.length) {
+  //   dataSource.value = articleStore.articleList
+  // } else {
+  //   await getArticle()
+  // }
 })
 </script>
 
@@ -104,7 +312,7 @@ onMounted(async () => {
         <img v-if="SpaceType === '个人'" class="favicon" src="/src/assets/favicon.ico" @click="toLink('back')" />
         <img v-else class="favicon" src="/src/assets/icons/spaceIcon.svg" @click="toLink('back')" />
         <img class="rightArrowIcon" src="/src/assets/icons/rightArrowIcon.svg" alt="" />
-        <span @click="toLink('link')">{{ SpaceType === '个人' ? '个人知识库' : '公共区' }}</span>
+        <span @click="toLink('link')">{{ SpaceType === '个人' ? '个人知识库' : `${group_name}` }}</span>
       </div>
       <div class="library-name">
         <div class="left">
@@ -123,7 +331,7 @@ onMounted(async () => {
       <SidebarSearch :menuItems="sidebarSearchMenuItemsData" />
     </div>
     <div class="directory-list">
-      <div :class="['index', route.name === 'Space-Directory' ? 'is_selected' : '']" @click="toLink('index')">
+      <div :class="['index', route.name === 'Space-Directory' || route.name === 'Directory' ? 'is_selected' : '']" @click="toLink('index')">
         <img class="indexIcon" src="/src/assets/icons/indexIcon.svg" alt="" />
         <span>首页</span>
       </div>
@@ -140,7 +348,7 @@ onMounted(async () => {
     </div>
     <div class="empty" v-if="!dataSource.length">
       <img src="@/assets/img/empty.png" alt="" />
-      <div>知识库为空，你可以<span>新建文档</span></div>
+      <div>知识库为空，你可以<span @click="addArticle('doc', null)">新建文档</span></div>
     </div>
     <div class="list" v-else>
       <el-tree
@@ -159,17 +367,27 @@ onMounted(async () => {
                 <img src="/src/assets/icons/miniDropDownIcon.svg" alt="" v-if="data.children?.length && node.expanded" />
                 <img class="foldIcon" src="/src/assets/icons/miniDropDownIcon.svg" alt="" v-if="data.children?.length && !node.expanded" />
               </div>
-              <span>{{ data.title }}</span>
+              <el-input v-if="reNameId === data.id" v-model="reName" :id="data.id" autofocus @change="handleRename" />
+              <span v-else>{{ data.title }}</span>
             </div>
-            <div class="button">
-              <LibraryOperationPopver :menuItems="articleOperationData" :height="32" :width="150" @moveArticle="moveArticle(data)">
+            <div class="button" v-if="reNameId !== data.id">
+              <LibraryOperationPopver
+                :menuItems="articleOperationData"
+                :height="32"
+                :width="150"
+                @moveArticle="moveArticle(data)"
+                @toRename="toRename(data)"
+                @toDeleteArticle="toDeleteArticle(data)"
+              >
                 <span class="moreIcon" @click.stop>
                   <img src="/src/assets/icons/moreIcon1_after.svg" alt="" />
                 </span>
               </LibraryOperationPopver>
-              <span class="addIcon" @click.stop>
-                <img src="/src/assets/icons/addIcon.svg" alt="" />
-              </span>
+              <AddOperationPopver :menu-items="sidebarSearchMenuItemsData" trigger="click" @toAddArticle="toAddArticle(data)">
+                <span class="addIcon" @click.stop>
+                  <img src="/src/assets/icons/addIcon.svg" alt="" />
+                </span>
+              </AddOperationPopver>
             </div>
           </span>
         </template>
@@ -497,5 +715,31 @@ onMounted(async () => {
 <style lang="scss">
 .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
   background-color: #eff0f0;
+}
+.deleteArticleDialog {
+  .submitBtn,
+  .cancelBtn {
+    margin-left: 8px;
+    border-radius: 6px;
+    box-shadow: none;
+    height: 32px;
+    padding: 4px 15px;
+    font-size: 14px;
+    margin-top: 24px;
+  }
+  .submitBtn {
+    color: #fff;
+    background: #00b96b;
+    border-color: #00b96b;
+  }
+  .cancelBtn {
+    color: #262626;
+    background: #fff;
+    border-color: #e7e9e8;
+    &:hover {
+      color: #00b96b;
+      border-color: #00b96b;
+    }
+  }
 }
 </style>

@@ -1,27 +1,3 @@
-import path from 'path'; import path from 'path'; import path from 'path';
-<template>
-  <div class="TeamHeader_wrap">
-    <div class="left">
-      <span class="teamIcon"> <img src="/src/assets/icons/teamIcon.svg" alt="" /></span>
-      <h3>{{ $route.query.gname }}</h3>
-      <el-tooltip effect="dark" content="仅团队成员可访问" placement="bottom">
-        <span class="privateIcon"><img src="/src/assets/icons/privateIcon.svg" alt="" /></span>
-      </el-tooltip>
-      <el-tooltip effect="dark" content="收藏" placement="bottom">
-        <span class="starIcon"> <img src="/src/assets/icons/startIcon.svg" alt="" /></span>
-      </el-tooltip>
-      <div class="tab">
-        <span :class="[currentItem === item.value ? 'active' : '']" v-for="(item, index) in headerItem" :key="'headerItem' + index" @click="toLink(item.value)">
-          {{ item.label }}
-        </span>
-      </div>
-    </div>
-    <div class="right">
-      <span @click="toTeamSetting"><img src="/src/assets/icons/settingIcon.svg" alt="" /></span>
-    </div>
-  </div>
-</template>
-
 <script lang="ts" setup>
 const route = useRoute()
 const router = useRouter()
@@ -75,6 +51,29 @@ const toTeamSetting = () => {
   })
 }
 </script>
+
+<template>
+  <div class="TeamHeader_wrap">
+    <div class="left">
+      <span class="teamIcon"> <img src="/src/assets/icons/teamIcon.svg" alt="" /></span>
+      <h3>{{ $route.query.gname }}</h3>
+      <el-tooltip effect="dark" content="仅团队成员可访问" placement="bottom">
+        <span class="privateIcon"><img src="/src/assets/icons/privateIcon.svg" alt="" /></span>
+      </el-tooltip>
+      <el-tooltip effect="dark" content="收藏" placement="bottom">
+        <span class="starIcon"> <img src="/src/assets/icons/startIcon.svg" alt="" /></span>
+      </el-tooltip>
+      <div class="tab">
+        <span :class="[currentItem === item.value ? 'active' : '']" v-for="(item, index) in headerItem" :key="'headerItem' + index" @click="toLink(item.value)">
+          {{ item.label }}
+        </span>
+      </div>
+    </div>
+    <div class="right">
+      <span @click="toTeamSetting"><img src="/src/assets/icons/settingIcon.svg" alt="" /></span>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .TeamHeader_wrap {
@@ -144,7 +143,7 @@ const toTeamSetting = () => {
         }
       }
       .active {
-        color: #262626 !important;
+        color: #00b96b !important;
       }
     }
   }

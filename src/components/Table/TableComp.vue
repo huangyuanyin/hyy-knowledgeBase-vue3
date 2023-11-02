@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { getTeamMemberApi } from '@/api/member'
 import { addQuickLinksApi, deleteQuickLinksApi } from '@/api/quickLinks'
 
 const props = defineProps({
@@ -124,15 +125,7 @@ const addQuickLinks = async (params, type) => {
 
 const toLink = (val, type) => {
   if (type === 'team') {
-    router.push({
-      path: `/${infoStore.currentSpaceName}/team/book`,
-      query: {
-        sid: val.space,
-        sname: route.query.sname,
-        gid: val.id,
-        gname: val.groupname
-      }
-    })
+    useTeamPermission(route, router, val)
   } else if (type === 'library') {
     router.push({
       path: `/${infoStore.currentSpaceName}/directory/index`,
@@ -140,7 +133,8 @@ const toLink = (val, type) => {
         sid: val.space,
         sname: route.query.sname,
         lid: val.id,
-        lname: val.name
+        lname: val.name,
+        gname: val.group_name
       }
     })
   }

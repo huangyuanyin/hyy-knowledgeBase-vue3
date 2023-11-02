@@ -10,6 +10,8 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
   menuItems: Array as () => MenuItem[]
 })
 
+const emit = defineEmits()
+
 const route = useRoute()
 const infoStore = useInfoStore()
 const stackId = ref('')
@@ -23,6 +25,9 @@ const toHandle = (val) => {
       break
     case '团队':
       isShowTeamDialog.value = true
+      break
+    case '文档':
+      emit(val.nick, val)
       break
     default:
       ElMessage.warning('功能暂未开放，敬请期待')

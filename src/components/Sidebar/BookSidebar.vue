@@ -24,12 +24,12 @@ const bookName = ref(route.query.lname as string)
 const currentMenu = ref('basic')
 
 watchEffect(() => {
-  currentMenu.value = route.path.split('/')[3]
+  route.path.split('/').length === 3 ? (currentMenu.value = route.path.split('/')[2]) : (currentMenu.value = route.path.split('/')[3])
 })
 
 const toBack = () => {
   router.push({
-    path: `/${route.path.split('/')[1]}/library`,
+    path: route.path.split('/').length === 3 ? `/library` : `/${route.path.split('/')[1]}/library`,
     query: {
       sid: route.query.sid,
       sname: route.query.sname
@@ -41,7 +41,7 @@ const toLink = (item: any) => {
   if (currentMenu.value === item.nickName) return
   currentMenu.value = item.nickName
   router.push({
-    path: '/' + route.path.split('/')[1] + item.path,
+    path: route.path.split('/').length === 3 ? `${item.path}` : '/' + route.path.split('/')[1] + item.path,
     query: {
       lid: route.query.lid,
       lname: route.query.lname,

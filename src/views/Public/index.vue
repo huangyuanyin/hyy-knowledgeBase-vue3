@@ -1,27 +1,3 @@
-<template>
-  <div class="Public_wrap">
-    <div class="header">
-      <span>公共区</span>
-      <div class="tag">
-        <img src="/src/assets/icons/publicTagIcon.svg" alt="" />
-        <el-tooltip class="box-item" effect="dark" content="公共区内容面向空间所有成员开放" placement="bottom">
-          <span>全员可见</span>
-        </el-tooltip>
-      </div>
-    </div>
-    <div class="announcement">
-      <div>管理员可以添加面向全体成员的公告信息</div>
-      <img src="/src/assets/icons/rightArrowIcon.svg" alt="" />
-    </div>
-    <div class="content">
-      <SwitchModuleItem moduleType="operation">
-        <template v-slot:left> <span class="title">知识库</span> </template>
-      </SwitchModuleItem>
-      <LibraryTable title="知识库" :commonList="commonList" :group="bookGroup" @getBookStacks="getBookStacks" />
-    </div>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import { getBookStacksApi } from '@/api/bookstacks'
 import { getLibraryApi } from '@/api/library'
@@ -41,9 +17,11 @@ const libarayList = ref([])
 
 watch(
   () => refreshStroe.isGetQuickList,
-  (newVal) => {
+  async (newVal) => {
     if (newVal) {
-      getQuickLinks()
+      await getBookStacks()
+      await getLibrary()
+      await getQuickLinks()
     }
   }
 )
@@ -99,6 +77,30 @@ onMounted(async () => {
   await getQuickLinks()
 })
 </script>
+
+<template>
+  <div class="Public_wrap">
+    <div class="header">
+      <span>公共区</span>
+      <div class="tag">
+        <img src="/src/assets/icons/publicTagIcon.svg" alt="" />
+        <el-tooltip class="box-item" effect="dark" content="公共区内容面向空间所有成员开放" placement="bottom">
+          <span>全员可见</span>
+        </el-tooltip>
+      </div>
+    </div>
+    <div class="announcement">
+      <div>管理员可以添加面向全体成员的公告信息</div>
+      <img src="/src/assets/icons/rightArrowIcon.svg" alt="" />
+    </div>
+    <div class="content">
+      <SwitchModuleItem moduleType="operation">
+        <template v-slot:left> <span class="title">知识库</span> </template>
+      </SwitchModuleItem>
+      <LibraryTable title="知识库" :commonList="commonList" :group="bookGroup" @getBookStacks="getBookStacks" />
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .Public_wrap {

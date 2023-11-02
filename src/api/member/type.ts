@@ -3,6 +3,7 @@ export interface TeamMemberParams {
 }
 
 export interface TeamMemberData {
+  [x: string]: any
   username: Array<string>
   space: string
   group: string

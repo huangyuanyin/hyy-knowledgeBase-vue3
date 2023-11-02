@@ -124,9 +124,9 @@ const customRoutes = [
     }
   },
   {
-    path: '/:spaceName/directory/article',
+    path: '/:spaceName?/directory/article',
     name: 'Space-Article',
-    component: pageComps['/src/views/Article/index.vue'] as Component,
+    component: pageComps['/src/views/Article/Doc/index.vue'] as Component,
     meta: {
       title: '文章详情',
       asideComponent: 'DirectorySidebar'
@@ -250,7 +250,7 @@ const customRoutes = [
     }
   },
   {
-    path: '/:spaceName/bookSetting/basic',
+    path: '/:spaceName?/bookSetting/basic',
     name: 'Book-Basic',
     component: pageComps['/src/views/Book/Basic/index.vue'] as Component,
     meta: {
@@ -259,7 +259,7 @@ const customRoutes = [
     }
   },
   {
-    path: '/:spaceName/bookSetting/collaborators',
+    path: '/:spaceName?/bookSetting/collaborators',
     name: 'Book-Collaborators',
     component: pageComps['/src/views/Book/Collaborators/index.vue'] as Component,
     meta: {
@@ -268,7 +268,7 @@ const customRoutes = [
     }
   },
   {
-    path: '/:spaceName/bookSetting/settings',
+    path: '/:spaceName?/bookSetting/settings',
     name: 'Book-Advanced',
     component: pageComps['/src/views/Book/Advanced/index.vue'] as Component,
     meta: {
@@ -277,7 +277,7 @@ const customRoutes = [
     }
   },
   {
-    path: '/:spaceName/bookSetting/toc',
+    path: '/:spaceName?/bookSetting/toc',
     name: 'Book-Toc',
     component: pageComps['/src/views/Book/Toc/index.vue'] as Component,
     meta: {
@@ -286,7 +286,7 @@ const customRoutes = [
     }
   },
   {
-    path: '/:spaceName/bookSetting/docs',
+    path: '/:spaceName?/bookSetting/docs',
     name: 'Book-Docs',
     component: pageComps['/src/views/Book/Docs/index.vue'] as Component,
     meta: {
@@ -295,7 +295,7 @@ const customRoutes = [
     }
   },
   {
-    path: '/:spaceName/bookSetting/webhooks',
+    path: '/:spaceName?/bookSetting/webhooks',
     name: 'Book-Webhooks',
     component: pageComps['/src/views/Book/Webhooks/index.vue'] as Component,
     meta: {
@@ -304,7 +304,7 @@ const customRoutes = [
     }
   },
   {
-    path: '/:spaceName/bookSetting/trash',
+    path: '/:spaceName?/bookSetting/trash',
     name: 'Book-Trash',
     component: pageComps['/src/views/Book/Trash/index.vue'] as Component,
     meta: {

@@ -19,6 +19,7 @@ const emit = defineEmits(['closeDialog'])
 
 const route = useRoute()
 const refreshStroe = useRefreshStore()
+const user = ref(JSON.parse(localStorage.getItem('user')).userInfo.username || '')
 const avatarUrl = import.meta.env.VITE_BASE_LOGIN_URL
 const dialogVisible = ref(false)
 const defaultProps = {
@@ -99,6 +100,9 @@ const getDepartUser = async (id: string) => {
       memberList.value = res.data.filter((item) => {
         return !props.spaceMember.some((v) => v.permusername === item.username)
       })
+      memberList.value = memberList.value.filter((item) => {
+        return item.username !== user.value
+      })
     }
     memberTotal.value = memberList.value.length
   } else {
@@ -167,7 +171,7 @@ const arrayToTree = (list: DeptList[], id: string) => {
                 <el-tag v-else type="danger">停用</el-tag>
               </template>
             </el-table-column>
-            <el-table-column property="post_name" label="岗位" width="120" />
+            <el-table-column property="post_name" label="岗位" width="130" />
             <el-table-column property="mobile" label="手机号" width="120" />
           </el-table>
         </div>

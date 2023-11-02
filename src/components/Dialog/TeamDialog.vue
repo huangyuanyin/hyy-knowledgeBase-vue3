@@ -2,10 +2,12 @@
 import { v4 as uuidv4 } from 'uuid'
 import { FormInstance } from 'element-plus'
 import { addGroupsApi } from '@/api/groups'
+import { getSpacepermissionsApi } from '@/api/spacepermissions'
 
 interface ListItem {
-  value: string
-  label: string
+  permusername: string
+  permname: string
+  dept: string
 }
 
 const props = defineProps({
@@ -19,208 +21,7 @@ const infoStore = useInfoStore()
 const dialogVisible = ref(false)
 const loadingMember = ref(false)
 const options = ref<ListItem[]>([])
-const list = ref([
-  {
-    value: 'Alabama',
-    label: 'Alabama'
-  },
-  {
-    value: 'Alaska',
-    label: 'Alaska'
-  },
-  {
-    value: 'Arizona',
-    label: 'Arizona'
-  },
-  {
-    value: 'Arkansas',
-    label: 'Arkansas'
-  },
-  {
-    value: 'California',
-    label: 'California'
-  },
-  {
-    value: 'Colorado',
-    label: 'Colorado'
-  },
-  {
-    value: 'Connecticut',
-    label: 'Connecticut'
-  },
-  {
-    value: 'Delaware',
-    label: 'Delaware'
-  },
-  {
-    value: 'Florida',
-    label: 'Florida'
-  },
-  {
-    value: 'Georgia',
-    label: 'Georgia'
-  },
-  {
-    value: 'Hawaii',
-    label: 'Hawaii'
-  },
-  {
-    value: 'Idaho',
-    label: 'Idaho'
-  },
-  {
-    value: 'Illinois',
-    label: 'Illinois'
-  },
-  {
-    value: 'Indiana',
-    label: 'Indiana'
-  },
-  {
-    value: 'Iowa',
-    label: 'Iowa'
-  },
-  {
-    value: 'value:Kansas',
-    label: 'label:Kansas'
-  },
-  {
-    value: 'value:Kentucky',
-    label: 'label:Kentucky'
-  },
-  {
-    value: 'value:Louisiana',
-    label: 'label:Louisiana'
-  },
-  {
-    value: 'value:Maine',
-    label: 'label:Maine'
-  },
-  {
-    value: 'value:Maryland',
-    label: 'label:Maryland'
-  },
-  {
-    value: 'value:Massachusetts',
-    label: 'label:Massachusetts'
-  },
-  {
-    value: 'value:Michigan',
-    label: 'label:Michigan'
-  },
-  {
-    value: 'value:Minnesota',
-    label: 'label:Minnesota'
-  },
-  {
-    value: 'value:Mississippi',
-    label: 'label:Mississippi'
-  },
-  {
-    value: 'value:Missouri',
-    label: 'label:Missouri'
-  },
-  {
-    value: 'value:Montana',
-    label: 'label:Montana'
-  },
-  {
-    value: 'value:Nebraska',
-    label: 'label:Nebraska'
-  },
-  {
-    value: 'value:Nevada',
-    label: 'label:Nevada'
-  },
-  {
-    value: 'value:New Hampshire',
-    label: 'label:New Hampshire'
-  },
-  {
-    value: 'value:New Jersey',
-    label: 'label:New Jersey'
-  },
-  {
-    value: 'value:New Mexico',
-    label: 'label:New Mexico'
-  },
-  {
-    value: 'value:New York',
-    label: 'label:New York'
-  },
-  {
-    value: 'value:North Carolina',
-    label: 'label:North Carolina'
-  },
-  {
-    value: 'value:North Dakota',
-    label: 'label:North Dakota'
-  },
-  {
-    value: 'value:Ohio',
-    label: 'label:Ohio'
-  },
-  {
-    value: 'value:Oklahoma',
-    label: 'label:Oklahoma'
-  },
-  {
-    value: 'value:Oregon',
-    label: 'label:Oregon'
-  },
-  {
-    value: 'value:Pennsylvania',
-    label: 'label:Pennsylvania'
-  },
-  {
-    value: 'value:Rhode Island',
-    label: 'label:Rhode Island'
-  },
-  {
-    value: 'value:South Carolina',
-    label: 'label:South Carolina'
-  },
-  {
-    value: 'South Dakota',
-    label: 'South Dakota'
-  },
-  {
-    value: 'Tennessee',
-    label: 'Tennessee'
-  },
-  {
-    value: 'Texas',
-    label: 'Texas'
-  },
-  {
-    value: 'Utah',
-    label: 'Utah'
-  },
-  {
-    value: 'Vermont',
-    label: 'Vermont'
-  },
-  {
-    value: 'Virginia',
-    label: 'Virginia'
-  },
-  {
-    value: 'Washington',
-    label: 'Washington'
-  },
-  {
-    value: 'West Virginia',
-    label: 'West Virginia'
-  },
-  {
-    value: 'Wisconsin',
-    label: 'Wisconsin'
-  },
-  {
-    value: 'Wyoming',
-    label: 'Wyoming'
-  }
-])
+const list = ref([])
 const teamFormRef = ref<FormInstance>()
 const teamForm = reactive({
   groupname: '',
@@ -234,7 +35,7 @@ watch(
   () => props.isShow,
   (newVal: boolean) => {
     dialogVisible.value = newVal
-    teamForm.groupkey = uuidv4().replace(/-/g, '')
+    getSpacepermissions()
   }
 )
 
@@ -244,9 +45,10 @@ const remoteMethod = (query: string) => {
     setTimeout(() => {
       loadingMember.value = false
       options.value = list.value.filter((item) => {
-        return item.label.toLowerCase().includes(query.toLowerCase())
+        return item.permusername.toLowerCase().includes(query.toLowerCase())
       })
     }, 200)
+    console.log(`output->options.value`, options.value, list.value)
   } else {
     options.value = []
   }
@@ -263,6 +65,7 @@ const handleSubmit = async () => {
 
 // 新增团队
 const addGroups = async () => {
+  teamForm.groupkey = uuidv4().replace(/-/g, '')
   let res = await addGroupsApi(teamForm)
   if (res.code === 1000) {
     handleClose()
@@ -278,6 +81,18 @@ const addGroups = async () => {
         }
       })
     }, 1000)
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const getSpacepermissions = async () => {
+  const params = {
+    space: route.query.sid as string
+  }
+  const res = await getSpacepermissionsApi(params)
+  if (res.code === 1000) {
+    list.value = res.data || ([] as any)
   } else {
     ElMessage.error(res.msg)
   }
@@ -332,17 +147,17 @@ const handleClose = async () => {
           :teleported="false"
           :max-collapse-tags="4"
         >
-          <el-option v-for="(item, index) in options" :key="'options' + index" :label="item.label" :value="item.value">
+          <el-option v-for="(item, index) in options" :key="'options' + index" :label="item.permname" :value="item.permusername">
             <div class="item">
               <span class="img">
                 <img src="/src/assets/img/img.jpg" alt="" />
               </span>
               <div class="info">
                 <span class="label">
-                  {{ item.label }}
-                  <span class="nickname">({{ item.value }})</span>
+                  {{ item.permname }}
+                  <span class="nickname">({{ item.permusername }})</span>
                 </span>
-                <span class="value">{{ item.value }}</span>
+                <span class="value">{{ item.dept }}</span>
               </div>
             </div>
           </el-option>

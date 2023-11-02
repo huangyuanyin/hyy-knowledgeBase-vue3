@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { commonLibraryData } from '@/data/data'
 import { deleteQuickLinksApi } from '@/api/quickLinks'
+import { getTeamMemberApi } from '@/api/member'
 
 type CommonLibraryItem = {
   name?: string
@@ -82,40 +83,77 @@ const deleteQuickLinks = async (id, params) => {
 }
 
 const toLink = (item) => {
-  console.log(`output->item.target_typ`, item)
   if (infoStore.currentSidebar === 'Sidebar') {
     router.push({
       path: `/directory/index`,
       query: {
         sid: item.space,
         sname: route.query.sname,
-        lid: item.id,
+        lid: item.target_id,
         lname: item.title
       }
     })
   } else {
     if (item.target_type === 'group') {
-      router.push({
-        path: `/${infoStore.currentSpaceName}/team/book`,
-        query: {
-          sid: item.space,
-          sname: route.query.sname,
-          gid: item.target_id,
-          gname: item.title
-        }
-      })
+      useTeamPermission(route, router, item)
     } else {
       router.push({
         path: `/${infoStore.currentSpaceName}/directory/index`,
         query: {
           sid: item.space,
           sname: route.query.sname,
-          lid: item.id,
-          lname: item.title
+          lid: item.target_id,
+          lname: item.title,
+          gid: item.group_id,
+          gname: item.group_name
         }
       })
     }
   }
+}
+
+// 判断是否有权限访问团队
+const isHasTeamPermission = (val) => {
+  getTeamMember(val)
+}
+
+const getTeamMember = async (val) => {
+  const user = JSON.parse(localStorage.getItem('user')).userInfo.username
+  const params = {
+    group: val.target_id
+  }
+  let res = await getTeamMemberApi(params)
+  if (res.code === 1000) {
+    console.log(`output->res.data`, res.data)
+    const isHasPermission = res.data.some((item) => item.username === user)
+    if (isHasPermission) {
+      router.push({
+        path: `/${infoStore.currentSpaceName}/team/book`,
+        query: {
+          sid: route.query.space,
+          sname: route.query.sname,
+          gid: val.target_id,
+          gname: val.title
+        }
+      })
+    } else {
+      ElMessage.error('您没有权限访问该团队')
+    }
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const toRename = (val) => {
+  ElMessage.warning('功能暂未开放，敬请期待')
+}
+
+const toMoreSetting = (val) => {
+  useLink(router, route, 'comBookSet', val)
+}
+
+const toPermission = (val) => {
+  useLink(router, route, 'comBookPermission', val)
 }
 </script>
 
@@ -140,6 +178,9 @@ const toLink = (item) => {
             @deleteLibrary="deleteLibrary(item)"
             @toTeamSetting="toTeamSetting(item)"
             @toQuitTeam="toQuitTeam(item)"
+            @toRename="toRename(item)"
+            @toPermission="toPermission(item)"
+            @toMoreSetting="toMoreSetting(item)"
           >
             <div class="item-right" @click.stop>
               <img src="/src/assets/icons/moreIcon1_after.svg" alt="" class="moreIcon" />

@@ -15,3 +15,7 @@ export function getDepartUserApi(params?: any) {
 export function selectUserInfoApi(data) {
   return http.post('user/select_UserInfo/', data, 'user')
 }
+
+export function getUserApi(params?: any) {
+  return http.get('http://10.4.150.56:8032/oauth/user/', { params }, 'user')
+}

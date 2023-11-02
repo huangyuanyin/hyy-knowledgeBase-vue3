@@ -24,7 +24,7 @@ export const spaceMenuItemsData = [
 ]
 
 export const sidebarSearchMenuItemsData = [
-  { type: 'item', icon: '/src/assets/icons/documentIcon.svg', label: '文档' },
+  { type: 'item', icon: '/src/assets/icons/documentIcon.svg', label: '文档', nick: 'toAddArticle' },
   { type: 'item', icon: '/src/assets/icons/formIcon.svg', label: '表格' },
   { type: 'item', icon: '/src/assets/icons/mindmapIcon.svg', label: '思维导图' },
   { type: 'item', icon: '/src/assets/icons/pptIcon.svg', label: '幻灯片' },
@@ -75,9 +75,9 @@ export const moreOperationData = [
 export const commonLibraryData = [
   { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '移除常用', nick: 'removeCommon' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限', nick: 'permission' },
-  { type: 'item', icon: '/src/assets/icons/renameIcon.svg', label: '重命名', nick: 'rename' },
-  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置', nick: 'moreSetting' },
+  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限', nick: 'toPermission' },
+  { type: 'item', icon: '/src/assets/icons/renameIcon.svg', label: '重命名', nick: 'toRename' },
+  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置', nick: 'toMoreSetting' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'deleteLibrary' }
 ]
@@ -85,15 +85,15 @@ export const commonLibraryData = [
 export const notCommonLibraryData = [
   { type: 'item', icon: '/src/assets/icons/pinOutIcon.svg', label: '常用', nick: 'addCommon' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限', nick: 'permission' },
-  { type: 'item', icon: '/src/assets/icons/renameIcon.svg', label: '重命名', nick: 'rename' },
-  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置', nick: 'moreSetting' },
+  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限', nick: 'toPermission' },
+  { type: 'item', icon: '/src/assets/icons/renameIcon.svg', label: '重命名', nick: 'toRename' },
+  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置', nick: 'toMoreSetting' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'deleteLibrary' }
 ]
 
 export const articleOperationData = [
-  { type: 'item', icon: '/src/assets/icons/article/renameIcon.svg', label: '重命名', nick: 'removeCommon' },
+  { type: 'item', icon: '/src/assets/icons/article/renameIcon.svg', label: '重命名', nick: 'toRename' },
   { type: 'item', icon: '/src/assets/icons/article/editIcon.svg', label: '编辑文档', nick: 'removeCommon' },
   { type: 'item', icon: '/src/assets/icons/article/copyLinkIcon.svg', label: '复制链接', nick: 'removeCommon' },
   { type: 'item', icon: '/src/assets/icons/article/addTabIcon.svg', label: '在新标签页打开', nick: 'removeCommon' },
@@ -104,7 +104,7 @@ export const articleOperationData = [
   { type: 'item', icon: '/src/assets/icons/article/moveIcon.svg', label: '移动', nick: 'moveArticle' },
   { type: 'item', icon: '/src/assets/icons/article/exportIcon.svg', label: '导出', nick: 'moreSetting' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'deleteArticle' }
+  { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteArticle' }
 ]
 
 export const cooperateLink =

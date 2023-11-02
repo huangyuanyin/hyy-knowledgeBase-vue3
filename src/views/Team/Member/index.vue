@@ -1,63 +1,3 @@
-<template>
-  <div class="Member_wrap">
-    <TeamHeader />
-    <div class="member-box">
-      <div class="header">
-        <h2>
-          成员
-          <span class="counts">{{ memberTotal }}</span>
-          <el-tooltip effect="dark" content="绑定部门后，部门成员访问该团队时将自动成为团队成员，未访问过的成员不生效。" placement="top">
-            <span class="departMemberIcon">
-              <img src="/src/assets/icons/departMemberIcon.svg" alt="" />
-              一键绑定空间成员
-            </span>
-          </el-tooltip>
-        </h2>
-        <div>
-          <el-input v-model="memberInput" placeholder="搜索成员" clearable>
-            <template #prefix>
-              <i-ep-Search />
-            </template>
-          </el-input>
-          <el-button @click="isShowAddMemberDialog = true"> 添加成员 </el-button>
-        </div>
-      </div>
-      <div class="member">
-        <vxe-table
-          :data="memberList"
-          border="inner"
-          ref="xTable"
-          max-height="800"
-          :row-config="{ isHover: true }"
-          @checkbox-all="selectAllChangeEvent"
-          @checkbox-change="selectChangeEvent"
-        >
-          <vxe-column type="checkbox" width="60"></vxe-column>
-          <vxe-column field="username" title="姓名" width="451" sortable></vxe-column>
-          <vxe-column field="role" title="角色" :formatter="formatterRole" width="200" sortable></vxe-column>
-          <vxe-column field="status" width="200" title="账号状态" :formatter="formatterStatus" sortable></vxe-column>
-          <vxe-column field="update_datetime" width="250" title="加入时间" sortable></vxe-column>
-          <vxe-column title="操作">
-            <template #default="{ row }">
-              <el-tooltip effect="dark" content="退出" placement="top" :show-arrow="false">
-                <span class="icon" v-if="row.role === '0'">
-                  <img src="/src/assets/icons/team/editIcon.svg" alt="" @click="toExit(row)" />
-                </span>
-              </el-tooltip>
-              <el-tooltip effect="dark" content="删除" placement="top" :show-arrow="false">
-                <span class="icon" v-if="row.role === '2' || row.role === '1'">
-                  <img src="/src/assets/icons/organize/deleteIcon.svg" alt="" @click="toDeleteMmber(row)" />
-                </span>
-              </el-tooltip>
-            </template>
-          </vxe-column>
-        </vxe-table>
-      </div>
-    </div>
-  </div>
-  <addMemberDialog :isShow="isShowAddMemberDialog" @closeDialog="isShowAddMemberDialog = false" :selectMember="memberList" />
-</template>
-
 <script lang="ts" setup>
 import { deleteTeamMemberApi, getTeamMemberApi } from '@/api/member'
 import { VxeTableInstance, VxeColumnPropTypes } from 'vxe-table'
@@ -151,6 +91,66 @@ onMounted(() => {
   getTeamMember()
 })
 </script>
+
+<template>
+  <div class="Member_wrap">
+    <TeamHeader />
+    <div class="member-box">
+      <div class="header">
+        <h2>
+          成员
+          <span class="counts">{{ memberTotal }}</span>
+          <el-tooltip effect="dark" content="绑定部门后，部门成员访问该团队时将自动成为团队成员，未访问过的成员不生效。" placement="top">
+            <span class="departMemberIcon">
+              <img src="/src/assets/icons/departMemberIcon.svg" alt="" />
+              一键绑定空间成员
+            </span>
+          </el-tooltip>
+        </h2>
+        <div>
+          <el-input v-model="memberInput" placeholder="搜索成员" clearable>
+            <template #prefix>
+              <i-ep-Search />
+            </template>
+          </el-input>
+          <el-button @click="isShowAddMemberDialog = true"> 添加成员 </el-button>
+        </div>
+      </div>
+      <div class="member">
+        <vxe-table
+          :data="memberList"
+          border="inner"
+          ref="xTable"
+          max-height="800"
+          :row-config="{ isHover: true }"
+          @checkbox-all="selectAllChangeEvent"
+          @checkbox-change="selectChangeEvent"
+        >
+          <vxe-column type="checkbox" width="60"></vxe-column>
+          <vxe-column field="username" title="姓名" width="451" sortable></vxe-column>
+          <vxe-column field="role" title="角色" :formatter="formatterRole" width="200" sortable></vxe-column>
+          <vxe-column field="status" width="200" title="账号状态" :formatter="formatterStatus" sortable></vxe-column>
+          <vxe-column field="update_datetime" width="250" title="加入时间" sortable></vxe-column>
+          <vxe-column title="操作">
+            <template #default="{ row }">
+              <el-tooltip effect="dark" content="退出" placement="top" :show-arrow="false">
+                <span class="icon" v-if="row.role === '0'">
+                  <img src="/src/assets/icons/team/editIcon.svg" alt="" @click="toExit(row)" />
+                </span>
+              </el-tooltip>
+              <el-tooltip effect="dark" content="删除" placement="top" :show-arrow="false">
+                <span class="icon" v-if="row.role === '2' || row.role === '1'">
+                  <img src="/src/assets/icons/organize/deleteIcon.svg" alt="" @click="toDeleteMmber(row)" />
+                </span>
+              </el-tooltip>
+            </template>
+          </vxe-column>
+        </vxe-table>
+      </div>
+    </div>
+  </div>
+  <addMemberDialog :isShow="isShowAddMemberDialog" @closeDialog="isShowAddMemberDialog = false" :selectMember="memberList" />
+</template>
 
 <style lang="scss" scoped>
 .Member_wrap {

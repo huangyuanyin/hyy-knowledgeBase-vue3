@@ -8,7 +8,16 @@ interface article {
   [key: string]: any
 }
 
-export interface articleRes {
+export interface ArticleData {
+  title: string
+  book: string
+  space?: string
+  type?: string
+  parent?: string
+  body?: string
+}
+
+export interface ArticleRes {
   code: number
   data: article
   msg?: string

@@ -1,15 +1,18 @@
 <script lang="ts" setup>
 import { deleteSpacepermissionsApi, getSpacepermissionsApi } from '@/api/spacepermissions'
+import { getUserApi } from '@/api/user'
 
 const route = useRoute()
+const user = ref(JSON.parse(localStorage.getItem('user')).userInfo.username || '')
 const refreshStroe = useRefreshStore()
 const searchInput = ref('')
 const memberData = ref([])
 const isShowTeamDialog = ref(false)
 
-watchEffect(() => {
+watchEffect(async () => {
   if (refreshStroe.isRefreshSpaceMember) {
-    getSpacepermissions()
+    await getSpacepermissions()
+    await getUser()
     refreshStroe.setRefreshSpaceMember(false)
   }
 })
@@ -31,6 +34,25 @@ const deleteSpacepermissions = async (id: number) => {
   if (res.code === 1000) {
     getSpacepermissions()
     ElMessage.success('删除成功')
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const getUser = async () => {
+  const params = {
+    username: user.value
+  }
+  const res = await getUserApi(params)
+  if (res.code === 1000) {
+    res.data.map((it) => {
+      if (it.username === user.value) {
+        it.permname = it.name
+        it.permtype = '0'
+        it.dept = it.dept_name
+      }
+    })
+    memberData.value = [...res.data, ...memberData.value]
   } else {
     ElMessage.error(res.msg)
   }
@@ -60,8 +82,9 @@ const toDetail = (data: any) => {
   ElMessage.warning('功能暂未开放，敬请期待')
 }
 
-onMounted(() => {
-  getSpacepermissions()
+onMounted(async () => {
+  await getSpacepermissions()
+  await getUser()
 })
 </script>
 
@@ -96,20 +119,24 @@ onMounted(() => {
       </SwitchModuleItem>
       <el-table :data="memberData" stripe style="width: 100%">
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="permusername" label="姓名" width="180" />
-        <el-table-column prop="dept" label="所在部门" width="150" />
-        <el-table-column prop="permtype" label="身份" width="180">
+        <el-table-column prop="permname" label="姓名" width="180" />
+        <el-table-column prop="dept" label="所在部门" width="180" />
+        <el-table-column prop="permtype" label="身份" width="150">
           <template #default="{ row }">
             <span v-if="row.permtype === '0'">管理员</span>
             <span v-else>成员</span>
           </template>
         </el-table-column>
         <el-table-column prop="mobile" label="手机号" width="150" />
-        <el-table-column prop="update_datetime" label="加入时间" width="200" />
+        <el-table-column label="加入时间" width="200">
+          <template #default="{ row }">
+            <span v-if="row.permtype === '1'">{{ row.update_datetime }}</span>
+          </template>
+        </el-table-column>
         <el-table-column fixed="right" label="操作">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="toDetail(row)">详情</el-button>
-            <el-button link type="danger" size="small" @click="toExit(row)">离开</el-button>
+            <el-button link type="primary" size="small" @click="toDetail(row)" v-if="row.permtype === '1'">详情</el-button>
+            <el-button link type="danger" size="small" @click="toExit(row)" v-if="row.permtype === '1'">离开</el-button>
           </template>
         </el-table-column>
       </el-table>

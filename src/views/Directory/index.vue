@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 const route = useRoute()
 const articleStore = useArticleStore()
-const bookId = computed(() => route.query.lid as string)
+const bookId = ref('')
 
-onBeforeMount(async () => {
-  if (articleStore.articleList.length === 0) {
+watchEffect(() => {
+  if (route.query.lid) {
+    bookId.value = route.query.lid as string
     articleStore.getArticleList(bookId.value)
   }
 })

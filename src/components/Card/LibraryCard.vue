@@ -46,8 +46,8 @@ const deleteQuickLinks = async (id, params) => {
   let res = await deleteQuickLinksApi(id, params)
   if (res.code === 1000) {
     listStore.setRefreshQuickListStatus(true)
-    ElMessage.success('移除成功')
     refreshStroe.setIsGetQuickList(true)
+    ElMessage.success('移除成功')
   } else {
     ElMessage.error(res.msg)
   }
@@ -105,11 +105,26 @@ const toLink = (item) => {
           sid: item.space,
           sname: route.query.sname,
           lid: item.id,
-          lname: item.title || item.name
+          lname: item.title || item.name,
+          gid: route.query.gid,
+          gname: item.group_name
         }
       })
     }
   }
+}
+
+const toRename = (val) => {
+  ElMessage.warning('功能暂未开放，敬请期待')
+}
+
+const toMoreSetting = (val) => {
+  useLink(router, route, 'bookSet', val)
+}
+
+const toPermission = (val) => {
+  console.log(`output->val`, val)
+  useLink(router, route, 'bookPermission', val)
 }
 </script>
 
@@ -136,6 +151,9 @@ const toLink = (item) => {
               @deleteLibrary="toDeleteLibrary(card)"
               @removeCommon="removeCommon(card)"
               @addCommon="addCommon(card)"
+              @toRename="toRename(card)"
+              @toPermission="toPermission(card)"
+              @toMoreSetting="toMoreSetting(card)"
             >
               <span class="moreIcon"><img src="/src/assets/icons/moreIcon1_after.svg" alt="" /></span>
             </LibraryOperationPopver>

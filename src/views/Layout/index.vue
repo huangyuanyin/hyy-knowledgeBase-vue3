@@ -75,5 +75,8 @@ watch(route, (newRoute) => {
     border-right: 1px solid rgba(0, 0, 0, 0.04);
     box-sizing: content-box;
   }
+  .no-padding {
+    padding: 0 !important;
+  }
 }
 </style>
