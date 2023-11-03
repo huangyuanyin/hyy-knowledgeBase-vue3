@@ -70,10 +70,14 @@ watch(route, (newRoute) => {
 .layout-wrap {
   width: 100vw;
   height: 100vh;
+  display: flex;
   &-left {
     background-color: #fafafa;
     border-right: 1px solid rgba(0, 0, 0, 0.04);
     box-sizing: content-box;
+  }
+  &-right {
+    flex: 1;
   }
   .no-padding {
     padding: 0 !important;

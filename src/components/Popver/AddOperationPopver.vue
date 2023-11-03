@@ -29,6 +29,9 @@ const toHandle = (val) => {
     case '文档':
       emit(val.nick, val)
       break
+    case '表格':
+      emit(val.nick, val)
+      break
     default:
       ElMessage.warning('功能暂未开放，敬请期待')
       break

@@ -6,8 +6,8 @@ const route = useRoute()
 const infoStore = useInfoStore()
 const articleStore = useArticleStore()
 const bookId = ref('') // 当前知识库id
+const spaceType = ref<string>('') // 空间类型：个人 组织
 const dataSource = ref([])
-const SpaceType = ref<string>('') // 空间类型：个人 公共
 const group_name = ref<string>('')
 const nickName = ref<string>(infoStore.currentSpaceInfo.nickname || route.fullPath.split('/')[1])
 const showMoveDialog = ref(false)
@@ -16,10 +16,14 @@ const reNameId = ref(null)
 const reNameParent = ref(null)
 const toLinkId = ref(null) // 删除完成后跳转的id
 const toLinkName = ref('')
+const articleType = {
+  文档: { type: 'doc', title: '无标题文档' },
+  表格: { type: 'sheet', title: '无标题表格' }
+}
 
 watchEffect(() => {
   nextTick(async () => {
-    SpaceType.value = route.fullPath.split('/')[1].includes('directory') ? '个人' : '公共'
+    spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
     group_name.value = route.query.gname as string
     bookId.value = route.query.lid as string
     if (bookId.value) {
@@ -30,11 +34,11 @@ watchEffect(() => {
 
 const toLink = (type?: string) => {
   if (type === 'link') {
-    switch (SpaceType.value) {
+    switch (spaceType.value) {
       case '个人':
         router.push('/library')
         break
-      case '公共':
+      case '组织':
         if (group_name.value === '公共区') {
           router.push({
             path: `/${nickName.value}/public`,
@@ -61,11 +65,11 @@ const toLink = (type?: string) => {
         break
     }
   } else if (type === 'back') {
-    switch (SpaceType.value) {
+    switch (spaceType.value) {
       case '个人':
         router.push('/')
         break
-      case '公共':
+      case '组织':
         router.push({
           path: `/${nickName.value}/dashboard`,
           query: {
@@ -78,7 +82,7 @@ const toLink = (type?: string) => {
         break
     }
   } else if (type === 'index') {
-    if (SpaceType.value === '个人') {
+    if (spaceType.value === '个人') {
       router.push({
         path: `/directory/index`,
         query: {
@@ -118,25 +122,8 @@ const getArticle = async () => {
 }
 
 const toArticleDetail = (val) => {
-  if (SpaceType.value === '个人') {
-    router.push({
-      path: `/directory/article`,
-      query: {
-        ...route.query,
-        aid: val.id,
-        aname: val.title
-      }
-    })
-  } else {
-    router.push({
-      path: `/${nickName.value}/directory/article`,
-      query: {
-        ...route.query,
-        aid: val.id,
-        aname: val.title
-      }
-    })
-  }
+  if (val.id == route.query.aid) return
+  useAddArticleAfterToLink(route, router, spaceType.value, val, false)
 }
 
 const moveArticle = (val) => {
@@ -156,82 +143,47 @@ const handleRename = () => {
   editArticle()
 }
 
-const toAddArticle = (val) => {
-  addArticle('doc', val.id)
+const toAddDoc = (data?) => {
+  addArticle(articleType['文档'], data === null ? null : data.id)
 }
 
-const addArticle = async (type, parent) => {
-  const spaceType = route.path.split('/').length === 3 ? '个人' : '公共'
+const toAddSheet = (data) => {
+  addArticle(articleType['表格'], data.id)
+}
+
+const addArticle = async (article, parent) => {
   const params = {
-    title: '新建文档',
+    title: article.title,
     book: route.query.lid as string,
-    space: spaceType === '个人' ? localStorage.getItem('personalSpaceId') : (route.query.sid as string),
-    type,
+    space: spaceType.value === '个人' ? localStorage.getItem('personalSpaceId') : (route.query.sid as string),
+    type: article.type,
     body: '',
     parent
   }
   let res = await addArticleApi(params)
   if (res.code === 1000) {
-    if (spaceType === '个人') {
-      router.push({
-        path: `/directory/article`,
-        query: {
-          ...route.query,
-          aid: res.data.id,
-          aname: res.data.title
-        }
-      })
-    } else {
-      router.push({
-        path: `/${route.path.split('/')[1]}/directory/article`,
-        query: {
-          ...route.query,
-          aid: res.data.id,
-          aname: res.data.title
-        }
-      })
-    }
+    useAddArticleAfterToLink(route, router, spaceType.value, res.data, true)
   } else {
     ElMessage.error(res.msg)
   }
 }
 
 const editArticle = async () => {
-  const spaceType = route.path.split('/').length === 3 ? '个人' : '公共'
   const params = {
     title: reName.value,
     book: route.query.lid as string,
-    space: spaceType === '个人' ? localStorage.getItem('personalSpaceId') : (route.query.sid as string)
+    space: spaceType.value === '个人' ? localStorage.getItem('personalSpaceId') : (route.query.sid as string)
   }
   let res = await editArticleApi(reNameId.value, params)
   if (res.code === 1000) {
     reNameId.value = null
-    if (spaceType === '个人') {
-      router.push({
-        path: `/directory/article`,
-        query: {
-          ...route.query,
-          aid: res.data.id,
-          aname: res.data.title
-        }
-      })
-    } else {
-      router.push({
-        path: `/${route.path.split('/')[1]}/directory/article`,
-        query: {
-          ...route.query,
-          aid: res.data.id,
-          aname: res.data.title
-        }
-      })
-    }
+    useAddArticleAfterToLink(route, router, spaceType.value, res.data, false)
   } else {
     ElMessage.error(res.msg)
   }
 }
 
 const deleteArticle = async (id) => {
-  const spaceType = route.path.split('/').length === 3 ? '个人' : '公共'
   let res = await deleteArticleApi(id)
   if (res.code === 1000) {
     ElMessage.success('删除成功')
@@ -250,9 +202,9 @@ const deleteArticle = async (id) => {
         }
       })
     } else {
-      if (spaceType === '个人') {
+      if (spaceType.value === '个人') {
         router.push({
-          path: `/directory/article`,
+          path: `/directory/doc`,
           query: {
             ...route.query,
             aid: toLinkId.value,
@@ -261,7 +213,7 @@ const deleteArticle = async (id) => {
         })
       } else {
         router.push({
-          path: `/${route.path.split('/')[1]}/directory/article`,
+          path: `/${route.path.split('/')[1]}/directory/doc`,
           query: {
             ...route.query,
             aid: toLinkId.value,
@@ -309,10 +261,10 @@ onMounted(async () => {
   <div class="DirectorySidebar-wrap">
     <div class="header-box">
       <div class="header">
-        <img v-if="SpaceType === '个人'" class="favicon" src="/src/assets/favicon.ico" @click="toLink('back')" />
+        <img v-if="spaceType === '个人'" class="favicon" src="/src/assets/favicon.ico" @click="toLink('back')" />
         <img v-else class="favicon" src="/src/assets/icons/spaceIcon.svg" @click="toLink('back')" />
         <img class="rightArrowIcon" src="/src/assets/icons/rightArrowIcon.svg" alt="" />
-        <span @click="toLink('link')">{{ SpaceType === '个人' ? '个人知识库' : `${group_name}` }}</span>
+        <span @click="toLink('link')">{{ spaceType === '个人' ? '个人知识库' : `${group_name}` }}</span>
       </div>
       <div class="library-name">
         <div class="left">
@@ -348,7 +300,7 @@ onMounted(async () => {
     </div>
     <div class="empty" v-if="!dataSource.length">
       <img src="@/assets/img/empty.png" alt="" />
-      <div>知识库为空，你可以<span @click="addArticle('doc', null)">新建文档</span></div>
+      <div>知识库为空，你可以<span @click="toAddDoc(null)">新建文档</span></div>
     </div>
     <div class="list" v-else>
       <el-tree
@@ -383,7 +335,7 @@ onMounted(async () => {
                   <img src="/src/assets/icons/moreIcon1_after.svg" alt="" />
                 </span>
               </LibraryOperationPopver>
-              <AddOperationPopver :menu-items="sidebarSearchMenuItemsData" trigger="click" @toAddArticle="toAddArticle(data)">
+              <AddOperationPopver :menu-items="sidebarSearchMenuItemsData" trigger="click" @toAddDoc="toAddDoc(data)" @toAddSheet="toAddSheet(data)">
                 <span class="addIcon" @click.stop>
                   <img src="/src/assets/icons/addIcon.svg" alt="" />
                 </span>
@@ -490,7 +442,7 @@ onMounted(async () => {
     }
   }
   .search {
-    :deep(.sidebar-search) {
+    :deep(.SidebarSearch-wrap) {
       padding: 0 8px;
       margin-bottom: 0px;
     }

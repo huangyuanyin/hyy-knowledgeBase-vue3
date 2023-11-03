@@ -59,6 +59,7 @@ declare module 'vue' {
     ElTree: typeof import('element-plus/es')['ElTree']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     Empty: typeof import('./src/components/Empty/index.vue')['default']
+    Excel: typeof import('./src/components/Excel/Excel.vue')['default']
     GroupDialog: typeof import('./src/components/Dialog/GroupDialog.vue')['default']
     IEpAdd: typeof import('~icons/ep/add')['default']
     IEpArrowDown: typeof import('~icons/ep/arrow-down')['default']

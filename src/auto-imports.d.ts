@@ -72,6 +72,7 @@ declare global {
   const toValue: typeof import('vue')['toValue']
   const triggerRef: typeof import('vue')['triggerRef']
   const unref: typeof import('vue')['unref']
+  const useAddArticleAfterToLink: typeof import('./hooks/useLink')['useAddArticleAfterToLink']
   const useArrayToTree: typeof import('./hooks/useArrayToTree')['useArrayToTree']
   const useArticleStore: typeof import('./store/article')['useArticleStore']
   const useAttrs: typeof import('vue')['useAttrs']

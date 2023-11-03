@@ -12,42 +12,37 @@ const props = defineProps({
 
 const route = useRoute()
 const router = useRouter()
-
-const toAddArticle = (val) => {
-  addArticle('doc', null)
+const spaceType = ref('') // 当前空间类型
+const spaceId = ref('') // 当前空间id
+const bookId = ref('') // 当前知识库id
+const articleType = {
+  文档: { type: 'doc', title: '无标题文档' },
+  表格: { type: 'sheet', title: '无标题表格' }
 }
 
-const addArticle = async (type, parent) => {
-  const spaceType = route.path.split('/').length === 3 ? '个人' : '公共'
+watchEffect(() => {
+  spaceType.value = route.path.split('/').length === 4 ? '个人' : '组织'
+  spaceId.value = spaceType.value === '个人' ? (localStorage.getItem('personalSpaceId') as string) : (route.query.sid as string)
+  bookId.value = route.query.lid as string
+})
+
+const toAddArticle = (val) => {
+  addArticle(articleType[val.label], null)
+}
+
+// 处理新建不同文章逻辑
+const addArticle = async (article, parent) => {
   const params = {
-    title: '新建文档',
-    book: route.query.lid as string,
-    space: spaceType === '个人' ? localStorage.getItem('personalSpaceId') : (route.query.sid as string),
-    type,
+    title: article.title,
+    type: article.type,
     body: '',
-    parent
+    parent,
+    book: bookId.value,
+    space: spaceId.value
   }
   let res = await addArticleApi(params)
   if (res.code === 1000) {
-    if (spaceType === '个人') {
-      router.push({
-        path: `/directory/article`,
-        query: {
-          ...route.query,
-          aid: res.data.id,
-          aname: res.data.title
-        }
-      })
-    } else {
-      router.push({
-        path: `/${route.path.split('/')[1]}/directory/article`,
-        query: {
-          ...route.query,
-          aid: res.data.id,
-          aname: res.data.title
-        }
-      })
-    }
+    useAddArticleAfterToLink(route, router, spaceType.value, res.data, true)
   } else {
     ElMessage.error(res.msg)
   }
@@ -55,18 +50,18 @@ const addArticle = async (type, parent) => {
 </script>
 
 <template>
-  <div class="sidebar-search">
+  <div class="SidebarSearch-wrap">
     <el-input class="search-input" placeholder="搜索" disabled :autofocus="false">
       <template #prefix>
         <i-ep-Search />
       </template>
     </el-input>
-    <AddOperationPopver :menu-items="props.menuItems" @toAddArticle="toAddArticle" />
+    <AddOperationPopver :menu-items="props.menuItems" @toAddDoc="toAddArticle" @toAddSheet="toAddArticle" />
   </div>
 </template>
 
 <style lang="scss" scoped>
-.sidebar-search {
+.SidebarSearch-wrap {
   display: flex;
   align-items: center;
   justify-content: space-between;

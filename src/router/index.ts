@@ -106,7 +106,7 @@ const customRoutes = [
     }
   },
   {
-    path: '/:spaceName/directory/index',
+    path: '/:spaceName?/directory/index',
     name: 'Space-Directory',
     component: pageComps['/src/views/Directory/index.vue'] as Component,
     meta: {
@@ -115,20 +115,20 @@ const customRoutes = [
     }
   },
   {
-    path: '/directory/index',
-    name: 'Directory',
-    component: pageComps['/src/views/Directory/index.vue'] as Component,
+    path: '/:spaceName?/directory/doc/:isEdit?',
+    name: 'Space-Article',
+    component: pageComps['/src/views/Article/Doc/index.vue'] as Component,
     meta: {
-      title: '知识库详情',
+      title: '文档',
       asideComponent: 'DirectorySidebar'
     }
   },
   {
-    path: '/:spaceName?/directory/article',
-    name: 'Space-Article',
-    component: pageComps['/src/views/Article/Doc/index.vue'] as Component,
+    path: '/:spaceName?/directory/sheet/:isEdit?',
+    name: 'Space-Sheet',
+    component: pageComps['/src/views/Article/Sheet/index.vue'] as Component,
     meta: {
-      title: '文章详情',
+      title: '数据表',
       asideComponent: 'DirectorySidebar'
     }
   },
