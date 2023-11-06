@@ -1,32 +1,32 @@
 <template>
-  <div id="luckysheet"></div>
+  <div :id="luckysheetId" class="luckysheet_wrap"></div>
 </template>
 
 <script lang="ts" setup>
-import { editArticleApi } from '@/api/article'
-import LuckyExcel from 'luckyexcel'
+import { getArticleApi } from '@/api/article'
+import { initData } from '@/components/Excel/data'
+import LuckySheet from 'luckysheet'
 
 const props = defineProps({
   isPreview: {
     type: Boolean,
     required: true
   },
-  isPublish: {
-    type: Boolean,
-    required: true
-  },
-  baseData: {
-    type: Object,
+  body: {
+    type: String,
     required: false
   }
 })
+const emit = defineEmits(['update:modelValue'])
 
 const route = useRoute()
-const spaceType = ref('') // 当前空间类型
-const previewConfig = {
-  container: 'luckysheet',
+const luckysheetId = ref(String.fromCharCode(65 + Math.floor(Math.random() * 26)))
+const excelBody = ref(props.body)
+const previewConfig = ref({
+  container: luckysheetId.value,
   showinfobar: false, // 是否显示顶部信息栏
   lang: 'zh', // 中文
+  data: excelBody.value || '',
   showtoolbar: false, // 是否显示工具栏
   showstatisticBar: false, // 是否显示统计信息栏
   sheetBottomConfig: false, // sheet页下方的添加行按钮和回到顶部按钮配置
@@ -34,53 +34,70 @@ const previewConfig = {
   enableAddRow: false, // 是否允许前台添加行
   enableAddCol: false, // 是否允许前台添加列
   enableAddBackTop: false // 返回顶部按钮
-}
-
-const editConfig = {
-  container: 'luckysheet',
+})
+const editConfig = ref({
+  container: luckysheetId.value,
   showinfobar: false, // 是否显示顶部信息栏
-  lang: 'zh' // 中文
-}
-
-watchEffect(() => {
-  spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
-  if (props.isPublish && route.path.split('/').slice(-1)[0] === 'edit') {
-    toPublishArticle()
+  lang: 'zh', // 中文
+  data: excelBody.value || '', // 数据
+  hook: {
+    updated: function () {
+      emit('update:modelValue', JSON.stringify(LuckySheet.getAllSheets()))
+    }
   }
 })
 
 watch(
-  () => route.path,
+  () => route.query.aid,
   async () => {
-    await luckysheet.destroy()
-    if (route.path.split('/').slice(-2)[0] == 'sheet') {
-      luckysheet.create(props.isPreview ? previewConfig : editConfig)
+    if (route.query.aid) {
+      await getArticleTree()
+      handleCreateSheet()
     }
   }
 )
 
-const toPublishArticle = async () => {
-  const params = {
-    title: props.baseData.title,
-    book: props.baseData.book,
-    space: props.baseData.space,
-    body: JSON.stringify(luckysheet.getAllSheets())
+watch(
+  () => route.path,
+  async () => {
+    handleCreateSheet(true)
   }
-  let res = await editArticleApi(Number(route.query.aid), params)
+)
+
+const handleCreateSheet = async (isDestory?: boolean) => {
+  if (route.path.split('/').slice(-2)[0] == 'sheet') {
+    ;(await isDestory) && LuckySheet.destroy()
+    LuckySheet.create(props.isPreview ? previewConfig.value : editConfig.value)
+  }
+}
+
+const getArticleTree = async () => {
+  const res = await getArticleApi(route.query.aid as string)
   if (res.code === 1000) {
-    useAddArticleAfterToLink(route, router, spaceType.value, res.data, false)
+    if (res.data.body === '') {
+      excelBody.value = JSON.parse(initData)
+    } else {
+      excelBody.value = JSON.parse(res.data.body) || JSON.parse(initData)
+    }
+    previewConfig.value.data = excelBody.value
+    editConfig.value.data = excelBody.value
   } else {
     ElMessage.error(res.msg)
   }
 }
 
-onMounted(() => {
-  luckysheet.create(props.isPreview ? previewConfig : editConfig)
+onMounted(async () => {
+  await getArticleTree()
+  handleCreateSheet(false)
+})
+
+onBeforeUnmount(() => {
+  LuckySheet.destroy()
 })
 </script>
 
 <style lang="scss" scoped>
-#luckysheet {
+.luckysheet_wrap {
   margin: 0px;
   padding: 0px;
   width: 100%;

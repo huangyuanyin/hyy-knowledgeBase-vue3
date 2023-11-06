@@ -80,13 +80,23 @@ export const useLink = (router, route, type, data) => {
 // 新建不同类型文章后跳转
 export const useAddArticleAfterToLink = (route, router, type, data, is) => {
   const spaceName = route.path.split('/')[1]
+  const query = {
+    lid: route.query.lid,
+    lname: route.query.lname,
+    aid: data.id,
+    aname: data.title
+  }
+  const spaceQuery = {
+    sid: route.query.sid,
+    sname: route.query.sname,
+    gid: route.query.gid,
+    gname: route.query.gname
+  }
   router.push({
     path: `${type === '个人' ? '' : `/${spaceName}`}/directory/${data.type}/${is ? 'edit' : ''}`,
     query: {
-      lid: route.query.lid,
-      lname: route.query.lname,
-      aid: data.id,
-      aname: data.title
+      ...(type === '个人' ? {} : spaceQuery),
+      ...query
     }
   })
 }

@@ -131,7 +131,7 @@ const toLink = (type) => {
 
 const handleClickLibrary = (val: any) => {
   if (val.target_type === 'group') {
-    isHasTeamPermission(val)
+    getTeamMember(val)
     state.currentGroup = val.target_id
     refreshStroe.setIsGetBookStacks(true)
   } else {
@@ -185,32 +185,21 @@ const toTopic = (val) => {
   })
 }
 
-// 判断是否有权限访问团队
-const isHasTeamPermission = (val) => {
-  getTeamMember(val)
-}
-
 const getTeamMember = async (val) => {
-  const user = JSON.parse(localStorage.getItem('user')).userInfo.username
   const params = {
     group: val.target_id
   }
   let res = await getTeamMemberApi(params)
   if (res.code === 1000) {
-    const isHasPermission = res.data.some((item) => item.username === user)
-    if (isHasPermission) {
-      router.push({
-        path: `/${infoStore.currentSpaceName}/team/book`,
-        query: {
-          sid: route.query.sid,
-          sname: route.query.sname,
-          gid: val.target_id,
-          gname: val.title
-        }
-      })
-    } else {
-      ElMessage.error('您没有权限访问该团队')
-    }
+    router.push({
+      path: `/${infoStore.currentSpaceName}/team/book`,
+      query: {
+        sid: route.query.sid,
+        sname: route.query.sname,
+        gid: val.target_id,
+        gname: val.title
+      }
+    })
   } else {
     ElMessage.error(res.msg)
   }

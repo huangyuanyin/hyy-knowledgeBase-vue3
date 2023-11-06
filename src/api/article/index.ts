@@ -4,6 +4,10 @@ export function getArticleTreeApi(id: string) {
   return http.get<ArticleRes>(`article_tree/${id}/`, {}, 'base')
 }
 
+export function getArticleApi(id: string) {
+  return http.get<ArticleRes>(`article/${id}/`, {}, 'base')
+}
+
 export function addArticleApi(data: ArticleData) {
   return http.post<ArticleRes>(`article/`, data, 'base')
 }

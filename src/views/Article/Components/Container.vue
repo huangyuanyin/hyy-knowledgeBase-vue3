@@ -1,4 +1,12 @@
 <script lang="ts" setup>
+import { editArticleApi } from '@/api/article'
+
+const props = defineProps({
+  content: {
+    type: String,
+    required: false
+  }
+})
 const emit = defineEmits(['toPublish'])
 
 const route = useRoute()
@@ -68,13 +76,7 @@ const toHandle = (item: any) => {
     case '分享':
       break
     case '发布':
-      const params = {
-        title: name.value,
-        book: route.query.lid,
-        space: spaceId.value,
-        body: ''
-      }
-      emit('toPublish', params)
+      editArticle()
       break
     case '编辑':
       const data = {
@@ -89,7 +91,21 @@ const toHandle = (item: any) => {
   }
 }
 
-onMounted(() => {})
+const editArticle = async () => {
+  const params = {
+    title: name.value,
+    book: route.query.lid as string,
+    space: spaceId.value,
+    body: props.content
+  }
+  let res = await editArticleApi(Number(route.query.aid), params)
+  if (res.code === 1000) {
+    ElMessage.success('编辑成功')
+    useAddArticleAfterToLink(route, router, spaceType.value, res.data, false)
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
 </script>
 
 <template>
@@ -108,7 +124,7 @@ onMounted(() => {})
               <span v-if="item.type === 'label'">
                 <img :src="item.icon" alt="" />
               </span>
-              <span v-else class="img">
+              <span v-if="item.type === 'img' && isEdit" class="img">
                 <img :src="item.icon" alt="" />
               </span>
             </el-tooltip>

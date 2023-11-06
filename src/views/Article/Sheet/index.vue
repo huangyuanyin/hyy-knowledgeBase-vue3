@@ -6,26 +6,17 @@ const emit = defineEmits(['toPublish'])
 
 const route = useRoute()
 const isPreview = ref(true) // 默认预览模式
-const isPublish = ref(false) // 是否发布
-const baseData = ref({}) // 基础数据
+const body = ref() // 文章内容
 
 watchEffect(() => {
-  if (route.path.split('/').slice(-1)[0] === 'edit') {
-    isPreview.value = false
-    console.log(`output->isPreview`, isPreview.value)
-  }
+  route.path.split('/').slice(-1)[0] === 'edit' ? (isPreview.value = false) : (isPreview.value = true)
 })
-
-const toPublish = (params) => {
-  isPublish.value = true
-  baseData.value = params
-}
 </script>
 
 <template>
   <div class="Sheet_wrap">
-    <Container @toPublish="toPublish">
-      <slot> <Excel :isPreview="isPreview" :isPublish="isPublish" :baseData="baseData" /> </slot>
+    <Container :content="body">
+      <Excel v-model="body" :isPreview="isPreview" />
     </Container>
   </div>
 </template>
