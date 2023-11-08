@@ -79,6 +79,8 @@ const getLibrary = async () => {
   if (res.code === 1000) {
     libarayList.value = res.data || ([] as any)
     console.log(`output-> libarayList.value`, libarayList.value)
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 

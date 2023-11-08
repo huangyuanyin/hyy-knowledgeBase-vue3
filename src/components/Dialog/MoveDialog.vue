@@ -76,6 +76,8 @@ const getLibrary = async () => {
   if (res.code === 1000) {
     libarayList.value = res.data || ([] as any)
     selectLibarayValue.value = String(route.query.lid)
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 </script>

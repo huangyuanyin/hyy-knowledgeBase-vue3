@@ -25,12 +25,7 @@ export const useTeamPermission = (route, router, data) => {
     }
     let res = await getTeamMemberApi(params)
     if (res.code === 1000) {
-      const isHasPermission = res.data.some((item) => item.username === user)
-      if (isHasPermission) {
-        toLinkTeam(data)
-      } else {
-        ElMessage.error('暂无该团队访问权限')
-      }
+      toLinkTeam(data)
     } else {
       ElMessage.error(res.msg)
     }

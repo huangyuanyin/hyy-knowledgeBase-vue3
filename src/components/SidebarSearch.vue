@@ -12,12 +12,15 @@ const props = defineProps({
 
 const route = useRoute()
 const router = useRouter()
+const refreshStroe = useRefreshStore()
+const isShowLinkDialog = ref(false)
 const spaceType = ref('') // 当前空间类型
 const spaceId = ref('') // 当前空间id
 const bookId = ref('') // 当前知识库id
 const articleType = {
   文档: { type: 'doc', title: '无标题文档' },
-  表格: { type: 'sheet', title: '无标题表格' }
+  表格: { type: 'sheet', title: '无标题表格' },
+  新建分组: { type: 'title', title: '新建分组' }
 }
 
 watchEffect(() => {
@@ -27,6 +30,7 @@ watchEffect(() => {
 })
 
 const toAddArticle = (val) => {
+  console.log(`output->val`, val)
   addArticle(articleType[val.label], null)
 }
 
@@ -42,7 +46,12 @@ const addArticle = async (article, parent) => {
   }
   let res = await addArticleApi(params)
   if (res.code === 1000) {
-    useAddArticleAfterToLink(route, router, spaceType.value, res.data, true)
+    if (res.data.type === 'title') {
+      ElMessage.success('分组新建成功')
+      refreshStroe.setRefreshBookList(true)
+    } else {
+      useAddArticleAfterToLink(route, router, spaceType.value, res.data, true)
+    }
   } else {
     ElMessage.error(res.msg)
   }
@@ -56,8 +65,9 @@ const addArticle = async (article, parent) => {
         <i-ep-Search />
       </template>
     </el-input>
-    <AddOperationPopver :menu-items="props.menuItems" @toAddDoc="toAddArticle" @toAddSheet="toAddArticle" />
+    <AddOperationPopver :menu-items="props.menuItems" @toAddDoc="toAddArticle" @toAddSheet="toAddArticle" @toAddGroup="toAddArticle" @toAddLink="isShowLinkDialog = true" />
   </div>
+  <LinkDialog :isShow="isShowLinkDialog" :parent="null" @closeDialog="isShowLinkDialog = false" />
 </template>
 
 <style lang="scss" scoped>

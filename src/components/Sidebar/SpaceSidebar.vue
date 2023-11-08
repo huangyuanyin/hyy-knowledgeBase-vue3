@@ -106,6 +106,8 @@ const getGroups = async () => {
   if (res.code === 1000) {
     menuItems.value[2].id = res.data.filter((item) => item.is_default === '1')[0].id
     dataStore.setTeamList(res.data)
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 

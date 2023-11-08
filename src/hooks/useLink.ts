@@ -1,3 +1,5 @@
+import qs from 'qs'
+
 const infoStore = useInfoStore()
 
 export const useLink = (router, route, type, data) => {
@@ -78,7 +80,7 @@ export const useLink = (router, route, type, data) => {
 }
 
 // 新建不同类型文章后跳转
-export const useAddArticleAfterToLink = (route, router, type, data, is) => {
+export const useAddArticleAfterToLink = (route, router, type, data, is, newTab = 'old') => {
   const spaceName = route.path.split('/')[1]
   const query = {
     lid: route.query.lid,
@@ -92,11 +94,20 @@ export const useAddArticleAfterToLink = (route, router, type, data, is) => {
     gid: route.query.gid,
     gname: route.query.gname
   }
-  router.push({
-    path: `${type === '个人' ? '' : `/${spaceName}`}/directory/${data.type}/${is ? 'edit' : ''}`,
-    query: {
-      ...(type === '个人' ? {} : spaceQuery),
-      ...query
-    }
-  })
+  if (newTab === 'old') {
+    router.push({
+      path: `${type === '个人' ? '' : `/${spaceName}`}/directory/${data.type}/${is ? 'edit' : ''}`,
+      query: {
+        ...(type === '个人' ? {} : spaceQuery),
+        ...query
+      }
+    })
+  } else {
+    window.open(
+      `${type === '个人' ? '' : `/${spaceName}`}/directory/${data.type}/?${qs.stringify({
+        ...(type === '个人' ? {} : spaceQuery),
+        ...query
+      })}`
+    )
+  }
 }

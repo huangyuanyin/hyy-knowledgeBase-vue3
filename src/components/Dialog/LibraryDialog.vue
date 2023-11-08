@@ -35,7 +35,6 @@ const libraryForm = reactive<RuleForm>({
   slug: '',
   avatar: '',
   description: '',
-  creator: userStore.userInfo.nickname,
   public: '',
   space: '',
   group: '1',

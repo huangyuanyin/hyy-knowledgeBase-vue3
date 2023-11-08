@@ -26,14 +26,14 @@ export const spaceMenuItemsData = [
 export const sidebarSearchMenuItemsData = [
   { type: 'item', icon: '/src/assets/icons/documentIcon.svg', label: '文档', nick: 'toAddDoc' },
   { type: 'item', icon: '/src/assets/icons/formIcon.svg', label: '表格', nick: 'toAddSheet' },
-  { type: 'item', icon: '/src/assets/icons/mindmapIcon.svg', label: '思维导图' },
   { type: 'item', icon: '/src/assets/icons/pptIcon.svg', label: '幻灯片' },
+  { type: 'item', icon: '/src/assets/icons/mindmapIcon.svg', label: '思维导图' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/templateIcon.svg', label: '从模板新建' },
   { type: 'item', icon: '/src/assets/icons/importIcon.svg', label: '导入...' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/groupIcon.svg', label: '新建分组' },
-  { type: 'item', icon: '/src/assets/icons/linkIcon.svg', label: '添加链接' }
+  { type: 'item', icon: '/src/assets/icons/groupIcon.svg', label: '新建分组', nick: 'toAddGroup' },
+  { type: 'item', icon: '/src/assets/icons/linkIcon.svg', label: '添加链接', nick: 'toAddLink' }
 ]
 
 export const moduleAddMenuData = [
@@ -94,15 +94,38 @@ export const notCommonLibraryData = [
 
 export const articleOperationData = [
   { type: 'item', icon: '/src/assets/icons/article/renameIcon.svg', label: '重命名', nick: 'toRename' },
-  { type: 'item', icon: '/src/assets/icons/article/editIcon.svg', label: '编辑文档', nick: 'removeCommon' },
-  { type: 'item', icon: '/src/assets/icons/article/copyLinkIcon.svg', label: '复制链接', nick: 'removeCommon' },
-  { type: 'item', icon: '/src/assets/icons/article/addTabIcon.svg', label: '在新标签页打开', nick: 'removeCommon' },
+  { type: 'item', icon: '/src/assets/icons/article/editIcon.svg', label: '编辑文档', nick: 'toEditArticle' },
+  { type: 'item', icon: '/src/assets/icons/article/copyLinkIcon.svg', label: '复制链接', nick: 'toTodo' },
+  { type: 'item', icon: '/src/assets/icons/article/addTabIcon.svg', label: '在新标签页打开', nick: 'toNewTab' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '移除目录', nick: 'permission' },
+  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '移除目录', nick: 'toTodo' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/article/copyIcon.svg', label: '复制', nick: 'rename' },
+  { type: 'item', icon: '/src/assets/icons/article/copyIcon.svg', label: '复制', nick: 'toTodo' },
+  { type: 'item', icon: '/src/assets/icons/article/moveIcon.svg', label: '移动', nick: 'toTodo' },
+  { type: 'item', icon: '/src/assets/icons/article/exportIcon.svg', label: '导出', nick: 'toTodo' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteArticle' }
+]
+
+export const linkOperationData = [
+  { type: 'item', icon: '/src/assets/icons/article/editIcon.svg', label: '修改链接信息', nick: 'toRename' },
+  { type: 'item', icon: '/src/assets/icons/article/copyLinkIcon.svg', label: '复制链接', nick: 'toTodo' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '移除目录', nick: 'toTodo' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/article/copyIcon.svg', label: '复制', nick: 'toTodo' },
   { type: 'item', icon: '/src/assets/icons/article/moveIcon.svg', label: '移动', nick: 'moveArticle' },
-  { type: 'item', icon: '/src/assets/icons/article/exportIcon.svg', label: '导出', nick: 'moreSetting' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteArticle' }
+]
+
+export const titleOperationData = [
+  { type: 'item', icon: '/src/assets/icons/article/renameIcon.svg', label: '重命名', nick: 'toRename' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '移除目录', nick: 'toTodo' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/article/copyIcon.svg', label: '复制', nick: 'toTodo' },
+  { type: 'item', icon: '/src/assets/icons/article/moveIcon.svg', label: '移动', nick: 'toTodo' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteArticle' }
 ]

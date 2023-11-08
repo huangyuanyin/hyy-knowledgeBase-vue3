@@ -19,6 +19,7 @@ const isShowsLibraryDialog = ref(false)
 const isShowTeamDialog = ref(false)
 
 const toHandle = (val) => {
+  console.log(`output->val`, val)
   switch (val.label) {
     case '知识库':
       isShowsLibraryDialog.value = true
@@ -30,6 +31,12 @@ const toHandle = (val) => {
       emit(val.nick, val)
       break
     case '表格':
+      emit(val.nick, val)
+      break
+    case '添加链接':
+      emit(val.nick, val)
+      break
+    case '新建分组':
       emit(val.nick, val)
       break
     default:

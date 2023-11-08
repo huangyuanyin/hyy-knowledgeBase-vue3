@@ -2,6 +2,16 @@
 const route = useRoute()
 const articleStore = useArticleStore()
 const bookId = ref('')
+const bookName = ref(route.query.lname)
+
+watch(
+  () => route.query.lid,
+  (newVal) => {
+    if (newVal) {
+      bookName.value = route.query.lname as string
+    }
+  }
+)
 
 watchEffect(() => {
   if (route.query.lid) {
@@ -20,7 +30,7 @@ watchEffect(() => {
             <div class="bookIcon">
               <img src="/src/assets/icons/bookIcon.svg" alt="" class="bookIcon" />
             </div>
-            <span>11111111</span>
+            <span>{{ bookName }}</span>
           </div>
           <div class="header-right">
             <div class="button-wrap">

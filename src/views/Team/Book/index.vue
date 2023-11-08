@@ -55,6 +55,8 @@ const getLibrary = async () => {
   let res = await getLibraryApi(params)
   if (res.code === 1000) {
     libarayList.value = res.data || ([] as any)
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 

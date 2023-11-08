@@ -15,6 +15,7 @@ export interface ArticleData {
   type?: string
   parent?: string
   body?: string
+  open_window?: string
 }
 
 export interface ArticleRes {

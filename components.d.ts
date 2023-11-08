@@ -79,6 +79,7 @@ declare module 'vue' {
     LibraryDialog: typeof import('./src/components/Dialog/LibraryDialog.vue')['default']
     LibraryOperationPopver: typeof import('./src/components/Popver/LibraryOperationPopver.vue')['default']
     LibraryTable: typeof import('./src/components/Table/LibraryTable.vue')['default']
+    LinkDialog: typeof import('./src/components/Dialog/LinkDialog.vue')['default']
     MemberDialog: typeof import('./src/components/Dialog/MemberDialog.vue')['default']
     ModuleItem: typeof import('./src/components/Item/ModuleItem.vue')['default']
     MorePopver: typeof import('./src/components/Popver/MorePopver.vue')['default']

@@ -208,6 +208,8 @@ const getLibrary = async (id) => {
   let res = await getLibraryApi(params)
   if (res.code === 1000) {
     return res.data
+  } else {
+    ElMessage.error(res.msg)
   }
   return []
 }

@@ -1,16 +1,23 @@
 <script lang="ts" setup>
-import { sidebarSearchMenuItemsData, articleOperationData } from '@/data/data'
+import { sidebarSearchMenuItemsData, articleOperationData, linkOperationData, titleOperationData } from '@/data/data'
 import { addArticleApi, deleteArticleApi, editArticleApi, getArticleTreeApi } from '@/api/article'
 
 const route = useRoute()
 const infoStore = useInfoStore()
-const articleStore = useArticleStore()
+const refreshStroe = useRefreshStore()
 const bookId = ref('') // 当前知识库id
 const spaceType = ref<string>('') // 空间类型：个人 组织
 const dataSource = ref([])
+const bookTree = ref(null)
+const currentNodeKey = ref(Number(route.query.aid)) // 当前选中的节点
+const isAllExpand = ref(true) // 是否全部展开
 const group_name = ref<string>('')
 const nickName = ref<string>(infoStore.currentSpaceInfo.nickname || route.fullPath.split('/')[1])
 const showMoveDialog = ref(false)
+const isShowLinkDialog = ref(false)
+const linkType = ref('add') // 链接弹窗类型： add edit
+const linkDialogId = ref(null) // 链接弹窗id
+const parentId = ref(null) // 父级节点id
 const reName = ref('')
 const reNameId = ref(null)
 const reNameParent = ref(null)
@@ -18,8 +25,24 @@ const toLinkId = ref(null) // 删除完成后跳转的id
 const toLinkName = ref('')
 const articleType = {
   文档: { type: 'doc', title: '无标题文档' },
-  表格: { type: 'sheet', title: '无标题表格' }
+  表格: { type: 'sheet', title: '无标题表格' },
+  新建分组: { type: 'title', title: '新建分组' }
 }
+
+// 监听currentNodeKey
+watch(
+  () => currentNodeKey.value,
+  (newVal) => {
+    bookTree.value.setCurrentKey(newVal)
+  }
+)
+
+watchEffect(() => {
+  if (refreshStroe.isRefreshBookList) {
+    getArticle()
+    refreshStroe.setRefreshBookList(false)
+  }
+})
 
 watchEffect(() => {
   nextTick(async () => {
@@ -122,25 +145,57 @@ const getArticle = async () => {
 }
 
 const toArticleDetail = (val) => {
+  val.type === 'links' || val.type === 'title' ? bookTree.value.setCurrentKey(Number(route.query.aid)) : (currentNodeKey.value = val.id)
+  console.log(`output->val`, currentNodeKey.value)
   if (val.id == route.query.aid) return
-  useAddArticleAfterToLink(route, router, spaceType.value, val, false)
+  switch (val.type) {
+    case 'links':
+      val.open_windows === '1' ? window.open(val.description) : (window.location.href = val.description)
+      break
+    case 'title':
+      break
+    default:
+      useAddArticleAfterToLink(route, router, spaceType.value, val, false)
+      break
+  }
 }
 
 const moveArticle = (val) => {
+  console.log(`output->val`, val)
   showMoveDialog.value = true
 }
 
 // 重命名
 const toRename = (val) => {
-  console.log(`output->val`, val)
   reNameId.value = val.id
   reNameParent.value = val.parent
   reName.value = val.title
 }
 
 const handleRename = () => {
-  console.log(`output->232`, 232)
   editArticle()
+}
+
+// 编辑文档
+const toEditArticle = (val) => {
+  useAddArticleAfterToLink(route, router, spaceType.value, val, true)
+}
+
+// 新标签页打开
+const toNewTab = (val) => {
+  useAddArticleAfterToLink(route, router, spaceType.value, val, true, 'new')
+}
+
+const toTodo = (val) => {
+  ElMessage.warning('功能暂未开放，敬请期待')
+}
+
+// 编辑链接弹窗
+const toEditLink = (val) => {
+  parentId.value = val.parent
+  linkType.value = 'edit'
+  linkDialogId.value = val.id
+  isShowLinkDialog.value = true
 }
 
 const toAddDoc = (data?) => {
@@ -149,6 +204,15 @@ const toAddDoc = (data?) => {
 
 const toAddSheet = (data) => {
   addArticle(articleType['表格'], data.id)
+}
+
+const toAddLink = (data) => {
+  parentId.value = data.id
+  isShowLinkDialog.value = true
+}
+
+const toAddGroup = (data) => {
+  addArticle(articleType['新建分组'], data.id)
 }
 
 const addArticle = async (article, parent) => {
@@ -160,9 +224,15 @@ const addArticle = async (article, parent) => {
     body: '',
     parent
   }
+  article.type === 'title' && delete params.body
   let res = await addArticleApi(params)
   if (res.code === 1000) {
-    useAddArticleAfterToLink(route, router, spaceType.value, res.data, true)
+    if (res.data.type === 'title') {
+      getArticle()
+      ElMessage.success('分组新建成功')
+    } else {
+      useAddArticleAfterToLink(route, router, spaceType.value, res.data, true)
+    }
   } else {
     ElMessage.error(res.msg)
   }
@@ -177,7 +247,11 @@ const editArticle = async () => {
   let res = await editArticleApi(reNameId.value, params)
   if (res.code === 1000) {
     reNameId.value = null
-    useAddArticleAfterToLink(route, router, spaceType.value, res.data, false)
+    if (res.data.type === 'title') {
+      getArticle()
+    } else {
+      useAddArticleAfterToLink(route, router, spaceType.value, res.data, false)
+    }
   } else {
     ElMessage.error(res.msg)
   }
@@ -228,7 +302,7 @@ const deleteArticle = async (id) => {
 }
 
 const toDeleteArticle = (val) => {
-  ElMessageBox.confirm(`确认删除【${val.title}】 无标题文档0 吗？`, '', {
+  ElMessageBox.confirm(`确认删除【${val.title}】吗？`, '', {
     confirmButtonText: '确认',
     cancelButtonText: '取消',
     confirmButtonClass: 'submitBtn',
@@ -248,13 +322,42 @@ const toDeleteArticle = (val) => {
     })
 }
 
-onMounted(async () => {
-  // if (articleStore.articleList.length) {
-  //   dataSource.value = articleStore.articleList
-  // } else {
-  //   await getArticle()
+const closeLinkDialog = () => {
+  isShowLinkDialog.value = false
+  linkType.value = 'add'
+}
+
+const toScroll = () => {
+  // const nodes = bookTree.value.store.nodesMap
+  // console.log(`output->bookTree.value.store.nodesMap`, bookTree.value.store.nodesMap, currentNodeKey.value)
+  // for (var i in nodes) {
+  //   if (nodes[i].data.id === Number(currentNodeKey.value)) {
+  //     if (nodes[i].data.parent !== null) {
+  //       console.log(`output->nodes[i]`, nodes[i])
+  //       nodes[i].expanded = true
+  //       for (var j in nodes[i].parent.childNodes) {
+  //         nodes[i].parent.childNodes[j].expanded = true
+  //       }
+  //     }
+  //   }
   // }
-})
+  // console.log(`output->`, bookTree.value.store.nodesMap)
+  ElMessage.warning('功能暂未开放，敬请期待')
+}
+
+const toExpand = (type) => {
+  isAllExpand.value = type
+  const nodes = bookTree.value.store.nodesMap
+  for (var i in nodes) {
+    nodes[i].expanded = type
+  }
+}
+
+const customIcon = () => {
+  return h('img', { src: '/src/assets/icons/miniDropDownIcon.svg' }) // 默认图标路径
+}
+
+onMounted(async () => {})
 </script>
 
 <template>
@@ -293,8 +396,15 @@ onMounted(async () => {
           <span>目录</span>
         </div>
         <div class="right">
-          <span><img class="locateIcon" src="/src/assets/icons/locateIcon.svg" alt="" /></span>
-          <span><img class="expandIcon" src="/src/assets/icons/expandIcon.svg" alt="" /></span>
+          <el-tooltip effect="dark" content="目录定位" placement="top" :show-arrow="false">
+            <span><img class="locateIcon" src="/src/assets/icons/locateIcon.svg" alt="" @click="toScroll" /></span>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="全部折叠" placement="top" :show-arrow="false" v-if="isAllExpand">
+            <span v-if="isAllExpand"><img class="expandIcon" src="/src/assets/icons/expandIcon.svg" alt="" @click="toExpand(false)" /></span>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="全部展开" placement="top" :show-arrow="false" v-if="!isAllExpand">
+            <span v-if="!isAllExpand"><img class="foldIcon" src="/src/assets/icons/foldIcon.svg" alt="" @click="toExpand(true)" /></span>
+          </el-tooltip>
         </div>
       </div>
     </div>
@@ -304,21 +414,20 @@ onMounted(async () => {
     </div>
     <div class="list" v-else>
       <el-tree
+        ref="bookTree"
         :data="dataSource"
         node-key="id"
-        :current-node-key="Number(route.query.aid)"
+        :current-node-key="currentNodeKey"
         :props="{ class: 'forumList' }"
         default-expand-all
         highlight-current
+        :expand-on-click-node="false"
+        :icon="customIcon"
         @node-click="toArticleDetail"
       >
-        <template #default="{ node, data }">
+        <template #default="{ data }">
           <span class="list-node">
             <div class="title">
-              <div :class="['icon', !data.children?.length ? 'no-icon' : '']">
-                <img src="/src/assets/icons/miniDropDownIcon.svg" alt="" v-if="data.children?.length && node.expanded" />
-                <img class="foldIcon" src="/src/assets/icons/miniDropDownIcon.svg" alt="" v-if="data.children?.length && !node.expanded" />
-              </div>
               <el-input v-if="reNameId === data.id" v-model="reName" :id="data.id" autofocus @change="handleRename" />
               <span v-else>{{ data.title }}</span>
             </div>
@@ -327,15 +436,50 @@ onMounted(async () => {
                 :menuItems="articleOperationData"
                 :height="32"
                 :width="150"
-                @moveArticle="moveArticle(data)"
                 @toRename="toRename(data)"
+                @toEditArticle="toEditArticle(data)"
+                @toNewTab="toNewTab(data)"
+                @toTodo="toTodo(data)"
+                @moveArticle="moveArticle(data)"
                 @toDeleteArticle="toDeleteArticle(data)"
               >
-                <span class="moreIcon" @click.stop>
+                <span class="moreIcon" v-if="data.type !== 'links' && data.type !== 'title'" @click.stop>
                   <img src="/src/assets/icons/moreIcon1_after.svg" alt="" />
                 </span>
               </LibraryOperationPopver>
-              <AddOperationPopver :menu-items="sidebarSearchMenuItemsData" trigger="click" @toAddDoc="toAddDoc(data)" @toAddSheet="toAddSheet(data)">
+              <LibraryOperationPopver
+                :menuItems="linkOperationData"
+                :height="32"
+                :width="150"
+                @moveArticle="moveArticle(data)"
+                @toRename="toEditLink(data)"
+                @toTodo="toTodo(data)"
+                @toDeleteArticle="toDeleteArticle(data)"
+              >
+                <span class="moreIcon" v-if="data.type === 'links'" @click.stop>
+                  <img src="/src/assets/icons/moreIcon1_after.svg" alt="" />
+                </span>
+              </LibraryOperationPopver>
+              <LibraryOperationPopver
+                :menuItems="titleOperationData"
+                :height="32"
+                :width="150"
+                @toRename="toRename(data)"
+                @toTodo="toTodo(data)"
+                @toDeleteArticle="toDeleteArticle(data)"
+              >
+                <span class="moreIcon" v-if="data.type === 'title'" @click.stop>
+                  <img src="/src/assets/icons/moreIcon1_after.svg" alt="" />
+                </span>
+              </LibraryOperationPopver>
+              <AddOperationPopver
+                :menu-items="sidebarSearchMenuItemsData"
+                trigger="click"
+                @toAddDoc="toAddDoc(data)"
+                @toAddSheet="toAddSheet(data)"
+                @toAddGroup="toAddGroup(data)"
+                @toAddLink="toAddLink(data)"
+              >
                 <span class="addIcon" @click.stop>
                   <img src="/src/assets/icons/addIcon.svg" alt="" />
                 </span>
@@ -347,6 +491,7 @@ onMounted(async () => {
     </div>
   </div>
   <MoveDialog :isShow="showMoveDialog" @closeDialog="showMoveDialog = false" />
+  <LinkDialog :isShow="isShowLinkDialog" :parent="parentId" :type="linkType" :id="linkDialogId" @closeDialog="closeLinkDialog" />
 </template>
 
 <style lang="scss" scoped>
@@ -533,6 +678,19 @@ onMounted(async () => {
       cursor: pointer;
     }
   }
+  .is-current {
+    .el-tree-node__content {
+      span {
+        color: #262626 !important;
+        font-weight: 700 !important;
+      }
+    }
+    .el-tree-node__children {
+      span {
+        font-weight: 500 !important;
+      }
+    }
+  }
   .list {
     flex: 1;
     overflow-y: scroll;
@@ -540,11 +698,9 @@ onMounted(async () => {
     height: auto;
     padding: 0 8px;
     box-sizing: border-box;
-    :deep(.el-tree-node__expand-icon) {
-      display: none;
-    }
     :deep(.forumList) {
       width: 100%;
+      box-sizing: border-box;
       .el-tree-node__content {
         position: relative;
         display: flex;
@@ -556,9 +712,26 @@ onMounted(async () => {
         padding-right: 6px;
         border: 1.5px solid transparent;
         margin-bottom: 2px;
+        box-sizing: border-box;
         &:hover {
           background-color: #eff0f0;
           border: 1px solid #eff0f0;
+          box-sizing: border-box;
+        }
+        .el-tree-node__expand-icon.expanded {
+          transform: rotate(0deg);
+        }
+        .el-tree-node__expand-icon {
+          transform: rotate(-90deg);
+          transition: none;
+        }
+        .el-icon {
+          border-radius: 6px;
+          margin-right: 4px;
+          &:hover {
+            background-color: #d8dad9;
+            border: 1px solid #d8dad9;
+          }
         }
       }
 
@@ -573,7 +746,7 @@ onMounted(async () => {
           align-items: center;
           flex: 1;
           overflow: hidden;
-          font-size: 15px;
+          font-size: 14px;
           font-family: Chinese Quote, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Helvetica Neue, Helvetica, Arial,
             sans-serif;
           .icon {
@@ -595,7 +768,7 @@ onMounted(async () => {
               background-color: #d8dad9;
             }
             .foldIcon {
-              transform: rotate(-90deg);
+              // transform: rotate(90deg);
               transition: transform 0.3s;
             }
           }
