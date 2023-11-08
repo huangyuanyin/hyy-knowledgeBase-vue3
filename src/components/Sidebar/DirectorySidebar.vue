@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { sidebarSearchMenuItemsData, articleOperationData, linkOperationData, titleOperationData } from '@/data/data'
 import { addArticleApi, deleteArticleApi, editArticleApi, getArticleTreeApi } from '@/api/article'
+import { ElNotification } from 'element-plus'
 
 const route = useRoute()
 const infoStore = useInfoStore()
@@ -179,6 +180,22 @@ const handleRename = () => {
 // 编辑文档
 const toEditArticle = (val) => {
   useAddArticleAfterToLink(route, router, spaceType.value, val, true)
+}
+
+// 复制链接
+const toCopyLink = (val) => {
+  const linkUrl = ref('')
+  const spaceName = route.path.split('/')[1]
+  if (val.type === 'links') {
+    linkUrl.value = val.description
+  } else {
+    if (spaceType.value === '个人') {
+      linkUrl.value = `${window.location.origin}/directory/${val.type}?lid=${val.book}&lname=${route.query.lname}&aid=${val.id}&aname=${val.title}`
+    } else {
+      linkUrl.value = `${window.location.origin}/${spaceName}/directory/${val.type}?sid=${route.query.sid}&sname=${route.query.sname}&gid=${route.query.gid}&gname=${route.query.gname}&lid=${val.book}&lname=${route.query.lname}&aid=${val.id}&aname=${val.title}`
+    }
+  }
+  useCopy(linkUrl.value)
 }
 
 // 新标签页打开
@@ -438,6 +455,7 @@ onMounted(async () => {})
                 :width="150"
                 @toRename="toRename(data)"
                 @toEditArticle="toEditArticle(data)"
+                @toCopyLink="toCopyLink(data)"
                 @toNewTab="toNewTab(data)"
                 @toTodo="toTodo(data)"
                 @moveArticle="moveArticle(data)"
@@ -451,8 +469,9 @@ onMounted(async () => {})
                 :menuItems="linkOperationData"
                 :height="32"
                 :width="150"
-                @moveArticle="moveArticle(data)"
                 @toRename="toEditLink(data)"
+                @toCopyLink="toCopyLink(data)"
+                @moveArticle="moveArticle(data)"
                 @toTodo="toTodo(data)"
                 @toDeleteArticle="toDeleteArticle(data)"
               >

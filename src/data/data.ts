@@ -95,7 +95,7 @@ export const notCommonLibraryData = [
 export const articleOperationData = [
   { type: 'item', icon: '/src/assets/icons/article/renameIcon.svg', label: '重命名', nick: 'toRename' },
   { type: 'item', icon: '/src/assets/icons/article/editIcon.svg', label: '编辑文档', nick: 'toEditArticle' },
-  { type: 'item', icon: '/src/assets/icons/article/copyLinkIcon.svg', label: '复制链接', nick: 'toTodo' },
+  { type: 'item', icon: '/src/assets/icons/article/copyLinkIcon.svg', label: '复制链接', nick: 'toCopyLink' },
   { type: 'item', icon: '/src/assets/icons/article/addTabIcon.svg', label: '在新标签页打开', nick: 'toNewTab' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '移除目录', nick: 'toTodo' },
@@ -109,7 +109,7 @@ export const articleOperationData = [
 
 export const linkOperationData = [
   { type: 'item', icon: '/src/assets/icons/article/editIcon.svg', label: '修改链接信息', nick: 'toRename' },
-  { type: 'item', icon: '/src/assets/icons/article/copyLinkIcon.svg', label: '复制链接', nick: 'toTodo' },
+  { type: 'item', icon: '/src/assets/icons/article/copyLinkIcon.svg', label: '复制链接', nick: 'toCopyLink' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '移除目录', nick: 'toTodo' },
   { type: 'divider' },

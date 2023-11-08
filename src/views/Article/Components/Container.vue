@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { editArticleApi } from '@/api/article'
+import { editArticleApi, getArticleApi } from '@/api/article'
 
 const props = defineProps({
   content: {
@@ -13,6 +13,9 @@ const route = useRoute()
 const name = ref('')
 const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('user')).userInfo.avatar || '@/assets/img/img.jpg')
 const isEdit = ref(false)
+const moreFeaturesDrawer = ref(false) // 更多功能抽屉
+const commentDrawer = ref(false) // 评论抽屉
+const moreFeaturesDrawerInfo = ref({}) // 更多功能抽屉tab
 const spaceType = ref('') // 当前空间类型
 const spaceId = ref('') // 当前空间id
 const itemList = [
@@ -26,11 +29,11 @@ const itemList = [
     icon: '/src/assets/icons/article/collaborateIcon.svg',
     type: 'label'
   },
-  {
-    label: '演示',
-    icon: '/src/assets/icons/article/presentIcon.svg',
-    type: 'label'
-  },
+  // {
+  //   label: '演示',
+  //   icon: '/src/assets/icons/article/presentIcon.svg',
+  //   type: 'label'
+  // },
   {
     label: '当前编辑者的头像将显示在此',
     icon: avatar.value,
@@ -74,6 +77,8 @@ watchEffect(() => {
 const toHandle = (item: any) => {
   switch (item.label) {
     case '分享':
+      const url = window.location.href
+      useCopy(url, '分享链接')
       break
     case '发布':
       editArticle()
@@ -87,6 +92,7 @@ const toHandle = (item: any) => {
       useAddArticleAfterToLink(route, router, spaceType.value, data, true)
       break
     default:
+      ElMessage.warning('功能暂未开放，敬请期待')
       break
   }
 }
@@ -106,6 +112,32 @@ const editArticle = async () => {
     ElMessage.error(res.msg)
   }
 }
+
+const openDrawer = (val) => {
+  if (val === 'more') {
+    moreFeaturesDrawer.value = !moreFeaturesDrawer.value
+    commentDrawer.value = false
+    if (moreFeaturesDrawer.value) {
+      getArticle()
+    }
+  } else {
+    commentDrawer.value = !commentDrawer.value
+    moreFeaturesDrawer.value = false
+  }
+}
+
+const getArticle = async () => {
+  let res = await getArticleApi(route.query.aid as string)
+  if (res.code === 1000) {
+    moreFeaturesDrawerInfo.value = res.data
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const toCloseDrawer = () => {
+  commentDrawer.value = false
+}
 </script>
 
 <template>
@@ -121,7 +153,7 @@ const editArticle = async () => {
         <div class="header_right">
           <div class="item" v-for="(item, index) in itemList" :key="'itemList' + index">
             <el-tooltip effect="dark" :content="item.label" placement="bottom" :show-arrow="false">
-              <span v-if="item.type === 'label'">
+              <span v-if="item.type === 'label'" @click="toHandle(item)">
                 <img :src="item.icon" alt="" />
               </span>
               <span v-if="item.type === 'img' && isEdit" class="img">
@@ -132,15 +164,17 @@ const editArticle = async () => {
           <div class="button" v-for="(item, index) in buttonList" :key="'itemList' + index">
             <el-button :type="item.type" @click="toHandle(item)">{{ item.label }}</el-button>
           </div>
-          <div class="action" v-if="isEdit">
-            <span><img src="/src/assets/icons/article/commentIcon.svg" alt="" /></span>
-            <span><img src="/src/assets/icons/article/rightboardIcon.svg" alt="" /></span>
+          <div class="action" v-if="!isEdit">
+            <span :class="[commentDrawer ? 'is_active' : '']"><img src="/src/assets/icons/article/commentIcon.svg" alt="" @click="openDrawer('comment')" /></span>
+            <span :class="[moreFeaturesDrawer ? 'is_active' : '']"><img src="/src/assets/icons/article/rightboardIcon.svg" alt="" @click="openDrawer('more')" /></span>
           </div>
           <span class="rightboardIcon" v-else><img src="/src/assets/icons/article/rightboardIcon.svg" alt="" /></span>
         </div>
       </el-header>
       <el-main class="body">
         <slot></slot>
+        <MoreFeaturesDrawer :drawer="moreFeaturesDrawer" :info="moreFeaturesDrawerInfo" />
+        <CommentDrawer :drawer="commentDrawer" @toCloseDrawer="toCloseDrawer" />
       </el-main>
     </el-container>
   </div>
@@ -245,6 +279,9 @@ const editArticle = async () => {
           &:hover {
             background-color: #eff0f0;
           }
+        }
+        .is_active {
+          background-color: #eff0f0;
         }
       }
       .rightboardIcon {

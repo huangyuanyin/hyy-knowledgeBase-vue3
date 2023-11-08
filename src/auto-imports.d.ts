@@ -78,6 +78,7 @@ declare global {
   const useAttrs: typeof import('vue')['useAttrs']
   const useBookStacksApi: typeof import('./hooks/useBookstacksApi')['useBookStacksApi']
   const useBookstacksApi: typeof import('./hooks/useBookstacksApi')['useBookstacksApi']
+  const useCopy: typeof import('./hooks/useCopy')['useCopy']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
   const useDataStore: typeof import('./store/data')['useDataStore']
