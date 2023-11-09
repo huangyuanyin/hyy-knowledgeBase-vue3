@@ -25,9 +25,9 @@ const operationItems = [
 const infoItems = ref([
   { icon: '/src/assets/icons/drawer/count.svg', text: '字数', value: '暂未统计', type: 'label' },
   { icon: '/src/assets/icons/drawer/historyVersion.svg', text: '历史版本', value: '暂未统计', type: 'label' },
-  { text: '创建时间', value: '今天 09:34', type: 'label' },
-  { text: '更新时间', value: '今天 12:47', type: 'label' },
-  { icon: '/src/assets/icons/drawer/author.svg', text: '作者', value: '就叫小黄好了', type: 'label' },
+  { text: '创建时间', value: '暂未统计', type: 'label' },
+  { text: '更新时间', value: '暂未统计', type: 'label' },
+  { icon: '/src/assets/icons/drawer/author.svg', text: '作者', value: '暂未统计', type: 'label' },
   { type: 'hr' },
   { icon: '/src/assets/icons/drawer/views.svg', text: '阅读数', value: '暂未统计', type: 'label' },
   { icon: '/src/assets/icons/drawer/comment.svg', text: '评论数', value: '暂未统计', type: 'label' },
@@ -78,7 +78,7 @@ const noUse = () => {
           <template v-for="item in infoItems">
             <div v-if="item.type === 'label'" class="item">
               <div class="item-left">
-                <img v-if="item.icon" :src="item.icon" alt="" />
+                <img v-if="item.icon" :src="(item.icon as string)" alt="" />
                 <span v-else></span>
                 {{ item.text }}
               </div>
