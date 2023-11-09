@@ -1,14 +1,20 @@
 <script lang="ts" setup>
+import { getLibraryDetailApi } from '@/api/library'
+import { directoryIndexOperationData } from '@/data/data'
+
 const route = useRoute()
 const articleStore = useArticleStore()
-const bookId = ref('')
+const isShowsDeleteDialog = ref(false)
+const bookId = ref(route.query.lid as string)
 const bookName = ref(route.query.lname)
+const deleteInfo = ref({})
 
 watch(
   () => route.query.lid,
   (newVal) => {
     if (newVal) {
       bookName.value = route.query.lname as string
+      bookId.value = route.query.lid as string
     }
   }
 )
@@ -18,6 +24,53 @@ watchEffect(() => {
     bookId.value = route.query.lid as string
     articleStore.getArticleList(bookId.value)
   }
+})
+
+const toDo = () => {
+  ElMessage.warning('功能暂未开放，敬请期待')
+}
+
+const toShare = () => {
+  const url = window.location.href
+  useCopy(url, '分享链接')
+}
+
+const toMoreSetting = () => {
+  useLink(router, route, 'fromBookToSet', {})
+}
+
+const toDeleteBook = () => {
+  isShowsDeleteDialog.value = true
+  const item = JSON.parse(sessionStorage.getItem('currentBookDetail') as string)
+  deleteInfo.value = item
+}
+
+const getBookDetail = async (id) => {
+  let res = await getLibraryDetailApi(id)
+  if (res.code === 1000) {
+    sessionStorage.setItem('currentBookDetail', JSON.stringify(res.data))
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+// 跳转到文章详情
+const toArticleDetail = (val) => {
+  const spaceType = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
+  switch (val.type) {
+    case 'links':
+      val.open_windows === '1' ? window.open(val.description) : (window.location.href = val.description)
+      break
+    case 'title':
+      break
+    default:
+      useAddArticleAfterToLink(route, router, spaceType, val, false)
+      break
+  }
+}
+
+onMounted(() => {
+  getBookDetail(bookId.value)
 })
 </script>
 
@@ -34,22 +87,31 @@ watchEffect(() => {
           </div>
           <div class="header-right">
             <div class="button-wrap">
-              <div class="button">
+              <div class="button" @click="toDo">
                 <img src="@/assets/icons/startIcon.svg" alt="" />
                 <span>收藏</span>
               </div>
-              <div class="button">
+              <div class="button" @click="toShare">
                 <span>分享</span>
               </div>
-              <div class="button moreIcon">
-                <img src="@/assets/icons/moreIcon1_after.svg" alt="" />
-              </div>
+              <LibraryOperationPopver
+                :menuItems="directoryIndexOperationData"
+                placement="bottom-end"
+                @toRename="toDo"
+                @toEditIndex="toDo"
+                @toMoreSetting="toMoreSetting"
+                @toDeleteBook="toDeleteBook"
+              >
+                <div class="button moreIcon">
+                  <img src="@/assets/icons/moreIcon1_after.svg" alt="" />
+                </div>
+              </LibraryOperationPopver>
             </div>
           </div>
         </div>
         <div class="count">
-          <span><b>0</b>文档</span>
-          <span><b>0</b>字</span>
+          <span><b>未统计</b>文档</span>
+          <span><b>未统计</b>字</span>
         </div>
         <div class="welcome">
           <div class="welcome-item">
@@ -63,7 +125,7 @@ watchEffect(() => {
         <div class="list" v-if="articleStore.articleList.length">
           <el-tree :data="articleStore.articleList" node-key="id" :props="{ class: 'forumList' }" default-expand-all>
             <template #default="{ node, data }">
-              <span class="list-node">
+              <span class="list-node" @click="toArticleDetail(data)">
                 <div class="title">
                   <div :class="['icon', !data.children?.length ? 'no-icon' : '']">
                     <img src="@/assets/icons/miniDropDownIcon.svg" alt="" v-if="data.children?.length && node.expanded" />
@@ -80,6 +142,7 @@ watchEffect(() => {
       </div>
     </div>
   </div>
+  <DeleteDialog :isShow="isShowsDeleteDialog" :deleteInfo="deleteInfo" @closeDialog="isShowsDeleteDialog = false" />
 </template>
 
 <style lang="scss" scoped>

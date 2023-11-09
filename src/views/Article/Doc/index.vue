@@ -11,7 +11,7 @@ watchEffect(() => {
 <template>
   <div class="Doc_wrap">
     <Container>
-      <TinyMCE />
+      <!-- <TinyMCE /> -->
     </Container>
   </div>
 </template>

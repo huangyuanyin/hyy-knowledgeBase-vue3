@@ -34,7 +34,7 @@ export const useLink = (router, route, type, data) => {
       break
     case 'bookSet':
       router.push({
-        path: route.path.split('/').length === 2 ? `/bookSetting/basic` : `/${infoStore.currentSpaceName}/bookSetting/basic`,
+        path: route.path.split('/')[1] === 'library' ? `/bookSetting/basic` : `/${infoStore.currentSpaceName}/bookSetting/basic`,
         query: {
           sid: route.query.sid,
           sname: route.query.sname,
@@ -43,7 +43,7 @@ export const useLink = (router, route, type, data) => {
         }
       })
       break
-    case 'comBookSet':
+    case 'comBookSet': // 从常用列表
       router.push({
         path: route.path.split('/').length === 2 ? `/bookSetting/basic` : `/${infoStore.currentSpaceName}/bookSetting/basic`,
         query: {
@@ -73,6 +73,42 @@ export const useLink = (router, route, type, data) => {
           sname: route.query.sname,
           lid: data.target_id,
           lname: data.title
+        }
+      })
+      break
+    // 从知识库首页跳转到知识库设置
+    case 'fromBookToSet':
+      router.push({
+        path: route.path.split('/')[1] === 'directory' ? `/bookSetting/basic` : `/${infoStore.currentSpaceName}/bookSetting/basic`,
+        query: {
+          sid: route.query.sid,
+          sname: route.query.sname,
+          lid: route.query.lid,
+          lname: route.query.lname
+        }
+      })
+      break
+    // 从知识库首页跳转到知识库设置 - 目录管理
+    case 'fromBookToToc':
+      router.push({
+        path: route.path.split('/')[1] === 'directory' ? `/bookSetting/toc` : `/${infoStore.currentSpaceName}/bookSetting/toc`,
+        query: {
+          sid: route.query.sid,
+          sname: route.query.sname,
+          lid: route.query.lid,
+          lname: route.query.lname
+        }
+      })
+      break
+    // 从知识库首页跳转到知识库设置 - 权限管理
+    case 'fromBookToCollaborators':
+      router.push({
+        path: route.path.split('/')[1] === 'directory' ? `/bookSetting/collaborators` : `/${infoStore.currentSpaceName}/bookSetting/collaborators`,
+        query: {
+          sid: route.query.sid,
+          sname: route.query.sname,
+          lid: route.query.lid,
+          lname: route.query.lname
         }
       })
       break

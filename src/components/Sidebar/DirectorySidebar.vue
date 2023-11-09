@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { sidebarSearchMenuItemsData, articleOperationData, linkOperationData, titleOperationData } from '@/data/data'
+import { sidebarSearchMenuItemsData, articleOperationData, linkOperationData, titleOperationData, directorySidebarOperationData } from '@/data/data'
 import { addArticleApi, deleteArticleApi, editArticleApi, getArticleTreeApi } from '@/api/article'
-import { ElNotification } from 'element-plus'
 
 const route = useRoute()
 const infoStore = useInfoStore()
@@ -370,6 +369,18 @@ const toExpand = (type) => {
   }
 }
 
+const toPermission = () => {
+  useLink(router, route, 'fromBookToCollaborators', {})
+}
+
+const toDirManage = () => {
+  useLink(router, route, 'fromBookToToc', {})
+}
+
+const toMoreSetting = () => {
+  useLink(router, route, 'fromBookToSet', {})
+}
+
 const customIcon = () => {
   return h('img', { src: '/src/assets/icons/miniDropDownIcon.svg' }) // 默认图标路径
 }
@@ -395,7 +406,15 @@ onMounted(async () => {})
           </div>
         </div>
         <div class="right">
-          <img class="moreIcon" src="/src/assets/icons/moreIcon1_after.svg" alt="" />
+          <LibraryOperationPopver
+            :menuItems="directorySidebarOperationData"
+            placement="bottom-start"
+            @toPermission="toPermission"
+            @toDirManage="toDirManage"
+            @toMoreSetting="toMoreSetting"
+          >
+            <img class="moreIcon" src="/src/assets/icons/moreIcon1_after.svg" alt="" />
+          </LibraryOperationPopver>
         </div>
       </div>
     </div>

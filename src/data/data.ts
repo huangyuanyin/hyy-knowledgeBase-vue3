@@ -65,6 +65,20 @@ export const teamOperationData = [
   { type: 'item', icon: '/src/assets/icons/team/editIcon.svg', label: '退出团队', nick: 'toQuitTeam' }
 ]
 
+export const directoryIndexOperationData = [
+  { type: 'item', icon: '/src/assets/icons/bookSetting/reName.svg', label: '重命名', nick: 'toRename' },
+  { type: 'item', icon: '/src/assets/icons/bookSetting/edit.svg', label: '编辑首页', nick: 'toEditIndex' },
+  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置', nick: 'toMoreSetting' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteBook' }
+]
+
+export const directorySidebarOperationData = [
+  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限', nick: 'toPermission' },
+  { type: 'item', icon: '/src/assets/icons/bookSetting/directoryManager.svg', label: '目录管理', nick: 'toDirManage' },
+  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置', nick: 'toMoreSetting' }
+]
+
 export const moreOperationData = [
   { type: 'detailItem', icon: '/src/assets/icons/deleteIcon.svg', label: '回收站', desc: '找回删除的文档与内容' },
   { type: 'divider' },

@@ -18,5 +18,5 @@ export function editLibraryApi(data: libraryParams, id?: number) {
 }
 
 export function deleteLibraryApi(id: number, data: libraryParams) {
-  return http.delete<libraryRes>(`books/${id}`, data, 'base')
+  return http.delete<libraryRes>(`books/${id}/`, data, 'base')
 }
