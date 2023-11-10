@@ -11,7 +11,7 @@ const emit = defineEmits(['toPublish'])
 
 const route = useRoute()
 const name = ref('')
-const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('user')).userInfo.avatar || '@/assets/img/img.jpg')
+const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
 const isEdit = ref(false)
 const moreFeaturesDrawer = ref(false) // 更多功能抽屉
 const commentDrawer = ref(false) // 评论抽屉
@@ -234,6 +234,7 @@ const toCloseDrawer = () => {
         img {
           width: 20px;
           height: 20px;
+          border-radius: 14px;
         }
         .img {
           margin-right: 8px;

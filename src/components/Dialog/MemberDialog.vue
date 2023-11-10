@@ -19,7 +19,7 @@ const emit = defineEmits(['closeDialog'])
 
 const route = useRoute()
 const refreshStroe = useRefreshStore()
-const user = ref(JSON.parse(localStorage.getItem('user')).userInfo.username || '')
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const avatarUrl = import.meta.env.VITE_BASE_LOGIN_URL
 const dialogVisible = ref(false)
 const defaultProps = {
@@ -101,7 +101,7 @@ const getDepartUser = async (id: string) => {
         return !props.spaceMember.some((v) => v.permusername === item.username)
       })
       memberList.value = memberList.value.filter((item) => {
-        return item.username !== user.value
+        return item.username !== user
       })
     }
     memberTotal.value = memberList.value.length

@@ -23,12 +23,21 @@ const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const isShowTeamDialog = ref(false)
+const isShowsDeleteDialog = ref(false)
+const deleteInfo = ref<{
+  id?: string
+  name?: string
+  slug?: string
+  space?: string
+  group?: string
+  stack?: string
+}>({})
 const libraryOperationData = [
   { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限', nick: 'toBookSetting2' },
   { type: 'item', icon: '/src/assets/icons/renameIcon.svg', label: '重命名' },
   { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置', nick: 'toBookSetting' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除' }
+  { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteBook' }
 ]
 const editTableOperation = [
   {
@@ -141,6 +150,11 @@ const toBookSetting = (val) => {
   console.log(`output->val`, val)
 }
 
+const toDeleteBook = (val) => {
+  deleteInfo.value = val
+  isShowsDeleteDialog.value = true
+}
+
 const toTeamSetting = (val: any) => {
   useLink(routeInfo, 'teamSet', val)
 }
@@ -244,7 +258,7 @@ const toQuitTeam = (val: any) => {
                 <img src="@/assets/icons/pinOutIcon.svg" alt="" @click="toQuickLink('add', document, 'book')" />
               </span>
             </el-tooltip>
-            <LibraryOperationPopver :menuItems="libraryOperationData" :width="126" @toBookSetting="toBookSetting">
+            <LibraryOperationPopver :menuItems="libraryOperationData" :width="126" @toBookSetting="toBookSetting" @toDeleteBook="toDeleteBook(document)">
               <span>
                 <img v-show="hoveredDocument === document.id" src="@/assets/icons/moreIcon1_after.svg" alt="" />
               </span>
@@ -309,6 +323,7 @@ const toQuitTeam = (val: any) => {
     </el-button>
   </div>
   <TeamDialog :isShow="isShowTeamDialog" @closeDialog="isShowTeamDialog = false" />
+  <DeleteDialog :isShow="isShowsDeleteDialog" :deleteInfo="deleteInfo" @closeDialog="isShowsDeleteDialog = false" />
 </template>
 
 <style lang="scss" scoped>

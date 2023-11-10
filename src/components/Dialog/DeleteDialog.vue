@@ -58,6 +58,7 @@ const toDelete = async (val) => {
           query: spaceType === '组织' ? query : {}
         })
       }
+      refreshStroe.setRefreshQuickBookList(true)
       refreshStroe.setRefreshBookStacks(true)
       refreshStroe.setRefreshBookList(true)
     } else {

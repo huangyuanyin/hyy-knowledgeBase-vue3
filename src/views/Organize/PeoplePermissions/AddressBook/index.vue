@@ -3,16 +3,18 @@ import { deleteSpacepermissionsApi, getSpacepermissionsApi } from '@/api/spacepe
 import { getUserApi } from '@/api/user'
 
 const route = useRoute()
-const user = ref(JSON.parse(localStorage.getItem('user')).userInfo.username || '')
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
+const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
 const refreshStroe = useRefreshStore()
 const searchInput = ref('')
 const memberData = ref([])
+const myData = ref([])
 const isShowTeamDialog = ref(false)
 
 watchEffect(async () => {
   if (refreshStroe.isRefreshSpaceMember) {
     await getSpacepermissions()
-    await getUser()
+    await handleMember()
     refreshStroe.setRefreshSpaceMember(false)
   }
 })
@@ -32,8 +34,9 @@ const getSpacepermissions = async () => {
 const deleteSpacepermissions = async (id: number) => {
   const res = await deleteSpacepermissionsApi(id)
   if (res.code === 1000) {
-    getSpacepermissions()
     ElMessage.success('删除成功')
+    await getSpacepermissions()
+    await handleMember()
   } else {
     ElMessage.error(res.msg)
   }
@@ -41,18 +44,18 @@ const deleteSpacepermissions = async (id: number) => {
 
 const getUser = async () => {
   const params = {
-    username: user.value
+    username: user
   }
   const res = await getUserApi(params)
   if (res.code === 1000) {
     res.data.map((it) => {
-      if (it.username === user.value) {
+      if (it.username === user) {
         it.permname = it.name
         it.permtype = '0'
         it.dept = it.dept_name
       }
     })
-    memberData.value = [...res.data, ...memberData.value]
+    myData.value = res.data || ([] as any)
   } else {
     ElMessage.error(res.msg)
   }
@@ -82,9 +85,14 @@ const toDetail = (data: any) => {
   ElMessage.warning('功能暂未开放，敬请期待')
 }
 
+const handleMember = () => {
+  memberData.value = [...myData.value, ...memberData.value]
+}
+
 onMounted(async () => {
   await getSpacepermissions()
   await getUser()
+  await handleMember()
 })
 </script>
 
@@ -119,7 +127,14 @@ onMounted(async () => {
       </SwitchModuleItem>
       <el-table :data="memberData" stripe style="width: 100%">
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="permname" label="姓名" width="180" />
+        <el-table-column label="姓名" width="180">
+          <template #default="{ row }">
+            <span>
+              {{ row.permname }}
+              <span v-if="nickname === row.permname" class="my_tag">你自己</span>
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="dept" label="所在部门" width="180" />
         <el-table-column prop="permtype" label="身份" width="150">
           <template #default="{ row }">
@@ -183,6 +198,14 @@ onMounted(async () => {
           background-color: #009456;
         }
       }
+    }
+    .my_tag {
+      margin-left: 8px;
+      background-color: #eff0f0;
+      padding: 2px 6px;
+      border-radius: 12px;
+      font-size: 12px;
+      color: #585a5a;
     }
   }
   :deep(.deleteMemberDialog) {

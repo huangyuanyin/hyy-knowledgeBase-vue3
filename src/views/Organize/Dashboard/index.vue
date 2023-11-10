@@ -27,6 +27,7 @@ const toLink = (val) => {
     </div>
     <div class="detail-box">
       <span>使用情况</span>
+      <Empty text="功能暂未开放，敬请期待" height="400px" />
     </div>
   </div>
 </template>

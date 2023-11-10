@@ -24,7 +24,7 @@
               <span class="name">{{ data.title }}</span>
             </div>
             <span class="rightIcon" v-if="data.children.length">
-              <img :class="[isNodeExpanded(data) ? 'is-expand' : '']" src="/src/assets/icons/organize/rightIcon.svg" alt="" />
+              <img :class="[isNodeExpanded(data) ? '' : 'is-expand']" src="/src/assets/icons/organize/rightIcon.svg" alt="" />
             </span>
           </span>
         </template>

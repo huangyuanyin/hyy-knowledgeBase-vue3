@@ -160,6 +160,7 @@ const addLibrary = async () => {
   if (res.code === 1000) {
     toClose()
     ElMessage.success('新建成功')
+    refreshStroe.setRefreshQuickBookList(true)
     refreshStroe.setRefreshBookStacks(true) // 刷新知识库分组列表
     refreshStroe.setRefreshBookList(true) // 刷新知识库列表
   } else {
