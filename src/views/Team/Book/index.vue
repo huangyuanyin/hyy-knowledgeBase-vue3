@@ -11,14 +11,19 @@ interface BookGroup {
 
 const route = useRoute()
 const refreshStroe = useRefreshStore()
+const spaceId = ref('') // 当前组织空间id
+const groupId = ref('') // 当前团队id
 const bookGroup = ref<BookGroup[]>([])
 const libarayList = ref([])
 const commonList = ref([])
-const spaceId = ref(route.query.sid)
-const groupId = ref(route.query.gid)
+
+watchEffect(() => {
+  spaceId.value = route.query.sid as string
+  groupId.value = route.query.gid as string
+})
 
 watch(
-  () => route.query.gid,
+  () => groupId.value,
   (newVal) => {
     groupId.value = newVal
     getBookStacks()
@@ -26,7 +31,7 @@ watch(
 )
 
 watch(
-  () => refreshStroe.isGetQuickList,
+  () => refreshStroe.isRefreshQuickBookList,
   (newVal) => {
     if (newVal) {
       getQuickLinks()
@@ -34,10 +39,11 @@ watch(
   }
 )
 
+// 获取当前组织空间下当前团队的知识库分组列表
 const getBookStacks = async () => {
   const params = {
     space: spaceId.value,
-    group: route.query.gid
+    group: groupId.value
   }
   let res = await getBookStacksApi(params)
   if (res.code === 1000) {
@@ -47,10 +53,9 @@ const getBookStacks = async () => {
 
 // 获取当前团队下的知识库列表
 const getLibrary = async () => {
-  let params = {}
-  params = {
-    space: route.query.sid,
-    group: route.query.gid
+  const params = {
+    space: spaceId.value,
+    group: groupId.value
   }
   let res = await getLibraryApi(params)
   if (res.code === 1000) {
@@ -64,7 +69,7 @@ const getLibrary = async () => {
 const getQuickLinks = async () => {
   const params = {
     target_type: 'book',
-    space: route.query.sid
+    space: spaceId.value
   }
   let res = await getQuickLinksApi(params)
   if (res.code === 1000) {

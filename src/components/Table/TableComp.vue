@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { getTeamMemberApi } from '@/api/member'
 import { addQuickLinksApi, deleteQuickLinksApi } from '@/api/quickLinks'
 
 const props = defineProps({
@@ -19,10 +18,10 @@ const props = defineProps({
 
 const route = useRoute()
 const router = useRouter()
+const routeInfo = { route, router }
 const infoStore = useInfoStore()
-const userStore = useUserStore()
-const listStore = useListStore()
 const refreshStroe = useRefreshStore()
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const isShowTeamDialog = ref(false)
 const libraryOperationData = [
   { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限', nick: 'toBookSetting2' },
@@ -78,14 +77,14 @@ const toQuickLink = (operation, val, type) => {
       target_id: String(val.id),
       target_type: type,
       slug: val.slug,
-      user: JSON.parse(localStorage.getItem('user')).userInfo.username || '',
-      space: val.space
+      space: val.space,
+      user
     }
     addQuickLinks(params, type)
   } else {
     const params = {
-      user: userStore.userInfo.username,
-      space: val.space
+      space: val.space,
+      user
     }
     deleteQuickLinks(val.is_common_id, params, type)
   }
@@ -95,14 +94,14 @@ const deleteQuickLinks = async (id, params, type) => {
   let res = await deleteQuickLinksApi(id, params)
   if (res.code === 1000) {
     if (type === 'book') {
-      listStore.setRefreshQuickListStatus(true)
       ElMessage.success('移除成功')
-      refreshStroe.setIsGetQuickList(true)
+      refreshStroe.setRefreshQuickBookList(true)
     } else {
-      listStore.setRefreshQuickListStatus(true)
       ElMessage.success('移除成功')
-      refreshStroe.setIsGetTeamQuickList(true)
+      refreshStroe.setRefreshQuickTeamList(true)
     }
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 
@@ -110,13 +109,11 @@ const addQuickLinks = async (params, type) => {
   let res = await addQuickLinksApi(params)
   if (res.code === 1000) {
     if (type === 'book') {
-      listStore.setRefreshQuickListStatus(true)
       ElMessage.success('添加成功')
-      refreshStroe.setIsGetQuickList(true)
+      refreshStroe.setRefreshQuickBookList(true)
     } else {
-      listStore.setRefreshQuickListStatus(true)
       ElMessage.success('添加成功')
-      refreshStroe.setIsGetTeamQuickList(true)
+      refreshStroe.setRefreshQuickTeamList(true)
     }
   } else {
     ElMessage.error(res.msg)
@@ -145,11 +142,11 @@ const toBookSetting = (val) => {
 }
 
 const toTeamSetting = (val: any) => {
-  useLink(router, route, 'teamSet', val)
+  useLink(routeInfo, 'teamSet', val)
 }
 
 const toQuitTeam = (val: any) => {
-  useLink(router, route, 'teamQuit', val)
+  useLink(routeInfo, 'teamQuit', val)
 }
 </script>
 
@@ -162,7 +159,7 @@ const toQuitTeam = (val: any) => {
     </thead>
     <template v-if="props.data.length">
       <tbody v-if="props.type === 'dashboard'">
-        <tr class="docItem" v-for="document in props.data" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">
+        <tr class="docItem" v-for="document in (props.data as any)" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">
           <td class="item-title">
             <div>
               <img :src="document.icon" alt="" />
@@ -196,7 +193,7 @@ const toQuitTeam = (val: any) => {
         </tr>
       </tbody>
       <tbody v-if="props.type === 'star'">
-        <tr class="docItem" v-for="document in props.data" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">
+        <tr class="docItem" v-for="document in (props.data as any)" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">
           <td class="item-title">
             <div>
               <img :src="document.icon" alt="" />
@@ -221,7 +218,7 @@ const toQuitTeam = (val: any) => {
         </tr>
       </tbody>
       <tbody v-if="props.type === 'library'">
-        <tr class="docItem" v-for="document in props.data" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">
+        <tr class="docItem" v-for="document in (props.data as any)" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">
           <td class="item-title">
             <div>
               <img :src="document.icon || '/src/assets/icons/bookIcon.svg'" alt="" />
@@ -247,7 +244,7 @@ const toQuitTeam = (val: any) => {
                 <img src="@/assets/icons/pinOutIcon.svg" alt="" @click="toQuickLink('add', document, 'book')" />
               </span>
             </el-tooltip>
-            <LibraryOperationPopver :menuItems="libraryOperationData" :width="126">
+            <LibraryOperationPopver :menuItems="libraryOperationData" :width="126" @toBookSetting="toBookSetting">
               <span>
                 <img v-show="hoveredDocument === document.id" src="@/assets/icons/moreIcon1_after.svg" alt="" />
               </span>
@@ -256,7 +253,7 @@ const toQuitTeam = (val: any) => {
         </tr>
       </tbody>
       <tbody v-if="props.type === 'team'">
-        <tr class="docItem" v-for="document in props.data" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">
+        <tr class="docItem" v-for="document in (props.data as any)" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">
           <td class="item-title">
             <div>
               <img :src="document.icon || '/src/assets/icons/teamIcon.svg'" alt="" />
@@ -437,8 +434,6 @@ const toQuitTeam = (val: any) => {
         &:hover {
           background-color: #e7e9e8;
         }
-      }
-      .moreIcon {
       }
     }
   }

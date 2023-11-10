@@ -4,7 +4,7 @@ export interface bookstackParams {
 }
 
 export interface bookstackData {
-  name: string
+  name?: string
   space: string | number
   group: string | number
 }

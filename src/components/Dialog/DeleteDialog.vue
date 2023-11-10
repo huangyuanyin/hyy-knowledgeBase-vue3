@@ -47,7 +47,7 @@ const toDelete = async (val) => {
     if (res.code === 1000) {
       closeDialog()
       ElMessage.success('删除成功')
-      if (localStorage.getItem('currentSidebar') === '"DirectorySidebar"') {
+      if (sessionStorage.getItem('currentSidebar') === '"DirectorySidebar"') {
         const query = {
           sid: route.query.sid,
           sname: route.query.sname
@@ -58,8 +58,8 @@ const toDelete = async (val) => {
           query: spaceType === '组织' ? query : {}
         })
       }
-      refreshStroe.setIsGetBookStacks(true)
-      refreshStroe.setIsGetLibrary(true)
+      refreshStroe.setRefreshBookStacks(true)
+      refreshStroe.setRefreshBookList(true)
     } else {
       ElMessage.error(res.msg)
     }

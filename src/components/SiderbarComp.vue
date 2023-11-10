@@ -2,7 +2,7 @@
 import { libraryOperationData, teamOperationData, moreOperationData, menuItemsData, spaceMenuItemsData } from '@/data/data'
 import { MenuItem } from '@/type/operationPopoverType'
 import { contentItemsData, moreMenuItemsData } from '@/data/data'
-import { getSpacesApi, getSpacesDetailApi } from '@/api/spaces/index'
+import { getSpacesDetailApi } from '@/api/spaces/index'
 import { deleteQuickLinksApi } from '@/api/quickLinks'
 import { getTeamMemberApi } from '@/api/member'
 
@@ -36,11 +36,10 @@ const props = defineProps({
 })
 
 const route = useRoute()
+const routeInfo = { route, router }
 const infoStore = useInfoStore()
-const listStore = useListStore()
 const refreshStroe = useRefreshStore()
-const userStore = useUserStore()
-const user = ref(JSON.parse(localStorage.getItem('user')).userInfo.username || '')
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const state = reactive({
   headerActive: null,
   currentGroup: null,
@@ -133,7 +132,7 @@ const handleClickLibrary = (val: any) => {
   if (val.target_type === 'group') {
     getTeamMember(val)
     state.currentGroup = val.target_id
-    refreshStroe.setIsGetBookStacks(true)
+    refreshStroe.setRefreshBookStacks(true)
   } else {
     const query = {
       lid: val.target_id,
@@ -206,6 +205,7 @@ const getTeamMember = async (val) => {
 }
 
 const toReminderFree = (val) => {
+  console.log(`output->val`, val)
   ElMessage.warning('功能暂未开放，敬请期待')
 }
 
@@ -221,18 +221,17 @@ const toSpaceManager = () => {
 
 const toRemoveCommon = (val) => {
   const params = {
-    user: user.value,
-    space: val.space
+    space: val.space,
+    user
   }
-  deleteQuickLinks(val.id, params)
+  deleteQuickLinks(val.target_type, val.id, params)
 }
 
-const deleteQuickLinks = async (id, params) => {
+const deleteQuickLinks = async (type, id, params) => {
   let res = await deleteQuickLinksApi(id, params)
   if (res.code === 1000) {
     ElMessage.success('移除成功')
-    refreshStroe.setIsGetQuickList(true)
-    listStore.setRefreshQuickListStatus(true)
+    type === 'group' ? refreshStroe.setRefreshQuickTeamList(true) : refreshStroe.setRefreshQuickBookList(true)
   } else {
     ElMessage.error(res.msg)
   }
@@ -246,37 +245,19 @@ const toDeleteLibrary = (item: any) => {
 }
 
 const toTeamSetting = (val) => {
-  useLink(router, route, 'comTeamSet', val)
+  useLink(routeInfo, 'comTeamSet', val)
 }
 
 const toQuitTeam = (val) => {
-  useLink(router, route, 'comTeamQuit', val)
+  useLink(routeInfo, 'comTeamQuit', val)
 }
 
 const toMoreSetting = (val) => {
-  useLink(router, route, 'comBookSet', val)
+  useLink(routeInfo, 'comBookSet', val)
 }
 
 const toPermission = (val) => {
-  useLink(router, route, 'comBookPermission', val)
-}
-
-// 获取当前用户下所能访问的空间
-const getSpaces = async () => {
-  const params = {
-    permusername: user.value
-  }
-  let res = await getSpacesApi(params)
-  if (res.code === 1000) {
-    if (localStorage.getItem('personalSpaceId') === null) {
-      res.data.map((item) => {
-        if (item.spacetype === 'personal' && item.creator === userStore.userInfo.username) {
-          infoStore.setPersonalSpaceId(item.id) // 个人空间id
-        }
-      })
-    }
-    bus.emit('TriggerSettingData', res.data)
-  }
+  useLink(routeInfo, 'comBookPermission', val)
 }
 
 const getSpacesDeatil = async () => {
@@ -284,7 +265,7 @@ const getSpacesDeatil = async () => {
   if (res.code === 1000) {
     // 循环res.data，找到item.permusername等于JSON.parse(localStorage.getItem('user')).userInfo.username的项，判断item.permtype是否为0，是则isAdmin为true,否则为false，找到则中止循环
     res.data.members.map((item) => {
-      if (item.permusername === user.value) {
+      if (item.permusername === user) {
         if (item.permtype === '0') {
           isAdmin.value = true
         } else {
@@ -292,7 +273,7 @@ const getSpacesDeatil = async () => {
         }
       }
     })
-    if (res.data.creator === user.value) {
+    if (res.data.creator === user) {
       isAdmin.value = true
     }
     sessionStorage.setItem('spaceInfo', JSON.stringify(res.data))
@@ -303,8 +284,7 @@ const getSpacesDeatil = async () => {
 }
 
 onMounted(async () => {
-  await getSpaces()
-  if (JSON.parse(localStorage.getItem('currentSidebar')) === 'SpaceSidebar') {
+  if (sessionStorage.getItem('currentSidebar') === 'SpaceSidebar') {
     await getSpacesDeatil()
   }
 })

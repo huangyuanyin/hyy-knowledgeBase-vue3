@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { getSpacesApi } from '@/api/spaces'
 import { MenuItem, OperationPopoverProps } from '@/type/operationPopoverType'
 
 const props = withDefaults(defineProps<OperationPopoverProps>(), {
@@ -13,22 +14,67 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
 
 const route = useRoute()
 const infoStore = useInfoStore()
-const spacesList = ref([])
-const personalSpaceName = ref(JSON.parse(localStorage.getItem('user')).userInfo.name || '')
-const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('user')).userInfo.avatar || '@/assets/img/img.jpg')
+const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
+const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
+const spaceId = ref(route.query.sid as string) // 当前空间id
 const isShowsSpaceDialog = ref(false)
 const isAdmin = ref(sessionStorage.getItem('isAdmin'))
+const spacesList = ref([])
+const spaces = ref([
+  {
+    name: '个人',
+    type: 'personal',
+    list: []
+  },
+  {
+    name: '空间',
+    type: 'organize',
+    list: []
+  }
+])
+const spaceReverse = ref([
+  {
+    name: '空间',
+    type: 'organize',
+    list: []
+  },
+  {
+    name: '个人',
+    type: 'personal',
+    list: []
+  }
+])
 
 const state = reactive({
   currentSpaceName: route.query.sname || ''
 })
 
+const toShow = () => {
+  getSpaces()
+}
+
+// 获取当前用户下所能访问的空间
+const getSpaces = async () => {
+  const params = {
+    permusername: user
+  }
+  let res = await getSpacesApi(params)
+  if (res.code === 1000) {
+    spacesList.value = res.data as any
+    spaces.value[0].list = res.data.filter((item) => item.spacetype === 'personal')
+    spaces.value[1].list = res.data.filter((item) => item.spacetype === 'organization')
+    spaceReverse.value[0].list = res.data.filter((item) => item.spacetype === 'organization')
+    spaceReverse.value[1].list = res.data.filter((item) => item.spacetype === 'personal')
+  }
+}
+
 const toLink = (type, val?) => {
   switch (type) {
-    case 'my':
+    case 'personal':
       router.push('/dashboard')
       break
-    case 'space':
+    case 'organize':
       router.push({
         path: `/${val.spacekey}/dashboard`,
         query: {
@@ -50,12 +96,6 @@ const toLink = (type, val?) => {
       break
   }
 }
-
-onMounted(async () => {
-  bus.on('TriggerSettingData', (res: any) => {
-    spacesList.value = res.filter((item) => item.spacetype !== 'personal')
-  })
-})
 </script>
 
 <template>
@@ -66,6 +106,7 @@ onMounted(async () => {
     :trigger="props.trigger"
     :hide-after="props.hideAfter"
     :show-arrow="props.showArrow"
+    @show="toShow"
   >
     <template #reference>
       <span class="arrowDownIcon">
@@ -74,41 +115,31 @@ onMounted(async () => {
     </template>
     <div class="changeSpac_Wrap">
       <template v-if="props.currentSider === 'Sidebar'">
-        <div class="my">
-          <h4>个人</h4>
-          <div class="menuItem" @click="toLink('my', null)">
-            <div class="left">
-              <div class="img">
-                <img :src="avatar" />
+        <div v-for="(item, index) in spaces" :key="'spaces' + index">
+          <div class="space_wrap">
+            <h4>{{ item.type === 'personal' ? '个人' : '空间' }}</h4>
+            <div class="menuItem" v-for="space in item.list" :key="space.id" @click="toLink(item.type, item.type === 'personal' ? null : space)">
+              <div class="left">
+                <div class="img">
+                  <img v-if="item.type === 'personal'" :src="avatar" />
+                  <img class="spaceIcon" v-else :src="space.icon || '/src/assets/icons/spaceIcon.svg'" alt="" />
+                </div>
+                <div class="content">
+                  <p>{{ space.spacename }}</p>
+                  <p class="tag" v-if="item.type === 'personal'">我自己</p>
+                  <p class="member" v-else>{{ space.member_count || 0 }}成员</p>
+                </div>
               </div>
-              <div class="content">
-                <p>{{ personalSpaceName }}</p>
-                <p class="tag">我自己</p>
-              </div>
-            </div>
-            <div class="right">
-              <img src="@/assets/icons/selectIcon.svg" alt="" />
-            </div>
-          </div>
-        </div>
-        <div class="space">
-          <h4>空间</h4>
-          <div class="menuItem" v-for="space in spacesList" :key="space.id" @click="toLink('space', space)">
-            <div class="left">
-              <div class="img">
-                <img class="spaceIcon" :src="space.icon || '/src/assets/icons/spaceIcon.svg'" alt="" />
-              </div>
-              <div class="content">
-                <p>{{ space.spacename }}</p>
-                <p class="member">{{ space.member_count || 0 }}成员</p>
+              <div class="right" v-if="item.type === 'personal'">
+                <img src="@/assets/icons/selectIcon.svg" alt="" />
               </div>
             </div>
-          </div>
-          <div class="menuItem" @click="isShowsSpaceDialog = true">
-            <div class="left">
-              <img class="addIcon" src="@/assets/icons/addIcon2.svg" alt="" />
-              <div class="content">
-                <span>创建空间</span>
+            <div class="menuItem" @click="isShowsSpaceDialog = true" v-if="item.type === 'organize'">
+              <div class="left">
+                <img class="addIcon" src="@/assets/icons/addIcon2.svg" alt="" />
+                <div class="content">
+                  <span>创建空间</span>
+                </div>
               </div>
             </div>
           </div>
@@ -160,41 +191,31 @@ onMounted(async () => {
             <div class="divider"></div>
           </div>
         </div>
-        <div class="space">
-          <h4>空间</h4>
-          <div class="menuItem" v-for="space in spacesList" :key="space.id" @click="toLink('space', space)">
-            <div class="left">
-              <div class="img">
-                <img class="spaceIcon" :src="space.icon || '/src/assets/icons/spaceIcon.svg'" alt="" />
+        <div v-for="(item, index) in spaceReverse" :key="'spaces' + index">
+          <div class="space_wrap">
+            <h4>{{ item.type === 'personal' ? '个人' : '空间' }}</h4>
+            <div class="menuItem" v-for="space in item.list" :key="space.id" @click="toLink(item.type, item.type === 'personal' ? null : space)">
+              <div class="left">
+                <div class="img">
+                  <img v-if="item.type === 'personal'" :src="avatar" />
+                  <img class="spaceIcon" v-else :src="space.icon || '/src/assets/icons/spaceIcon.svg'" alt="" />
+                </div>
+                <div class="content">
+                  <p>{{ space.spacename }}</p>
+                  <p class="tag" v-if="item.type === 'personal'">我自己</p>
+                  <p class="member" v-else>{{ space.member_count || 0 }}成员</p>
+                </div>
               </div>
-              <div class="content">
-                <p>{{ space.spacename }}</p>
-                <p class="member">{{ space.member_count || 0 }}成员</p>
-              </div>
-            </div>
-            <div class="right" v-if="infoStore.currentSpaceName === space.spacekey">
-              <img src="@/assets/icons/selectIcon.svg" alt="" />
-            </div>
-          </div>
-          <div class="menuItem" @click="isShowsSpaceDialog = true">
-            <div class="left">
-              <img class="addIcon" src="@/assets/icons/addIcon2.svg" alt="" />
-              <div class="content">
-                <span>创建空间</span>
+              <div class="right" v-if="spaceId == space.id">
+                <img src="@/assets/icons/selectIcon.svg" alt="" />
               </div>
             </div>
-          </div>
-        </div>
-        <div class="my">
-          <h4>个人</h4>
-          <div class="menuItem" @click="toLink('my', null)">
-            <div class="left">
-              <div class="img">
-                <img :src="avatar" />
-              </div>
-              <div class="content">
-                <p>{{ personalSpaceName }}</p>
-                <p class="tag">我自己</p>
+            <div class="menuItem" @click="isShowsSpaceDialog = true" v-if="item.type === 'organize'">
+              <div class="left">
+                <img class="addIcon" src="@/assets/icons/addIcon2.svg" alt="" />
+                <div class="content">
+                  <span>创建空间</span>
+                </div>
               </div>
             </div>
           </div>
@@ -225,8 +246,7 @@ onMounted(async () => {
   padding: 13px 20px 12px 20px !important;
   box-sizing: border-box;
   .changeSpac_Wrap {
-    .my,
-    .space {
+    .space_wrap {
       h4 {
         margin-top: 16px;
         margin-bottom: 16px;

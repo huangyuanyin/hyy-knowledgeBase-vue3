@@ -3,16 +3,15 @@ import { getGroupsApi } from '@/api/groups'
 import { getQuickLinksApi } from '@/api/quickLinks'
 
 const route = useRoute()
-const listStore = useListStore()
 const refreshStroe = useRefreshStore()
 const dataStore = useDataStore()
-const spaceId = ref(route.query.sid) // 当前空间id
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
+const spaceId = ref('') // 当前公共空间id
 const menuItems = ref([
   { index: 'dashboard', icon: 'actionIcon', label: '开始' },
   { index: 'collections', icon: 'startIcon', label: '收藏' },
   { id: null, index: 'public', icon: 'publicAreaIcon', label: '公共区' }
 ])
-
 const contentItems = ref([
   {
     id: null,
@@ -33,40 +32,31 @@ const contentItems = ref([
     libraryList: []
   }
 ])
-
 const moreMenuItems = [
   { icon: '/src/assets/icons/settingIcon.svg', label: '空间管理' },
   { icon: '/src/assets/icons/moreIcon2.svg', label: '更多' }
 ]
 
+watchEffect(() => {
+  spaceId.value = route.query.sid as string
+})
+
 watch(
-  () => refreshStroe.isGetTeamQuickList,
+  () => refreshStroe.isRefreshQuickTeamList,
   (newVal) => {
     if (newVal) {
       getCommonTeam()
-      refreshStroe.setIsGetTeamQuickList(false)
+      refreshStroe.setRefreshQuickTeamList(false)
     }
   }
 )
 
 watch(
-  () => refreshStroe.isGetQuickList,
+  () => refreshStroe.isRefreshQuickBookList,
   (newVal) => {
     if (newVal) {
       getCommonLibrary()
-      refreshStroe.setIsGetQuickList(false)
-    }
-  }
-)
-
-watch(
-  () => listStore.refreshQuickListStatus,
-  (newVal) => {
-    if (newVal) {
-      console.log(`output->12121`, 12121)
-      getCommonTeam()
-      getCommonLibrary()
-      listStore.setRefreshQuickListStatus(false)
+      refreshStroe.setRefreshQuickBookList(false)
     }
   }
 )
@@ -74,9 +64,9 @@ watch(
 // 获取常用知识库列表
 const getCommonLibrary = async () => {
   const params = {
-    space: route.query.sid,
-    user: JSON.parse(localStorage.getItem('user')).userInfo.username,
-    target_type: 'book'
+    space: spaceId.value,
+    target_type: 'book',
+    user
   }
   let res = await getQuickLinksApi(params)
   if (res.code === 1000) {
@@ -87,9 +77,9 @@ const getCommonLibrary = async () => {
 // 获取常用团队列表
 const getCommonTeam = async () => {
   const params = {
-    space: route.query.sid,
-    user: JSON.parse(localStorage.getItem('user')).userInfo.username,
-    target_type: 'group'
+    space: spaceId.value,
+    target_type: 'group',
+    user
   }
   let res = await getQuickLinksApi(params)
   if (res.code === 1000) {
@@ -100,12 +90,12 @@ const getCommonTeam = async () => {
 // 获取当前空间下的全部团队
 const getGroups = async () => {
   const params = {
-    space: String(spaceId.value)
+    space: spaceId.value
   }
   let res = await getGroupsApi(params)
   if (res.code === 1000) {
     menuItems.value[2].id = res.data.filter((item) => item.is_default === '1')[0].id
-    dataStore.setTeamList(res.data)
+    dataStore.setTeamList(res.data) // 存储当前空间下的全部团队
   } else {
     ElMessage.error(res.msg)
   }

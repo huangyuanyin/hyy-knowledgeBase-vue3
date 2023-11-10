@@ -3,6 +3,10 @@ import { sidebarSearchMenuItemsData, articleOperationData, linkOperationData, ti
 import { addArticleApi, deleteArticleApi, editArticleApi, getArticleTreeApi } from '@/api/article'
 
 const route = useRoute()
+const routeInfo = {
+  route,
+  router
+}
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const bookId = ref('') // 当前知识库id
@@ -370,15 +374,15 @@ const toExpand = (type) => {
 }
 
 const toPermission = () => {
-  useLink(router, route, 'fromBookToCollaborators', {})
+  useLink(routeInfo, 'fromBookToCollaborators', {})
 }
 
 const toDirManage = () => {
-  useLink(router, route, 'fromBookToToc', {})
+  useLink(routeInfo, 'fromBookToToc', {})
 }
 
 const toMoreSetting = () => {
-  useLink(router, route, 'fromBookToSet', {})
+  useLink(routeInfo, 'fromBookToSet', {})
 }
 
 const customIcon = () => {

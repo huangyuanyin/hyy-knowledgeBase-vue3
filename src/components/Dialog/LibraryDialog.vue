@@ -15,20 +15,20 @@ const props = defineProps({
     default: ''
   }
 })
-
 const emit = defineEmits(['closeDialog', 'getBookStacks'])
 
+const route = useRoute()
 const infoStore = useInfoStore()
-const userStore = useUserStore()
 const dataStore = useDataStore()
 const refreshStroe = useRefreshStore()
-const route = useRoute()
+const spaceType = ref('') // 当前空间类型
+const spaceId = ref('') // 当前空间id
 const selectGroupName = ref('')
 const teamList = ref([]) // 当前空间下的全部团队
 const stacksList = ref([]) // 知识库分组集合
 const publicList = ref([])
 const dialogVisible = ref(false)
-const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('user')).userInfo.avatar || '@/assets/img/img.jpg')
+const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
 const libraryFormRef = ref<FormInstance>()
 const libraryForm = reactive<RuleForm>({
   name: '',
@@ -60,14 +60,13 @@ watch(
           })
         } else {
           await getBookStacks(libraryForm.group)
-          libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || ''
         }
       } else if (infoStore.currentSidebar === 'Sidebar') {
         teamList.value = [
           {
             id: localStorage.getItem('personalGroupId'),
             img: avatar.value,
-            groupname: JSON.parse(localStorage.getItem('user')).userInfo.name
+            groupname: JSON.parse(localStorage.getItem('userInfo')).name
           }
         ]
         libraryForm.group = teamList.value[0].id
@@ -80,8 +79,16 @@ watch(
   }
 )
 
+const handleID = () => {
+  sessionStorage.getItem('currentSidebar') === 'Sidebar' ? (spaceType.value = '个人') : (spaceType.value = '组织')
+  spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
+}
+
 watchEffect(() => {
-  if (selectGroupName.value === '公共区') {
+  if (props.isShow) {
+    handleID()
+  }
+  if (selectGroupName.value === '公共区' || route.query.gname === '公共区') {
     publicList.value = [
       {
         id: '1',
@@ -102,9 +109,10 @@ watchEffect(() => {
 
 const handleNewData = () => {
   libraryForm.stacks = props.stackId || ''
+  console.log(`output->libraryForm.stacks `, libraryForm.stacks)
   libraryForm.slug = uuidv4().replace(/-/g, '')
   libraryForm.group = String(route.query.gid) || ''
-  libraryForm.space = infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalSpaceId') : String(route.query.sid)
+  libraryForm.space = spaceId.value
 }
 
 const toSubmit = async () => {
@@ -141,7 +149,6 @@ const handleStackId = (val) => {
 
 // 切换团队
 const toSelectTeam = async (val) => {
-  console.log(`output->val`, val)
   selectGroupName.value = teamList.value.filter((item) => item.id == val)[0].groupname
   await getBookStacks(val)
   await handleStackId(val)
@@ -153,8 +160,8 @@ const addLibrary = async () => {
   if (res.code === 1000) {
     toClose()
     ElMessage.success('新建成功')
-    refreshStroe.setIsGetBookStacks(true)
-    refreshStroe.setIsGetLibrary(true)
+    refreshStroe.setRefreshBookStacks(true) // 刷新知识库分组列表
+    refreshStroe.setRefreshBookList(true) // 刷新知识库列表
   } else {
     ElMessage.error(res.msg)
   }
@@ -163,7 +170,7 @@ const addLibrary = async () => {
 // 获取知识库分组列表
 const getBookStacks = async (val) => {
   const params = {
-    space: infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalSpaceId') : libraryForm.space,
+    space: spaceId.value,
     group: val
   }
   let res = await getBookStacksApi(params)

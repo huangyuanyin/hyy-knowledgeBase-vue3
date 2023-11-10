@@ -2,7 +2,8 @@ import qs from 'qs'
 
 const infoStore = useInfoStore()
 
-export const useLink = (router, route, type, data) => {
+export const useLink = (routerInfo, type, data) => {
+  const { route, router } = routerInfo
   switch (type) {
     case 'teamSet':
       router.push({

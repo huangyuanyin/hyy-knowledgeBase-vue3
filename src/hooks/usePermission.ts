@@ -1,6 +1,6 @@
 import { getTeamMemberApi } from '@/api/member'
 
-const user = JSON.parse(localStorage.getItem('user')).userInfo.username || ''
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const spaceInfo = JSON.parse(sessionStorage.getItem('spaceInfo')) || {}
 
 // 判断是否有权限访问团队

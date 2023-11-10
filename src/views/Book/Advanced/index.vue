@@ -19,7 +19,7 @@ const deleteInfo = ref<{
 }>({})
 
 watchEffect(() => {
-  if (refreshStroe.isGetLibrary) {
+  if (refreshStroe.isRefreshBookList) {
     router.push({
       path: `/${route.path.split('/')[1]}/dashboard`,
       query: {

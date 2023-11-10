@@ -4,19 +4,19 @@ import { getLibraryApi } from '@/api/library'
 import { getQuickLinksApi } from '@/api/quickLinks'
 
 const route = useRoute()
-const infoStore = useInfoStore()
-const listStore = useListStore()
 const refreshStroe = useRefreshStore()
 const dataStore = useDataStore()
-const currentSidebar = ref(infoStore.currentSidebar) // 当前类型：个人、公共
+const currentSidebar = ref(sessionStorage.getItem('currentSidebar')) // 当前类型：个人、公共
+const spaceId = ref('') // 当前空间id
+const personalGroupId = ref('') // 个人空间下的团队id
+const bookList = ref([]) // 当前空间下的知识库列表
 const commonList = ref([]) // 当前空间下的常用列表
-const libarayList = ref([]) // 当前空间下的知识库列表
 const bookGroup = ref([]) // 当前空间&&当前团队下的知识库分组
 const libraryInput = ref('')
 const isShowsLibraryDialog = ref(false)
 
 watch(
-  () => refreshStroe.isGetQuickList,
+  () => refreshStroe.isRefreshQuickBookList,
   (newVal) => {
     if (newVal) {
       getQuickLinks()
@@ -25,31 +25,38 @@ watch(
 )
 
 watch(
-  () => refreshStroe.isGetLibrary,
+  () => refreshStroe.isRefreshBookList,
   (newVal) => {
     if (newVal) {
-      getLibrary()
+      getBook()
+      if (currentSidebar.value === 'Sidebar') {
+        getBookStacks()
+      }
     }
   }
 )
 
 watchEffect(() => {
-  currentSidebar.value = infoStore.currentSidebar
+  currentSidebar.value = sessionStorage.getItem('currentSidebar')
+  if (currentSidebar.value === 'Sidebar') {
+    spaceId.value = JSON.parse(localStorage.getItem('personalSpaceInfo')).id
+  } else {
+    spaceId.value = route.query.sid as string
+  }
+  personalGroupId.value = localStorage.getItem('personalGroupId')
 })
 
 // 获取当前空间下的常用列表
 const getQuickLinks = async () => {
-  console.log(`output->personalSpaceId`, localStorage.getItem('personalSpaceId'))
   const params = {
     target_type: 'book',
-    space: currentSidebar.value === 'Sidebar' ? localStorage.getItem('personalSpaceId') : String(route.query.sid)
+    space: spaceId.value
   }
   let res = await getQuickLinksApi(params)
   if (res.code === 1000) {
     commonList.value = res.data || ([] as any)
-    refreshStroe.setIsGetQuickList(false)
     // 遍历知识库列表和常用知识库列表，如果id和target_id相同，就把is_common设置为true,否则设置为false
-    libarayList.value.forEach((item) => {
+    bookList.value.forEach((item) => {
       item.is_common_id = null
       commonList.value.forEach((val) => {
         if (item.id === Number(val.target_id)) {
@@ -57,6 +64,7 @@ const getQuickLinks = async () => {
         }
       })
     })
+    refreshStroe.setRefreshQuickBookList(false)
     dataStore.setCommonLibraryList(commonList.value)
   } else {
     ElMessage.error(res.msg)
@@ -64,35 +72,23 @@ const getQuickLinks = async () => {
 }
 
 // 获取当前空间下的知识库列表
-const getLibrary = async () => {
-  let params = {}
-  if (currentSidebar.value === 'Sidebar') {
-    params = {
-      public: currentSidebar.value === 'Sidebar' ? '0' : '1'
-    }
-  } else {
-    params = {
-      space: route.query.sid
-    }
+const getBook = async () => {
+  let params = {
+    space: spaceId.value
   }
   let res = await getLibraryApi(params)
   if (res.code === 1000) {
-    libarayList.value = res.data || ([] as any)
-    console.log(`output-> libarayList.value`, libarayList.value)
+    bookList.value = res.data || ([] as any)
   } else {
     ElMessage.error(res.msg)
   }
 }
 
-const filterGroupFromPublic = (list) => {
-  return list.filter((item) => item.group_name !== '公共区')
-}
-
-// 获取当前空间&&当前团队下的知识库分组
+// 获取个人空间知识库团队下的知识库分组
 const getBookStacks = async () => {
   const params = {
-    space: localStorage.getItem('personalSpaceId'),
-    group: localStorage.getItem('personalGroupId')
+    space: spaceId.value,
+    group: personalGroupId.value
   }
   let res = await getBookStacksApi(params)
   if (res.code === 1000) {
@@ -100,10 +96,14 @@ const getBookStacks = async () => {
   }
 }
 
+const filterGroupFromPublic = (list) => {
+  return list.filter((item) => item.group_name !== '公共区')
+}
+
 onMounted(async () => {
-  await getLibrary()
+  await getBook()
   await getQuickLinks()
-  if (infoStore.currentSidebar === 'Sidebar') {
+  if (currentSidebar.value === 'Sidebar') {
     await getBookStacks()
   }
 })
@@ -165,7 +165,7 @@ onMounted(async () => {
           </template>
         </SwitchModuleItem>
         <LibraryTable v-if="currentSidebar === 'Sidebar'" title="知识库" :commonList="commonList" :group="bookGroup" @getBookStacks="getBookStacks" />
-        <TableComp v-else :header="['名称', '归属', '更新时间', '']" type="library" :data="filterGroupFromPublic(libarayList)" />
+        <TableComp v-else :header="['名称', '归属', '更新时间', '']" type="library" :data="filterGroupFromPublic(bookList)" />
         <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
       </div>
     </div>

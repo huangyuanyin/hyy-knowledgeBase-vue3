@@ -12,6 +12,10 @@ const handleModule = (id: number): void => {
       break
   }
 }
+
+const toAddArticle = (val: any): void => {
+  console.log(val)
+}
 </script>
 
 <template>

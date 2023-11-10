@@ -51,7 +51,7 @@ const toSelectGroup = (val: any) => {
         </div>
       </div>
       <div class="right">
-        <TableComp :header="['名称', '归属', '收藏时间', '']" type="star" :data="documentsData" />
+        <TableComp :header="['名称', '归属', '收藏时间', '']" type="star" :data="(documentsData as any)" />
       </div>
     </div>
   </div>

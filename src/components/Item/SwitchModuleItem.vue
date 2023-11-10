@@ -16,13 +16,12 @@ const props = defineProps<{
 
 const route = useRoute()
 const refreshStroe = useRefreshStore()
-const infoStore = useInfoStore()
-const spaceId = ref(infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalSpaceId') : route.query.sid)
-const groupId = ref(infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalGroupId') : route.query.gid)
+const spaceType = ref('') // 当前空间类型
+const spaceId = ref('') // 当前空间id
+const groupId = ref('') // 当前团队id
 const moduleGenreLocal = ref(props.moduleGenre)
 const isShowsLibraryDialog = ref(false)
 const viewType = ref('group')
-const stackId = ref('2')
 const addOperation = [
   {
     type: 'item',
@@ -41,6 +40,12 @@ const addOperation = [
   }
 ]
 
+watchEffect(() => {
+  sessionStorage.getItem('currentSidebar') === 'Sidebar' ? (spaceType.value = '个人') : (spaceType.value = '组织')
+  spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
+  groupId.value = spaceType.value === '个人' ? localStorage.getItem('personalGroupId') : (route.query.gid as string)
+})
+
 const changeType = (type: string) => {
   return ElMessage.warning('功能暂未开放，敬请期待')
   moduleGenreLocal.value = type
@@ -58,17 +63,17 @@ const toAddGroup = () => {
   addBookStacks()
 }
 
-// 调用新建知识库分组接口
 const addBookStacks = async () => {
   const params = {
+    name: '新建分组',
     space: spaceId.value,
-    group: groupId.value,
-    name: '新建分组'
+    group: groupId.value
   }
   let res = await addBookStacksApi(params)
   if (res.code === 1000) {
     ElMessage.success('新建分组成功')
-    refreshStroe.setIsGetBookStacks(true)
+    refreshStroe.setRefreshBookList(true)
+    refreshStroe.setRefreshBookStacks(true)
   } else {
     ElMessage.error(res.msg)
   }
@@ -133,7 +138,7 @@ const toAddLibrary = () => {
     </slot>
   </div>
 
-  <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" :stackId="String(stackId)" />
+  <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
 </template>
 
 <style lang="scss" scoped>

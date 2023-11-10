@@ -7,7 +7,7 @@ export interface SidebarInfo {
 
 export const useInfoStore = defineStore('info', () => {
   const personalSpaceId = ref(JSON.parse(localStorage.getItem('personalSpaceId')) || null)
-  const currentSidebar = ref(JSON.parse(localStorage.getItem('currentSidebar')) || '')
+  const currentSidebar = ref(sessionStorage.getItem('currentSidebar') || '')
   const currentMenu = ref('')
   const currentSpaceName = ref('')
   const currentSpaceInfo = ref<SidebarInfo>({
@@ -28,7 +28,7 @@ export const useInfoStore = defineStore('info', () => {
 
   const setCurrentSidebar = (val: string) => {
     currentSidebar.value = val
-    localStorage.setItem('currentSidebar', JSON.stringify(currentSidebar.value))
+    sessionStorage.setItem('currentSidebar', currentSidebar.value)
   }
 
   const setCurrentSpaceName = (val: string) => {

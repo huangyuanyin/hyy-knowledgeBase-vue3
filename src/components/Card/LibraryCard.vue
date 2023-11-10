@@ -15,9 +15,10 @@ const props = defineProps({
 })
 
 const route = useRoute()
+const routeInfo = { route, router }
 const infoStore = useInfoStore()
-const listStore = useListStore()
 const refreshStroe = useRefreshStore()
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const isShowsLibraryDialog = ref(false)
 const isShowsDeleteDialog = ref(false)
 const deleteInfo = ref<{
@@ -34,10 +35,11 @@ const toDeleteLibrary = (val) => {
   deleteInfo.value = val
 }
 
+// 移除常用
 const removeCommon = (val) => {
   const params = {
-    user: JSON.parse(localStorage.getItem('user')).userInfo.username || '',
-    space: val.space
+    space: val.space,
+    user
   }
   deleteQuickLinks(val.is_common_id, params)
 }
@@ -45,22 +47,22 @@ const removeCommon = (val) => {
 const deleteQuickLinks = async (id, params) => {
   let res = await deleteQuickLinksApi(id, params)
   if (res.code === 1000) {
-    listStore.setRefreshQuickListStatus(true)
-    refreshStroe.setIsGetQuickList(true)
     ElMessage.success('移除成功')
+    refreshStroe.setRefreshQuickBookList(true)
   } else {
     ElMessage.error(res.msg)
   }
 }
 
+// 添加常用
 const addCommon = (val) => {
   const params = {
     title: val.name,
     target_id: String(val.id),
     target_type: 'book',
     slug: val.slug,
-    user: JSON.parse(localStorage.getItem('user')).userInfo.username || '',
-    space: val.space
+    space: val.space,
+    user
   }
   addQuickLinks(params)
 }
@@ -68,9 +70,8 @@ const addCommon = (val) => {
 const addQuickLinks = async (params) => {
   let res = await addQuickLinksApi(params)
   if (res.code === 1000) {
-    listStore.setRefreshQuickListStatus(true)
     ElMessage.success('添加成功')
-    refreshStroe.setIsGetQuickList(true)
+    refreshStroe.setRefreshQuickBookList(true)
   } else {
     ElMessage.error(res.msg)
   }
@@ -115,16 +116,16 @@ const toLink = (item) => {
 }
 
 const toRename = (val) => {
+  console.log(`output->val`, val)
   ElMessage.warning('功能暂未开放，敬请期待')
 }
 
 const toMoreSetting = (val) => {
-  useLink(router, route, 'bookSet', val)
+  useLink(routeInfo, 'bookSet', val)
 }
 
 const toPermission = (val) => {
-  console.log(`output->val`, val)
-  useLink(router, route, 'bookPermission', val)
+  useLink(routeInfo, 'bookPermission', val)
 }
 </script>
 

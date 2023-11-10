@@ -11,13 +11,15 @@ export const useUserStore = defineStore({
   actions: {
     setToken(token: string) {
       this.token = token
+      localStorage.setItem('token', token)
     },
     setUserInfo(info: object) {
       this.userInfo = info
+      localStorage.setItem('userInfo', JSON.stringify(info))
     },
     setIsAuth(isAuth: boolean) {
       this.isAuth = isAuth
+      localStorage.setItem('isAuth', JSON.stringify(isAuth))
     }
-  },
-  persist: true
+  }
 })

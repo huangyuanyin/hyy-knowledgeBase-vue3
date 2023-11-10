@@ -3,27 +3,25 @@ import { getGroupsApi } from '@/api/groups'
 import { getQuickLinksApi } from '@/api/quickLinks'
 
 const route = useRoute()
-const dataStore = useDataStore()
-const listStore = useListStore()
-const spaceId = ref(route.query.sid)
+const refreshStroe = useRefreshStore()
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
+const spaceId = ref('') // 当前公共空间id
 const teamInput = ref('')
 const isShowsTeamDialog = ref(false)
 const groupsList = ref([]) // 当前空间下除公共区外全部团队
 const commonTeamList = ref([]) // 当前空间下常用团队列表
 
-watch(
-  () => listStore.refreshQuickListStatus,
-  (newVal) => {
-    if (newVal) {
-      getQuickLinks()
-    }
+watchEffect(() => {
+  spaceId.value = route.query.sid as string
+  if (refreshStroe.isRefreshQuickTeamList) {
+    getQuickLinks()
   }
-)
+})
 
 // 获取当前空间下的全部团队（除去公共区）
 const getGroups = async () => {
   const params = {
-    space: String(spaceId.value),
+    space: spaceId.value,
     is_default: '0'
   }
   let res = await getGroupsApi(params)
@@ -36,13 +34,12 @@ const getGroups = async () => {
 const getQuickLinks = async () => {
   const params = {
     space: spaceId.value,
-    user: JSON.parse(localStorage.getItem('user')).userInfo.username,
-    target_type: 'group'
+    target_type: 'group',
+    user
   }
   let res = await getQuickLinksApi(params)
   if (res.code === 1000) {
     commonTeamList.value = res.data || ([] as any)
-    listStore.setRefreshQuickListStatus(false)
     // 遍历团队列表和常用团队列表，如果id和target_id相同，就把is_common设置为true,否则设置为false
     groupsList.value.forEach((item) => {
       item.is_common_id = null

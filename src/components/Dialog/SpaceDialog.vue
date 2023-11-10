@@ -25,7 +25,7 @@ const spaceForm = reactive<SpaceForm>({
   spacename: '',
   spacekey: '',
   spacetype: 'organization',
-  creator: JSON.parse(localStorage.getItem('user')).userInfo.username || ''
+  creator: JSON.parse(localStorage.getItem('userInfo')).username || ''
 })
 const spaceFormRef = ref<FormInstance>()
 const spaceFormRules = reactive<FormRules<SpaceForm>>({

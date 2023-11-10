@@ -4,6 +4,8 @@ import { getQuickLinksApi } from '@/api/quickLinks'
 
 const refreshStroe = useRefreshStore()
 const dataStore = useDataStore()
+const personalSpaceId = JSON.parse(localStorage.getItem('personalSpaceInfo')).id.toString() || '' // 个人空间id
+const user = JSON.parse(localStorage.getItem('userInfo')).username || '' // 当前登录用户
 const menuItems = [
   { index: 'dashboard', icon: 'actionIcon', label: '开始' },
   { index: 'notes', icon: 'noteIcon', label: '小记' },
@@ -21,20 +23,19 @@ const contentItems = ref([
 ])
 
 watch(
-  () => refreshStroe.isGetQuickList,
+  () => refreshStroe.isRefreshQuickBookList,
   (newVal) => {
     if (newVal) {
       getCommonLibrary()
-      refreshStroe.setIsGetQuickList(false)
+      refreshStroe.setRefreshQuickBookList(false)
     }
   }
 )
 
 // 获取个人空间下的团队列表
 const getGroups = async () => {
-  console.log(`output->localStorage.getItem('personalSpaceId')`, localStorage.getItem('personalSpaceId'))
   const params = {
-    space: localStorage.getItem('personalSpaceId')
+    space: personalSpaceId
   }
   let res = await getGroupsApi(params)
   if (res.code === 1000) {
@@ -47,9 +48,9 @@ const getGroups = async () => {
 // 获取常用知识库列表
 const getCommonLibrary = async () => {
   const params = {
-    space: localStorage.getItem('personalSpaceId'),
+    space: personalSpaceId,
     target_type: 'book',
-    user: JSON.parse(localStorage.getItem('user')).userInfo.username || ''
+    user
   }
   let res = await getQuickLinksApi(params)
   if (res.code === 1000) {
@@ -67,8 +68,8 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss" scoped></style>
-
 <template>
   <SiderbarComp :menuItems="menuItems" :contentItems="contentItems" />
 </template>
+
+<style lang="scss" scoped></style>

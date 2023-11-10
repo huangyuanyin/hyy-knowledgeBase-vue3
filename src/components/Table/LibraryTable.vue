@@ -37,12 +37,13 @@ const emit = defineEmits(['getBookStacks'])
 const route = useRoute()
 const refreshStroe = useRefreshStore()
 const infoStore = useInfoStore()
-const isShowsLibraryDialog = ref(false)
-const editedName = ref('')
-const spaceId = ref(infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalSpaceId') : route.query.sid)
-const groupId = ref(infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalGroupId') : route.query.gid)
+const spaceType = ref('') // 当前空间类型
+const spaceId = ref('') // 当前空间id
+const groupId = ref('') // 当前团队id
 const stackId = ref('') // 当前知识库分组id
+const isShowsLibraryDialog = ref(false)
 const processedGroup = ref([])
+const editedName = ref('')
 const addOperation = [
   {
     type: 'item',
@@ -87,7 +88,7 @@ const addLibraryOperation = [
 watch(
   () => props.group,
   async (newVal) => {
-    console.log(`output->props.group`, props.group)
+    console.log(`output->props.group33333`, props.group)
     if (newVal.length) {
       await Promise.all(
         props.group.map(async (item) => {
@@ -135,8 +136,15 @@ watch(
   }
 )
 
+const handleID = () => {
+  sessionStorage.getItem('currentSidebar') === 'Sidebar' ? (spaceType.value = '个人') : (spaceType.value = '组织')
+  spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
+  groupId.value = spaceType.value === '个人' ? localStorage.getItem('personalGroupId') : (route.query.gid as string)
+}
+
 watchEffect(async () => {
-  if (refreshStroe.isGetLibrary) {
+  await handleID()
+  if (refreshStroe.isRefreshBookList) {
     await Promise.all(
       props.group.map(async (item) => {
         const library = await getLibrary(item.id)
@@ -147,12 +155,12 @@ watchEffect(async () => {
     processedGroup.value.map((item) => {
       item.is_editing = false
     })
-    refreshStroe.setIsGetLibrary(false)
+    refreshStroe.setRefreshBookList(false)
   }
-  if (refreshStroe.isGetBookStacks) {
+  if (refreshStroe.isRefreshBookStacks) {
     const params = {
       space: spaceId.value,
-      group: infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalGroupId') : route.query.gid
+      group: groupId.value
     }
     let res = await getBookStacksApi(params)
     if (res.code === 1000) {
@@ -162,20 +170,20 @@ watchEffect(async () => {
           item.library = library
         })
       )
-      processedGroup.value = res.data
+      processedGroup.value = res.data || ([] as any)
       processedGroup.value.map((item) => {
         item.is_editing = false
       })
-      refreshStroe.setIsGetLibrary(false)
+      refreshStroe.setRefreshBookList(false)
     }
-    refreshStroe.setIsGetBookStacks(false)
+    refreshStroe.setRefreshBookStacks(false)
   }
 })
 
 const addBookStacks = async () => {
   const params = {
     space: spaceId.value,
-    group: infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalGroupId') : route.query.gid,
+    group: groupId.value,
     name: '新建分组'
   }
   let res = await addBookStacksApi(params)
@@ -188,12 +196,12 @@ const addBookStacks = async () => {
 const deleteBookStacks = async (id) => {
   const params = {
     space: spaceId.value,
-    group: infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalGroupId') : route.query.gid
+    group: groupId.value
   }
   let res = await deleteBookStacksApi(id, params)
   if (res.code === 1000) {
-    emit('getBookStacks')
     ElMessage.success('删除成功')
+    emit('getBookStacks')
   } else {
     ElMessage.error(res.msg)
   }
@@ -202,7 +210,7 @@ const deleteBookStacks = async (id) => {
 const getLibrary = async (id) => {
   const params = {
     space: spaceId.value,
-    group: infoStore.currentSidebar === 'Sidebar' ? localStorage.getItem('personalGroupId') : route.query.gid,
+    group: groupId.value,
     stacks: id
   }
   let res = await getLibraryApi(params)

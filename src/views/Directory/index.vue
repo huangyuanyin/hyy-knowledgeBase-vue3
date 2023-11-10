@@ -3,6 +3,7 @@ import { getLibraryDetailApi } from '@/api/library'
 import { directoryIndexOperationData } from '@/data/data'
 
 const route = useRoute()
+const routeInfo = { route, router }
 const articleStore = useArticleStore()
 const isShowsDeleteDialog = ref(false)
 const bookId = ref(route.query.lid as string)
@@ -36,7 +37,7 @@ const toShare = () => {
 }
 
 const toMoreSetting = () => {
-  useLink(router, route, 'fromBookToSet', {})
+  useLink(routeInfo, 'fromBookToSet', {})
 }
 
 const toDeleteBook = () => {

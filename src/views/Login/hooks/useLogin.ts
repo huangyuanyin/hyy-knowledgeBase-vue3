@@ -10,6 +10,7 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
 
   const router = useRouter()
   const userStore = useUserStore()
+  const nickname = ref('')
 
   const validateForm = async (formRef: { validate: () => Promise<boolean> | boolean }) => {
     const isValid: boolean = await formRef?.validate()
@@ -20,11 +21,15 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
     ElMessage.error(message)
   }
 
-  const handleLoginSuccess = (res: any): void => {
+  const setUserInfo = (data: any): void => {
+    userStore.setToken(data.token)
+    userStore.setIsAuth(true)
+    userStore.setUserInfo(data)
+  }
+
+  const handleLoginSuccess = async (res: any): Promise<void> => {
     if (res.code === 1000) {
-      userStore.setToken(res.data.token)
-      userStore.setIsAuth(true)
-      userStore.setUserInfo(res.data)
+      await setUserInfo(res.data)
       ElMessage.success('登录成功')
       router.push({ path: '/' })
     } else {
@@ -46,6 +51,7 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
       })
       .then(async (res: any) => {
         state.loading = false
+        nickname.value = res.data.nickname
         await handleLoginSuccess(res)
         await getSpaces()
       })
@@ -67,7 +73,7 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
     }
     let res = await getSpacesApi(params)
     if (res.code === 1000) {
-      if (res.data.length > 0) return
+      if (res.data.length > 0) return localStorage.setItem('personalSpaceInfo', JSON.stringify(res.data[0]))
       addSpace()
     } else {
       ElMessage.error(res.msg)
@@ -76,7 +82,7 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
 
   const addSpace = async () => {
     const spaceForm = {
-      spacename: `${loginForm.username}的空间`,
+      spacename: `${nickname.value}的空间`,
       spacekey: loginForm.username,
       spacetype: 'personal',
       permusername: loginForm.username

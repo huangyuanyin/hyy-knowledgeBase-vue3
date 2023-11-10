@@ -12,9 +12,6 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
 
 const emit = defineEmits()
 
-const route = useRoute()
-const infoStore = useInfoStore()
-const stackId = ref('')
 const isShowsLibraryDialog = ref(false)
 const isShowTeamDialog = ref(false)
 
@@ -44,12 +41,6 @@ const toHandle = (val) => {
       break
   }
 }
-
-onMounted(() => {
-  if (infoStore.currentSidebar === 'SpaceSidebar') {
-    stackId.value = String(route.query.gid) || ''
-  }
-})
 </script>
 
 <template>
@@ -82,7 +73,7 @@ onMounted(() => {
       </ul>
     </div>
   </el-popover>
-  <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" :stackId="String(stackId)" />
+  <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
   <TeamDialog :isShow="isShowTeamDialog" @closeDialog="isShowTeamDialog = false" />
 </template>
 

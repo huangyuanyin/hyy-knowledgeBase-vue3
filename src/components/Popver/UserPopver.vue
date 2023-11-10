@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const userStore = useUserStore()
-const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('user')).userInfo.avatar || '@/assets/img/img.jpg')
+const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
 
 const toExit = () => {
   localStorage.removeItem('user')

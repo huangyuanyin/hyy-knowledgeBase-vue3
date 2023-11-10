@@ -20,17 +20,11 @@ const props = defineProps({
   }
 })
 
-const commonTeamData = [
-  { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '移除常用', nick: 'removeCommon' },
-  { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/team/settingIcon.svg', label: '团队设置', nick: 'toTeamSetting' },
-  { type: 'item', icon: '/src/assets/icons/team/editIcon.svg', label: '退出团队', nick: 'toQuitTeam' }
-]
 const route = useRoute()
-const listStore = useListStore()
-const userStore = useUserStore()
+const routeInfo = { route, router }
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const isShowsDeleteDialog = ref(false)
 const deleteInfo = ref<{
   id?: string
@@ -40,15 +34,12 @@ const deleteInfo = ref<{
   group?: string
   stack?: string
 }>({})
-
-// 移除常用
-const removeCommon = (item: any) => {
-  const params = {
-    user: userStore.userInfo.username,
-    space: item.space
-  }
-  deleteQuickLinks(item.id, params)
-}
+const commonTeamData = [
+  { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '移除常用', nick: 'removeCommon' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/team/settingIcon.svg', label: '团队设置', nick: 'toTeamSetting' },
+  { type: 'item', icon: '/src/assets/icons/team/editIcon.svg', label: '退出团队', nick: 'toQuitTeam' }
+]
 
 // 删除知识库
 const deleteLibrary = (item: any) => {
@@ -59,11 +50,20 @@ const deleteLibrary = (item: any) => {
 }
 
 const toTeamSetting = (item: any) => {
-  useLink(router, route, 'comTeamSet', item)
+  useLink(routeInfo, 'comTeamSet', item)
 }
 
 const toQuitTeam = (item: any) => {
-  useLink(router, route, 'comTeamQuit', item)
+  useLink(routeInfo, 'comTeamQuit', item)
+}
+
+// 移除常用
+const removeCommon = (item: any) => {
+  const params = {
+    space: item.space,
+    user
+  }
+  deleteQuickLinks(item.id, params)
 }
 
 // 移除常用接口
@@ -71,13 +71,11 @@ const deleteQuickLinks = async (id, params) => {
   let res = await deleteQuickLinksApi(id, params)
   if (res.code === 1000) {
     if (props.type === 'library') {
-      listStore.setRefreshQuickListStatus(true)
       ElMessage.success('移除成功')
-      refreshStroe.setIsGetQuickList(true)
+      refreshStroe.setRefreshQuickBookList(true)
     } else {
-      listStore.setRefreshQuickListStatus(true)
       ElMessage.success('移除成功')
-      refreshStroe.setIsGetTeamQuickList(true)
+      refreshStroe.setRefreshQuickTeamList(true)
     }
   }
 }
@@ -133,15 +131,16 @@ const getTeamMember = async (val) => {
 }
 
 const toRename = (val) => {
+  console.log(`output->val`, val)
   ElMessage.warning('功能暂未开放，敬请期待')
 }
 
 const toMoreSetting = (val) => {
-  useLink(router, route, 'comBookSet', val)
+  useLink(routeInfo, 'comBookSet', val)
 }
 
 const toPermission = (val) => {
-  useLink(router, route, 'comBookPermission', val)
+  useLink(routeInfo, 'comBookPermission', val)
 }
 </script>
 

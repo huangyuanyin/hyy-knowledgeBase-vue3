@@ -42,8 +42,7 @@ const createAxiosInstance = (baseUrlType: keyof typeof baseUrlList): AxiosInstan
 const modifyRequestConfig = (config: AxiosRequestConfig): AxiosRequestConfig => {
   const { url, method, paramsHeaderState, params } = config
   if (url !== 'forum/login/') {
-    const userStorage = JSON.parse(localStorage.getItem('user') || '{}')
-    const Authorization = userStorage.token || ''
+    const Authorization: string = localStorage.getItem('token') || ''
     config.headers = {
       ...config.headers,
       Authorization
