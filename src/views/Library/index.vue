@@ -6,6 +6,7 @@ import { getQuickLinksApi } from '@/api/quickLinks'
 const route = useRoute()
 const refreshStroe = useRefreshStore()
 const dataStore = useDataStore()
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const currentSidebar = ref(sessionStorage.getItem('currentSidebar')) // 当前类型：个人、公共
 const spaceId = ref('') // 当前空间id
 const personalGroupId = ref('') // 个人空间下的团队id
@@ -50,7 +51,8 @@ watchEffect(() => {
 const getQuickLinks = async () => {
   const params = {
     target_type: 'book',
-    space: spaceId.value
+    space: spaceId.value,
+    user
   }
   let res = await getQuickLinksApi(params)
   if (res.code === 1000) {

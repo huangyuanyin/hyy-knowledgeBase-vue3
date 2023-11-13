@@ -18,7 +18,7 @@ const getSpacesDeatil = async () => {
   let res = await getSpacesDetailApi(Number(route.query.sid))
   if (res.code === 1000) {
     deleteInfo.value = {
-      id: res.data.id,
+      id: String(res.data.id),
       name: res.data.spacename,
       slug: res.data.spacekey
     }

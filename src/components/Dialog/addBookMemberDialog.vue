@@ -1,14 +1,14 @@
 <template>
-  <el-dialog class="addMemberDialog" v-model="dialogVisible" title="添加成员" width="360" :before-close="handleClose">
-    <div class="header">{{ spaceName }}</div>
-    <el-table ref="memberListRef" :data="memberList" @selection-change="handleSelectionChange" min-height="100" max-height="800" empty-text="该空间下暂无可添加成员">
-      <el-table-column type="selection" width="55" />
-      <el-table-column property="permusername" label="全选">
+  <el-dialog class="addBookMemberDialog" v-model="dialogVisible" title="从团队添加成员" width="360" :before-close="handleClose">
+    <div class="header">{{ teamName }}</div>
+    <el-table ref="memberListRef" :data="memberList" @selection-change="handleSelectionChange" min-height="100" max-height="800" empty-text="该团队下暂无可添加成员">
+      <el-table-column type="selection" width="45" />
+      <el-table-column property="username" label="全选">
         <template #default="{ row }">
           <div class="cell">
             <img :src="row.avatar || '/src/assets/img/img.jpg'" alt="" />
-            <span class="name">{{ row.permname }}</span>
-            <span class="nick">（{{ row.permusername }}）</span>
+            <span class="name">{{ row.name }}</span>
+            <span class="nick">（{{ row.username }}）</span>
           </div>
         </template>
       </el-table-column>
@@ -40,12 +40,12 @@
 </template>
 
 <script lang="ts" setup>
-import { addTeamMemberApi } from '@/api/member'
-import { getSpacepermissionsApi } from '@/api/spacepermissions'
+import { addCollaborationsApi } from '@/api/collaborations'
+import { getTeamMemberApi } from '@/api/member'
 import { ElTable } from 'element-plus'
 
 interface Member {
-  permusername: string
+  username: string
 }
 
 const props = defineProps({
@@ -58,7 +58,7 @@ const route = useRoute()
 const refreshStore = useRefreshStore()
 const selectTotal = ref(0)
 const dialogVisible = ref(false)
-const spaceName = ref('')
+const teamName = ref('')
 const memberListRef = ref<InstanceType<typeof ElTable>>()
 const selectMemberList = ref<Member[]>([])
 const memberList = ref<Member[]>([])
@@ -68,8 +68,8 @@ watch(
   async (newVal: boolean) => {
     dialogVisible.value = newVal
     if (dialogVisible.value) {
-      spaceName.value = route.query.sname as string
-      getSpacepermissions()
+      teamName.value = route.query.gname as string
+      getTeamMember()
     }
   }
 )
@@ -86,20 +86,19 @@ const handleClose = async () => {
 }
 
 const toAddMember = () => {
-  addTeamMember()
+  addBookMember()
 }
 
-const addTeamMember = async () => {
+const addBookMember = async () => {
   const params = {
-    username: [],
-    group: route.query.gid as string,
-    space: route.query.sid as string,
-    role: '2' //成员
+    permusername: [],
+    permtype: '1',
+    book: route.query.lid as string
   }
   selectMemberList.value.forEach((item) => {
-    params.username.push(item.permusername)
+    params.permusername.push(item.username)
   })
-  let res = await addTeamMemberApi(params)
+  let res = await addCollaborationsApi(params)
   if (res.code === 1000) {
     ElMessage.success('添加成功')
     handleClose()
@@ -109,11 +108,11 @@ const addTeamMember = async () => {
   }
 }
 
-const getSpacepermissions = async () => {
+const getTeamMember = async () => {
   const params = {
-    space: route.query.sid as string
+    group: route.query.gid as string
   }
-  const res = await getSpacepermissionsApi(params)
+  const res = await getTeamMemberApi(params)
   if (res.code === 1000) {
     memberList.value = res.data.filter((item) => {
       return !props.selectMember.some((item2: any) => {
@@ -129,7 +128,7 @@ const getSpacepermissions = async () => {
 <style lang="scss" scoped></style>
 
 <style lang="scss">
-.addMemberDialog {
+.addBookMemberDialog {
   .header {
     margin-bottom: 16px;
     padding: 0px 14px;

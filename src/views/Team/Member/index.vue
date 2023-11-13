@@ -1,10 +1,12 @@
 <script lang="ts" setup>
+import { getGroupsDetailApi } from '@/api/groups'
 import { deleteTeamMemberApi, getTeamMemberApi } from '@/api/member'
 import { VxeTableInstance, VxeColumnPropTypes } from 'vxe-table'
 
 interface MemberItem {
   id: number
-  username: string
+  avatar: string
+  name: string
   role: string
   group: number
   status: string
@@ -13,10 +15,12 @@ interface MemberItem {
 
 const route = useRoute()
 const refreshStore = useRefreshStore()
+const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
 const memberInput = ref('')
 const xTable = ref<VxeTableInstance<MemberItem>>()
 const memberList = ref<MemberItem[]>([])
 const memberTotal = ref(0)
+const creatorInfo = ref([])
 const isShowAddMemberDialog = ref(false)
 const sexList = [
   { label: '管理员', value: '0' },
@@ -46,7 +50,7 @@ const formatterStatus: VxeColumnPropTypes.Formatter<MemberItem> = ({ cellValue }
 }
 
 const toDeleteMmber = (data) => {
-  ElMessageBox.confirm(`确定删除${data.username}吗？删除后对方就无法再访问本团队`, '确定删除该成员？', {
+  ElMessageBox.confirm(`确定删除${data.name}吗？删除后对方就无法再访问本团队`, '确定删除该成员？', {
     confirmButtonText: '删除',
     cancelButtonText: '取消',
     customClass: 'deleteMemberDialog',
@@ -62,6 +66,10 @@ const toDeleteMmber = (data) => {
     .catch(() => {
       ElMessage.info('取消删除')
     })
+}
+
+const toExit = (data) => {
+  ElMessage.warning('功能暂未开放，敬请期待')
 }
 
 const deleteTeamMember = async (id) => {
@@ -81,7 +89,25 @@ const getTeamMember = async () => {
   let res = await getTeamMemberApi(params)
   if (res.code === 1000) {
     memberList.value = res.data || ([] as any)
-    memberTotal.value = memberList.value.length
+    memberTotal.value = memberList.value.length + 1
+    await getGroupsDetail()
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const getGroupsDetail = async () => {
+  let res = await getGroupsDetailApi(Number(route.query.gid))
+  if (res.code === 1000) {
+    memberList.value.unshift({
+      id: res.data.id,
+      avatar: res.data.avatar,
+      name: res.data.creator_name,
+      role: '0',
+      group: res.data.id,
+      status: res.data.status,
+      update_datetime: res.data.create_datetime
+    })
   } else {
     ElMessage.error(res.msg)
   }
@@ -127,7 +153,15 @@ onMounted(() => {
           @checkbox-change="selectChangeEvent"
         >
           <vxe-column type="checkbox" width="60"></vxe-column>
-          <vxe-column field="username" title="姓名" width="451" sortable></vxe-column>
+          <vxe-column title="姓名" width="451" sortable>
+            <template #default="{ row }">
+              <div class="cell">
+                <img :src="row.avatar || '/src/assets/img/img.jpg'" alt="" />
+                <span>{{ row.name }}</span>
+                <span v-if="nickname === row.name" class="my_tag">你自己</span>
+              </div>
+            </template>
+          </vxe-column>
           <vxe-column field="role" title="角色" :formatter="formatterRole" width="200" sortable></vxe-column>
           <vxe-column field="status" width="200" title="账号状态" :formatter="formatterStatus" sortable></vxe-column>
           <vxe-column field="update_datetime" width="250" title="加入时间" sortable></vxe-column>
@@ -230,6 +264,24 @@ onMounted(() => {
         width: 22px;
         height: 22px;
         cursor: pointer;
+      }
+      .cell {
+        display: flex;
+        align-items: center;
+        img {
+          width: 24px;
+          height: 24px;
+          border-radius: 12px;
+          margin-right: 12px;
+        }
+        .my_tag {
+          margin-left: 8px;
+          background-color: #eff0f0;
+          padding: 2px 6px;
+          border-radius: 12px;
+          font-size: 12px;
+          color: #585a5a;
+        }
       }
     }
   }

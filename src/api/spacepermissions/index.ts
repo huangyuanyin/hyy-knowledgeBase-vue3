@@ -8,6 +8,10 @@ export function addSpacepermissionsApi(data: SpacepermissionsData) {
   return http.post<SpacepermissionsRes>('spacepermissions/', data, 'base')
 }
 
+export function editSpacepermissionsApi(id: number, data: SpacepermissionsData) {
+  return http.put<SpacepermissionsRes>(`spacepermissions/${id}/`, data, 'base')
+}
+
 export function deleteSpacepermissionsApi(id: number, data?: SpacepermissionsParams) {
   return http.delete<SpacepermissionsRes>(`spacepermissions/${id}/`, data, 'base')
 }

@@ -39,6 +39,8 @@ export const useLink = (routerInfo, type, data) => {
         query: {
           sid: route.query.sid,
           sname: route.query.sname,
+          gid: route.query.gid,
+          gname: route.query.gname,
           lid: data.id,
           lname: data.name
         }
@@ -50,6 +52,8 @@ export const useLink = (routerInfo, type, data) => {
         query: {
           sid: route.query.sid,
           sname: route.query.sname,
+          gid: data.group_id,
+          gname: data.group_name,
           lid: data.target_id,
           lname: data.title
         }
@@ -61,6 +65,8 @@ export const useLink = (routerInfo, type, data) => {
         query: {
           sid: route.query.sid,
           sname: route.query.sname,
+          gid: route.query.gid,
+          gname: route.query.gname,
           lid: data.id,
           lname: data.name
         }
@@ -72,6 +78,8 @@ export const useLink = (routerInfo, type, data) => {
         query: {
           sid: route.query.sid,
           sname: route.query.sname,
+          gid: route.query.gid,
+          gname: route.query.gname,
           lid: data.target_id,
           lname: data.title
         }
@@ -84,6 +92,8 @@ export const useLink = (routerInfo, type, data) => {
         query: {
           sid: route.query.sid,
           sname: route.query.sname,
+          gid: route.query.gid,
+          gname: route.query.gname,
           lid: route.query.lid,
           lname: route.query.lname
         }
@@ -96,6 +106,8 @@ export const useLink = (routerInfo, type, data) => {
         query: {
           sid: route.query.sid,
           sname: route.query.sname,
+          gid: route.query.gid,
+          gname: route.query.gname,
           lid: route.query.lid,
           lname: route.query.lname
         }
@@ -108,10 +120,45 @@ export const useLink = (routerInfo, type, data) => {
         query: {
           sid: route.query.sid,
           sname: route.query.sname,
+          gid: route.query.gid,
+          gname: route.query.gname,
           lid: route.query.lid,
           lname: route.query.lname
         }
       })
+      break
+    // 从空间管理跳转到团队设置
+    case 'fromSpaceSetToTeamBasic':
+      window.open(
+        `/${route.path.split('/')[1]}/teamSetting/basic?${qs.stringify({
+          sid: route.query.sid,
+          sname: route.query.sname,
+          gid: data.id,
+          gname: data.groupname
+        })}`
+      )
+      break
+    // 从空间管理跳转到团队首页
+    case 'fromSpaceSetToTeamIndex':
+      window.open(
+        `/${route.path.split('/')[1]}/team/book?${qs.stringify({
+          sid: route.query.sid,
+          sname: route.query.sname,
+          gid: data.id,
+          gname: data.groupname
+        })}`
+      )
+      break
+    // 从空间管理跳转到团队设置 - 删除
+    case 'fromSpaceSetToTeamSettings':
+      window.open(
+        `/${route.path.split('/')[1]}/teamSetting/settings?${qs.stringify({
+          sid: route.query.sid,
+          sname: route.query.sname,
+          gid: data.id,
+          gname: data.groupname
+        })}`
+      )
       break
   }
 }

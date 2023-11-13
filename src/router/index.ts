@@ -330,6 +330,14 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Login',
     component: () => import('@/views/Login/index.vue'),
     meta: {
+      title: '无权限'
+    }
+  },
+  {
+    path: '/no-permission',
+    name: 'Permission',
+    component: () => import('@/views/NoPermission/index.vue'),
+    meta: {
       title: '登录',
       is_login: true
     }

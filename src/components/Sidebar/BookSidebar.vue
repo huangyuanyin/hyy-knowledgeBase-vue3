@@ -45,6 +45,8 @@ const toLink = (item: any) => {
     query: {
       lid: route.query.lid,
       lname: route.query.lname,
+      gid: route.query.gid,
+      gname: route.query.gname,
       sid: route.query.sid,
       sname: route.query.sname
     }

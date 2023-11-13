@@ -62,7 +62,7 @@ const getUser = async () => {
 }
 
 const toExit = (data: any) => {
-  ElMessageBox.confirm(`确定删除${data.permusername}吗？删除后对方就无法再访问本团队`, '确定删除该成员？', {
+  ElMessageBox.confirm(`确定删除【${data.permname}】吗？删除后对方就无法再访问本团队`, '确定删除该成员？', {
     confirmButtonText: '删除',
     cancelButtonText: '取消',
     customClass: 'deleteMemberDialog',
@@ -150,8 +150,8 @@ onMounted(async () => {
         </el-table-column>
         <el-table-column fixed="right" label="操作">
           <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="toDetail(row)" v-if="row.permtype === '1'">详情</el-button>
-            <el-button link type="danger" size="small" @click="toExit(row)" v-if="row.permtype === '1'">离开</el-button>
+            <el-button link type="primary" size="small" @click="toDetail(row)" v-if="nickname !== row.permname">详情</el-button>
+            <el-button link type="danger" size="small" @click="toExit(row)" v-if="nickname !== row.permname">离开</el-button>
           </template>
         </el-table-column>
       </el-table>

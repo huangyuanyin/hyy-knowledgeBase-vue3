@@ -51,6 +51,8 @@ const editLibrary = async (params, id) => {
       query: {
         sname: route.query.sname,
         sid: route.query.sid,
+        gid: route.query.gid,
+        gname: route.query.gname,
         lname: (res.data as any).name,
         lid: (res.data as any).id
       }

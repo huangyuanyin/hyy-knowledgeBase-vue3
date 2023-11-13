@@ -7,6 +7,8 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AddAdminDialog: typeof import('./src/components/Dialog/addAdminDialog.vue')['default']
+    AddBookMemberDialog: typeof import('./src/components/Dialog/addBookMemberDialog.vue')['default']
     AddMemberDialog: typeof import('./src/components/Dialog/addMemberDialog.vue')['default']
     AddOperationPopver: typeof import('./src/components/Popver/AddOperationPopver.vue')['default']
     BookSidebar: typeof import('./src/components/Sidebar/BookSidebar.vue')['default']
@@ -21,6 +23,7 @@ declare module 'vue' {
     DirectorySidebar: typeof import('./src/components/Sidebar/DirectorySidebar.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
+    ElButt: typeof import('element-plus/es')['ElButt']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
     ElCheckboxGroup: typeof import('element-plus/es')['ElCheckboxGroup']
@@ -79,6 +82,7 @@ declare module 'vue' {
     IEpStar: typeof import('~icons/ep/star')['default']
     IEpStopwatch: typeof import('~icons/ep/stopwatch')['default']
     IEpUpload: typeof import('~icons/ep/upload')['default']
+    IEpUser: typeof import('~icons/ep/user')['default']
     LibraryCard: typeof import('./src/components/Card/LibraryCard.vue')['default']
     LibraryDialog: typeof import('./src/components/Dialog/LibraryDialog.vue')['default']
     LibraryOperationPopver: typeof import('./src/components/Popver/LibraryOperationPopver.vue')['default']

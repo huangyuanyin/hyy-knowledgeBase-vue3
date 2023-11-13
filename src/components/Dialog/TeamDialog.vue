@@ -72,7 +72,7 @@ const addGroups = async () => {
     ElMessage.success('团队创建成功')
     setTimeout(() => {
       router.push({
-        path: `/${infoStore.currentSpaceName}/team/book`,
+        path: `/${route.path.split('/')[1]}/team/book`,
         query: {
           sid: route.query.sid,
           sname: route.query.sname,

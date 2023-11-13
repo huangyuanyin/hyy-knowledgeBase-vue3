@@ -16,6 +16,7 @@ const groupId = ref('') // 当前团队id
 const bookGroup = ref<BookGroup[]>([])
 const libarayList = ref([])
 const commonList = ref([])
+const isHasPermissionCode = ref(1000)
 
 watchEffect(() => {
   spaceId.value = route.query.sid as string
@@ -39,6 +40,15 @@ watch(
   }
 )
 
+watch(
+  () => isHasPermissionCode.value,
+  (newVal) => {
+    if (newVal === 1003) {
+      router.replace('/no-permission')
+    }
+  }
+)
+
 // 获取当前组织空间下当前团队的知识库分组列表
 const getBookStacks = async () => {
   const params = {
@@ -46,8 +56,11 @@ const getBookStacks = async () => {
     group: groupId.value
   }
   let res = await getBookStacksApi(params)
+  isHasPermissionCode.value = res.code
   if (res.code === 1000) {
     bookGroup.value = res.data as unknown as BookGroup[]
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 
@@ -58,6 +71,7 @@ const getLibrary = async () => {
     group: groupId.value
   }
   let res = await getLibraryApi(params)
+  isHasPermissionCode.value = res.code
   if (res.code === 1000) {
     libarayList.value = res.data || ([] as any)
   } else {
@@ -72,6 +86,7 @@ const getQuickLinks = async () => {
     space: spaceId.value
   }
   let res = await getQuickLinksApi(params)
+  isHasPermissionCode.value = res.code
   if (res.code === 1000) {
     commonList.value = res.data || ([] as any)
     libarayList.value.forEach((item) => {
