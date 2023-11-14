@@ -33,7 +33,8 @@ export const sidebarSearchMenuItemsData = [
   { type: 'item', icon: '/src/assets/icons/importIcon.svg', label: '导入...' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/groupIcon.svg', label: '新建分组', nick: 'toAddGroup' },
-  { type: 'item', icon: '/src/assets/icons/linkIcon.svg', label: '添加链接', nick: 'toAddLink' }
+  { type: 'item', icon: '/src/assets/icons/linkIcon.svg', label: '添加链接', nick: 'toAddLink' },
+  { type: 'item', icon: '/src/assets/icons/uploadFile.svg', label: '上传文件', nick: 'toUpload' }
 ]
 
 export const moduleAddMenuData = [
@@ -140,6 +141,20 @@ export const titleOperationData = [
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/article/copyIcon.svg', label: '复制', nick: 'toTodo' },
   { type: 'item', icon: '/src/assets/icons/article/moveIcon.svg', label: '移动', nick: 'toTodo' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteArticle' }
+]
+
+export const fileOperationData = [
+  { type: 'item', icon: '/src/assets/icons/article/renameIcon.svg', label: '重命名', nick: 'toRename' },
+  { type: 'item', icon: '/src/assets/icons/article/copyLinkIcon.svg', label: '复制链接', nick: 'toCopyLink' },
+  { type: 'item', icon: '/src/assets/icons/article/addTabIcon.svg', label: '在新标签页打开', nick: 'toNewTab' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '移除目录', nick: 'toTodo' },
+  { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/article/copyIcon.svg', label: '复制', nick: 'toTodo' },
+  { type: 'item', icon: '/src/assets/icons/article/moveIcon.svg', label: '移动', nick: 'toTodo' },
+  { type: 'item', icon: '/src/assets/icons/article/exportIcon.svg', label: '导出', nick: 'toExport' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteArticle' }
 ]

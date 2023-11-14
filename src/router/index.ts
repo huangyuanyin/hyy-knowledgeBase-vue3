@@ -133,6 +133,15 @@ const customRoutes = [
     }
   },
   {
+    path: '/:spaceName?/directory/file',
+    name: 'Space-File',
+    component: pageComps['/src/views/Article/File/index.vue'] as Component,
+    meta: {
+      title: '文件',
+      asideComponent: 'DirectorySidebar'
+    }
+  },
+  {
     path: '/:spaceName/organize/dashboard',
     name: 'Organize-Dashboard',
     component: pageComps['/src/views/Organize/Dashboard/index.vue'] as Component,
@@ -330,7 +339,8 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Login',
     component: () => import('@/views/Login/index.vue'),
     meta: {
-      title: '无权限'
+      title: '登录',
+      is_login: true
     }
   },
   {
@@ -338,8 +348,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Permission',
     component: () => import('@/views/NoPermission/index.vue'),
     meta: {
-      title: '登录',
-      is_login: true
+      title: '无权限'
     }
   }
 ]

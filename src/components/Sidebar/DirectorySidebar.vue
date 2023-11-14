@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { sidebarSearchMenuItemsData, articleOperationData, linkOperationData, titleOperationData, directorySidebarOperationData } from '@/data/data'
+import { sidebarSearchMenuItemsData, articleOperationData, linkOperationData, titleOperationData, fileOperationData, directorySidebarOperationData } from '@/data/data'
 import { addArticleApi, deleteArticleApi, editArticleApi, getArticleTreeApi } from '@/api/article'
 
 const route = useRoute()
@@ -9,6 +9,7 @@ const routeInfo = {
 }
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
+const spaceId = ref('') // 当前空间id
 const bookId = ref('') // 当前知识库id
 const spaceType = ref<string>('') // 空间类型：个人 组织
 const dataSource = ref([])
@@ -33,24 +34,14 @@ const articleType = {
   新建分组: { type: 'title', title: '新建分组' }
 }
 
-// 监听currentNodeKey
-watch(
-  () => currentNodeKey.value,
-  (newVal) => {
-    bookTree.value.setCurrentKey(newVal)
-  }
-)
-
 watchEffect(() => {
   if (refreshStroe.isRefreshBookList) {
     getArticle()
     refreshStroe.setRefreshBookList(false)
   }
-})
-
-watchEffect(() => {
   nextTick(async () => {
     spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
+    spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
     group_name.value = route.query.gname as string
     bookId.value = route.query.lid as string
     if (bookId.value) {
@@ -58,6 +49,14 @@ watchEffect(() => {
     }
   })
 })
+
+// 监听currentNodeKey
+watch(
+  () => currentNodeKey.value,
+  (newVal) => {
+    bookTree.value.setCurrentKey(newVal)
+  }
+)
 
 const toLink = (type?: string) => {
   if (type === 'link') {
@@ -206,7 +205,13 @@ const toNewTab = (val) => {
   useAddArticleAfterToLink(route, router, spaceType.value, val, true, 'new')
 }
 
+// 导出
+const toExport = (val) => {
+  ElMessage.warning('暂不支持导出')
+}
+
 const toTodo = (val) => {
+  console.log(`output->val`, val)
   ElMessage.warning('功能暂未开放，敬请期待')
 }
 
@@ -239,7 +244,7 @@ const addArticle = async (article, parent) => {
   const params = {
     title: article.title,
     book: route.query.lid as string,
-    space: spaceType.value === '个人' ? localStorage.getItem('personalSpaceId') : (route.query.sid as string),
+    space: spaceId.value,
     type: article.type,
     body: '',
     parent
@@ -484,7 +489,7 @@ onMounted(async () => {})
                 @moveArticle="moveArticle(data)"
                 @toDeleteArticle="toDeleteArticle(data)"
               >
-                <span class="moreIcon" v-if="data.type !== 'links' && data.type !== 'title'" @click.stop>
+                <span class="moreIcon" v-if="data.type !== 'links' && data.type !== 'title' && data.type !== 'file'" @click.stop>
                   <img src="/src/assets/icons/moreIcon1_after.svg" alt="" />
                 </span>
               </LibraryOperationPopver>
@@ -511,6 +516,19 @@ onMounted(async () => {})
                 @toDeleteArticle="toDeleteArticle(data)"
               >
                 <span class="moreIcon" v-if="data.type === 'title'" @click.stop>
+                  <img src="/src/assets/icons/moreIcon1_after.svg" alt="" />
+                </span>
+              </LibraryOperationPopver>
+              <LibraryOperationPopver
+                :menuItems="fileOperationData"
+                :height="32"
+                :width="150"
+                @toRename="toRename(data)"
+                @toExport="toExport(data)"
+                @toTodo="toTodo(data)"
+                @toDeleteArticle="toDeleteArticle(data)"
+              >
+                <span class="moreIcon" v-if="data.type === 'file'" @click.stop>
                   <img src="/src/assets/icons/moreIcon1_after.svg" alt="" />
                 </span>
               </LibraryOperationPopver>

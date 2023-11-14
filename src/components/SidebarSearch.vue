@@ -13,10 +13,10 @@ const props = defineProps({
 const route = useRoute()
 const router = useRouter()
 const refreshStroe = useRefreshStore()
-const isShowLinkDialog = ref(false)
 const spaceType = ref('') // 当前空间类型
 const spaceId = ref('') // 当前空间id
 const bookId = ref('') // 当前知识库id
+const isShowLinkDialog = ref(false)
 const articleType = {
   文档: { type: 'doc', title: '无标题文档' },
   表格: { type: 'sheet', title: '无标题表格' },
@@ -24,13 +24,12 @@ const articleType = {
 }
 
 watchEffect(() => {
-  spaceType.value = route.path.split('/').length === 4 ? '个人' : '组织'
-  spaceId.value = spaceType.value === '个人' ? (localStorage.getItem('personalSpaceId') as string) : (route.query.sid as string)
+  spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
+  spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
   bookId.value = route.query.lid as string
 })
 
 const toAddArticle = (val) => {
-  console.log(`output->val`, val)
   addArticle(articleType[val.label], null)
 }
 

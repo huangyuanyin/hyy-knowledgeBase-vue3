@@ -1,5 +1,5 @@
 <template>
-  <el-dialog class="addMemberDialog" v-model="dialogVisible" title="添加成员" width="360" :before-close="handleClose">
+  <el-dialog class="addMemberDialog" v-model="dialogVisible" title="从空间添加成员" width="360" :before-close="handleClose">
     <div class="header">{{ spaceName }}</div>
     <el-table ref="memberListRef" :data="memberList" @selection-change="handleSelectionChange" min-height="100" max-height="800" empty-text="该空间下暂无可添加成员">
       <el-table-column type="selection" width="55" />

@@ -39,6 +39,10 @@ watchEffect(() => {
   }
 })
 
+const toDo = () => {
+  ElMessage.warning('功能暂未开放，敬请期待')
+}
+
 const formatterRole: VxeColumnPropTypes.Formatter<MemberItem> = ({ cellValue }) => {
   const item = sexList.find((item) => item.value === cellValue)
   return item ? item.label : cellValue
@@ -127,7 +131,7 @@ onMounted(() => {
           成员
           <span class="counts">{{ memberTotal }}</span>
           <el-tooltip effect="dark" content="绑定部门后，部门成员访问该团队时将自动成为团队成员，未访问过的成员不生效。" placement="top">
-            <span class="departMemberIcon">
+            <span class="departMemberIcon" @click="toDo">
               <img src="/src/assets/icons/departMemberIcon.svg" alt="" />
               一键绑定空间成员
             </span>

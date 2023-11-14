@@ -16,7 +16,7 @@ const groupId = ref('') // 当前团队id
 const bookGroup = ref<BookGroup[]>([])
 const libarayList = ref([])
 const commonList = ref([])
-const isHasPermissionCode = ref(1000)
+const isHasPermissionCode = ref(null)
 
 watchEffect(() => {
   spaceId.value = route.query.sid as string
@@ -44,8 +44,12 @@ watch(
   () => isHasPermissionCode.value,
   (newVal) => {
     if (newVal === 1003) {
+      isHasPermissionCode.value = null
       router.replace('/no-permission')
     }
+  },
+  {
+    immediate: true
   }
 )
 
@@ -71,7 +75,6 @@ const getLibrary = async () => {
     group: groupId.value
   }
   let res = await getLibraryApi(params)
-  isHasPermissionCode.value = res.code
   if (res.code === 1000) {
     libarayList.value = res.data || ([] as any)
   } else {
@@ -86,7 +89,6 @@ const getQuickLinks = async () => {
     space: spaceId.value
   }
   let res = await getQuickLinksApi(params)
-  isHasPermissionCode.value = res.code
   if (res.code === 1000) {
     commonList.value = res.data || ([] as any)
     libarayList.value.forEach((item) => {
@@ -111,7 +113,7 @@ onMounted(async () => {
   <div class="Book_wrap">
     <TeamHeader />
     <div class="announcement">
-      <div>管理员可以添加自定义内容，向 全体团队成员展示</div>
+      <div>管理员可以添加自定义内容，向 全体团队成员展示{{ isHasPermissionCode }}</div>
       <img src="/src/assets/icons/rightArrowIcon.svg" alt="" />
     </div>
     <SwitchModuleItem moduleType="operation">

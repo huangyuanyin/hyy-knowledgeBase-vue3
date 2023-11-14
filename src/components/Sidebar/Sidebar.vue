@@ -27,7 +27,9 @@ watch(
   (newVal) => {
     if (newVal) {
       getCommonLibrary()
-      refreshStroe.setRefreshQuickBookList(false)
+      setTimeout(() => {
+        refreshStroe.setRefreshQuickBookList(false)
+      }, 0)
     }
   }
 )

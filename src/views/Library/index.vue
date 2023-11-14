@@ -21,6 +21,9 @@ watch(
   (newVal) => {
     if (newVal) {
       getQuickLinks()
+      setTimeout(() => {
+        refreshStroe.setRefreshQuickBookList(false)
+      }, 0)
     }
   }
 )
@@ -33,6 +36,9 @@ watch(
       if (currentSidebar.value === 'Sidebar') {
         getBookStacks()
       }
+      setTimeout(() => {
+        refreshStroe.setRefreshBookList(false)
+      }, 0)
     }
   }
 )

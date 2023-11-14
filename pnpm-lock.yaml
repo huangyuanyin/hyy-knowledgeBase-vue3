@@ -26,6 +26,9 @@ dependencies:
   element-plus:
     specifier: ^2.3.9
     version: registry.npmmirror.com/element-plus@2.3.9(vue@3.3.4)
+  js-base64:
+    specifier: ^3.7.5
+    version: registry.npmmirror.com/js-base64@3.7.5
   luckyexcel:
     specifier: ^1.0.1
     version: registry.npmmirror.com/luckyexcel@1.0.1
@@ -1868,6 +1871,12 @@ packages:
     resolution: {integrity: sha512-lBHj60ezci2u1v2FqnZIraShGgEXq35qCzMv4lITyHGppTnA13rwR0MgwyNJh9TnDs3aXUvd1xjAotfraMHX/Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/jquery/-/jquery-2.2.4.tgz}
     name: jquery
     version: 2.2.4
+    dev: false
+
+  registry.npmmirror.com/js-base64@3.7.5:
+    resolution: {integrity: sha512-3MEt5DTINKqfScXKfJFrRbxkrnk2AxPWGBL/ycjz4dK8iqiSJ06UxD8jh8xuh6p10TX4t2+7FsBYVxxQbMg+qA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/js-base64/-/js-base64-3.7.5.tgz}
+    name: js-base64
+    version: 3.7.5
     dev: false
 
   registry.npmmirror.com/json-parse-even-better-errors@2.3.1:

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { uploadArticleApi } from '@/api/article'
 import { MenuItem, OperationPopoverProps } from '@/type/operationPopoverType'
 
 const props = withDefaults(defineProps<OperationPopoverProps>(), {
@@ -12,8 +13,13 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
 
 const emit = defineEmits()
 
+const route = useRoute()
+const refreshStroe = useRefreshStore()
 const isShowsLibraryDialog = ref(false)
 const isShowTeamDialog = ref(false)
+const headers = ref({
+  Authorization: localStorage.getItem('token')
+})
 
 const toHandle = (val) => {
   console.log(`output->val`, val)
@@ -36,9 +42,28 @@ const toHandle = (val) => {
     case '新建分组':
       emit(val.nick, val)
       break
+    case '上传文件':
+      break
     default:
       ElMessage.warning('功能暂未开放，敬请期待')
       break
+  }
+}
+
+const toUpload = async (file) => {
+  const formData = new FormData()
+  formData.append('file', file.file)
+  formData.append('space', route.query.sid as string)
+  formData.append('book', route.query.lid as string)
+  formData.append('type', 'file')
+  formData.append('title', file.file.name)
+  // formData.append('parent', null)
+  let res = await uploadArticleApi(formData)
+  if (res.code === 1000) {
+    ElMessage.success('上传成功')
+    refreshStroe.setRefreshBookList(true)
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 </script>
@@ -62,11 +87,19 @@ const toHandle = (val) => {
     <div class="addOperation_Wrap">
       <ul>
         <template v-for="(item, _index) in props.menuItems" :key="'menuItems' + _index">
-          <li v-if="item.type === 'item'" @click="toHandle(item)">
+          <li v-if="item.type === 'item' && item.label !== '上传文件'" @click="toHandle(item)">
             <div class="add-icon">
               <img :src="item.icon as string" alt="" />
             </div>
             <span>{{ item.label }}</span>
+          </li>
+          <li v-if="item.type === 'item' && item.label === '上传文件'">
+            <div class="add-icon">
+              <img :src="item.icon as string" alt="" />
+            </div>
+            <el-upload :http-request="toUpload" :headers="headers" class="upload-demo" action="" :limit="1">
+              <el-button type="" link>上传文件</el-button>
+            </el-upload>
           </li>
           <li v-else-if="item.type === 'divider'" class="divider"></li>
         </template>

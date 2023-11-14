@@ -46,7 +46,9 @@ watch(
   (newVal) => {
     if (newVal) {
       getCommonTeam()
-      refreshStroe.setRefreshQuickTeamList(false)
+      setTimeout(() => {
+        refreshStroe.setRefreshQuickTeamList(false)
+      }, 0)
     }
   }
 )
@@ -56,7 +58,10 @@ watch(
   (newVal) => {
     if (newVal) {
       getCommonLibrary()
-      refreshStroe.setRefreshQuickBookList(false)
+      // fix 知识库/团队第一次切换后添加移除常用时，常用列表不刷新。
+      setTimeout(() => {
+        refreshStroe.setRefreshQuickBookList(false)
+      }, 0)
     }
   }
 )

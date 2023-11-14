@@ -82,7 +82,7 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
 
   const addSpace = async () => {
     const spaceForm = {
-      spacename: `${nickname.value}的空间`,
+      spacename: `${nickname.value}个人空间`,
       spacekey: loginForm.username,
       spacetype: 'personal',
       permusername: loginForm.username
