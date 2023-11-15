@@ -20,6 +20,7 @@ const contentItems = ref([
     icon: '/src/assets/icons/bookIcon.svg',
     typeIcon: '/src/assets/icons/publicIcon.svg',
     emptyText: '暂无常用知识库',
+    isExpand: localStorage.getItem('bookIsExpand') === 'false' ? false : true,
     libraryList: []
   },
   {
@@ -29,6 +30,7 @@ const contentItems = ref([
     icon: '/src/assets/icons/teamIcon.svg',
     typeIcon: '/src/assets/icons/privateIcon.svg',
     emptyText: '暂无常用团队',
+    isExpand: localStorage.getItem('teamIsExpand') === 'false' ? false : true,
     libraryList: []
   }
 ])

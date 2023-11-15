@@ -17,4 +17,5 @@ export interface OperationPopoverProps {
   showArrow?: boolean
   menuItems?: Array<MenuItem>
   currentSider?: string
+  parent?: number
 }

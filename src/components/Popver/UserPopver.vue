@@ -3,9 +3,11 @@ const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem(
 const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
 
 const toExit = () => {
-  localStorage.removeItem('user')
-  localStorage.removeItem('personalSpaceId')
+  localStorage.removeItem('userInfo')
+  localStorage.removeItem('token')
+  localStorage.removeItem('personalSpaceInfo')
   localStorage.removeItem('personalGroupId')
+  localStorage.setItem('isAuth', 'false')
   router.push('/login')
 }
 

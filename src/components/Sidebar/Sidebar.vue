@@ -18,6 +18,7 @@ const contentItems = ref([
     type: 'library',
     icon: '/src/assets/icons/bookIcon.svg',
     emptyText: '暂无常用知识库',
+    isExpand: localStorage.getItem('bookIsExpand') === 'false' ? false : true,
     libraryList: [] // 常用知识库列表
   }
 ])

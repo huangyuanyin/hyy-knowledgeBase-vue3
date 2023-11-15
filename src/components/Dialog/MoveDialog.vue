@@ -77,7 +77,11 @@ const getLibrary = async () => {
     libarayList.value = res.data || ([] as any)
     selectLibarayValue.value = String(route.query.lid)
   } else {
-    ElMessage.error(res.msg)
+    ElMessage({
+      message: res.msg,
+      type: 'error',
+      grouping: true
+    })
   }
 }
 </script>

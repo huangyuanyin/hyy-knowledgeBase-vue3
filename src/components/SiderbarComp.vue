@@ -11,6 +11,7 @@ interface ContentItem {
   type: string
   icon: string
   emptyText: string
+  isExpand: boolean
   libraryList: any
 }
 
@@ -283,6 +284,16 @@ const getSpacesDeatil = async () => {
   }
 }
 
+const toExpandCollapse = (opera, type, data) => {
+  if (opera === 'collapse') {
+    data.isExpand = false
+    type === 'book' ? localStorage.setItem('bookIsExpand', 'false') : localStorage.setItem('teamIsExpand', 'false')
+  } else {
+    data.isExpand = true
+    type === 'book' ? localStorage.setItem('bookIsExpand', 'true') : localStorage.setItem('teamIsExpand', 'true')
+  }
+}
+
 onMounted(async () => {
   if (sessionStorage.getItem('currentSidebar') === 'SpaceSidebar') {
     await getSpacesDeatil()
@@ -302,12 +313,16 @@ onMounted(async () => {
         <div class="library" v-for="(item, index) in props.contentItems" :key="index">
           <div :class="['header', state.headerActive === index ? 'header-active' : '']" @click="toLink(item.type)">
             <div class="header-left">
-              <span class="header-icon"><i-ep-CaretRight /></span>
+              <span class="header-icon expand" v-if="item.isExpand" @click.stop="toExpandCollapse('collapse', item.title === '团队' ? 'team' : 'book', item)"
+                ><i-ep-CaretRight
+              /></span>
+              <span class="header-icon" v-else @click.stop="toExpandCollapse('expand', item.title === '团队' ? 'team' : 'book', item)"><i-ep-CaretRight /></span>
               <span class="header-title">{{ item.title }}</span>
             </div>
             <div class="header-right"><i-ep-ArrowRight /></div>
           </div>
           <el-tree
+            v-if="item.isExpand"
             :data="item.libraryList"
             node-key="target_id"
             :current-node-key="state.currentGroup"
@@ -423,6 +438,9 @@ onMounted(async () => {
                 background-color: #d8dad9;
                 color: #262626;
               }
+            }
+            .expand {
+              transform: rotate(90deg);
             }
             .header-title {
               font-size: 14px;

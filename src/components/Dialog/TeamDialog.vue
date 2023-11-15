@@ -17,11 +17,12 @@ const props = defineProps({
 const emit = defineEmits(['closeDialog'])
 
 const route = useRoute()
-const infoStore = useInfoStore()
 const dialogVisible = ref(false)
 const loadingMember = ref(false)
+const isShowAddMemberDialog = ref(false)
 const options = ref<ListItem[]>([])
 const list = ref([])
+const selectMemberList = ref([])
 const teamFormRef = ref<FormInstance>()
 const teamForm = reactive({
   groupname: '',
@@ -45,13 +46,27 @@ const remoteMethod = (query: string) => {
     setTimeout(() => {
       loadingMember.value = false
       options.value = list.value.filter((item) => {
-        return item.permusername.toLowerCase().includes(query.toLowerCase())
+        return item.permusername.toLowerCase().includes(query.toLowerCase()) || item.permname.toLowerCase().includes(query.toLowerCase())
       })
     }, 200)
     console.log(`output->options.value`, options.value, list.value)
   } else {
     options.value = []
   }
+}
+
+const toAddBatches = () => {
+  isShowAddMemberDialog.value = true
+  selectMemberList.value = teamForm.members
+}
+
+const submitMember = (data: any) => {
+  options.value = list.value
+  data.forEach((item) => {
+    teamForm.members.push(item.permusername)
+  })
+  teamForm.members = Array.from(new Set(teamForm.members))
+  console.log(`output->data`, data, teamForm.members)
 }
 
 const handleSubmit = async () => {
@@ -129,7 +144,7 @@ const handleClose = async () => {
         <template #label>
           <div class="label">
             <span>添加成员</span>
-            <el-button link type="primary">+ 批量添加</el-button>
+            <el-button link type="primary" @click="toAddBatches">+ 批量添加</el-button>
           </div>
         </template>
         <el-select
@@ -141,11 +156,11 @@ const handleClose = async () => {
           reserve-keyword
           collapse-tags
           collapse-tags-tooltip
-          placeholder="输入成员名字搜索添加"
+          placeholder="输入空间成员名字搜索添加"
           :remote-method="remoteMethod"
           :loading="loadingMember"
           :teleported="false"
-          :max-collapse-tags="4"
+          :max-collapse-tags="3"
         >
           <el-option v-for="(item, index) in options" :key="'options' + index" :label="item.permname" :value="item.permusername">
             <div class="item">
@@ -170,6 +185,7 @@ const handleClose = async () => {
       </span>
     </template>
   </el-dialog>
+  <addMemberDialog :isShow="isShowAddMemberDialog" @closeDialog="isShowAddMemberDialog = false" @submitMember="submitMember" :selectMember="selectMemberList" :is-auto="false" />
 </template>
 
 <style lang="scss" scoped>

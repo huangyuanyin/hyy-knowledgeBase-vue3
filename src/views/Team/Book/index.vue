@@ -28,6 +28,7 @@ watch(
   (newVal) => {
     groupId.value = newVal
     getBookStacks()
+    getLibrary()
   }
 )
 
@@ -40,18 +41,12 @@ watch(
   }
 )
 
-watch(
-  () => isHasPermissionCode.value,
-  (newVal) => {
-    if (newVal === 1003) {
-      isHasPermissionCode.value = null
-      router.replace('/no-permission')
-    }
-  },
-  {
-    immediate: true
+watchEffect(() => {
+  if (isHasPermissionCode.value === 1003) {
+    isHasPermissionCode.value = null
+    router.replace('/no-permission')
   }
-)
+})
 
 // 获取当前组织空间下当前团队的知识库分组列表
 const getBookStacks = async () => {
@@ -60,7 +55,6 @@ const getBookStacks = async () => {
     group: groupId.value
   }
   let res = await getBookStacksApi(params)
-  isHasPermissionCode.value = res.code
   if (res.code === 1000) {
     bookGroup.value = res.data as unknown as BookGroup[]
   } else {
@@ -75,10 +69,15 @@ const getLibrary = async () => {
     group: groupId.value
   }
   let res = await getLibraryApi(params)
+  isHasPermissionCode.value = res.code
   if (res.code === 1000) {
     libarayList.value = res.data || ([] as any)
   } else {
-    ElMessage.error(res.msg)
+    ElMessage({
+      message: res.msg,
+      type: 'error',
+      grouping: true
+    })
   }
 }
 

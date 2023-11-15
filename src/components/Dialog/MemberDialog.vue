@@ -75,7 +75,8 @@ const handleSelectionChange = (val: User[]) => {
 const addSpacepermissions = async () => {
   const params = {
     permusername: [],
-    space: route.query.sid as string
+    space: route.query.sid as string,
+    permtype: '1'
   }
   selectMemberList.value.forEach((item) => {
     params.permusername.push(item.username)

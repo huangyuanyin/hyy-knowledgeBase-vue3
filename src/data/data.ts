@@ -117,7 +117,7 @@ export const articleOperationData = [
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/article/copyIcon.svg', label: '复制', nick: 'toTodo' },
   { type: 'item', icon: '/src/assets/icons/article/moveIcon.svg', label: '移动', nick: 'toTodo' },
-  { type: 'item', icon: '/src/assets/icons/article/exportIcon.svg', label: '导出', nick: 'toTodo' },
+  { type: 'item', icon: '/src/assets/icons/article/exportIcon.svg', label: '导出', nick: 'toExport' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteArticle' }
 ]
@@ -293,6 +293,7 @@ export const contentItemsData = [
     icon: '/src/assets/icons/bookIcon.svg',
     typeIcon: '/src/assets/icons/publicIcon.svg',
     emptyText: '暂无常用知识库',
+    isExpand: true,
     libraryList: []
   }
 ]

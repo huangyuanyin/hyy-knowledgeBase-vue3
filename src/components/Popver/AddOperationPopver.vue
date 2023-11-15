@@ -8,17 +8,26 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
   trigger: 'hover',
   hideAfter: 200,
   showArrow: false,
-  menuItems: Array as () => MenuItem[]
+  menuItems: Array as () => MenuItem[],
+  parent: null
 })
 
 const emit = defineEmits()
 
 const route = useRoute()
-const refreshStroe = useRefreshStore()
+const spaceId = ref('')
+const bookId = ref('')
 const isShowsLibraryDialog = ref(false)
 const isShowTeamDialog = ref(false)
+const spaceType = ref('')
 const headers = ref({
   Authorization: localStorage.getItem('token')
+})
+
+watchEffect(() => {
+  spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
+  spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
+  bookId.value = route.query.lid as string
 })
 
 const toHandle = (val) => {
@@ -53,15 +62,15 @@ const toHandle = (val) => {
 const toUpload = async (file) => {
   const formData = new FormData()
   formData.append('file', file.file)
-  formData.append('space', route.query.sid as string)
-  formData.append('book', route.query.lid as string)
+  formData.append('space', spaceId.value)
+  formData.append('book', bookId.value)
   formData.append('type', 'file')
   formData.append('title', file.file.name)
-  // formData.append('parent', null)
+  props.parent === null ? '' : formData.append('parent', props.parent as any)
   let res = await uploadArticleApi(formData)
   if (res.code === 1000) {
     ElMessage.success('上传成功')
-    refreshStroe.setRefreshBookList(true)
+    useAddArticleAfterToLink(route, router, spaceType.value, res.data, false, 'old')
   } else {
     ElMessage.error(res.msg)
   }
@@ -97,7 +106,7 @@ const toUpload = async (file) => {
             <div class="add-icon">
               <img :src="item.icon as string" alt="" />
             </div>
-            <el-upload :http-request="toUpload" :headers="headers" class="upload-demo" action="" :limit="1">
+            <el-upload :http-request="toUpload" :headers="headers" :show-file-list="false" class="upload" action="" :limit="1">
               <el-button type="" link>上传文件</el-button>
             </el-upload>
           </li>
@@ -127,6 +136,11 @@ const toUpload = async (file) => {
         span {
           font-size: 14px;
           color: #262626;
+        }
+        .upload {
+          .el-button {
+            padding: 0;
+          }
         }
         .add-icon {
           height: 34px;

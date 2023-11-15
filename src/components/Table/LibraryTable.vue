@@ -217,7 +217,11 @@ const getLibrary = async (id) => {
   if (res.code === 1000) {
     return res.data
   } else {
-    ElMessage.error(res.msg)
+    ElMessage({
+      message: res.msg,
+      type: 'error',
+      grouping: true
+    })
   }
   return []
 }

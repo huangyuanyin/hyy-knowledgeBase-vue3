@@ -287,7 +287,7 @@ const toQuitTeam = (val: any) => {
             <span class="desc">{{ document.description }}</span>
           </td>
           <td class="item-user">
-            <span class="username">{{ document.member_count }} 人</span>
+            <span class="username">{{ document.member_count + 1 }} 人</span>
           </td>
           <td class="item-time">
             <span>{{ document.create_datetime }}</span>

@@ -14,12 +14,11 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
 
 const route = useRoute()
 const infoStore = useInfoStore()
-const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
 const spaceId = ref(route.query.sid as string) // 当前空间id
 const isShowsSpaceDialog = ref(false)
-const isAdmin = ref(sessionStorage.getItem('isAdmin'))
+const isAdmin = ref() // 是否是管理员
 const spacesList = ref([])
 const spaces = ref([
   {
@@ -45,9 +44,12 @@ const spaceReverse = ref([
     list: []
   }
 ])
-
 const state = reactive({
   currentSpaceName: route.query.sname || ''
+})
+
+watchEffect(() => {
+  isAdmin.value = sessionStorage.getItem('isAdmin')
 })
 
 const toShow = () => {
@@ -127,7 +129,7 @@ const toLink = (type, val?) => {
                 <div class="content">
                   <p>{{ space.spacename }}</p>
                   <p class="tag" v-if="item.type === 'personal'">我自己</p>
-                  <p class="member" v-else>{{ space.member_count || 0 }}成员</p>
+                  <p class="member" v-else>{{ space.member_count + 1 || 1 }}成员</p>
                 </div>
               </div>
               <div class="right" v-if="item.type === 'personal'">
@@ -203,7 +205,7 @@ const toLink = (type, val?) => {
                 <div class="content">
                   <p>{{ space.spacename }}</p>
                   <p class="tag" v-if="item.type === 'personal'">我自己</p>
-                  <p class="member" v-else>{{ space.member_count || 0 }}成员</p>
+                  <p class="member" v-else>{{ space.member_count + 1 || 1 }}成员</p>
                 </div>
               </div>
               <div class="right" v-if="spaceId == space.id">

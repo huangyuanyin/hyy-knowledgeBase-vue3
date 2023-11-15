@@ -28,6 +28,7 @@ const reNameId = ref(null)
 const reNameParent = ref(null)
 const toLinkId = ref(null) // 删除完成后跳转的id
 const toLinkName = ref('')
+const isHasPermissionCode = ref(null)
 const articleType = {
   文档: { type: 'doc', title: '无标题文档' },
   表格: { type: 'sheet', title: '无标题表格' },
@@ -35,6 +36,10 @@ const articleType = {
 }
 
 watchEffect(() => {
+  if (isHasPermissionCode.value === 1003) {
+    isHasPermissionCode.value = null
+    router.replace('/no-permission')
+  }
   if (refreshStroe.isRefreshBookList) {
     getArticle()
     refreshStroe.setRefreshBookList(false)
@@ -137,6 +142,7 @@ const toLink = (type?: string) => {
 // 获取目录
 const getArticle = async () => {
   let res = await getArticleTreeApi(bookId.value as string)
+  isHasPermissionCode.value = res.code
   if (res.code === 1000) {
     dataSource.value = res.data || ([] as any)
     // 取出res.data中的第一项的id
@@ -144,6 +150,12 @@ const getArticle = async () => {
       toLinkId.value = res.data[0].id
       toLinkName.value = res.data[0].title
     }
+  } else {
+    ElMessage({
+      message: res.msg,
+      type: 'error',
+      grouping: true
+    })
   }
 }
 
@@ -207,8 +219,20 @@ const toNewTab = (val) => {
 
 // 导出
 const toExport = (val) => {
-  ElMessage.warning('暂不支持导出')
+  ElMessageBox.confirm(`确认导出 【${val.title}】 ？`, '', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'success'
+  })
+    .then(() => {
+      handleDownload(val)
+    })
+    .catch(() => {
+      ElMessage.info('取消操作')
+    })
 }
+
+const handleDownload = async (val) => {}
 
 const toTodo = (val) => {
   console.log(`output->val`, val)
@@ -259,7 +283,11 @@ const addArticle = async (article, parent) => {
       useAddArticleAfterToLink(route, router, spaceType.value, res.data, true)
     }
   } else {
-    ElMessage.error(res.msg)
+    ElMessage({
+      message: res.msg,
+      type: 'error',
+      grouping: true
+    })
   }
 }
 
@@ -278,7 +306,11 @@ const editArticle = async () => {
       useAddArticleAfterToLink(route, router, spaceType.value, res.data, false)
     }
   } else {
-    ElMessage.error(res.msg)
+    ElMessage({
+      message: res.msg,
+      type: 'error',
+      grouping: true
+    })
   }
 }
 
@@ -322,7 +354,11 @@ const deleteArticle = async (id) => {
       }
     }
   } else {
-    ElMessage.error(res.msg)
+    ElMessage({
+      message: res.msg,
+      type: 'error',
+      grouping: true
+    })
   }
 }
 
@@ -487,6 +523,7 @@ onMounted(async () => {})
                 @toNewTab="toNewTab(data)"
                 @toTodo="toTodo(data)"
                 @moveArticle="moveArticle(data)"
+                @toExport="toExport(data)"
                 @toDeleteArticle="toDeleteArticle(data)"
               >
                 <span class="moreIcon" v-if="data.type !== 'links' && data.type !== 'title' && data.type !== 'file'" @click.stop>
@@ -535,6 +572,7 @@ onMounted(async () => {})
               <AddOperationPopver
                 :menu-items="sidebarSearchMenuItemsData"
                 trigger="click"
+                :parent="data.id"
                 @toAddDoc="toAddDoc(data)"
                 @toAddSheet="toAddSheet(data)"
                 @toAddGroup="toAddGroup(data)"
@@ -759,6 +797,7 @@ onMounted(async () => {})
     padding: 0 8px;
     box-sizing: border-box;
     :deep(.forumList) {
+      padding-right: 6px;
       width: 100%;
       box-sizing: border-box;
       .el-tree-node__content {
@@ -796,7 +835,7 @@ onMounted(async () => {})
       }
 
       .list-node {
-        width: 100%;
+        width: calc(100% - 24px);
         height: 100%;
         display: flex;
         align-items: center;

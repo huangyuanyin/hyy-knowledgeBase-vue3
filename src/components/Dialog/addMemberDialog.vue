@@ -1,3 +1,100 @@
+<script lang="ts" setup>
+import { addTeamMemberApi } from '@/api/member'
+import { getSpacepermissionsApi } from '@/api/spacepermissions'
+import { ElTable } from 'element-plus'
+
+interface Member {
+  permusername: string
+}
+
+const props = defineProps({
+  isShow: Boolean,
+  isAuto: {
+    type: Boolean,
+    default: true
+  }, // 是否自动添加
+  selectMember: Array // 已添加的成员
+})
+const emit = defineEmits(['closeDialog', 'submitMember'])
+
+const route = useRoute()
+const refreshStore = useRefreshStore()
+const selectTotal = ref(0)
+const dialogVisible = ref(false)
+const spaceName = ref('')
+const memberListRef = ref<InstanceType<typeof ElTable>>()
+const selectMemberList = ref<Member[]>([])
+const memberList = ref<Member[]>([])
+
+watch(
+  () => props.isShow,
+  async (newVal: boolean) => {
+    dialogVisible.value = newVal
+    if (dialogVisible.value) {
+      spaceName.value = route.query.sname as string
+      getSpacepermissions()
+    }
+  }
+)
+
+const handleSelectionChange = (val: Member[]) => {
+  selectMemberList.value = val
+  selectTotal.value = val.length
+}
+
+const handleClose = async () => {
+  selectMemberList.value = []
+  dialogVisible.value = false
+  emit('closeDialog', false)
+}
+
+const toAddMember = () => {
+  if (props.isAuto) {
+    addTeamMember()
+  } else {
+    emit('submitMember', selectMemberList.value)
+    handleClose()
+    console.log(`output->已选择`, selectMemberList.value)
+  }
+}
+
+const addTeamMember = async () => {
+  const params = {
+    username: [],
+    group: route.query.gid as string,
+    space: route.query.sid as string,
+    role: '2' //成员
+  }
+  selectMemberList.value.forEach((item) => {
+    params.username.push(item.permusername)
+  })
+  let res = await addTeamMemberApi(params)
+  if (res.code === 1000) {
+    ElMessage.success('添加成功')
+    handleClose()
+    refreshStore.setRefreshTeamMember(true)
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const getSpacepermissions = async () => {
+  const params = {
+    space: route.query.sid as string
+  }
+  const res = await getSpacepermissionsApi(params)
+  if (res.code === 1000) {
+    memberList.value = res.data.filter((item) => {
+      return !props.selectMember.some((item2: any) => {
+        return item2.username === item.permusername || item2 === item.permusername
+      })
+    })
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+</script>
+
 <template>
   <el-dialog class="addMemberDialog" v-model="dialogVisible" title="从空间添加成员" width="360" :before-close="handleClose">
     <div class="header">{{ spaceName }}</div>
@@ -38,93 +135,6 @@
     </template>
   </el-dialog>
 </template>
-
-<script lang="ts" setup>
-import { addTeamMemberApi } from '@/api/member'
-import { getSpacepermissionsApi } from '@/api/spacepermissions'
-import { ElTable } from 'element-plus'
-
-interface Member {
-  permusername: string
-}
-
-const props = defineProps({
-  isShow: Boolean,
-  selectMember: Array // 已添加的成员
-})
-const emit = defineEmits(['closeDialog'])
-
-const route = useRoute()
-const refreshStore = useRefreshStore()
-const selectTotal = ref(0)
-const dialogVisible = ref(false)
-const spaceName = ref('')
-const memberListRef = ref<InstanceType<typeof ElTable>>()
-const selectMemberList = ref<Member[]>([])
-const memberList = ref<Member[]>([])
-
-watch(
-  () => props.isShow,
-  async (newVal: boolean) => {
-    dialogVisible.value = newVal
-    if (dialogVisible.value) {
-      spaceName.value = route.query.sname as string
-      getSpacepermissions()
-    }
-  }
-)
-
-const handleSelectionChange = (val: Member[]) => {
-  selectMemberList.value = val
-  selectTotal.value = val.length
-}
-
-const handleClose = async () => {
-  selectMemberList.value = []
-  dialogVisible.value = false
-  emit('closeDialog', false)
-}
-
-const toAddMember = () => {
-  addTeamMember()
-}
-
-const addTeamMember = async () => {
-  const params = {
-    username: [],
-    group: route.query.gid as string,
-    space: route.query.sid as string,
-    role: '2' //成员
-  }
-  selectMemberList.value.forEach((item) => {
-    params.username.push(item.permusername)
-  })
-  let res = await addTeamMemberApi(params)
-  if (res.code === 1000) {
-    ElMessage.success('添加成功')
-    handleClose()
-    refreshStore.setRefreshTeamMember(true)
-  } else {
-    ElMessage.error(res.msg)
-  }
-}
-
-const getSpacepermissions = async () => {
-  const params = {
-    space: route.query.sid as string
-  }
-  const res = await getSpacepermissionsApi(params)
-  if (res.code === 1000) {
-    memberList.value = res.data.filter((item) => {
-      return !props.selectMember.some((item2: any) => {
-        return item2.username === item.permusername
-      })
-    })
-  } else {
-    ElMessage.error(res.msg)
-  }
-}
-</script>
 
 <style lang="scss" scoped></style>
 
