@@ -246,6 +246,9 @@ const toQuitTeam = (val: any) => {
           <td class="item-user">
             <span class="username">{{ document.group_name }}</span>
           </td>
+          <td class="item-user">
+            <span class="username">{{ document.creator_name }}</span>
+          </td>
           <td class="item-time">
             <span>{{ document.update_datetime }}</span>
           </td>
@@ -288,6 +291,9 @@ const toQuitTeam = (val: any) => {
           </td>
           <td class="item-user">
             <span class="username">{{ document.member_count + 1 }} 人</span>
+          </td>
+          <td class="item-user">
+            <span>{{ document.creator_name }}</span>
           </td>
           <td class="item-time">
             <span>{{ document.create_datetime }}</span>

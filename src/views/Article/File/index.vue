@@ -23,7 +23,8 @@ const getArticle = async (aid) => {
   if (res.code === 1000) {
     let url = 'http://10.4.150.56:8012/onlinePreview?url=' + encodeURIComponent(Base64.encode(res.data.body))
     iframeSrc.value = url
-    console.log(`output->url`, url)
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 

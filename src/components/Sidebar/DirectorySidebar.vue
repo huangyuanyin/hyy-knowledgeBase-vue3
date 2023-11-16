@@ -44,6 +44,10 @@ watchEffect(() => {
     getArticle()
     refreshStroe.setRefreshBookList(false)
   }
+  if (refreshStroe.isRefreshArticleList) {
+    getArticle()
+    refreshStroe.setRefreshArticleList(false)
+  }
   nextTick(async () => {
     spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
     spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
@@ -55,11 +59,17 @@ watchEffect(() => {
   })
 })
 
+const isLoading = ref(false)
+
 // 监听currentNodeKey
 watch(
   () => currentNodeKey.value,
   (newVal) => {
-    bookTree.value.setCurrentKey(newVal)
+    isLoading.value = true
+    setTimeout(() => {
+      bookTree.value.setCurrentKey(newVal)
+      isLoading.value = false
+    }, 200)
   }
 )
 
@@ -495,6 +505,8 @@ onMounted(async () => {})
     </div>
     <div class="list" v-else>
       <el-tree
+        v-loading="isLoading"
+        element-loading-text="文章加载中..."
         ref="bookTree"
         :data="dataSource"
         node-key="id"

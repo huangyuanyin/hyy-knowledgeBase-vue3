@@ -1,6 +1,7 @@
 import qs from 'qs'
 
 const infoStore = useInfoStore()
+const refreshStore = useRefreshStore()
 
 export const useLink = (routerInfo, type, data) => {
   const { route, router } = routerInfo
@@ -194,4 +195,5 @@ export const useAddArticleAfterToLink = (route, router, type, data, is, newTab =
       })}`
     )
   }
+  refreshStore.setRefreshArticleList(true)
 }

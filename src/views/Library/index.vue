@@ -177,7 +177,7 @@ onMounted(async () => {
           </template>
         </SwitchModuleItem>
         <LibraryTable v-if="currentSidebar === 'Sidebar'" title="知识库" :commonList="commonList" :group="bookGroup" @getBookStacks="getBookStacks" />
-        <TableComp v-else :header="['名称', '归属', '更新时间', '']" type="library" :data="filterGroupFromPublic(bookList)" />
+        <TableComp v-else :header="['名称', '归属', '创建人', '更新时间', '']" type="library" :data="filterGroupFromPublic(bookList)" />
         <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
       </div>
     </div>

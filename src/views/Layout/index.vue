@@ -1,9 +1,7 @@
 <template>
   <el-container class="layout-wrap">
     <el-aside v-if="currentSidebar" class="layout-wrap-left" :style="{ width: asideComponentWidth[asideComponent  as keyof typeof asideComponentWidth].with }">
-      <keep-alive>
-        <component :is="currentSidebar" />
-      </keep-alive>
+      <component :is="currentSidebar" />
     </el-aside>
     <el-main
       :class="['layout-wrap-right', asideComponent === 'DirectorySidebar' ? 'no-padding' : 'use-padding']"
@@ -16,7 +14,6 @@
 
 <script lang="ts" setup>
 const route = useRoute()
-
 const currentSidebar = ref<null | any>(null)
 const asideComponent = ref(route.meta.asideComponent)
 const asideComponentWidth = {
@@ -55,14 +52,14 @@ const loadSidebar = (asideComponent) => {
 }
 
 onMounted(() => {
-  console.log(`output->onMounted`, route.meta.asideComponent)
   loadSidebar(asideComponent.value)
 })
 
-watch(route, (newRoute) => {
-  console.log(`output->watch`, route.meta.asideComponent)
-  asideComponent.value = newRoute.meta.asideComponent
-  loadSidebar(asideComponent.value)
+onBeforeRouteUpdate((to, from) => {
+  if (to.meta.asideComponent !== from.meta.asideComponent) {
+    asideComponent.value = to.meta.asideComponent
+    loadSidebar(asideComponent.value)
+  }
 })
 </script>
 

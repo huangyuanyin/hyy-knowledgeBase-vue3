@@ -310,7 +310,7 @@ onMounted(async () => {
         <SidebarMenuItem :menuItems="menuItems" />
       </div>
       <div class="content-box">
-        <div class="library" v-for="(item, index) in props.contentItems" :key="index">
+        <div :class="[item.title === '团队' ? 'team' : 'library']" v-for="(item, index) in props.contentItems" :key="index">
           <div :class="['header', state.headerActive === index ? 'header-active' : '']" @click="toLink(item.type)">
             <div class="header-left">
               <span class="header-icon expand" v-if="item.isExpand" @click.stop="toExpandCollapse('collapse', item.title === '团队' ? 'team' : 'book', item)"
@@ -403,7 +403,8 @@ onMounted(async () => {
       flex: 1;
       overflow-y: scroll;
       padding-right: 6px;
-      .library {
+      .library,
+      .team {
         margin-top: 14px;
         background-color: #fafafa;
         flex: 1;
@@ -469,11 +470,6 @@ onMounted(async () => {
             width: 100%;
           }
         }
-        :deep(.is-current) {
-          .el-tree-node__content {
-            background-color: #eff0f0 !important;
-          }
-        }
         :deep(.el-tree-node__content) {
           height: 32px;
           &:hover {
@@ -536,6 +532,13 @@ onMounted(async () => {
                 content: url('@/assets/icons/moreIcon1_after.svg');
               }
             }
+          }
+        }
+      }
+      .team {
+        :deep(.is-current) {
+          .el-tree-node__content {
+            background-color: #eff0f0 !important;
           }
         }
       }

@@ -11,7 +11,7 @@
       </div>
       <div class="collaborator">
         <div class="header">
-          <span>协作者</span>
+          <span>知识库成员</span>
           <div>
             <el-input disabled placeholder="搜索成员"></el-input>
             <el-button @click="isShowAddBookMemberDialog = true">添加</el-button>

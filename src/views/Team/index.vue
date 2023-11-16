@@ -78,7 +78,7 @@ onMounted(async () => {
       </div>
     </div>
     <CommonList :list="commonTeamList" type="team" v-if="commonTeamList.length" />
-    <TableComp :style="{ 'margin-top': commonTeamList.length ? '' : '26px' }" :header="['名称', '简介', '成员', '加入时间', '']" type="team" :data="groupsList" />
+    <TableComp :style="{ 'margin-top': commonTeamList.length ? '' : '26px' }" :header="['名称', '简介', '成员', '创建人', '加入时间', '']" type="team" :data="groupsList" />
     <TeamDialog :isShow="isShowsTeamDialog" @closeDialog="isShowsTeamDialog = false" />
   </div>
 </template>
