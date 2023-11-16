@@ -1,16 +1,21 @@
 <template>
   <div class="TinyMCE_wrap" :style="{ width: props.width }">
-    <Editor v-model="editorValue" :api-key="key" :init="initOptions"></Editor>
+    <Editor :disabled="props.readonly" v-model="editorValue" :api-key="key" :init="initOptions"></Editor>
   </div>
 </template>
 
 <script lang="ts" setup>
 import Editor from '@tinymce/tinymce-vue'
 
+const emit = defineEmits(['update:modelValue'])
 const props = defineProps({
   modelValue: {
     type: String,
-    default: '34343'
+    default: ''
+  },
+  readonly: {
+    type: Boolean,
+    default: false
   },
   width: {
     type: String,
@@ -29,13 +34,13 @@ const props = defineProps({
    * bold:加粗；italic:斜体；underline:下划线；strikethrough:删除线；subscript:下标；superscript:上标；alignleft:左对齐；aligncenter:居中对齐；
    * alignright:右对齐；alignjustify:两端对齐；outdent:减少缩进；indent:增加缩进；visualaid:显示隐藏元素；print:打印；spellchecker:拼写检查；
    * insertfile:插入文件；insertimage:插入图片；insertvideo:插入视频；inserttable:插入表格；toc:插入目录；inserthr:插入水平线；pagebreak:插入分页符；
+   * quickbars:快速工具栏；
    * numlist:有序列表；
    */
-
   plugins: {
     type: [String, Array],
     default:
-      'help autosave lists advlist code charmap link fullscreen emoticons wordcount image codesample codeformat  directionality autosave  visualblocks autolink inserthr anchor quickbars tableofcontents advlist importcss insertdatetime lists media pagebreak  preview quickbars searchreplace table'
+      'help autosave lists advlist code charmap link fullscreen emoticons wordcount image codesample codeformat  directionality autosave  visualblocks autolink inserthr anchor  tableofcontents  importcss insertdatetime media pagebreak  preview searchreplace table'
   },
   toolbar: {
     type: [String, Array],
@@ -58,21 +63,41 @@ const initOptions = ref({
   content_style: 'body { margin: 3rem 30% 3rem 15% }', // 设置内容样式
   with: '100px',
   height: props.height,
+  placeholder: '直接输入正文...', // 设置占位符
   language_url: '/tinymce/langs/zh-Hans.js', // 设置本地语言，在本地的路径
   language: 'zh-Hans', // 设置本地语言
   plugins: props.plugins, // 插件
-  toolbar: props.toolbar, // 工具栏
-  toolbar_mode: 'sliding',
+  toolbar: props.readonly ? false : props.toolbar, // 工具栏
+  toolbar_mode: 'sliding', // 工具栏模式
   autosave_ask_before_unload: false, // 编辑器是否应提示用户在尝试关闭当前窗口时告知他们有未保存的更改
   autosave_interval: '2s', // 编辑器在拍摄当前内容的快照和将其保存到本地存储之间应等待的时间。默认为“ 30s”
   autosave_prefix: 'tinymce-autosave', // 用于保存的键的前缀
   block_formats: '正文=p; 标题1=h1; 标题2=h2; 标题3=h3; 标题4=h4; 标题5=h5; 标题6=h6', // 设置块格式
   line_height_formats: '1 1.2 1.4 1.6 2 2.5 3', // 设置行高格式
+  readonly: props.readonly, // 设置只读
   statusbar: true, // 是否隐藏状态栏
-  menubar: false // 是否隐藏菜单栏
+  menubar: false, // 是否隐藏菜单栏
+  branding: false, // 是否隐藏品牌
+  resize: false, // 是否允许调整大小
+  help_accessibility: true, // 是否在 TinyMCE 状态栏中显示用于访问“帮助”对话框的键盘快捷键。
+  help_tabs: [
+    'shortcuts',
+    'keyboardnav'
+    //  'plugins', 'versions'
+  ], // 设置帮助选项卡
   // ...getPasteOption(),
-  // ...getImageOption()
+  // ...getImageOption(),
+  setup: (editor) => {
+    editor.on('init', () => {})
+  }
 })
+
+watch(
+  () => editorValue.value,
+  (newVal) => {
+    emit('update:modelValue', newVal)
+  }
+)
 </script>
 
 <style lang="scss" scoped>
@@ -83,8 +108,10 @@ const initOptions = ref({
     .tox-editor-header {
       box-shadow: none;
       .tox-toolbar {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
         background-size: 0;
+        .tox-tbtn {
+          cursor: pointer;
+        }
       }
     }
     .tox-sidebar-wrap {
@@ -102,21 +129,8 @@ const initOptions = ref({
   }
 }
 </style>
-<!-- 
-<script setup>
-let init = reactive({
-  // 选择器
-  selector: 'textarea',
-  // 设置本地语言，在本地的路径
-  language_url: '/tinymce/langs/zh-Hans.js',
-  // 设置本地语言
-  language: 'zh-Hans',
-  // 设置工具栏
-  toolbar: [
-    'bold italic hr | fontsize forecolor backcolor | blocks blockquote removeformat | undo redo ',
-    'bullist table insertdatetime | link charmap emoticons wordcount searchreplace code | codesample visualblocks image fullscreen preview'
-  ],
-  // 设置插件
-  plugins: 'codesample lists advlist link autolink charmap emoticons fullscreen preview code searchreplace table visualblocks wordcount insertdatetime image'
-})
-</script> -->
+
+<!-- // 设置工具栏 toolbar: [ 'bold italic hr | fontsize forecolor backcolor | blocks blockquote removeformat | undo redo ', 'bullist table insertdatetime | link charmap emoticons
+wordcount searchreplace code | codesample visualblocks image fullscreen preview' ]
+// 设置插件 plugins: 'codesample lists advlist link autolink charmap emoticons fullscreen
+preview code searchreplace table visualblocks wordcount insertdatetime image' -->

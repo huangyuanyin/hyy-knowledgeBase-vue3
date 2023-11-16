@@ -61,7 +61,7 @@ watchEffect(() => {
 
 const isLoading = ref(false)
 
-// 监听currentNodeKey
+// // 监听currentNodeKey
 watch(
   () => currentNodeKey.value,
   (newVal) => {
@@ -69,7 +69,7 @@ watch(
     setTimeout(() => {
       bookTree.value.setCurrentKey(newVal)
       isLoading.value = false
-    }, 200)
+    }, 1000)
   }
 )
 
@@ -171,7 +171,6 @@ const getArticle = async () => {
 
 const toArticleDetail = (val) => {
   val.type === 'links' || val.type === 'title' ? bookTree.value.setCurrentKey(Number(route.query.aid)) : (currentNodeKey.value = val.id)
-  console.log(`output->val`, currentNodeKey.value)
   if (val.id == route.query.aid) return
   switch (val.type) {
     case 'links':

@@ -89,7 +89,7 @@ const toHandle = (item: any) => {
         id: route.query.aid,
         title: route.query.aname
       }
-      useAddArticleAfterToLink(route, router, spaceType.value, data, true)
+      useAddArticleAfterToLink(route, router, spaceType.value, data, true, 'old', false)
       break
     default:
       ElMessage.warning('功能暂未开放，敬请期待')
@@ -107,7 +107,7 @@ const editArticle = async () => {
   let res = await editArticleApi(Number(route.query.aid), params)
   if (res.code === 1000) {
     ElMessage.success('编辑成功')
-    useAddArticleAfterToLink(route, router, spaceType.value, res.data, false)
+    useAddArticleAfterToLink(route, router, spaceType.value, res.data, false, 'old', false)
   } else {
     ElMessage.error(res.msg)
   }

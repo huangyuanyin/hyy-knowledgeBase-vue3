@@ -50,7 +50,8 @@ const editConfig = ref({
 watch(
   () => route.query.aid,
   async () => {
-    if (route.query.aid) {
+    const path = route.path.split('/')
+    if (route.query.aid && path.includes('sheet')) {
       await getArticleTree()
       handleCreateSheet()
     }

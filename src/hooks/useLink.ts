@@ -165,7 +165,7 @@ export const useLink = (routerInfo, type, data) => {
 }
 
 // 新建不同类型文章后跳转
-export const useAddArticleAfterToLink = (route, router, type, data, is, newTab = 'old') => {
+export const useAddArticleAfterToLink = (route, router, type, data, is, newTab = 'old', refresh = true) => {
   const spaceName = route.path.split('/')[1]
   const query = {
     lid: route.query.lid,
@@ -195,5 +195,5 @@ export const useAddArticleAfterToLink = (route, router, type, data, is, newTab =
       })}`
     )
   }
-  refreshStore.setRefreshArticleList(true)
+  refresh && refreshStore.setRefreshArticleList(true)
 }
