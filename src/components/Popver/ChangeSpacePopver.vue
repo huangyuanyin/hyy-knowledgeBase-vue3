@@ -16,9 +16,10 @@ const route = useRoute()
 const infoStore = useInfoStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
-const spaceId = ref(route.query.sid as string) // 当前空间id
+const spaceId = ref('') // 当前空间id
 const isShowsSpaceDialog = ref(false)
-const isAdmin = ref() // 是否是管理员
+const changeSpacePopverRef = ref<any>(null)
+const isSpaceAdmin = ref() // 是否是当前空间管理员
 const spacesList = ref([])
 const spaces = ref([
   {
@@ -48,12 +49,15 @@ const state = reactive({
   currentSpaceName: route.query.sname || ''
 })
 
-watchEffect(() => {
-  isAdmin.value = sessionStorage.getItem('isAdmin')
-})
+const initData = () => {
+  spaceId.value = route.query.sid as string
+  state.currentSpaceName = route.query.sname || ''
+  isSpaceAdmin.value = sessionStorage.getItem('isSpaceAdmin')
+}
 
-const toShow = () => {
-  getSpaces()
+const toShow = async () => {
+  await initData()
+  await getSpaces()
 }
 
 // 获取当前用户下所能访问的空间
@@ -84,6 +88,10 @@ const toLink = (type, val?) => {
           sid: val.id
         }
       })
+      // fix 切换空间，左侧常用列表不刷新
+      setTimeout(() => {
+        location.reload()
+      }, 0)
       break
     case 'add':
       router.push(`/${val.spacekey}/organize/dashboard`)
@@ -97,11 +105,13 @@ const toLink = (type, val?) => {
     default:
       break
   }
+  changeSpacePopverRef.value && changeSpacePopverRef.value.hide()
 }
 </script>
 
 <template>
   <el-popover
+    ref="changeSpacePopverRef"
     popper-class="changeSpacePopver"
     :placement="props.placement"
     :width="props.width"
@@ -157,7 +167,7 @@ const toLink = (type, val?) => {
             </div>
           </div>
           <div class="card-content">
-            <div class="content" v-if="isAdmin == 'true'">
+            <div class="content" v-if="isSpaceAdmin == 'true'">
               <div class="type">
                 <span>标准版</span>
                 <span>升级</span>

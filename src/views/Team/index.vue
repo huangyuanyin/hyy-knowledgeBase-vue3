@@ -14,7 +14,9 @@ const commonTeamList = ref([]) // 当前空间下常用团队列表
 watchEffect(() => {
   spaceId.value = route.query.sid as string
   if (refreshStroe.isRefreshQuickTeamList) {
-    getQuickLinks()
+    nextTick(() => {
+      getQuickLinks()
+    })
   }
 })
 

@@ -47,6 +47,7 @@ const state = reactive({
   currentSpace: infoStore.currentSpaceInfo.nickname || route.path.split('/')[1],
   operatData: []
 })
+const currentSpaceName = ref(route.path.split('/')[1])
 const isShowsDeleteDialog = ref(false)
 const isAdmin = ref(false)
 const deleteInfo = ref<{
@@ -65,6 +66,10 @@ const typeIcon = {
 watch(
   () => route.path,
   () => {
+    if (currentSpaceName.value !== route.path.split('/')[1]) {
+      getSpacesDeatil()
+      currentSpaceName.value = route.path.split('/')[1]
+    }
     infoStore.setCurrentSpaceName(route.path.split('/')[1])
     infoStore.setCurrentMenu(route.path.split('/')[2] || route.path.split('/')[1])
     infoStore.setCurrentSidebar(route.meta.asideComponent.toString())
@@ -278,7 +283,7 @@ const getSpacesDeatil = async () => {
       isAdmin.value = true
     }
     sessionStorage.setItem('spaceInfo', JSON.stringify(res.data))
-    sessionStorage.setItem('isAdmin', isAdmin.value.toString())
+    sessionStorage.setItem('isSpaceAdmin', isAdmin.value.toString())
   } else {
     ElMessage.error(res.msg)
   }
