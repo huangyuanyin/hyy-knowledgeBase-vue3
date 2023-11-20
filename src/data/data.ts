@@ -26,7 +26,7 @@ export const spaceMenuItemsData = [
 export const sidebarSearchMenuItemsData = [
   { type: 'item', icon: '/src/assets/icons/documentIcon.svg', label: '文档', nick: 'toAddDoc' },
   { type: 'item', icon: '/src/assets/icons/formIcon.svg', label: '表格', nick: 'toAddSheet' },
-  { type: 'item', icon: '/src/assets/icons/pptIcon.svg', label: '幻灯片' },
+  { type: 'item', icon: '/src/assets/icons/pptIcon.svg', label: '幻灯片', nick: 'toAddPPT' },
   { type: 'item', icon: '/src/assets/icons/mindmapIcon.svg', label: '思维导图' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/templateIcon.svg', label: '从模板新建' },

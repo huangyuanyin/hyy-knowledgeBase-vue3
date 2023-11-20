@@ -20,6 +20,7 @@ const isShowLinkDialog = ref(false)
 const articleType = {
   文档: { type: 'doc', title: '无标题文档' },
   表格: { type: 'sheet', title: '无标题表格' },
+  幻灯片: { type: 'ppt', title: '无标题幻灯片' },
   新建分组: { type: 'title', title: '新建分组' }
 }
 
@@ -64,7 +65,14 @@ const addArticle = async (article, parent) => {
         <i-ep-Search />
       </template>
     </el-input>
-    <AddOperationPopver :menu-items="props.menuItems" @toAddDoc="toAddArticle" @toAddSheet="toAddArticle" @toAddGroup="toAddArticle" @toAddLink="isShowLinkDialog = true" />
+    <AddOperationPopver
+      :menu-items="props.menuItems"
+      @toAddDoc="toAddArticle"
+      @toAddSheet="toAddArticle"
+      @toAddPPT="toAddArticle"
+      @toAddGroup="toAddArticle"
+      @toAddLink="isShowLinkDialog = true"
+    />
   </div>
   <LinkDialog :isShow="isShowLinkDialog" :parent="null" @closeDialog="isShowLinkDialog = false" />
 </template>

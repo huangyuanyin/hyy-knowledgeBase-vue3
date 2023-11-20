@@ -133,6 +133,15 @@ const customRoutes = [
     }
   },
   {
+    path: '/:spaceName?/directory/ppt/:isEdit?',
+    name: 'Space-PPT',
+    component: pageComps['/src/views/Article/PPT/index.vue'] as Component,
+    meta: {
+      title: 'PPT',
+      asideComponent: 'DirectorySidebar'
+    }
+  },
+  {
     path: '/:spaceName?/directory/file',
     name: 'Space-File',
     component: pageComps['/src/views/Article/File/index.vue'] as Component,

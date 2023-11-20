@@ -4,7 +4,7 @@
       <component :is="currentSidebar" />
     </el-aside>
     <el-main
-      :class="['layout-wrap-right', asideComponent === 'DirectorySidebar' ? 'no-padding' : 'use-padding']"
+      :class="['layout-wrap-right', asideComponent === 'DirectorySidebar' ? 'no-padding' : 'use-padding', isShowPreviewFile ? 'previewFile' : '']"
       :style="{ padding: asideComponentWidth[asideComponent  as keyof typeof asideComponentWidth].padding }"
     >
       <router-view />
@@ -14,6 +14,7 @@
 
 <script lang="ts" setup>
 const route = useRoute()
+const isShowPreviewFile = ref(false)
 const currentSidebar = ref<null | any>(null)
 const asideComponent = ref(route.meta.asideComponent)
 const asideComponentWidth = {
@@ -42,6 +43,10 @@ const asideComponentWidth = {
     padding: '48px 52px !important'
   }
 }
+
+watchEffect(() => {
+  isShowPreviewFile.value = route.path.split('/').slice(-2)[0] === 'file' || route.path.split('/').slice(-2)[0] === 'ppt'
+})
 
 const loadSidebar = (asideComponent) => {
   if (asideComponent) {
@@ -75,6 +80,9 @@ onBeforeRouteUpdate((to, from) => {
   }
   &-right {
     flex: 1;
+  }
+  .previewFile {
+    overflow-y: hidden !important;
   }
   .no-padding {
     padding: 0 !important;
