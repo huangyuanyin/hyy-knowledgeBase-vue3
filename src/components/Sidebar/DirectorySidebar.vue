@@ -18,8 +18,11 @@ const currentNodeKey = ref(Number(route.query.aid)) // 当前选中的节点
 const isAllExpand = ref(true) // 是否全部展开
 const group_name = ref<string>('')
 const nickName = ref<string>(infoStore.currentSpaceInfo.nickname || route.fullPath.split('/')[1])
-const showMoveDialog = ref(false)
+const showHandleArticleDialog = ref(false)
 const isShowLinkDialog = ref(false)
+const handleArticleDialogTitle = ref('')
+const handleArticleDialogDesc = ref('')
+const handleData = ref(null) // 复制 || 移动的数据
 const linkType = ref('add') // 链接弹窗类型： add edit
 const linkDialogId = ref(null) // 链接弹窗id
 const parentId = ref(null) // 父级节点id
@@ -32,6 +35,7 @@ const isHasPermissionCode = ref(null)
 const articleType = {
   文档: { type: 'doc', title: '无标题文档' },
   表格: { type: 'sheet', title: '无标题表格' },
+  幻灯片: { type: 'ppt', title: '无标题幻灯片' },
   新建分组: { type: 'title', title: '新建分组' }
 }
 
@@ -184,11 +188,6 @@ const toArticleDetail = (val) => {
   }
 }
 
-const moveArticle = (val) => {
-  console.log(`output->val`, val)
-  showMoveDialog.value = true
-}
-
 // 重命名
 const toRename = (val) => {
   reNameId.value = val.id
@@ -224,6 +223,19 @@ const toCopyLink = (val) => {
 // 新标签页打开
 const toNewTab = (val) => {
   useAddArticleAfterToLink(route, router, spaceType.value, val, true, 'new')
+}
+
+// 复制 || 移动
+const toHandleArticle = (type, val) => {
+  handleData.value = val
+  showHandleArticleDialog.value = true
+  if (type === 'move') {
+    handleArticleDialogTitle.value = '移动到...'
+    handleArticleDialogDesc.value = '可移动到有创建文档权限的知识库'
+  } else {
+    handleArticleDialogTitle.value = '复制到...'
+    handleArticleDialogDesc.value = '可复制到有创建文档权限的知识库'
+  }
 }
 
 // 导出
@@ -262,6 +274,10 @@ const toAddDoc = (data?) => {
 
 const toAddSheet = (data) => {
   addArticle(articleType['表格'], data.id)
+}
+
+const toAddPPT = (data) => {
+  addArticle(articleType['幻灯片'], data.id)
 }
 
 const toAddLink = (data) => {
@@ -532,8 +548,9 @@ onMounted(async () => {})
                 @toEditArticle="toEditArticle(data)"
                 @toCopyLink="toCopyLink(data)"
                 @toNewTab="toNewTab(data)"
+                @toCopyArticle="toHandleArticle('copy', data)"
+                @toMoveArticle="toHandleArticle('move', data)"
                 @toTodo="toTodo(data)"
-                @moveArticle="moveArticle(data)"
                 @toExport="toExport(data)"
                 @toDeleteArticle="toDeleteArticle(data)"
               >
@@ -547,7 +564,8 @@ onMounted(async () => {})
                 :width="150"
                 @toRename="toEditLink(data)"
                 @toCopyLink="toCopyLink(data)"
-                @moveArticle="moveArticle(data)"
+                @toCopyArticle="toHandleArticle('copy', data)"
+                @toMoveArticle="toHandleArticle('move', data)"
                 @toTodo="toTodo(data)"
                 @toDeleteArticle="toDeleteArticle(data)"
               >
@@ -560,6 +578,8 @@ onMounted(async () => {})
                 :height="32"
                 :width="150"
                 @toRename="toRename(data)"
+                @toCopyArticle="toHandleArticle('copy', data)"
+                @toMoveArticle="toHandleArticle('move', data)"
                 @toTodo="toTodo(data)"
                 @toDeleteArticle="toDeleteArticle(data)"
               >
@@ -573,6 +593,8 @@ onMounted(async () => {})
                 :width="150"
                 @toRename="toRename(data)"
                 @toExport="toExport(data)"
+                @toCopyArticle="toHandleArticle('copy', data)"
+                @toMoveArticle="toHandleArticle('move', data)"
                 @toTodo="toTodo(data)"
                 @toDeleteArticle="toDeleteArticle(data)"
               >
@@ -586,6 +608,7 @@ onMounted(async () => {})
                 :parent="data.id"
                 @toAddDoc="toAddDoc(data)"
                 @toAddSheet="toAddSheet(data)"
+                @toAddPPT="toAddPPT(data)"
                 @toAddGroup="toAddGroup(data)"
                 @toAddLink="toAddLink(data)"
               >
@@ -599,7 +622,13 @@ onMounted(async () => {})
       </el-tree>
     </div>
   </div>
-  <MoveDialog :isShow="showMoveDialog" @closeDialog="showMoveDialog = false" />
+  <HandleArticleDialog
+    :show="showHandleArticleDialog"
+    :title="handleArticleDialogTitle"
+    :desc="handleArticleDialogDesc"
+    :data="handleData"
+    @closeDialog="showHandleArticleDialog = false"
+  />
   <LinkDialog :isShow="isShowLinkDialog" :parent="parentId" :type="linkType" :id="linkDialogId" @closeDialog="closeLinkDialog" />
 </template>
 

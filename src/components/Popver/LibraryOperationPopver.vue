@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import { MenuItem, OperationPopoverProps } from '@/type/operationPopoverType'
 
-const emit = defineEmits()
-
 const props = withDefaults(defineProps<OperationPopoverProps>(), {
   placement: 'bottom-start',
   width: 138,
@@ -13,14 +11,19 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
   showArrow: false,
   menuItems: Array as () => MenuItem[]
 })
+const emit = defineEmits()
+
+const addOperationPopver = ref(null)
 
 const toHandle = (item: MenuItem) => {
   emit(item.nick, item)
+  addOperationPopver.value && addOperationPopver.value.hide()
 }
 </script>
 
 <template>
   <el-popover
+    ref="addOperationPopver"
     popper-class="libraryOperationPopver"
     :placement="props.placement"
     :width="props.width"

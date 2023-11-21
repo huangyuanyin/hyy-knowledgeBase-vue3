@@ -110,7 +110,7 @@ onMounted(async () => {
       </el-table>
     </div>
   </div>
-  <addAdminDialog :isShow="isShowAddAdminDialog" @closeDialog="closeDialog" />
+  <AddAdminDialog :isShow="isShowAddAdminDialog" @closeDialog="closeDialog" />
 </template>
 
 <style lang="scss" scoped>

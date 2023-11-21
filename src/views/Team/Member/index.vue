@@ -187,7 +187,7 @@ onMounted(() => {
       </div>
     </div>
   </div>
-  <addMemberDialog :isShow="isShowAddMemberDialog" @closeDialog="isShowAddMemberDialog = false" :selectMember="memberList" />
+  <AddMemberDialog :isShow="isShowAddMemberDialog" @closeDialog="isShowAddMemberDialog = false" :selectMember="memberList" />
 </template>
 
 <style lang="scss" scoped>

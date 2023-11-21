@@ -106,6 +106,7 @@ declare global {
   const useSlots: typeof import('vue')['useSlots']
   const useSpacesApi: typeof import('./hooks/useSpacesApi')['useSpacesApi']
   const useTeamPermission: typeof import('./hooks/usePermission')['useTeamPermission']
+  const useTreeDisable: typeof import('./hooks/useTreeDisable')['useTreeDisable']
   const useUserStore: typeof import('./store/user')['useUserStore']
   const viteEnvD: typeof import('./vite-env.d')['default']
   const watch: typeof import('vue')['watch']

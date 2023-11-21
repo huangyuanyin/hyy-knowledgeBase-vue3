@@ -30,7 +30,9 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
   const handleLoginSuccess = async (res: any): Promise<void> => {
     if (res.code === 1000) {
       await setUserInfo(res.data)
+      nickname.value = res.data.nickname
       ElMessage.success('登录成功')
+      await getSpaces()
       router.push({ path: '/' })
     } else {
       showError(res.msg)
@@ -51,9 +53,7 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
       })
       .then(async (res: any) => {
         state.loading = false
-        nickname.value = res.data.nickname
         await handleLoginSuccess(res)
-        await getSpaces()
       })
       .catch((error: any) => {
         console.error('Form validation failed', error)

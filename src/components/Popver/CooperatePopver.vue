@@ -12,9 +12,9 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
   menuItems: Array as () => MenuItem[]
 })
 
+const cooperatePopverRef = ref(null)
 const searchValue = ref('')
 const link = ref(cooperateLink)
-
 const userList = ref([])
 const selectedUserList = ref([])
 const isShowUserOperationPopver = ref(false)
@@ -39,6 +39,7 @@ const onShowUserOperationPopver = (val: boolean) => {
 
 <template>
   <el-popover
+    ref="cooperatePopverRef"
     popper-class="cooperatePopverPopver"
     :placement="props.placement"
     :width="props.width"

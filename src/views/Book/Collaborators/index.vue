@@ -43,7 +43,7 @@
       </div>
     </div>
   </div>
-  <addBookMemberDialog :isShow="isShowAddBookMemberDialog" @closeDialog="isShowAddBookMemberDialog = false" :selectMember="memberList" />
+  <AddBookMemberDialog :isShow="isShowAddBookMemberDialog" @closeDialog="isShowAddBookMemberDialog = false" :selectMember="memberList" />
 </template>
 
 <script lang="ts" setup>

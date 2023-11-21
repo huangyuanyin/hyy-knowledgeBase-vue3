@@ -47,6 +47,7 @@ const deleteLibrary = (item: any) => {
   deleteInfo.value = item
   deleteInfo.value.name = item.title
   deleteInfo.value.id = item.target_id
+  deleteInfo.value.slug = item.target_slug
 }
 
 const toTeamSetting = (item: any) => {

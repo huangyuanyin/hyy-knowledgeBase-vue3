@@ -113,10 +113,10 @@ export const articleOperationData = [
   { type: 'item', icon: '/src/assets/icons/article/copyLinkIcon.svg', label: '复制链接', nick: 'toCopyLink' },
   { type: 'item', icon: '/src/assets/icons/article/addTabIcon.svg', label: '在新标签页打开', nick: 'toNewTab' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '移除目录', nick: 'toTodo' },
-  { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/article/copyIcon.svg', label: '复制', nick: 'toTodo' },
-  { type: 'item', icon: '/src/assets/icons/article/moveIcon.svg', label: '移动', nick: 'toTodo' },
+  // { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '移除目录', nick: 'toTodo' },
+  // { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/article/copyIcon.svg', label: '复制', nick: 'toCopyArticle' },
+  { type: 'item', icon: '/src/assets/icons/article/moveIcon.svg', label: '移动', nick: 'toMoveArticle' },
   { type: 'item', icon: '/src/assets/icons/article/exportIcon.svg', label: '导出', nick: 'toExport' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteArticle' }
@@ -126,10 +126,10 @@ export const linkOperationData = [
   { type: 'item', icon: '/src/assets/icons/article/editIcon.svg', label: '修改链接信息', nick: 'toRename' },
   { type: 'item', icon: '/src/assets/icons/article/copyLinkIcon.svg', label: '复制链接', nick: 'toCopyLink' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '移除目录', nick: 'toTodo' },
-  { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/article/copyIcon.svg', label: '复制', nick: 'toTodo' },
-  { type: 'item', icon: '/src/assets/icons/article/moveIcon.svg', label: '移动', nick: 'moveArticle' },
+  // { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '移除目录', nick: 'toTodo' },
+  // { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/article/copyIcon.svg', label: '复制', nick: 'toCopyArticle' },
+  { type: 'item', icon: '/src/assets/icons/article/moveIcon.svg', label: '移动', nick: 'toMoveArticle' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteArticle' }
 ]
@@ -137,10 +137,10 @@ export const linkOperationData = [
 export const titleOperationData = [
   { type: 'item', icon: '/src/assets/icons/article/renameIcon.svg', label: '重命名', nick: 'toRename' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '移除目录', nick: 'toTodo' },
-  { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/article/copyIcon.svg', label: '复制', nick: 'toTodo' },
-  { type: 'item', icon: '/src/assets/icons/article/moveIcon.svg', label: '移动', nick: 'toTodo' },
+  // { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '移除目录', nick: 'toTodo' },
+  // { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/article/copyIcon.svg', label: '复制', nick: 'toCopyArticle' },
+  { type: 'item', icon: '/src/assets/icons/article/moveIcon.svg', label: '移动', nick: 'toMoveArticle' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteArticle' }
 ]
@@ -150,11 +150,11 @@ export const fileOperationData = [
   { type: 'item', icon: '/src/assets/icons/article/copyLinkIcon.svg', label: '复制链接', nick: 'toCopyLink' },
   { type: 'item', icon: '/src/assets/icons/article/addTabIcon.svg', label: '在新标签页打开', nick: 'toNewTab' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '移除目录', nick: 'toTodo' },
-  { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/article/copyIcon.svg', label: '复制', nick: 'toTodo' },
-  { type: 'item', icon: '/src/assets/icons/article/moveIcon.svg', label: '移动', nick: 'toTodo' },
-  { type: 'item', icon: '/src/assets/icons/article/exportIcon.svg', label: '导出', nick: 'toExport' },
+  // { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '移除目录', nick: 'toTodo' },
+  // { type: 'divider' },
+  { type: 'item', icon: '/src/assets/icons/article/copyIcon.svg', label: '复制', nick: 'toCopyArticle' },
+  { type: 'item', icon: '/src/assets/icons/article/moveIcon.svg', label: '移动', nick: 'toMoveArticle' },
+  { type: 'item', icon: '/src/assets/icons/article/exportIcon.svg', label: '下载', nick: 'toExport' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteArticle' }
 ]

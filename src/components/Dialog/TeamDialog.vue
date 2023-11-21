@@ -185,7 +185,7 @@ const handleClose = async () => {
       </span>
     </template>
   </el-dialog>
-  <addMemberDialog :isShow="isShowAddMemberDialog" @closeDialog="isShowAddMemberDialog = false" @submitMember="submitMember" :selectMember="selectMemberList" :is-auto="false" />
+  <AddMemberDialog :isShow="isShowAddMemberDialog" @closeDialog="isShowAddMemberDialog = false" @submitMember="submitMember" :selectMember="selectMemberList" :is-auto="false" />
 </template>
 
 <style lang="scss" scoped>

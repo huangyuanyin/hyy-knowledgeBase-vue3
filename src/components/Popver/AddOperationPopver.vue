@@ -20,6 +20,7 @@ const spaceId = ref('')
 const bookId = ref('')
 const isShowsLibraryDialog = ref(false)
 const isShowTeamDialog = ref(false)
+const addOperationPopver = ref(null)
 const spaceType = ref('')
 const headers = ref({
   Authorization: localStorage.getItem('token')
@@ -32,7 +33,6 @@ watchEffect(() => {
 })
 
 const toHandle = (val) => {
-  console.log(`output->val`, val)
   switch (val.label) {
     case '知识库':
       isShowsLibraryDialog.value = true
@@ -61,6 +61,7 @@ const toHandle = (val) => {
       ElMessage.warning('功能暂未开放，敬请期待')
       break
   }
+  addOperationPopver.value && addOperationPopver.value.hide()
 }
 
 const toUpload = async (file) => {
@@ -84,6 +85,7 @@ const toUpload = async (file) => {
 
 <template>
   <el-popover
+    ref="addOperationPopver"
     popper-class="addOperationPopver"
     :placement="props.placement"
     :width="props.width"

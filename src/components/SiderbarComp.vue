@@ -66,7 +66,7 @@ const typeIcon = {
 watch(
   () => route.path,
   () => {
-    if (currentSpaceName.value !== route.path.split('/')[1]) {
+    if (currentSpaceName.value !== route.path.split('/')[1] && sessionStorage.getItem('currentSidebar') === 'SpaceSidebar') {
       getSpacesDeatil()
       currentSpaceName.value = route.path.split('/')[1]
     }
@@ -248,6 +248,7 @@ const toDeleteLibrary = (item: any) => {
   deleteInfo.value = item
   deleteInfo.value.name = item.title
   deleteInfo.value.id = item.target_id
+  deleteInfo.value.slug = item.target_slug
 }
 
 const toTeamSetting = (val) => {

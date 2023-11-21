@@ -88,6 +88,7 @@ const toLink = (type, val?) => {
           sid: val.id
         }
       })
+      if (sessionStorage.getItem('currentSidebar') === 'Sidebar') return
       // fix 切换空间，左侧常用列表不刷新
       setTimeout(() => {
         location.reload()
