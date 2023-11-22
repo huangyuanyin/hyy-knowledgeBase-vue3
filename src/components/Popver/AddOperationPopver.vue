@@ -122,7 +122,7 @@ const toUpload = async (file) => {
       </ul>
     </div>
   </el-popover>
-  <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
+  <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" from="null" />
   <TeamDialog :isShow="isShowTeamDialog" @closeDialog="isShowTeamDialog = false" />
 </template>
 

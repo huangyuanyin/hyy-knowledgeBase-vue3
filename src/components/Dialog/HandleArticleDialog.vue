@@ -68,6 +68,14 @@ const initData = () => {
   pinPosition.value = '0'
 }
 
+const handleAfterData = (id) => {
+  return {
+    id,
+    title: props.data.title,
+    type: props.data.type
+  }
+}
+
 const changePip = (val) => {
   if (val === '2') return ElMessage.warning('该功能暂未开放，敬请期待！')
   if (!dataSource.value.length) return
@@ -117,9 +125,9 @@ const copyArticle = async () => {
   if (res.code === 1000) {
     ElMessage.success('复制成功')
     closeDialog()
-    // if (props.data.book === bookId.value) {
-    //   useAddArticleAfterToLink(route, router, spaceType.value, res.data, false, 'old')
-    // }
+    if (props.data.book === bookId.value) {
+      useAddArticleAfterToLink(route, router, spaceType.value, handleAfterData(res.data), false, 'old')
+    }
     refreshStroe.setRefreshArticleList(true)
   } else {
     ElMessage.error(res.msg)
@@ -140,9 +148,9 @@ const moveArticle = async () => {
   if (res.code === 1000) {
     ElMessage.success('移动成功')
     closeDialog()
-    // if (props.data.book === bookId.value) {
-    //   useAddArticleAfterToLink(route, router, spaceType.value, res.data, false, 'old')
-    // }
+    if (props.data.book === bookId.value) {
+      useAddArticleAfterToLink(route, router, spaceType.value, handleAfterData(res.data), false, 'old')
+    }
     refreshStroe.setRefreshArticleList(true)
   } else {
     ElMessage.error(res.msg)

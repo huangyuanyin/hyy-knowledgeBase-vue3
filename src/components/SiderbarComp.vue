@@ -64,6 +64,13 @@ const typeIcon = {
 }
 
 watch(
+  () => route.query.gid,
+  () => {
+    state.currentGroup = route.query.gid
+  }
+)
+
+watch(
   () => route.path,
   () => {
     if (currentSpaceName.value !== route.path.split('/')[1] && sessionStorage.getItem('currentSidebar') === 'SpaceSidebar') {

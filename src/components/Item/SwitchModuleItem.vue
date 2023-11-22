@@ -13,9 +13,9 @@ const props = defineProps<{
   moduleGenreData?: Button[]
   moduleGenre?: string
 }>()
+const emit = defineEmits(['getBookStacks'])
 
 const route = useRoute()
-const refreshStroe = useRefreshStore()
 const spaceType = ref('') // 当前空间类型
 const spaceId = ref('') // 当前空间id
 const groupId = ref('') // 当前团队id
@@ -71,9 +71,8 @@ const addBookStacks = async () => {
   }
   let res = await addBookStacksApi(params)
   if (res.code === 1000) {
+    emit('getBookStacks')
     ElMessage.success('新建分组成功')
-    refreshStroe.setRefreshBookList(true)
-    refreshStroe.setRefreshBookStacks(true)
   } else {
     ElMessage.error(res.msg)
   }

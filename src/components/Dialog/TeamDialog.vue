@@ -17,6 +17,7 @@ const props = defineProps({
 const emit = defineEmits(['closeDialog'])
 
 const route = useRoute()
+const refreshStore = useRefreshStore()
 const dialogVisible = ref(false)
 const loadingMember = ref(false)
 const isShowAddMemberDialog = ref(false)
@@ -84,7 +85,8 @@ const addGroups = async () => {
   let res = await addGroupsApi(teamForm)
   if (res.code === 1000) {
     handleClose()
-    ElMessage.success('团队创建成功')
+    ElMessage.success('团队创建成功，即将跳转...')
+    refreshStore.setRefreshQuickTeamList(true)
     setTimeout(() => {
       router.push({
         path: `/${route.path.split('/')[1]}/team/book`,
@@ -95,7 +97,7 @@ const addGroups = async () => {
           gname: res.data.groupname
         }
       })
-    }, 1000)
+    }, 1500)
   } else {
     ElMessage.error(res.msg)
   }

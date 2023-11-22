@@ -56,16 +56,16 @@ const addOperation = [
     label: '添加已有知识库...',
     nick: 'addExistLibrary',
     icon: ''
-  },
-  {
-    type: 'divider'
-  },
-  {
-    type: 'item',
-    label: '新建分组',
-    nick: 'addGroup',
-    icon: ''
   }
+  // {
+  //   type: 'divider'
+  // },
+  // {
+  //   type: 'item',
+  //   label: '新建分组',
+  //   nick: 'addGroup',
+  //   icon: ''
+  // }
 ]
 const addLibraryOperation = [
   {

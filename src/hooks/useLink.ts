@@ -3,8 +3,9 @@ import qs from 'qs'
 const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
 
-export const useLink = (routerInfo, type, data) => {
+export const useLink = (routerInfo, type, data, spaceType?) => {
   const { route, router } = routerInfo
+  const spaceName = route.path.split('/')[1]
   switch (type) {
     case 'teamSet':
       router.push({
@@ -160,6 +161,26 @@ export const useLink = (routerInfo, type, data) => {
           gname: data.groupname
         })}`
       )
+      break
+    case 'toBookIndex':
+      router.push({
+        path: `${spaceType === '个人' ? '' : `/${spaceName}`}/directory/index`,
+        query: {
+          ...(type === '个人'
+            ? {
+                lid: data.id,
+                lname: data.name
+              }
+            : {
+                sid: data.space,
+                sname: route.query.sname,
+                gid: data.group,
+                gname: data.group_name,
+                lid: data.id,
+                lname: data.name
+              })
+        }
+      })
       break
   }
 }

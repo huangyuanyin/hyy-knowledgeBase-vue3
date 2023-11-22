@@ -17,6 +17,7 @@ const operationItems = [
   { icon: '/src/assets/icons/drawer/fullScreen.svg', text: '全屏', type: 'label' },
   { icon: '/src/assets/icons/drawer/saveTem.svg', text: '另存为模板', type: 'label' },
   { icon: '/src/assets/icons/drawer/historyVersion.svg', text: '查看历史版本', type: 'label' },
+  { icon: '/src/assets/icons/reviewIcon.svg', text: '评审', type: 'label' },
   { icon: '/src/assets/icons/drawer/export.svg', text: '导出...', type: 'label' },
   { icon: '/src/assets/icons/drawer/copy.svg', text: '复制...', type: 'label' },
   { icon: '/src/assets/icons/drawer/move.svg', text: '移动...', type: 'label' },

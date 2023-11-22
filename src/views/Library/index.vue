@@ -144,6 +144,7 @@ onMounted(async () => {
               name: '邀请协作的'
             }
           ]"
+          @getBookStacks="getBookStacks"
         />
         <SwitchModuleItem
           v-else

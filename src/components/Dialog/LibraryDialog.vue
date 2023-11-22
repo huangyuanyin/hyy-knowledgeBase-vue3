@@ -13,11 +13,17 @@ const props = defineProps({
   stackId: {
     type: String,
     default: ''
+  },
+  from: {
+    type: String,
+    default: ''
   }
 })
 const emit = defineEmits(['closeDialog', 'getBookStacks'])
 
 const route = useRoute()
+const router = useRouter()
+const routeInfo = { route, router }
 const infoStore = useInfoStore()
 const dataStore = useDataStore()
 const refreshStroe = useRefreshStore()
@@ -49,7 +55,7 @@ watch(
       await handleNewData()
       if (infoStore.currentSidebar === 'SpaceSidebar') {
         teamList.value = dataStore.teamList
-        if (libraryForm.stacks === '' || libraryForm.stacks === 'undefined') {
+        if ((!route.query.gid && libraryForm.stacks === '') || libraryForm.stacks === 'undefined' || props.from === 'null') {
           teamList.value.map(async (it) => {
             if (it.is_default === '1') {
               libraryForm.group = String(it.id)
@@ -58,6 +64,11 @@ watch(
               libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || ''
             }
           })
+        } else if (route.query.gid && props.from === '') {
+          libraryForm.group = String(route.query.gid)
+          selectGroupName.value = String(route.query.gname)
+          await getBookStacks(route.query.gid)
+          libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || ''
         } else {
           await getBookStacks(libraryForm.group)
         }
@@ -159,10 +170,11 @@ const addLibrary = async () => {
   let res = await addLibraryApi(libraryForm)
   if (res.code === 1000) {
     toClose()
-    ElMessage.success('新建成功')
-    refreshStroe.setRefreshQuickBookList(true)
-    refreshStroe.setRefreshBookStacks(true) // 刷新知识库分组列表
-    refreshStroe.setRefreshBookList(true) // 刷新知识库列表
+    ElMessage.success('新建成功，即将跳转到知识库首页...')
+    refreshStroe.setRefreshBookList(false)
+    setTimeout(() => {
+      useLink(routeInfo, 'toBookIndex', res.data, spaceType.value)
+    }, 1000)
   } else {
     ElMessage.error(res.msg)
   }

@@ -36,6 +36,7 @@ watch(
   () => refreshStroe.isRefreshQuickBookList,
   (newVal) => {
     if (newVal) {
+      getBookStacks()
       getQuickLinks()
     }
   }
@@ -115,7 +116,7 @@ onMounted(async () => {
       <div>管理员可以添加自定义内容，向 全体团队成员展示{{ isHasPermissionCode }}</div>
       <img src="/src/assets/icons/rightArrowIcon.svg" alt="" />
     </div>
-    <SwitchModuleItem moduleType="operation">
+    <SwitchModuleItem moduleType="operation" @getBookStacks="getBookStacks">
       <template v-slot:left><span class="title">知识库</span></template>
     </SwitchModuleItem>
     <div class="book_header" v-if="bookGroup.length > 1">

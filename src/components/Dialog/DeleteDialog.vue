@@ -82,10 +82,10 @@ const toDelete = async (val) => {
     let res = await deleteGroupsApi(val.id)
     if (res.code === 1000) {
       closeDialog()
-      // 两秒后给出删除成功提示，1s后跳转到首页
+      // 0.5秒后给出删除成功提示，2.5s后跳转到首页
       setTimeout(() => {
         ElMessage.success('删除成功，即将跳转到空间首页...')
-      }, 1000)
+      }, 500)
       setTimeout(() => {
         router.push({
           path: `/${route.path.split('/')[1]}/dashboard`,
@@ -94,7 +94,7 @@ const toDelete = async (val) => {
             sname: route.query.sname
           }
         })
-      }, 2000)
+      }, 2500)
     } else {
       ElMessage.error(res.msg)
     }
