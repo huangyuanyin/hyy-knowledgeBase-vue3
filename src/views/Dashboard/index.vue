@@ -8,6 +8,9 @@ const handleModule = (id: number): void => {
     case 2:
       isShowsLibraryDialog.value = true
       break
+    case 3:
+      ElMessage.warning('功能暂未开放，敬请期待')
+      break
     default:
       break
   }

@@ -18,6 +18,15 @@ export interface ArticleData {
   open_window?: string
 }
 
+export interface HandleArticleData {
+  target_id: number
+  target_book_id: number
+  node_id: number
+  book_id: number
+  with_children: boolean
+  action: string
+}
+
 export interface ArticleRes {
   code: number
   data: article

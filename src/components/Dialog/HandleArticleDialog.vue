@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { getArticleTreeApi } from '@/api/article'
+import { copyArticleApi, getArticleTreeApi, moveArticleApi } from '@/api/article'
 import { getGroupsApi } from '@/api/groups'
 import { getLibraryApi } from '@/api/library'
 import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
@@ -25,10 +25,15 @@ const props = defineProps({
 const emit = defineEmits(['closeDialog'])
 
 const route = useRoute()
-const visible = ref(false)
+const router = useRouter()
+const refreshStroe = useRefreshStore()
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
+const spaceType = ref('') // 当前空间类型
 const spaceId = ref(null) // 当前空间id
 const teamId = ref(null) // 团队id
 const bookId = ref(null) // 知识库id
+const visible = ref(false)
+const with_children = ref(false) // 是否包含子文档
 const articleId = ref(null) // 文章id
 const dataSource = ref([]) // 目录树
 const selectTeamName = ref('')
@@ -45,6 +50,8 @@ watch(
   () => props.show,
   async (newVal: boolean) => {
     visible.value = newVal
+    props.title === '复制到...' ? (with_children.value = false) : (with_children.value = true)
+    spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
     if (visible.value) {
       await initData()
       await getTeams()
@@ -62,13 +69,14 @@ const initData = () => {
 }
 
 const changePip = (val) => {
+  if (val === '2') return ElMessage.warning('该功能暂未开放，敬请期待！')
   if (!dataSource.value.length) return
   articleId.value = null
   pinPosition.value = val
 }
 
 const toSelectArticle = (val) => {
-  if (val.disabled) return
+  if (val.disabled) return ElMessage.warning('该目录不可移动')
   pinPosition.value = '1'
   articleId.value = val.id
   levelType.value = '2'
@@ -79,10 +87,7 @@ const closeDialog = () => {
   emit('closeDialog', false)
 }
 
-const toSubmit = () => {}
-
 const toChange = (type) => {
-  console.log(`output->`, teamId.value)
   pinPosition.value = '0'
   levelType.value = '2'
   articleId.value = null
@@ -91,6 +96,56 @@ const toChange = (type) => {
     getBook()
   } else {
     getArticle()
+  }
+}
+
+const toSubmit = () => {
+  props.title === '复制到...' ? copyArticle() : moveArticle()
+}
+
+// 复制文章
+const copyArticle = async () => {
+  const params = {
+    target_id: articleId.value,
+    target_book_id: bookId.value,
+    node_id: props.data.id,
+    book_id: props.data.book,
+    with_children: with_children.value, // 不包含子文档
+    action: levelType.value === '1' ? 'moveAfter' : 'prependChild'
+  }
+  let res = await copyArticleApi(params)
+  if (res.code === 1000) {
+    ElMessage.success('复制成功')
+    closeDialog()
+    // if (props.data.book === bookId.value) {
+    //   useAddArticleAfterToLink(route, router, spaceType.value, res.data, false, 'old')
+    // }
+    refreshStroe.setRefreshArticleList(true)
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+// 移动文章
+const moveArticle = async () => {
+  const params = {
+    target_id: articleId.value,
+    target_book_id: bookId.value,
+    node_id: props.data.id,
+    book_id: props.data.book,
+    with_children: with_children.value, // 不包含子文档
+    action: levelType.value === '1' ? 'moveAfter' : 'prependChild'
+  }
+  let res = await moveArticleApi(params)
+  if (res.code === 1000) {
+    ElMessage.success('移动成功')
+    closeDialog()
+    // if (props.data.book === bookId.value) {
+    //   useAddArticleAfterToLink(route, router, spaceType.value, res.data, false, 'old')
+    // }
+    refreshStroe.setRefreshArticleList(true)
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 
@@ -109,7 +164,8 @@ const getArticle = async () => {
 // 获取团队列表
 const getTeams = async () => {
   const params = {
-    space: spaceId.value as string
+    space: spaceId.value as string,
+    permusername: user
   }
   let res = await getGroupsApi(params)
   if (res.code === 1000) {
@@ -120,7 +176,8 @@ const getTeams = async () => {
 // 获取知识库列表
 const getBook = async () => {
   const params = {
-    group: String(teamId.value)
+    group: String(teamId.value),
+    permusername: user
   }
   let res = await getLibraryApi(params)
   if (res.code === 1000) {
@@ -242,8 +299,11 @@ const getBook = async () => {
     </div>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="closeDialog">取消</el-button>
-        <el-button type="success" @click="toSubmit">确认</el-button>
+        <el-checkbox v-model="with_children" label="包含子文档" size="large" disabled />
+        <div>
+          <el-button @click="closeDialog">取消</el-button>
+          <el-button type="success" @click="toSubmit">确认</el-button>
+        </div>
       </span>
     </template>
   </el-dialog>
@@ -450,6 +510,11 @@ const getBook = async () => {
         }
       }
     }
+  }
+  .dialog-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 }
 .selectList {

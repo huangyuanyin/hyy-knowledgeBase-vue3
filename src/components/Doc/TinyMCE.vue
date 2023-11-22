@@ -5,6 +5,7 @@
 </template>
 
 <script lang="ts" setup>
+import tinymce from 'tinymce/tinymce'
 import Editor from '@tinymce/tinymce-vue'
 
 const emit = defineEmits(['update:modelValue'])
@@ -40,12 +41,12 @@ const props = defineProps({
   plugins: {
     type: [String, Array],
     default:
-      'help autosave lists advlist code charmap link fullscreen emoticons wordcount image codesample codeformat  directionality autosave  visualblocks autolink inserthr anchor  tableofcontents  importcss insertdatetime media pagebreak  preview searchreplace table'
+      '  customHyy help autosave lists advlist code charmap link fullscreen emoticons wordcount image codesample codeformat  directionality autosave  visualblocks autolink inserthr anchor  tableofcontents  importcss insertdatetime media pagebreak  preview searchreplace table'
   },
   toolbar: {
     type: [String, Array],
     default: [
-      ' undo redo removeformat | blocks fontsize bold italic strikethrough underline superscript subscript codeformat   | forecolor backcolor |align bullist numlist  lineheight | link blockquote hr searchreplace anchor  charmap help tableofcontents tableofcontentsupdate  insertdatetime |  charmap emoticons wordcount |  code  codesample visualblocks image fullscreen   preview autolink  autosave'
+      '  custom_button  undo redo removeformat | blocks fontsize bold italic strikethrough underline superscript subscript codeformat   | forecolor backcolor |align bullist numlist  lineheight | link blockquote hr searchreplace anchor  charmap help tableofcontents tableofcontentsupdate  insertdatetime |  charmap emoticons wordcount |  code  codesample visualblocks image fullscreen   preview autolink  autosave'
     ]
   }
 })
@@ -58,8 +59,9 @@ const initOptions = ref({
   // skin: false,
   // menubar: false,
   // content_css: false,
-  skin: 'jam', //果酱图标
-  icons: 'jam', //果酱图标
+  skin_url: '/tinymce/skins/ui/oxide',
+  // skin: 'jam', //果酱图标
+  // icons: 'jam', //果酱图标
   content_style: 'body { margin: 3rem 30% 3rem 15% }', // 设置内容样式
   with: '100px',
   height: props.height,
@@ -98,6 +100,10 @@ watch(
     emit('update:modelValue', newVal)
   }
 )
+
+onBeforeMount(() => {
+  tinymce.baseURL = '/tinymce'
+})
 </script>
 
 <style lang="scss" scoped>
@@ -106,25 +112,52 @@ watch(
     border: none;
     border-radius: 0px;
     .tox-editor-header {
+      padding: 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
       box-shadow: none;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
       .tox-toolbar {
         background-size: 0;
+        .tox-toolbar__group {
+          position: relative;
+          height: 42px;
+          &::after {
+            content: '';
+            position: absolute;
+            top: 25%;
+            right: 0;
+            width: 1px;
+            height: 50%;
+            background-color: #f4f5f5; /* 竖线的颜色 */
+          }
+        }
         .tox-tbtn {
           cursor: pointer;
+          border-radius: 6px;
+          span {
+            cursor: pointer;
+          }
+          &:hover {
+            background-color: #f4f5f5;
+          }
+        }
+        .tox-split-button {
+          cursor: pointer;
+          border-radius: 6px;
+          &:hover {
+            box-shadow: none;
+            background-color: #f4f5f5;
+            .tox-tbtn svg {
+              fill: #222f3e;
+            }
+          }
         }
       }
     }
     .tox-sidebar-wrap {
-      // padding: 20px 40px 0px 40px;
       box-sizing: border-box;
-      .tox-edit-area {
-        // margin: 0 auto;
-        // // padding-left: 170px;
-        // box-sizing: border-box;
-      }
-      iframe {
-        // max-width: 800px;
-      }
     }
   }
 }

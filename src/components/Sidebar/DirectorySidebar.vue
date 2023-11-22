@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { sidebarSearchMenuItemsData, articleOperationData, linkOperationData, titleOperationData, fileOperationData, directorySidebarOperationData } from '@/data/data'
-import { addArticleApi, deleteArticleApi, editArticleApi, getArticleTreeApi } from '@/api/article'
+import { addArticleApi, deleteArticleApi, editArticleApi, exportDocApi, getArticleTreeApi } from '@/api/article'
+import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
 
 const route = useRoute()
 const routeInfo = {
@@ -38,6 +39,9 @@ const articleType = {
   幻灯片: { type: 'ppt', title: '无标题幻灯片' },
   新建分组: { type: 'title', title: '新建分组' }
 }
+const defaultProps = {
+  class: 'forumList'
+} as unknown as TreeOptionProps
 
 watchEffect(() => {
   if (isHasPermissionCode.value === 1003) {
@@ -246,14 +250,25 @@ const toExport = (val) => {
     type: 'success'
   })
     .then(() => {
-      handleDownload(val)
+      val.type === 'doc' ? exportDoc(val.id) : handleDownload(val)
     })
     .catch(() => {
       ElMessage.info('取消操作')
     })
 }
 
-const handleDownload = async (val) => {}
+const handleDownload = async (val) => {
+  console.log(`output->val`, val)
+}
+
+const exportDoc = async (id) => {
+  let res = await exportDocApi(id)
+  if (res.code === 1000) {
+    window.open(res.data as unknown as string)
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
 
 const toTodo = (val) => {
   console.log(`output->val`, val)
@@ -526,7 +541,7 @@ onMounted(async () => {})
         :data="dataSource"
         node-key="id"
         :current-node-key="currentNodeKey"
-        :props="{ class: 'forumList' }"
+        :props="defaultProps"
         default-expand-all
         highlight-current
         :expand-on-click-node="false"

@@ -1,5 +1,6 @@
 export interface groupsParams {
   space: string
+  permusername?: string
 }
 
 export interface groupsData {

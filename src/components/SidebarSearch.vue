@@ -56,6 +56,10 @@ const addArticle = async (article, parent) => {
     ElMessage.error(res.msg)
   }
 }
+
+const toDo = (val) => {
+  ElMessage.warning('暂未开放，敬请期待！')
+}
 </script>
 
 <template>
@@ -72,6 +76,7 @@ const addArticle = async (article, parent) => {
       @toAddPPT="toAddArticle"
       @toAddGroup="toAddArticle"
       @toAddLink="isShowLinkDialog = true"
+      @toDo="toDo"
     />
   </div>
   <LinkDialog :isShow="isShowLinkDialog" :parent="null" @closeDialog="isShowLinkDialog = false" />

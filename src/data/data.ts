@@ -11,16 +11,16 @@ export const menuItemsData = [
 ]
 
 export const spaceMenuItemsData = [
-  { type: 'item', icon: '/src/assets/icons/documentIcon.svg', label: '文档' },
-  { type: 'item', icon: '/src/assets/icons/formIcon.svg', label: '表格' },
-  { type: 'item', icon: '/src/assets/icons/mindmapIcon.svg', label: '思维导图' },
-  { type: 'item', icon: '/src/assets/icons/pptIcon.svg', label: '幻灯片' },
+  { type: 'item', icon: '/src/assets/icons/documentIcon.svg', label: '文档', nick: 'toDo' },
+  { type: 'item', icon: '/src/assets/icons/formIcon.svg', label: '表格', nick: 'toDo' },
+  { type: 'item', icon: '/src/assets/icons/mindmapIcon.svg', label: '思维导图', nick: 'toDo' },
+  { type: 'item', icon: '/src/assets/icons/pptIcon.svg', label: '幻灯片', nick: 'toDo' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/bookIcon.svg', label: '知识库', nick: 'toAddBook' },
   { type: 'item', icon: '/src/assets/icons/teamIcon.svg', label: '团队', nick: 'toAddTeam' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/templateIcon.svg', label: '从模板新建' },
-  { type: 'item', icon: '/src/assets/icons/importIcon.svg', label: '导入...' }
+  { type: 'item', icon: '/src/assets/icons/templateIcon.svg', label: '从模板新建', nick: 'toDo' },
+  { type: 'item', icon: '/src/assets/icons/importIcon.svg', label: '导入...', nick: 'toDo' }
 ]
 
 export const sidebarSearchMenuItemsData = [
@@ -154,7 +154,7 @@ export const fileOperationData = [
   // { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/article/copyIcon.svg', label: '复制', nick: 'toCopyArticle' },
   { type: 'item', icon: '/src/assets/icons/article/moveIcon.svg', label: '移动', nick: 'toMoveArticle' },
-  { type: 'item', icon: '/src/assets/icons/article/exportIcon.svg', label: '下载', nick: 'toExport' },
+  { type: 'item', icon: '/src/assets/icons/article/exportIcon.svg', label: '下载', nick: 'toDownload' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteArticle' }
 ]
@@ -189,24 +189,24 @@ export const documentsData = [
     id: 1,
     icon: '/src/assets/icons/documentIcon.svg',
     title: '无标题文档',
-    username: '就叫小黄好了',
-    library: '让4月3让3让3',
+    username: '黄原寅',
+    library: '假数据',
     time: '08-18 16:43'
   },
   {
     id: 2,
     icon: '/src/assets/icons/documentIcon.svg',
     title: '无标题文档',
-    username: '就叫小黄好了',
-    library: '让4月3让3让3',
+    username: '黄原寅',
+    library: '假数据',
     time: '08-18 16:43'
   },
   {
     id: 3,
     icon: '/src/assets/icons/documentIcon.svg',
     title: '无标题文档',
-    username: '就叫小黄好了',
-    library: '让4月3让3让3',
+    username: '黄原寅',
+    library: '假数据',
     time: '08-18 16:43'
   },
 
@@ -214,72 +214,72 @@ export const documentsData = [
     id: 4,
     icon: '/src/assets/icons/documentIcon.svg',
     title: '无标题文档',
-    username: '就叫小黄好了',
-    library: '让4月3让3让3',
+    username: '黄原寅',
+    library: '假数据',
     time: '08-18 16:43'
   },
   {
     id: 5,
     icon: '/src/assets/icons/documentIcon.svg',
     title: '无标题文档',
-    username: '就叫小黄好了',
-    library: '让4月3让3让3',
+    username: '黄原寅',
+    library: '假数据',
     time: '08-18 16:43'
   },
   {
     id: 6,
     icon: '/src/assets/icons/documentIcon.svg',
     title: '无标题文档',
-    username: '就叫小黄好了',
-    library: '让4月3让3让3',
+    username: '黄原寅',
+    library: '假数据',
     time: '08-18 16:43'
   },
   {
     id: 7,
     icon: '/src/assets/icons/documentIcon.svg',
     title: '无标题文档',
-    username: '就叫小黄好了',
-    library: '让4月3让3让3',
+    username: '黄原寅',
+    library: '假数据',
     time: '08-18 16:43'
   },
   {
     id: 8,
     icon: '/src/assets/icons/documentIcon.svg',
     title: '无标题文档',
-    username: '就叫小黄好了',
-    library: '让4月3让3让3',
+    username: '黄原寅',
+    library: '假数据',
     time: '08-18 16:43'
   },
   {
     id: 9,
     icon: '/src/assets/icons/documentIcon.svg',
     title: '无标题文档',
-    username: '就叫小黄好了',
-    library: '让4月3让3让3',
+    username: '黄原寅',
+    library: '假数据',
     time: '08-18 16:43'
   },
   {
     id: 10,
     icon: '/src/assets/icons/documentIcon.svg',
     title: '无标题文档',
-    username: '就叫小黄好了',
-    library: '让4月3让3让3',
+    username: '黄原寅',
+    library: '假数据',
     time: '08-18 16:43'
   },
   {
     id: 11,
     icon: '/src/assets/icons/documentIcon.svg',
     title: '无标题文档',
-    username: '就叫小黄好了',
-    library: '让4月3让3让3',
+    username: '黄原寅',
+    library: '假数据',
     time: '08-18 16:43'
   },
   {
     id: 12,
     icon: '/src/assets/icons/documentIcon.svg',
     title: '无标题文档',
-    username: '就叫小黄好了',
-    library: '让4月3让3让3',
+    username: '黄原寅',
+    library: '假数据',
     time: '08-18 16:43'
   }
 ]
