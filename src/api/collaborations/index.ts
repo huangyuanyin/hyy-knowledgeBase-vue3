@@ -11,3 +11,15 @@ export function addCollaborationsApi(data: collaborationsData) {
 export function deleteCollaborationsApi(id: number) {
   return http.delete<collaborationsRes>(`book/collaborations/${id}`, {}, 'base')
 }
+
+export function getArticleCollaborationsApi(params: collaborationsParams) {
+  return http.get<collaborationsRes>('article/collaborations/', { params }, 'base')
+}
+
+export function addArticleCollaborationsApi(data: collaborationsData) {
+  return http.post<collaborationsRes>('article/collaborations/', data, 'base')
+}
+
+export function deleteArticleCollaborationsApi(id: number) {
+  return http.delete<collaborationsRes>(`article/collaborations/${id}/`, {}, 'base')
+}

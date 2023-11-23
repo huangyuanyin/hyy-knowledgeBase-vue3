@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { cooperateLink } from '@/data/data'
 import { MenuItem, OperationPopoverProps } from '@/type/operationPopoverType'
-import { selectUserInfoApi } from '@/api/user'
+import { getCollaborationsApi, addArticleCollaborationsApi, deleteArticleCollaborationsApi } from '@/api/collaborations'
 
 const props = withDefaults(defineProps<OperationPopoverProps>(), {
   placement: 'bottom-start',
@@ -9,9 +9,11 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
   trigger: 'click',
   hideAfter: 100,
   showArrow: false,
-  menuItems: Array as () => MenuItem[]
+  userList: [],
+  selectUserList: []
 })
 
+const route = useRoute()
 const cooperatePopverRef = ref(null)
 const searchValue = ref('')
 const link = ref(cooperateLink)
@@ -19,17 +21,61 @@ const userList = ref([])
 const selectedUserList = ref([])
 const isShowUserOperationPopver = ref(false)
 
+watchEffect(() => {
+  if (props.userList.length) {
+    selectedUserList.value = props.userList
+  } else {
+    selectedUserList.value = []
+  }
+})
+
 const querySearch = async (queryString: string, cb: (result: any[]) => void): Promise<any> => {
   userList.value = []
   if (queryString) {
-    const { selectUserList } = await useSelectUserApi(selectUserInfoApi, { name: queryString })
-    userList.value = selectUserList.value
+    console.log(`output->`, props.selectUserList, queryString)
+    userList.value = props.selectUserList.filter((item) => {
+      return item.permusername.toLowerCase().includes(queryString) || item.name.toLowerCase().includes(queryString) || item.username.toLowerCase().includes(queryString)
+    })
+    userList.value = userList.value.filter((item) => {
+      return !selectedUserList.value.some((selectedItem) => {
+        return selectedItem.permusername === item.permusername || selectedItem.username === item.permusername
+      })
+    })
   }
   cb(userList.value)
 }
 
 const handleSelect = (item) => {
   selectedUserList.value.push(item)
+  addArticleCollaborations(item.permusername)
+}
+
+const toDelete = (val) => {
+  deleteArticleCollaborations(val)
+}
+
+const deleteArticleCollaborations = async (val) => {
+  const res = await deleteArticleCollaborationsApi(val.id)
+  if (res.code === 1000) {
+    ElMessage.success('删除成功')
+    selectedUserList.value = selectedUserList.value.filter((item) => {
+      return item.permusername !== val.permusername
+    })
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const addArticleCollaborations = async (username) => {
+  const params = {
+    role: '1',
+    username,
+    content: route.query.aid as string
+  }
+  const res = await addArticleCollaborationsApi(params)
+  if (res.code === 1000) {
+    ElMessage.success('添加成功')
+  }
 }
 
 const onShowUserOperationPopver = (val: boolean) => {
@@ -48,7 +94,7 @@ const onShowUserOperationPopver = (val: boolean) => {
     :show-arrow="props.showArrow"
   >
     <template #reference>
-      <div class="cooperate-icon">
+      <div class="cooperate-icon" style="display: flex; align-items: center; justify-content: center">
         <img src="@/assets/icons/cooperateIcon.svg" alt="" />
       </div>
     </template>
@@ -71,7 +117,8 @@ const onShowUserOperationPopver = (val: boolean) => {
           >
             <template #default="{ item }">
               <img src="@/assets/img/img.jpg" alt="" />
-              <div class="value">{{ item.nickname }}</div>
+              <div class="value">{{ item.name }}</div>
+              <div class="value">({{ item.permusername }})</div>
             </template>
           </el-autocomplete>
         </div>
@@ -81,8 +128,8 @@ const onShowUserOperationPopver = (val: boolean) => {
               <div class="item-left">
                 <img src="@/assets/img/img.jpg" alt="" />
                 <span class="nickname">
-                  {{ item.nickname }}
-                  <span class="name">({{ item.name }})</span>
+                  {{ item.name }}
+                  <span class="name">({{ item.permusername || item.username }})</span>
                 </span>
               </div>
               <div class="item-right">
@@ -120,7 +167,7 @@ const onShowUserOperationPopver = (val: boolean) => {
                         </div>
                       </el-dropdown-item>
                       <el-dropdown-item>
-                        <div class="item">
+                        <div class="item" @click="toDelete(item)">
                           <div class="item-left delete">
                             <span>移除</span>
                             <span class="des">移除该协作者</span>
@@ -135,13 +182,13 @@ const onShowUserOperationPopver = (val: boolean) => {
           </div>
         </div>
         <Empty text="暂无文档协作者" height="244px" v-else />
-        <div class="share">
+        <!-- <div class="share">
           <p>拿到链接的人可获得编辑权限</p>
           <div class="share-button">
             <el-input placeholder="输入用户名邀请协作" v-model="link" disabled />
             <el-button type="primary">复制链接</el-button>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </el-popover>

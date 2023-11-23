@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import { editArticleApi, getArticleApi } from '@/api/article'
 import NoPermission from '@/views/NoPermission/index.vue'
+import { getCollaborationsApi, getArticleCollaborationsApi } from '@/api/collaborations'
+import { getTeamMemberApi } from '@/api/member'
+import { getLibraryDetailApi } from '@/api/library'
 
 const props = defineProps({
   content: {
@@ -24,6 +27,9 @@ const commentDrawer = ref(false) // 评论抽屉
 const moreFeaturesDrawerInfo = ref({}) // 更多功能抽屉tab
 const spaceType = ref('') // 当前空间类型
 const spaceId = ref('') // 当前空间id
+const publicType = ref('') // 知识库的公开性
+const selectUserList = ref([]) // 可协作人员列表
+const userList = ref([]) // 已在的协作人员列表
 const itemList = [
   {
     label: '收藏',
@@ -103,6 +109,56 @@ const toHandle = (item: any) => {
   }
 }
 
+const toCooperate = async () => {
+  nextTick(() => {
+    getArticleCollaborations()
+  })
+  await getLibraryDetail()
+  if (publicType.value === '0') {
+    await getCollaborations()
+  } else if (publicType.value === '1') {
+    await getTeamMember()
+  }
+}
+
+const getTeamMember = async () => {
+  const params = {
+    group: route.query.gid
+  }
+  const res = await getTeamMemberApi(params)
+  if (res.code === 1000) {
+    selectUserList.value = res.data
+    selectUserList.value.forEach((item) => {
+      item.permusername = item.username
+    })
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+const getCollaborations = async () => {
+  const params = {
+    book: route.query.lid
+  }
+  const res = await getCollaborationsApi(params)
+  if (res.code === 1000) {
+    selectUserList.value = res.data
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const getArticleCollaborations = async () => {
+  const params = {
+    content: route.query.aid
+  }
+  const res = await getArticleCollaborationsApi(params)
+  if (res.code === 1000) {
+    userList.value = res.data
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
 const editArticle = async () => {
   const params = {
     title: name.value,
@@ -114,6 +170,15 @@ const editArticle = async () => {
   if (res.code === 1000) {
     ElMessage.success('编辑成功')
     useAddArticleAfterToLink(route, router, spaceType.value, res.data, false, 'old', false)
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const getLibraryDetail = async () => {
+  let res = await getLibraryDetailApi(route.query.lid as string)
+  if (res.code === 1000) {
+    publicType.value = res.data.public
   } else {
     ElMessage.error(res.msg)
   }
@@ -159,9 +224,16 @@ const toCloseDrawer = () => {
         <div class="header_right">
           <div class="item" v-for="(item, index) in itemList" :key="'itemList' + index">
             <el-tooltip effect="dark" :content="item.label" placement="bottom" :show-arrow="false">
-              <span v-if="item.type === 'label'" @click="toHandle(item)">
+              <span v-if="item.label === '收藏'" @click="toHandle(item)">
                 <img :src="item.icon" alt="" />
               </span>
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="item.label" placement="bottom" :show-arrow="false">
+              <span v-if="item.label === '协作'" @click="toCooperate">
+                <CooperatePopver :selectUserList="selectUserList" :userList="userList" />
+              </span>
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="item.label" placement="bottom" :show-arrow="false">
               <span v-if="item.type === 'img' && isEdit" class="img">
                 <img :src="item.icon" alt="" />
               </span>

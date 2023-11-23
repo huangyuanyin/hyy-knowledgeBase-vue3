@@ -18,4 +18,6 @@ export interface OperationPopoverProps {
   menuItems?: Array<MenuItem>
   currentSider?: string
   parent?: number
+  userList?: Array<any>
+  selectUserList?: Array<any>
 }

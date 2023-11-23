@@ -311,6 +311,7 @@ const addArticle = async (article, parent) => {
     space: spaceId.value,
     type: article.type,
     body: '',
+    public: '1', // 知识库所有成员都可以访问
     parent
   }
   article.type === 'title' && delete params.body

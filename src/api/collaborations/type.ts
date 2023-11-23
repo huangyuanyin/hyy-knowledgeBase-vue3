@@ -1,5 +1,6 @@
 export interface collaborationsParams {
   book?: string
+  id?: number
 }
 
 export interface collaborationsData {

@@ -124,9 +124,6 @@ onMounted(async () => {
 <template>
   <div class="Library_wrap">
     <div class="header">知识库</div>
-    <!-- <div style="display: flex; justify-content: flex-end">
-      <CooperatePopver :menuItems="commonLibraryData" />
-    </div> -->
     <CommonList :list="commonList" />
     <div class="library_box">
       <div class="libraryList">

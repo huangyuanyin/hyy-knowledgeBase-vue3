@@ -42,7 +42,8 @@ const addArticle = async (article, parent) => {
     body: '',
     parent,
     book: bookId.value,
-    space: spaceId.value
+    space: spaceId.value,
+    public: '1'
   }
   let res = await addArticleApi(params)
   if (res.code === 1000) {

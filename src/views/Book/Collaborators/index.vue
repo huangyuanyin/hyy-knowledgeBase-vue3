@@ -178,8 +178,8 @@ onMounted(() => {
         <span>公开性</span>
         <el-radio-group v-model="publicType" class="publicityRadio" @change="toChangePublic">
           <el-radio label="0" size="large">仅协作者可访问</el-radio>
-          <el-radio v-if="spaceType.value === '组织空间'" label="1" size="large">团队所有成员可访问</el-radio>
-          <el-radio v-if="spaceType.value === '组织空间'" label="2" size="large">空间所有成员可访问</el-radio>
+          <el-radio v-if="spaceType === '组织空间'" label="1" size="large">团队所有成员可访问</el-radio>
+          <el-radio v-if="spaceType === '组织空间'" label="2" size="large">空间所有成员可访问</el-radio>
         </el-radio-group>
       </div>
       <div class="collaborator">

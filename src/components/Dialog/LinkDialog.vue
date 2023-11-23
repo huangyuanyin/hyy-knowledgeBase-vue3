@@ -28,6 +28,7 @@ const linkForm = reactive({
   parent: null,
   space: '',
   book: '',
+  public: '1',
   open_windows: true
 })
 const rules = reactive<FormRules>({
