@@ -9,7 +9,7 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
   switch (type) {
     case 'teamSet':
       router.push({
-        path: `/${infoStore.currentSpaceName}/teamSetting/basic`,
+        path: `/${spaceName}/teamSetting/basic`,
         query: {
           sid: data.space,
           sname: route.query.sname,
@@ -20,7 +20,7 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
       break
     case 'comTeamSet':
       router.push({
-        path: `/${infoStore.currentSpaceName}/teamSetting/basic`,
+        path: `/${spaceName}/teamSetting/basic`,
         query: {
           sid: data.space,
           sname: route.query.sname,
@@ -37,7 +37,7 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
       break
     case 'bookSet':
       router.push({
-        path: route.path.split('/')[1] === 'library' ? `/bookSetting/basic` : `/${infoStore.currentSpaceName}/bookSetting/basic`,
+        path: route.path.split('/')[1] === 'library' ? `/bookSetting/basic` : `/${spaceName}/bookSetting/basic`,
         query: {
           sid: route.query.sid,
           sname: route.query.sname,
@@ -50,7 +50,7 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
       break
     case 'comBookSet': // 从常用列表
       router.push({
-        path: route.path.split('/').length === 2 ? `/bookSetting/basic` : `/${infoStore.currentSpaceName}/bookSetting/basic`,
+        path: route.path.split('/').length === 2 ? `/bookSetting/basic` : `/${spaceName}/bookSetting/basic`,
         query: {
           sid: route.query.sid,
           sname: route.query.sname,
@@ -63,7 +63,7 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
       break
     case 'bookPermission':
       router.push({
-        path: route.path.split('/').length === 2 ? `/bookSetting/collaborators` : `/${infoStore.currentSpaceName}/bookSetting/collaborators`,
+        path: route.path.split('/').length === 2 ? `/bookSetting/collaborators` : `/${spaceName}/bookSetting/collaborators`,
         query: {
           sid: route.query.sid,
           sname: route.query.sname,
@@ -76,7 +76,7 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
       break
     case 'comBookPermission':
       router.push({
-        path: route.path.split('/').length === 2 ? `/bookSetting/collaborators` : `/${infoStore.currentSpaceName}/bookSetting/collaborators`,
+        path: route.path.split('/').length === 2 ? `/bookSetting/collaborators` : `/${spaceName}/bookSetting/collaborators`,
         query: {
           sid: route.query.sid,
           sname: route.query.sname,
@@ -90,7 +90,7 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
     // 从知识库首页跳转到知识库设置
     case 'fromBookToSet':
       router.push({
-        path: route.path.split('/')[1] === 'directory' ? `/bookSetting/basic` : `/${infoStore.currentSpaceName}/bookSetting/basic`,
+        path: route.path.split('/')[1] === 'directory' ? `/bookSetting/basic` : `/${spaceName}/bookSetting/basic`,
         query: {
           sid: route.query.sid,
           sname: route.query.sname,
@@ -104,7 +104,7 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
     // 从知识库首页跳转到知识库设置 - 目录管理
     case 'fromBookToToc':
       router.push({
-        path: route.path.split('/')[1] === 'directory' ? `/bookSetting/toc` : `/${infoStore.currentSpaceName}/bookSetting/toc`,
+        path: route.path.split('/')[1] === 'directory' ? `/bookSetting/toc` : `/${spaceName}/bookSetting/toc`,
         query: {
           sid: route.query.sid,
           sname: route.query.sname,
@@ -118,7 +118,7 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
     // 从知识库首页跳转到知识库设置 - 权限管理
     case 'fromBookToCollaborators':
       router.push({
-        path: route.path.split('/')[1] === 'directory' ? `/bookSetting/collaborators` : `/${infoStore.currentSpaceName}/bookSetting/collaborators`,
+        path: route.path.split('/')[1] === 'directory' ? `/bookSetting/collaborators` : `/${spaceName}/bookSetting/collaborators`,
         query: {
           sid: route.query.sid,
           sname: route.query.sname,

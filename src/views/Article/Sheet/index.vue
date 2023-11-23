@@ -21,4 +21,8 @@ watchEffect(() => {
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.Sheet_wrap {
+  height: 100vh;
+}
+</style>

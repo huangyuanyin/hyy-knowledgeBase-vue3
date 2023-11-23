@@ -115,9 +115,7 @@ const getTeamMember = async () => {
   const res = await getTeamMemberApi(params)
   if (res.code === 1000) {
     memberList.value = res.data.filter((item) => {
-      return !props.selectMember.some((item2: any) => {
-        return item2.username === item.permusername
-      })
+      return !props.selectMember.some((it) => item.username === it.permusername)
     })
   } else {
     ElMessage.error(res.msg)

@@ -7,13 +7,16 @@ const isUpdate = ref(false)
 const aid = ref(route.query.aid as string)
 const modelValue = ref('')
 const isPreview = ref(true)
+const isHasPermissionCode = ref(true)
 
 watch(
   () => route.query.aid,
   (newVal) => {
     isUpdate.value = false
-    aid.value = newVal as string
-    getArticle()
+    if (route.query.aid && route.path.includes('doc')) {
+      aid.value = newVal as string
+      getArticle()
+    }
   }
 )
 
@@ -27,6 +30,7 @@ watchEffect(() => {
 
 const getArticle = async () => {
   const res = await getArticleApi(aid.value)
+  isHasPermissionCode.value = res.code === 1003 ? false : true
   if (res.code === 1000) {
     modelValue.value = res.data.body
     isUpdate.value = true
@@ -46,10 +50,14 @@ onBeforeMount(() => {
 
 <template>
   <div class="Doc_wrap">
-    <Container :content="modelValue">
+    <Container :content="modelValue" :isHasPermission="isHasPermissionCode">
       <TinyMCE v-if="isUpdate" v-model="modelValue" :readonly="isPreview" />
     </Container>
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.Doc_wrap {
+  height: 100vh;
+}
+</style>

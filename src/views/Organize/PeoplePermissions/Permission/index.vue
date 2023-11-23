@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-const toChangeStatus = (item) => {
-  console.log(`output->item`, item)
-  ElMessage.warning('暂不支持自定义')
-}
+import { getSpaceSettingApi, updateSpaceSettingApi } from '@/api/spaceSetting'
 
+const route = useRoute()
+const spaceId = ref('')
+const spaceSettingId = ref('')
 const memberOptions = ref([
   {
     label: '管理员',
@@ -30,6 +30,45 @@ const memberOptions = ref([
     children: []
   }
 ])
+
+watchEffect(() => {
+  spaceId.value = route.query.sid as string
+})
+
+const toChangeStatus = (item) => {
+  const params = {
+    space: spaceId.value
+  }
+  if (item.label === '允许成员创建团队') {
+    params['create_group'] = item.value ? '1' : '0'
+    updateSpaceSetting(params)
+  }
+}
+
+const getSpaceSetting = async () => {
+  const params = {
+    space: spaceId.value
+  }
+  const res = await getSpaceSettingApi(params)
+  if (res.code === 1000) {
+    const { data } = res
+    spaceSettingId.value = data[0].id
+    memberOptions.value[1].children[1].value = data[0].create_group === '1' ? true : false
+  }
+}
+
+const updateSpaceSetting = async (params) => {
+  const res = await updateSpaceSettingApi(spaceSettingId.value, params)
+  if (res.code === 1000) {
+    ElMessage.success('更新成功')
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+onMounted(() => {
+  getSpaceSetting()
+})
 </script>
 
 <template>
@@ -48,7 +87,13 @@ const memberOptions = ref([
               <p>{{ it.label }}</p>
             </div>
             <div class="right" v-if="it.value !== null">
-              <el-switch disabled v-model="it.value" size="large" style="--el-switch-on-color: #13ce66; --el-switch-off-color: #bec0bf" @change="toChangeStatus(it)" />
+              <el-switch
+                :disabled="it.label === '允许成员创建团队' ? false : true"
+                v-model="it.value"
+                size="large"
+                style="--el-switch-on-color: #13ce66; --el-switch-off-color: #bec0bf"
+                @change="toChangeStatus(it)"
+              />
             </div>
           </div>
         </div>

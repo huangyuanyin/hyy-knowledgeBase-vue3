@@ -1,10 +1,16 @@
 <script lang="ts" setup>
 import { editArticleApi, getArticleApi } from '@/api/article'
+import NoPermission from '@/views/NoPermission/index.vue'
 
 const props = defineProps({
   content: {
     type: String,
     required: false
+  },
+  isHasPermission: {
+    type: Boolean,
+    default: true,
+    required: true
   }
 })
 const emit = defineEmits(['toPublish'])
@@ -141,7 +147,7 @@ const toCloseDrawer = () => {
 </script>
 
 <template>
-  <div class="Container_wrap">
+  <div class="Container_wrap" v-if="props.isHasPermission">
     <el-container>
       <el-header class="header">
         <div class="header_left">
@@ -178,6 +184,7 @@ const toCloseDrawer = () => {
       </el-main>
     </el-container>
   </div>
+  <NoPermission v-else type="article" />
 </template>
 
 <style lang="scss" scoped>

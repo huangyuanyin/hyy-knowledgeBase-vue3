@@ -9,7 +9,7 @@ interface MemberItem {
   name: string
   role: string
   group: number
-  status: string
+  dept: string
   update_datetime: string
 }
 
@@ -109,7 +109,7 @@ const getGroupsDetail = async () => {
       name: res.data.creator_name,
       role: '0',
       group: res.data.id,
-      status: res.data.status,
+      dept: res.data.dept,
       update_datetime: res.data.create_datetime
     })
   } else {
@@ -167,7 +167,7 @@ onMounted(() => {
             </template>
           </vxe-column>
           <vxe-column field="role" title="角色" :formatter="formatterRole" width="200" sortable></vxe-column>
-          <vxe-column field="status" width="200" title="账号状态" :formatter="formatterStatus" sortable></vxe-column>
+          <vxe-column field="dept" width="200" title="所属部门" :formatter="formatterStatus" sortable></vxe-column>
           <vxe-column field="update_datetime" width="250" title="加入时间" sortable></vxe-column>
           <vxe-column title="操作">
             <template #default="{ row }">

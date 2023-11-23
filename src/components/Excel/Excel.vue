@@ -51,7 +51,7 @@ watch(
   () => route.query.aid,
   async () => {
     const path = route.path.split('/')
-    if (route.query.aid && path.includes('sheet')) {
+    if (route.query.aid && route.path.includes('sheet')) {
       await getArticleTree()
       handleCreateSheet()
     }

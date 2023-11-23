@@ -7,3 +7,7 @@ export function getCollaborationsApi(params: collaborationsParams) {
 export function addCollaborationsApi(data: collaborationsData) {
   return http.post<collaborationsRes>('book/collaborations/', data, 'base')
 }
+
+export function deleteCollaborationsApi(id: number) {
+  return http.delete<collaborationsRes>(`book/collaborations/${id}`, {}, 'base')
+}

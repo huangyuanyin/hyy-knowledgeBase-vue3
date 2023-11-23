@@ -1,3 +1,10 @@
+<script lang="ts" setup>
+import Container from '../Components/Container.vue'
+
+const modelValue = ref('')
+const iframeSrc = ref('http://192.168.94.221:8081')
+</script>
+
 <template>
   <div class="PPT_wrap">
     <Container :content="modelValue">
@@ -6,13 +13,14 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-const modelValue = ref('')
-const iframeSrc = ref('http://192.168.94.221:8081')
-</script>
-
 <style lang="scss" scoped>
 .PPT_wrap {
   height: 100vh;
+  .Container_wrap {
+    height: 100%;
+  }
+  .iframe {
+    height: calc(100vh - 52px);
+  }
 }
 </style>

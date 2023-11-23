@@ -1,6 +1,10 @@
 <script lang="ts" setup>
-const publicType = ref('1')
+import { getGroupPermissionsApi, updateGroupPermissionsApi } from '@/api/grouppermissions'
 
+const route = useRoute()
+const publicType = ref('1')
+const group = ref('')
+const groupSettingId = ref(null)
 const teamOptions = ref([
   {
     label: '管理员',
@@ -34,7 +38,6 @@ const teamOptions = ref([
     ]
   }
 ])
-
 const libraryOptions = ref([
   {
     label: '可管理',
@@ -85,9 +88,42 @@ const libraryOptions = ref([
   }
 ])
 
-const toChangeStatus = (item) => {
-  ElMessage.warning('暂不支持自定义')
+watchEffect(() => {
+  group.value = route.query.gid as string
+})
+
+const toChangeStatus = (type, item) => {
+  if (type === 'book') return ElMessage.warning('暂不支持自定义')
+  const params = {
+    group: group.value
+  }
+  item.label === '允许成员新建知识库' ? (params['create_book'] = item.value ? '1' : '0') : (params['create_mumber'] = item.value ? '1' : '0')
+  updateGroupPermissions(params)
 }
+
+const getGroupPermissions = async () => {
+  const params = {
+    group: group.value
+  }
+  const res = await getGroupPermissionsApi(params)
+  if (res.code === 1000) {
+    const { data } = res
+    groupSettingId.value = data[0].id
+    teamOptions.value[1].children[0].value = data[0].create_book === '1' ? true : false
+    teamOptions.value[1].children[1].value = data[0].create_mumber === '1' ? true : false
+  }
+}
+
+const updateGroupPermissions = async (params) => {
+  const res = await updateGroupPermissionsApi(groupSettingId.value, params)
+  if (res.code === 1000) {
+    ElMessage.success('更新成功')
+  }
+}
+
+onMounted(() => {
+  getGroupPermissions()
+})
 </script>
 
 <template>
@@ -111,7 +147,7 @@ const toChangeStatus = (item) => {
               <p>{{ it.label }}</p>
             </div>
             <div class="right" v-if="it.value !== null">
-              <el-switch disabled v-model="it.value" class="ml-2" size="large" style="--el-switch-on-color: #13ce66; --el-switch-off-color: #bec0bf" @change="toChangeStatus(it)" />
+              <el-switch v-model="it.value" class="ml-2" size="large" style="--el-switch-on-color: #13ce66; --el-switch-off-color: #bec0bf" @change="toChangeStatus('team', it)" />
             </div>
           </div>
         </div>
@@ -125,7 +161,14 @@ const toChangeStatus = (item) => {
               <p>{{ it.label }}</p>
             </div>
             <div class="right" v-if="it.value !== null">
-              <el-switch disabled v-model="it.value" class="ml-2" size="large" style="--el-switch-on-color: #13ce66; --el-switch-off-color: #bec0bf" @change="toChangeStatus(it)" />
+              <el-switch
+                disabled
+                v-model="it.value"
+                class="ml-2"
+                size="large"
+                style="--el-switch-on-color: #13ce66; --el-switch-off-color: #bec0bf"
+                @change="toChangeStatus('book', it)"
+              />
             </div>
           </div>
         </div>
