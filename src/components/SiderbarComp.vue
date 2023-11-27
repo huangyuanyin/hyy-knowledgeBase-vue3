@@ -41,6 +41,8 @@ const routeInfo = { route, router }
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
+const icon = ref('')
+const spaceType = ref('')
 const state = reactive({
   headerActive: null,
   currentGroup: null,
@@ -62,6 +64,13 @@ const typeIcon = {
   '0': '/src/assets/icons/privateIcon.svg',
   '1': '/src/assets/icons/publicIcon.svg'
 }
+
+watchEffect(() => {
+  spaceType.value = sessionStorage.getItem('currentSidebar') === 'SpaceSidebar' ? '组织' : '个人'
+  if (spaceType.value === '个人') {
+    icon.value = '/src/assets/icons/personalIcon.svg'
+  }
+})
 
 watch(
   () => route.query.gid,
@@ -101,8 +110,8 @@ watch(
       infoStore.setCurrentSpaceInfo({
         nickname: infoStore.currentSpaceName || route.path.split('/')[1],
         name: route.query.sname.toString(),
-        id: Number(route.query.sid),
-        icon: ''
+        id: Number(route.query.sid)
+        // icon: ''
       })
     } else {
       state.operatData = menuItemsData
@@ -290,8 +299,9 @@ const getSpacesDeatil = async () => {
     if (res.data.creator === user) {
       isAdmin.value = true
     }
-    sessionStorage.setItem('spaceInfo', JSON.stringify(res.data))
+    sessionStorage.setItem('currentSpaceInfo', JSON.stringify(res.data))
     sessionStorage.setItem('isSpaceAdmin', isAdmin.value.toString())
+    icon.value = res.data.icon
   } else {
     ElMessage.error(res.msg)
   }
@@ -318,7 +328,7 @@ onMounted(async () => {
   <div class="SiderbarComp-wrap">
     <div class="first-comp">
       <div class="top-box">
-        <SidebarUserItem />
+        <SidebarUserItem :icon="icon" />
         <SidebarSearch :menuItems="state.operatData" />
         <SidebarMenuItem :menuItems="menuItems" />
       </div>
@@ -326,9 +336,9 @@ onMounted(async () => {
         <div :class="[item.title === '团队' ? 'team' : 'library']" v-for="(item, index) in props.contentItems" :key="index">
           <div :class="['header', state.headerActive === index ? 'header-active' : '']" @click="toLink(item.type)">
             <div class="header-left">
-              <span class="header-icon expand" v-if="item.isExpand" @click.stop="toExpandCollapse('collapse', item.title === '团队' ? 'team' : 'book', item)"
-                ><i-ep-CaretRight
-              /></span>
+              <span class="header-icon expand" v-if="item.isExpand" @click.stop="toExpandCollapse('collapse', item.title === '团队' ? 'team' : 'book', item)">
+                <i-ep-CaretRight />
+              </span>
               <span class="header-icon" v-else @click.stop="toExpandCollapse('expand', item.title === '团队' ? 'team' : 'book', item)"><i-ep-CaretRight /></span>
               <span class="header-title">{{ item.title }}</span>
             </div>
@@ -348,7 +358,7 @@ onMounted(async () => {
             <template #default="{ data }">
               <span :class="['custom-tree-node']">
                 <div style="display: flex; align-items: center; flex: 1">
-                  <img :src="item.icon" alt="" />
+                  <img :src="data.icon" alt="" />
                   <span class="title">{{ data.name || data.groupname || data.title }}</span>
                   <span class="type-icon">
                     <img :src="typeIcon[data.public] || '/src/assets/icons/privateIcon.svg'" alt="" />

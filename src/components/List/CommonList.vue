@@ -7,6 +7,7 @@ type CommonLibraryItem = {
   name?: string
   title?: string
   public: string
+  icon?: string
 }
 
 const props = defineProps({
@@ -152,7 +153,7 @@ const toPermission = (val) => {
       <div class="item_box" v-for="(item, index) in props.list" :key="index" @click="toLink(item)">
         <div class="item active">
           <div class="item-left">
-            <img src="/src/assets/icons/bookIcon.svg" alt="" class="bookIcon" />
+            <img :src="item.icon" alt="" class="bookIcon" />
             <div class="title">
               <span>{{ item.name || item.title }}</span>
               <img v-if="item.public === '1'" src="/src/assets/icons/publicIcon.svg" alt="" class="publicIcon" />

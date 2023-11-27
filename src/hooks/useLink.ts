@@ -80,8 +80,8 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
         query: {
           sid: route.query.sid,
           sname: route.query.sname,
-          gid: route.query.gid,
-          gname: route.query.gname,
+          gid: data.group_id,
+          gname: data.group_name,
           lid: data.target_id,
           lname: data.title
         }

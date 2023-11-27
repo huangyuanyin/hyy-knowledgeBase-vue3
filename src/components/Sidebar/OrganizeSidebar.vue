@@ -1,43 +1,20 @@
-<template>
-  <div class="OrganizeSidebar_wrap">
-    <div class="back" @click="toBack">
-      <img src="/src/assets/icons/arrowRightIcon.svg" alt="" />
-      <span>返回空间</span>
-    </div>
-    <div class="title">
-      <img src="/src/assets/icons/spaceIcon.svg" alt="" />
-      <span>{{ $route.query.sname || '未知' }}</span>
-    </div>
-    <div class="menu">
-      <el-tree
-        :data="organizeMenu"
-        node-key="nick"
-        :current-node-key="route.path.split('/')[route.path.split('/').length - 1]"
-        highlight-current
-        default-expand-all
-        @node-click="handleClickNode"
-      >
-        <template #default="{ data }">
-          <span class="custom-tree-node">
-            <div>
-              <img :src="data.icon" alt="" />
-              <span class="name">{{ data.title }}</span>
-            </div>
-            <span class="rightIcon" v-if="data.children.length">
-              <img :class="[isNodeExpanded(data) ? '' : 'is-expand']" src="/src/assets/icons/organize/rightIcon.svg" alt="" />
-            </span>
-          </span>
-        </template>
-      </el-tree>
-    </div>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import { organizeMenu } from '@/data/data'
 
 const route = useRoute()
+const refreshStore = useRefreshStore()
 const expandedNodes = ref([])
+const icon = ref('')
+
+watchEffect(() => {
+  nextTick(() => {
+    icon.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon
+  })
+  if (refreshStore.isRefreshSpaceSet) {
+    icon.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon
+    refreshStore.isRefreshSpaceSet = false
+  }
+})
 
 const handleClickNode = (node) => {
   if (isNodeExpanded(node)) {
@@ -73,6 +50,41 @@ const toBack = () => {
   })
 }
 </script>
+
+<template>
+  <div class="OrganizeSidebar_wrap">
+    <div class="back" @click="toBack">
+      <img src="/src/assets/icons/arrowRightIcon.svg" alt="" />
+      <span>返回空间</span>
+    </div>
+    <div class="title">
+      <img :src="icon" alt="" />
+      <span>{{ $route.query.sname || '未知' }}</span>
+    </div>
+    <div class="menu">
+      <el-tree
+        :data="organizeMenu"
+        node-key="nick"
+        :current-node-key="route.path.split('/')[route.path.split('/').length - 1]"
+        highlight-current
+        default-expand-all
+        @node-click="handleClickNode"
+      >
+        <template #default="{ data }">
+          <span class="custom-tree-node">
+            <div>
+              <img :src="data.icon" alt="" />
+              <span class="name">{{ data.title }}</span>
+            </div>
+            <span class="rightIcon" v-if="data.children.length">
+              <img :class="[isNodeExpanded(data) ? '' : 'is-expand']" src="/src/assets/icons/organize/rightIcon.svg" alt="" />
+            </span>
+          </span>
+        </template>
+      </el-tree>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .OrganizeSidebar_wrap {

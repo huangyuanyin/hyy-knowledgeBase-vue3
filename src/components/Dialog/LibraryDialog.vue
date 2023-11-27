@@ -4,6 +4,7 @@ import { FormInstance } from 'element-plus'
 import { getBookStacksApi } from '@/api/bookstacks'
 import { addLibraryApi } from '@/api/library'
 import { getGroupsApi } from '@/api/groups'
+import { icon1 } from '@/data/iconBase64'
 
 interface RuleForm {
   [key: string]: any
@@ -31,6 +32,7 @@ const refreshStroe = useRefreshStore()
 const spaceType = ref('') // 当前空间类型
 const spaceId = ref('') // 当前空间id
 const selectGroupName = ref('')
+const selectGroupIcon = ref('')
 const teamList = ref([]) // 当前空间下的全部团队
 const stacksList = ref([]) // 知识库分组集合
 const publicList = ref([])
@@ -41,7 +43,7 @@ const libraryFormRef = ref<FormInstance>()
 const libraryForm = reactive<RuleForm>({
   name: '',
   slug: '',
-  avatar: '',
+  icon: icon1,
   description: '',
   public: '',
   space: '',
@@ -62,6 +64,7 @@ watch(
             if (it.is_default === '1') {
               libraryForm.group = String(it.id)
               selectGroupName.value = it.groupname
+              selectGroupIcon.value = it.icon
               await getBookStacks(it.id)
               libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || ''
             }
@@ -71,6 +74,7 @@ watch(
           libraryForm.group = String(route.query.gid)
           selectGroupName.value = String(route.query.gname)
           await getBookStacks(route.query.gid)
+          selectGroupIcon.value = teamList.value.filter((item) => item.id == route.query.gid)[0].icon
           libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || ''
         } else {
           await getBookStacks(libraryForm.group)
@@ -131,7 +135,6 @@ watchEffect(() => {
 
 const handleNewData = () => {
   libraryForm.stacks = props.stackId || ''
-  console.log(`output->libraryForm.stacks `, libraryForm.stacks)
   libraryForm.slug = uuidv4().replace(/-/g, '')
   libraryForm.group = String(route.query.gid) || ''
   libraryForm.space = spaceId.value
@@ -172,6 +175,7 @@ const handleStackId = (val) => {
 // 切换团队
 const toSelectTeam = async (val) => {
   selectGroupName.value = teamList.value.filter((item) => item.id == val)[0].groupname
+  selectGroupIcon.value = teamList.value.filter((item) => item.id == val)[0].icon
   await getBookStacks(val)
   await handleStackId(val)
 }
@@ -216,6 +220,10 @@ const getTeams = async () => {
     teamList.value = res.data || ([] as any)
   }
 }
+
+const changeIcon = (val: string) => {
+  libraryForm.icon = val
+}
 </script>
 
 <template>
@@ -223,9 +231,11 @@ const getTeams = async () => {
     <el-form ref="libraryFormRef" :model="libraryForm" label-width="120px" label-position="top">
       <el-form-item label="基本信息" prop="name">
         <div class="form-name">
-          <div class="bookIcon">
-            <img src="/src/assets/icons/bookIcon.svg" alt="" />
-          </div>
+          <SelectIconPopver @changeIcon="changeIcon">
+            <div class="bookIcon">
+              <img :src="libraryForm.icon" alt="" />
+            </div>
+          </SelectIconPopver>
           <el-input v-model="libraryForm.name" placeholder="知识库名称" maxlength="10" show-word-limit />
         </div>
       </el-form-item>
@@ -252,13 +262,13 @@ const getTeams = async () => {
         <el-select v-model="libraryForm.group" prop="group" @change="toSelectTeam">
           <template #prefix>
             <img v-if="selectGroupName === '公共区'" class="prefix-icon" src="/src/assets/icons/library/publicIcon.svg" />
-            <img v-else class="prefix-icon" src="/src/assets/icons/teamIcon.svg" />
+            <img v-else class="prefix-icon" :src="selectGroupIcon" />
           </template>
           <el-option :label="item.groupname" :value="String(item.id)" v-for="(item, index) in teamList" :key="'teamList' + index">
             <div class="form-public">
               <div class="form-public-left">
                 <img v-if="item.groupname === '公共区'" src="/src/assets/icons/library/publicIcon.svg" />
-                <img v-else :src="item.icon || '/src/assets/icons/teamIcon.svg'" />
+                <img v-else :src="item.icon" />
                 <span style="float: left">{{ item.groupname }}</span>
               </div>
               <img v-if="item.id == libraryForm.group" class="selectIcon" src="@/assets/icons/selectIcon.svg" />
@@ -372,6 +382,7 @@ const getTeams = async () => {
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
       img {
         width: 24px;
         height: 24px;

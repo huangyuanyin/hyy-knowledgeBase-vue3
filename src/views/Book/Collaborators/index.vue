@@ -102,7 +102,7 @@ const getCollaborations = async () => {
 }
 
 const getBookDetail = async () => {
-  const res = await getLibraryDetailApi(bookId.value)
+  const res = await getLibraryDetailApi(Number(bookId.value))
   if (res.code === 1000) {
     publicType.value = res.data.public
     spaceId.value = res.data.space
@@ -187,7 +187,7 @@ onMounted(() => {
           <span>知识库成员</span>
           <div>
             <el-input disabled placeholder="搜索成员"></el-input>
-            <el-button v-if="spaceType.value === '组织空间'" @click="isShowAddBookMemberDialog = true">添加</el-button>
+            <el-button v-if="spaceType === '组织空间'" @click="isShowAddBookMemberDialog = true">添加</el-button>
           </div>
         </div>
         <el-table :data="memberData" stripe style="width: 100%">

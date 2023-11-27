@@ -235,7 +235,7 @@ const toQuitTeam = (val: any) => {
         <tr class="docItem" v-for="document in (props.data as any)" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">
           <td class="item-title">
             <div>
-              <img :src="document.icon || '/src/assets/icons/bookIcon.svg'" alt="" />
+              <img :src="document.icon" alt="" />
               <div class="item-title-right" @click="toLink(document, 'library')">
                 <el-tooltip effect="light" :content="document.name" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
                   <span>{{ document.name }}</span>
@@ -273,7 +273,7 @@ const toQuitTeam = (val: any) => {
         <tr class="docItem" v-for="document in (props.data as any)" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">
           <td class="item-title">
             <div>
-              <img :src="document.icon || '/src/assets/icons/teamIcon.svg'" alt="" />
+              <img :src="document.icon" alt="" />
               <div class="item-title-right" @click="toLink(document, 'team')">
                 <el-tooltip effect="light" :content="document.groupname" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
                   <span>{{ document.groupname }}</span>

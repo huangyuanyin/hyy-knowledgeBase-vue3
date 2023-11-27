@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { getBookStacksApi } from '@/api/bookstacks'
+import { getGroupsDetailApi } from '@/api/groups'
 import { getLibraryApi } from '@/api/library'
 import { getQuickLinksApi } from '@/api/quickLinks'
 
@@ -17,6 +18,7 @@ const bookGroup = ref<BookGroup[]>([])
 const libarayList = ref([])
 const commonList = ref([])
 const isHasPermissionCode = ref(null)
+const teamIcon = ref('')
 
 watchEffect(() => {
   spaceId.value = route.query.sid as string
@@ -26,9 +28,12 @@ watchEffect(() => {
 watch(
   () => groupId.value,
   (newVal) => {
-    groupId.value = newVal
-    getBookStacks()
-    getLibrary()
+    if (newVal) {
+      groupId.value = newVal
+      getBookStacks()
+      getLibrary()
+      getGroupsDetail()
+    }
   }
 )
 
@@ -102,16 +107,28 @@ const getQuickLinks = async () => {
   }
 }
 
+// 获取团队详情
+const getGroupsDetail = async () => {
+  let res = await getGroupsDetailApi(Number(groupId.value))
+  if (res.code === 1000) {
+    sessionStorage.setItem('currentTeamInfo', JSON.stringify(res.data))
+    teamIcon.value = res.data.icon
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
 onMounted(async () => {
   await getBookStacks()
   await getLibrary()
   await getQuickLinks()
+  await getGroupsDetail()
 })
 </script>
 
 <template>
   <div class="Book_wrap">
-    <TeamHeader />
+    <TeamHeader :icon="teamIcon" />
     <div class="announcement">
       <div>管理员可以添加自定义内容，向 全体团队成员展示{{ isHasPermissionCode }}</div>
       <img src="/src/assets/icons/rightArrowIcon.svg" alt="" />

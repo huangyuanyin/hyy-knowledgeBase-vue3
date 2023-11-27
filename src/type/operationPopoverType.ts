@@ -6,6 +6,7 @@ export interface MenuItem {
   label?: string
   nick?: string
   desc?: string
+  value?: string
 }
 
 export interface OperationPopoverProps {
@@ -20,4 +21,5 @@ export interface OperationPopoverProps {
   parent?: number
   userList?: Array<any>
   selectUserList?: Array<any>
+  selectId: string | number
 }

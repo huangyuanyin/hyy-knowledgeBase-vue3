@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { getLibraryDetailApi } from '@/api/library'
+
 const menuList = [
   {
     label: '设置',
@@ -19,21 +21,71 @@ const menuList = [
   }
 ]
 const route = useRoute()
+const refreshStore = useRefreshStore()
 const router = useRouter()
-const bookName = ref(route.query.lname as string)
+const currentBookInfo = ref({
+  id: '',
+  name: '',
+  icon: ''
+})
 const currentMenu = ref('basic')
+const spaceType = ref('') // 当前空间类型
+const loading = ref(false)
+
+const init = () => {
+  spaceType.value = route.path.split('/')[1] === 'bookSetting' ? '个人' : '团队'
+  currentBookInfo.value = JSON.parse(sessionStorage.getItem('currentBookInfo') as string) || {
+    id: '',
+    name: '',
+    icon: ''
+  }
+  if (route.query.lid && route.query.lid != currentBookInfo.value.id && !route.path.includes('bookSetting')) {
+    ElMessage.warning('前端存储知识库错误！')
+  }
+}
 
 watchEffect(() => {
   route.path.split('/').length === 3 ? (currentMenu.value = route.path.split('/')[2]) : (currentMenu.value = route.path.split('/')[3])
+  init()
+  if (refreshStore.isRefreshBookSet) {
+    getBookDetail(route.query.lid)
+    refreshStore.setRefreshBookSet(false)
+  }
 })
 
-const toBack = () => {
-  router.push({
-    path: route.path.split('/').length === 3 ? `/library` : `/${route.path.split('/')[1]}/library`,
-    query: {
-      sid: route.query.sid,
-      sname: route.query.sname
+watch(
+  () => route.query.lid,
+  (newVal) => {
+    if (newVal && newVal != currentBookInfo.value.id) {
+      loading.value = true
+      nextTick(() => {
+        getBookDetail(newVal)
+      })
     }
+  },
+  {
+    immediate: true
+  }
+)
+
+const getBookDetail = async (id) => {
+  let res = await getLibraryDetailApi(id)
+  if (res.code === 1000) {
+    nextTick(() => {
+      sessionStorage.setItem('currentBookInfo', JSON.stringify(res.data))
+      currentBookInfo.value = JSON.parse(sessionStorage.getItem('currentBookInfo') as string)
+      loading.value = false
+    })
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const toBack = () => {
+  const query = route.query
+  router.push({
+    path: spaceType.value === '个人' ? `/directory/index` : `/${route.path.split('/')[1]}/directory/index`,
+    query: { ...query }
   })
 }
 
@@ -55,12 +107,12 @@ const toLink = (item: any) => {
 </script>
 
 <template>
-  <div class="BookSidebar_wrap">
+  <div class="BookSidebar_wrap" v-if="!loading">
     <div class="back" @click="toBack">
       <img src="/src/assets/icons/arrowRightIcon.svg" alt="" />
       <span>
-        <img class="bookIcon" src="/src/assets/icons/teamIcon.svg" alt="" />
-        {{ bookName }}
+        <img class="bookIcon" :src="currentBookInfo.icon" alt="" />
+        {{ currentBookInfo.name }}
       </span>
     </div>
     <h4>知识库管理</h4>

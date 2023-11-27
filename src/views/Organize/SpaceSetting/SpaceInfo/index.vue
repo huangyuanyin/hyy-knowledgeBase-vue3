@@ -2,6 +2,7 @@
 import { FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { getSpacesDetailApi, editSpacesApi } from '@/api/spaces/index'
+import { spaceIcon } from '@/data/iconBase64'
 
 interface SpaceForm {
   spacename: string
@@ -13,6 +14,8 @@ interface SpaceForm {
 
 const route = useRoute()
 const router = useRouter()
+const refreshStore = useRefreshStore()
+const icon = ref('')
 const spaceId = ref(Number(route.query.sid) || null)
 const spaceFormRef = ref<FormInstance>()
 const spaceForm = reactive<SpaceForm>({
@@ -20,7 +23,7 @@ const spaceForm = reactive<SpaceForm>({
   spacekey: '',
   spacetype: '',
   description: '',
-  icon: ''
+  icon: spaceIcon
 })
 const rules = reactive<FormRules<SpaceForm>>({
   spacename: [
@@ -33,13 +36,17 @@ const rules = reactive<FormRules<SpaceForm>>({
   ]
 })
 
+watchEffect(() => {
+  nextTick(() => {
+    icon.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon || '/src/assets/icons/spaceIcon.svg'
+  })
+})
+
 const toUploadImg = (uploadFile) => {
   if (uploadFile) {
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      spaceForm.icon = event.target?.result
-    }
-    reader.readAsDataURL(uploadFile['raw'])
+    getBase64Image(uploadFile.raw).then((res) => {
+      spaceForm.icon = res
+    })
   }
 }
 
@@ -65,6 +72,10 @@ const editSpaces = async (params, id) => {
         sid: spaceId.value
       }
     })
+    sessionStorage.setItem('currentSpaceInfo', JSON.stringify(res.data))
+    refreshStore.setRefreshSpaceSet(true)
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 
@@ -74,6 +85,7 @@ const getDetailSpaces = async (id: number) => {
   spaceForm.spacekey = 'http://10.4.150.55:8080/' + res.data.spacekey + '/dashboard'
   spaceForm.spacetype = res.data.spacetype
   spaceForm.description = res.data.description
+  spaceForm.icon = res.data.icon
 }
 
 onMounted(() => {
@@ -97,9 +109,8 @@ onMounted(() => {
         </el-form-item>
         <el-form-item label="空间标识">
           <div class="icon-tag">
-            <img v-if="!spaceForm.icon" src="/src/assets/icons/spaceIcon.svg" alt="" />
-            <img v-else :src="spaceForm.icon" alt="" />
-            <el-upload v-model="spaceForm.icon" class="upload" action="" :auto-upload="false" :show-file-list="false" @change="toUploadImg">
+            <img :src="spaceForm.icon" alt="" />
+            <el-upload v-model="spaceForm.icon" class="upload" action="" accept=".png,.jpg,.svg" :auto-upload="false" :show-file-list="false" @change="toUploadImg">
               <el-button class="upload-button"><i-ep-Upload></i-ep-Upload>上传图标</el-button>
               <template #tip>
                 <div class="upload-tip">支持文件格式：.png, .jpg...</div>

@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { FormInstance } from 'element-plus'
 import { addGroupsApi } from '@/api/groups'
 import { getSpacepermissionsApi } from '@/api/spacepermissions'
+import { icon11 } from '@/data/iconBase64'
 
 interface ListItem {
   permusername: string
@@ -26,6 +27,7 @@ const list = ref([])
 const selectMemberList = ref([])
 const teamFormRef = ref<FormInstance>()
 const teamForm = reactive({
+  icon: icon11,
   groupname: '',
   groupkey: '',
   space: String(route.query.sid),
@@ -125,6 +127,10 @@ const handleClose = async () => {
   dialogVisible.value = false
   emit('closeDialog', false)
 }
+
+const changeIcon = (icon: string) => {
+  teamForm.icon = icon
+}
 </script>
 
 <template>
@@ -133,9 +139,11 @@ const handleClose = async () => {
     <el-form ref="teamFormRef" :model="teamForm" label-width="120px" label-position="top">
       <el-form-item label="基本信息" prop="groupname">
         <div class="form-name">
-          <div class="bookIcon">
-            <img src="/src/assets/icons/teamIcon.svg" alt="" />
-          </div>
+          <SelectIconPopver @changeIcon="changeIcon">
+            <div class="bookIcon">
+              <img :src="teamForm.icon" alt="" />
+            </div>
+          </SelectIconPopver>
           <el-input v-model="teamForm.groupname" placeholder="团队名称" maxlength="10" show-word-limit />
         </div>
       </el-form-item>
@@ -324,6 +332,7 @@ const handleClose = async () => {
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
       img {
         width: 24px;
         height: 24px;

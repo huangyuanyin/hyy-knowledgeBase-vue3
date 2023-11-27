@@ -1,27 +1,12 @@
-<template>
-  <div class="TeamSidebar_wrap">
-    <div class="back" @click="toBack">
-      <img src="/src/assets/icons/arrowRightIcon.svg" alt="" />
-      <span>
-        <img class="teamIcon" src="/src/assets/icons/teamIcon.svg" alt="" />
-        {{ teamName }}
-      </span>
-    </div>
-    <h4>团队管理</h4>
-    <div class="menu" v-for="(item, index) in menuList" :key="'menuList' + index">
-      <div class="title">{{ item.label }}</div>
-      <span :class="[it.nickName === currentMenu ? 'active' : '']" v-for="(it, index) in item.children" :key="'children' + index" @click="toLink(it)">
-        <img :src="it.icon" alt="" />
-        {{ it.label }}
-      </span>
-    </div>
-  </div>
-</template>
-
 <script lang="ts" setup>
 const route = useRoute()
 const router = useRouter()
-const teamName = ref(route.query.gname as string)
+const refreshStore = useRefreshStore()
+const currentTeamInfo = ref({
+  id: '',
+  groupname: '',
+  icon: ''
+})
 const currentMenu = ref('basic')
 const menuList = [
   {
@@ -40,6 +25,13 @@ const menuList = [
 
 watchEffect(() => {
   currentMenu.value = route.path.split('/')[3]
+  if (route.query.gid) {
+    currentTeamInfo.value = JSON.parse(sessionStorage.getItem('currentTeamInfo') as string)
+  }
+  if (refreshStore.isRefreshTeamSet) {
+    currentTeamInfo.value = JSON.parse(sessionStorage.getItem('currentTeamInfo') as string)
+    refreshStore.setRefreshTeamSet(false)
+  }
 })
 
 const toBack = () => {
@@ -68,6 +60,26 @@ const toLink = (item: any) => {
   })
 }
 </script>
+
+<template>
+  <div class="TeamSidebar_wrap">
+    <div class="back" @click="toBack">
+      <img src="/src/assets/icons/arrowRightIcon.svg" alt="" />
+      <span>
+        <img class="teamIcon" :src="currentTeamInfo.icon" alt="" />
+        {{ currentTeamInfo.groupname }}
+      </span>
+    </div>
+    <h4>团队管理</h4>
+    <div class="menu" v-for="(item, index) in menuList" :key="'menuList' + index">
+      <div class="title">{{ item.label }}</div>
+      <span :class="[it.nickName === currentMenu ? 'active' : '']" v-for="(it, index) in item.children" :key="'children' + index" @click="toLink(it)">
+        <img :src="it.icon" alt="" />
+        {{ it.label }}
+      </span>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .TeamSidebar_wrap {

@@ -4,7 +4,7 @@ export function getSpacesApi(params: spaceParams) {
   return http.get<spacesRes>(`spaces/`, { params }, 'base')
 }
 
-export function getSpacesDetailApi(id?: number) {
+export function getSpacesDetailApi(id?: number | string) {
   return http.get<spacesRes>(`spaces/${id}/`, {}, 'base')
 }
 

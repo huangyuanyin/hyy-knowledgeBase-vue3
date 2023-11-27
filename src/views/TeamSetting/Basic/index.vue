@@ -13,6 +13,7 @@ interface TeamForm {
 
 const route = useRoute()
 const router = useRouter()
+const refreshStore = useRefreshStore()
 const groupId = ref(Number(route.query.gid) || null)
 const teamFormRef = ref<FormInstance>()
 const teamForm = reactive<TeamForm>({
@@ -62,6 +63,8 @@ const editGroups = async (params, id) => {
         gid: route.query.gid
       }
     })
+    sessionStorage.setItem('currentTeamInfo', JSON.stringify(res.data))
+    refreshStore.setRefreshTeamSet(true)
   } else {
     ElMessage.error(res.msg)
   }
@@ -73,9 +76,15 @@ const getGroupsDetail = async (id: number) => {
     teamForm.groupname = res.data.groupname
     teamForm.groupkey = res.data.groupkey
     teamForm.description = res.data.description
+    teamForm.icon = res.data.icon
+    sessionStorage.setItem('currentTeamInfo', JSON.stringify(res.data))
   } else {
     ElMessage.error(res.msg)
   }
+}
+
+const changeIcon = (icon: string) => {
+  teamForm.icon = icon
 }
 
 onMounted(() => {
@@ -89,16 +98,11 @@ onMounted(() => {
     <div class="box">
       <el-form ref="teamFormRef" :model="teamForm" :rules="rules" label-width="120px" class="teamForm" status-icon label-position="top">
         <el-form-item label="团队头像">
-          <div class="icon-tag">
-            <img v-if="!teamForm.icon" src="/src/assets/icons/spaceIcon.svg" alt="" />
-            <img v-else :src="teamForm.icon" alt="" />
-            <!-- <el-upload v-model="teamForm.icon" class="upload" action="" :auto-upload="false" :show-file-list="false" @change="toUploadImg">
-              <el-button class="upload-button"><i-ep-Upload></i-ep-Upload>上传图标</el-button>
-              <template #tip>
-                <div class="upload-tip">支持文件格式：.png, .jpg...</div>
-              </template>
-            </el-upload> -->
-          </div>
+          <SelectIconPopver @changeIcon="changeIcon">
+            <div class="icon-tag">
+              <img :src="teamForm.icon" alt="" />
+            </div>
+          </SelectIconPopver>
         </el-form-item>
         <el-form-item label="团队名称" prop="groupname">
           <el-input v-model="teamForm.groupname" placeholder="如：就叫小黄好了" />
@@ -155,6 +159,7 @@ onMounted(() => {
       .icon-tag {
         display: flex;
         align-items: center;
+        cursor: pointer;
         img {
           width: 56px;
           height: 56px;

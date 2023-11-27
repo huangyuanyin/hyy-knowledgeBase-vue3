@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { getGroupsDetailApi } from '@/api/groups'
-import { deleteTeamMemberApi, getTeamMemberApi } from '@/api/member'
+import { deleteTeamMemberApi, editTeamMemberApi, getTeamMemberApi } from '@/api/member'
 import { VxeTableInstance, VxeColumnPropTypes } from 'vxe-table'
 
 interface MemberItem {
@@ -16,26 +16,40 @@ interface MemberItem {
 const route = useRoute()
 const refreshStore = useRefreshStore()
 const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const memberInput = ref('')
 const xTable = ref<VxeTableInstance<MemberItem>>()
 const memberList = ref<MemberItem[]>([])
 const memberTotal = ref(0)
-const creatorInfo = ref([])
 const isShowAddMemberDialog = ref(false)
+const currentTeamInfo = ref({
+  id: null,
+  icon: ''
+})
 const sexList = [
-  { label: '管理员', value: '0' },
-  { label: '成员', value: '1' },
-  { label: '成员', value: '2' }
+  { label: '管理员', value: '0', desc: '拥有所有权限' },
+  { label: '只读成员', value: '1', desc: '拥有知识库管理权限' },
+  { label: '成员', value: '2', desc: '仅有阅读权限' }
 ]
 const statusList = [
   { label: '正常', value: '1' },
   { label: '注销', value: '0' }
 ]
 
+const init = () => {
+  currentTeamInfo.value = sessionStorage.getItem('currentTeamInfo') ? JSON.parse(sessionStorage.getItem('currentTeamInfo')) : {}
+  if (currentTeamInfo.value.id != route.query.gid) {
+    ElMessage.warning('前端存储团队错误！')
+  }
+}
+
 watchEffect(() => {
   if (refreshStore.isRefreshTeamMember) {
     getTeamMember()
     refreshStore.isRefreshTeamMember = false
+  }
+  if (route.query.gid) {
+    init()
   }
 })
 
@@ -72,8 +86,29 @@ const toDeleteMmber = (data) => {
     })
 }
 
+const toChangeRole = (data, row) => {
+  console.log(`output->data`, row)
+  const params = {
+    role: data.value,
+    space: String(route.query.sid),
+    group: String(route.query.gid),
+    username: row.username
+  }
+  editTeamMember(row.id, params)
+}
+
 const toExit = (data) => {
   ElMessage.warning('功能暂未开放，敬请期待')
+}
+
+const editTeamMember = async (id, params) => {
+  let res = await editTeamMemberApi(id, params)
+  if (res.code === 1000) {
+    ElMessage.success('编辑成功')
+    getTeamMember()
+  } else {
+    ElMessage.error(res.msg)
+  }
 }
 
 const deleteTeamMember = async (id) => {
@@ -124,7 +159,7 @@ onMounted(() => {
 
 <template>
   <div class="Member_wrap">
-    <TeamHeader />
+    <TeamHeader :icon="currentTeamInfo.icon" />
     <div class="member-box">
       <div class="header">
         <h2>
@@ -166,18 +201,28 @@ onMounted(() => {
               </div>
             </template>
           </vxe-column>
-          <vxe-column field="role" title="角色" :formatter="formatterRole" width="200" sortable></vxe-column>
+          <vxe-column field="role" title="角色" :formatter="formatterRole" width="200" sortable>
+            <template #default="{ row, rowIndex }">
+              <DropdownPopver :menuItems="sexList" :selectId="sexList[row.role].value" @toChange="toChangeRole($event, row)">
+                <span class="el-dropdown" v-if="rowIndex !== 0">
+                  {{ sexList[row.role].label }}
+                  <i-ep-ArrowDown />
+                </span>
+              </DropdownPopver>
+              <span v-if="rowIndex === 0">{{ sexList[row.role].label }}</span>
+            </template>
+          </vxe-column>
           <vxe-column field="dept" width="200" title="所属部门" :formatter="formatterStatus" sortable></vxe-column>
           <vxe-column field="update_datetime" width="250" title="加入时间" sortable></vxe-column>
           <vxe-column title="操作">
-            <template #default="{ row }">
+            <template #default="{ row, rowIndex }">
               <el-tooltip effect="dark" content="退出" placement="top" :show-arrow="false">
-                <span class="icon" v-if="row.role === '0'">
+                <span class="icon" v-if="rowIndex === 0">
                   <img src="/src/assets/icons/team/editIcon.svg" alt="" @click="toExit(row)" />
                 </span>
               </el-tooltip>
               <el-tooltip effect="dark" content="删除" placement="top" :show-arrow="false">
-                <span class="icon" v-if="row.role === '2' || row.role === '1'">
+                <span class="icon" v-if="rowIndex !== 0">
                   <img src="/src/assets/icons/organize/deleteIcon.svg" alt="" @click="toDeleteMmber(row)" />
                 </span>
               </el-tooltip>
@@ -285,6 +330,16 @@ onMounted(() => {
           border-radius: 12px;
           font-size: 12px;
           color: #585a5a;
+        }
+      }
+      .el-dropdown {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        svg {
+          margin-left: 6px;
+          width: 14px;
+          height: 14px;
         }
       }
     }

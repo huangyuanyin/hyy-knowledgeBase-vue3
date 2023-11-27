@@ -15,6 +15,7 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
 const route = useRoute()
 const infoStore = useInfoStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
+const icon = ref('')
 const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
 const spaceId = ref('') // 当前空间id
 const isShowsSpaceDialog = ref(false)
@@ -53,6 +54,7 @@ const initData = () => {
   spaceId.value = route.query.sid as string
   state.currentSpaceName = route.query.sname || ''
   isSpaceAdmin.value = sessionStorage.getItem('isSpaceAdmin')
+  icon.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon || '/src/assets/icons/spaceIcon.svg'
 }
 
 const toShow = async () => {
@@ -76,6 +78,7 @@ const getSpaces = async () => {
 }
 
 const toLink = (type, val?) => {
+  console.log(`output->val`, val)
   switch (type) {
     case 'personal':
       router.push('/dashboard')
@@ -92,7 +95,7 @@ const toLink = (type, val?) => {
       // fix 切换空间，左侧常用列表不刷新
       setTimeout(() => {
         location.reload()
-      }, 0)
+      }, 500)
       break
     case 'add':
       router.push(`/${val.spacekey}/organize/dashboard`)
@@ -161,7 +164,7 @@ const toLink = (type, val?) => {
       <template v-if="props.currentSider === 'SpaceSidebar'">
         <div class="card">
           <div class="header">
-            <img src="/src/assets/icons/spaceIcon.svg" alt="" />
+            <img :src="icon" alt="" />
             <div class="title">
               <span>{{ state.currentSpaceName }}</span>
               <p>享受标准版空间权益</p>

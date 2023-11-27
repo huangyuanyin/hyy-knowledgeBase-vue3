@@ -24,6 +24,7 @@ declare global {
   const effectScope: typeof import('vue')['effectScope']
   const encryp: typeof import('./utils/crypto')['encryp']
   const getActivePinia: typeof import('pinia')['getActivePinia']
+  const getBase64Image: typeof import('./utils/tool')['getBase64Image']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const h: typeof import('vue')['h']

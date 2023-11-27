@@ -12,6 +12,6 @@ interface Category {
 
 export interface libraryRes {
   code: number
-  data: Category[] | Category
+  data: Category
   msg: string
 }

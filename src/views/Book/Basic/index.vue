@@ -5,25 +5,25 @@ import { FormInstance, FormRules } from 'element-plus'
 interface BookForm {
   name: string
   slug: string
+  icon: string
   description: string
-  avatar: string
   space: string
   group: string
   stacks: string
 }
 
 const route = useRoute()
+const refreshStore = useRefreshStore()
 const bookId = ref(Number(route.query.lid) || null)
 const bookFormRef = ref<FormInstance>()
-
 const bookForm = reactive<BookForm>({
   name: '',
   slug: '',
+  icon: '',
   description: '',
-  avatar: '',
   space: route.query.sid as string,
-  group: (route.query.gid as string) || '123',
-  stacks: (route.query.stackId as string) || '107'
+  group: route.query.gid as string,
+  stacks: ''
 })
 const rules = reactive<FormRules<BookForm>>({
   name: [
@@ -57,6 +57,7 @@ const editLibrary = async (params, id) => {
         lid: (res.data as any).id
       }
     })
+    refreshStore.setRefreshBookSet(true)
   } else {
     ElMessage.error(res.msg)
   }
@@ -67,8 +68,10 @@ const getBooksDetail = async (id) => {
   if (res.code === 1000) {
     bookForm.name = (res.data as any).name
     bookForm.slug = (res.data as any).slug
-    bookForm.avatar = (res.data as any).icon
     bookForm.description = (res.data as any).description
+    bookForm.icon = (res.data as any).icon
+    bookForm.stacks = (res.data as any).stacks
+    sessionStorage.setItem('currentBookInfo', JSON.stringify(res.data))
   } else {
     ElMessage.error(res.msg)
   }
@@ -76,6 +79,10 @@ const getBooksDetail = async (id) => {
 
 const uploadImg = () => {
   ElMessage.warning('该功能暂未开放，敬请期待')
+}
+
+const changeIcon = (icon) => {
+  bookForm.icon = icon
 }
 
 onMounted(() => {
@@ -89,10 +96,11 @@ onMounted(() => {
     <div class="box">
       <el-form ref="bookFormRef" :model="bookForm" :rules="rules" label-width="120px" class="bookForm" status-icon label-position="top">
         <el-form-item label="图标和名称" prop="name">
-          <div class="icon-tag">
-            <img v-if="!bookForm.avatar" src="/src/assets/icons/spaceIcon.svg" alt="" />
-            <img v-else :src="bookForm.avatar" alt="" />
-          </div>
+          <SelectIconPopver @changeIcon="changeIcon">
+            <div class="icon-tag">
+              <img :src="bookForm.icon" alt="" />
+            </div>
+          </SelectIconPopver>
           <el-input v-model="bookForm.name" placeholder="如：就叫小黄好了" />
         </el-form-item>
         <el-form-item label="简介">
@@ -153,6 +161,7 @@ onMounted(() => {
       .icon-tag {
         display: flex;
         align-items: center;
+        cursor: pointer;
         img {
           width: 40px;
           height: 40px;

@@ -2,7 +2,6 @@ export interface SidebarInfo {
   nickname: string
   name: string
   id: number
-  icon: string
 }
 
 export const useInfoStore = defineStore('info', () => {
@@ -13,8 +12,7 @@ export const useInfoStore = defineStore('info', () => {
   const currentSpaceInfo = ref<SidebarInfo>({
     nickname: '',
     name: '',
-    id: 0,
-    icon: ''
+    id: 0
   })
 
   const setPersonalSpaceId = (val: number) => {

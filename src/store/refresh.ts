@@ -6,6 +6,9 @@ export const useRefreshStore = defineStore('refresh', () => {
   const isRefreshSpaceMember = ref(false) // 刷新空间成员
   const isRefreshTeamMember = ref(false) // 刷新团队成员
   const isRefreshArticleList = ref(false) // 刷新文章列表
+  const isRefreshBookSet = ref(false) // 刷新知识库设置
+  const isRefreshTeamSet = ref(false) // 刷新团队设置
+  const isRefreshSpaceSet = ref(false) // 刷新空间设置
 
   const setRefreshBookStacks = (val: boolean) => {
     isRefreshBookStacks.value = val
@@ -35,6 +38,18 @@ export const useRefreshStore = defineStore('refresh', () => {
     isRefreshArticleList.value = val
   }
 
+  const setRefreshBookSet = (val: boolean) => {
+    isRefreshBookSet.value = val
+  }
+
+  const setRefreshTeamSet = (val: boolean) => {
+    isRefreshTeamSet.value = val
+  }
+
+  const setRefreshSpaceSet = (val: boolean) => {
+    isRefreshSpaceSet.value = val
+  }
+
   return {
     isRefreshBookStacks,
     setRefreshBookStacks,
@@ -49,6 +64,12 @@ export const useRefreshStore = defineStore('refresh', () => {
     isRefreshBookList,
     setRefreshBookList,
     isRefreshArticleList,
-    setRefreshArticleList
+    setRefreshArticleList,
+    isRefreshBookSet,
+    setRefreshBookSet,
+    isRefreshTeamSet,
+    setRefreshTeamSet,
+    isRefreshSpaceSet,
+    setRefreshSpaceSet
   }
 })

@@ -9,6 +9,14 @@ const isShowsDeleteDialog = ref(false)
 const bookId = ref(route.query.lid as string)
 const bookName = ref(route.query.lname)
 const deleteInfo = ref({})
+const currentBookInfo = ref({})
+
+watchEffect(() => {
+  if (route.query.lid) {
+    bookId.value = route.query.lid as string
+    articleStore.getArticleList(bookId.value)
+  }
+})
 
 watch(
   () => route.query.lid,
@@ -19,13 +27,6 @@ watch(
     }
   }
 )
-
-watchEffect(() => {
-  if (route.query.lid) {
-    bookId.value = route.query.lid as string
-    articleStore.getArticleList(bookId.value)
-  }
-})
 
 const toDo = () => {
   ElMessage.warning('功能暂未开放，敬请期待')
@@ -42,14 +43,15 @@ const toMoreSetting = () => {
 
 const toDeleteBook = () => {
   isShowsDeleteDialog.value = true
-  const item = JSON.parse(sessionStorage.getItem('currentBookDetail') as string)
+  const item = JSON.parse(sessionStorage.getItem('currentBookInfo') as string)
   deleteInfo.value = item
 }
 
 const getBookDetail = async (id) => {
   let res = await getLibraryDetailApi(id)
   if (res.code === 1000) {
-    sessionStorage.setItem('currentBookDetail', JSON.stringify(res.data))
+    sessionStorage.setItem('currentBookInfo', JSON.stringify(res.data))
+    currentBookInfo.value = res.data
   } else {
     ElMessage.error(res.msg)
   }
@@ -82,7 +84,7 @@ onMounted(() => {
         <div class="header">
           <div class="header-left">
             <div class="bookIcon">
-              <img src="/src/assets/icons/bookIcon.svg" alt="" class="bookIcon" />
+              <img :src="currentBookInfo.icon" alt="" class="bookIcon" />
             </div>
             <span>{{ bookName }}</span>
           </div>

@@ -111,6 +111,8 @@ const getGroupPermissions = async () => {
     groupSettingId.value = data[0].id
     teamOptions.value[1].children[0].value = data[0].create_book === '1' ? true : false
     teamOptions.value[1].children[1].value = data[0].create_mumber === '1' ? true : false
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 
@@ -118,6 +120,8 @@ const updateGroupPermissions = async (params) => {
   const res = await updateGroupPermissionsApi(groupSettingId.value, params)
   if (res.code === 1000) {
     ElMessage.success('更新成功')
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 

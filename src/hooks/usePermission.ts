@@ -1,14 +1,14 @@
 import { getTeamMemberApi } from '@/api/member'
 
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
-const spaceInfo = JSON.parse(sessionStorage.getItem('spaceInfo')) || {}
+const currentSpaceInfo = JSON.parse(sessionStorage.getItem('currentSpaceInfo')) || {}
 
 // 判断是否有权限访问团队
 export const useTeamPermission = (route, router, data) => {
   console.log(`output->data`, data)
   const spaceName = ref(route.path.split('/')[1])
   switch (user) {
-    case spaceInfo.creator: // 1.该用户是空间创建者
+    case currentSpaceInfo.creator: // 1.该用户是空间创建者
       toLinkTeam(data)
       break
     case data.creator: // 2.该用户是团队创建者

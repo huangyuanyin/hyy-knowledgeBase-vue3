@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import type { FormInstance, FormRules } from 'element-plus'
 import { addSpaceApi } from '@/api/spaces'
+import { spaceIcon } from '@/data/iconBase64'
 
 interface SpaceForm {
+  icon: string
   spacename: string
   spacekey: string
   spacetype: string
@@ -22,6 +24,7 @@ const spacetypeList = ref([
   // { label: '公共空间', value: 'public' }
 ])
 const spaceForm = reactive<SpaceForm>({
+  icon: '',
   spacename: '',
   spacekey: '',
   spacetype: 'organization',
@@ -61,10 +64,19 @@ const addSpace = async () => {
   }
 }
 
+const toUploadImg = (uploadFile) => {
+  if (uploadFile) {
+    getBase64Image(uploadFile.raw).then((res) => {
+      spaceForm.icon = res
+    })
+  }
+}
+
 const handleSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid) => {
     if (valid) {
+      spaceForm.icon ? spaceForm.icon : (spaceForm.icon = spaceIcon)
       addSpace()
     }
   })
@@ -88,9 +100,12 @@ const handleClose = async () => {
     <el-form ref="spaceFormRef" :rules="spaceFormRules" :model="spaceForm" label-width="120px" label-position="top">
       <el-form-item label="空间名称" prop="spacename">
         <div class="form-name">
-          <div class="spaceIcon">
-            <img src="/src/assets/icons/spaceIcon.svg" alt="" />
-          </div>
+          <el-upload class="upload-icon" accept=".png,.jpg,.svg" :auto-upload="false" :show-file-list="false" @change="toUploadImg">
+            <div class="spaceIcon" v-if="!spaceForm.icon">
+              <img src="/src/assets/icons/spaceIcon.svg" alt="" />
+            </div>
+            <img v-else class="spaceImg" :src="spaceForm.icon" alt="" />
+          </el-upload>
           <el-input v-model="spaceForm.spacename" placeholder="可输入部门或团队名称" maxlength="20" show-word-limit />
         </div>
       </el-form-item>
@@ -224,20 +239,30 @@ const handleClose = async () => {
     display: flex;
     align-items: center;
     width: 100%;
-    .spaceIcon {
-      border-radius: 4px;
-      padding: 6px;
+    .upload-icon {
       width: 40px;
       height: 40px;
-      border: 1px solid #d8dad9;
       margin-right: 6px;
-      box-sizing: border-box;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      img {
-        width: 24px;
-        height: 24px;
+      .spaceIcon {
+        border-radius: 4px;
+        padding: 6px;
+        width: 40px;
+        height: 40px;
+        border: 1px solid #d8dad9;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        img {
+          width: 24px;
+          height: 24px;
+        }
+      }
+      .spaceImg {
+        width: 38px;
+        height: 38px;
+        margin-right: 6px;
+        border-radius: 4px;
       }
     }
   }

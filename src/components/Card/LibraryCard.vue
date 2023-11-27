@@ -135,7 +135,7 @@ const toPermission = (val) => {
       <div class="card-content">
         <div class="header">
           <div class="header-left">
-            <img src="/src/assets/icons/bookIcon.svg" alt="" class="bookIcon" />
+            <img :src="card.icon" alt="" class="bookIcon" />
           </div>
           <div class="header-right">
             <div style="display: flex; align-items: center" @click="toLink(card)">

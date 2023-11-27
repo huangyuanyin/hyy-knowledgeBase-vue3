@@ -13,6 +13,7 @@ const refreshStroe = useRefreshStore()
 const spaceId = ref('') // 当前空间id
 const bookId = ref('') // 当前知识库id
 const spaceType = ref<string>('') // 空间类型：个人 组织
+const currentBookInfo = ref(null) // 当前知识库信息
 const dataSource = ref([])
 const bookTree = ref(null)
 const currentNodeKey = ref(Number(route.query.aid)) // 当前选中的节点
@@ -33,6 +34,7 @@ const reNameParent = ref(null)
 const toLinkId = ref(null) // 删除完成后跳转的id
 const toLinkName = ref('')
 const isHasPermissionCode = ref(null)
+const bookIcon = ref('/src/assets/icons/bookIcon.svg')
 const articleType = {
   文档: { type: 'doc', title: '无标题文档' },
   表格: { type: 'sheet', title: '无标题表格' },
@@ -65,6 +67,10 @@ watchEffect(() => {
       await getArticle()
     }
   })
+  if (sessionStorage.getItem('currentBookInfo')) {
+    bookIcon.value = JSON.parse(sessionStorage.getItem('currentBookInfo')).icon
+    currentBookInfo.value = JSON.parse(sessionStorage.getItem('currentBookInfo'))
+  }
 })
 
 const isLoading = ref(false)
@@ -479,13 +485,13 @@ onMounted(async () => {})
     <div class="header-box">
       <div class="header">
         <img v-if="spaceType === '个人'" class="favicon" src="/src/assets/favicon.ico" @click="toLink('back')" />
-        <img v-else class="favicon" src="/src/assets/icons/spaceIcon.svg" @click="toLink('back')" />
+        <img v-else class="favicon" :src="currentBookInfo.group_icon" @click="toLink('back')" />
         <img class="rightArrowIcon" src="/src/assets/icons/rightArrowIcon.svg" alt="" />
         <span @click="toLink('link')">{{ spaceType === '个人' ? '个人知识库' : `${group_name}` }}</span>
       </div>
       <div class="library-name">
         <div class="left">
-          <img class="bookIcon" src="/src/assets/icons/bookIcon.svg" alt="" />
+          <img class="bookIcon" :src="bookIcon" alt="" />
           <div class="name">
             <span>{{ $route.query.lname }}</span>
             <img class="privateIcon" src="/src/assets/icons/privateIcon.svg" alt="" />

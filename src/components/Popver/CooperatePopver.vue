@@ -69,7 +69,7 @@ const deleteArticleCollaborations = async (val) => {
 const addArticleCollaborations = async (username) => {
   const params = {
     role: '1',
-    username,
+    username: [username],
     content: route.query.aid as string
   }
   const res = await addArticleCollaborationsApi(params)
