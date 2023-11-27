@@ -123,11 +123,11 @@ const toCooperate = async () => {
 
 const getTeamMember = async () => {
   const params = {
-    group: route.query.gid
+    group: route.query.gid as string
   }
   const res = await getTeamMemberApi(params)
   if (res.code === 1000) {
-    selectUserList.value = res.data
+    selectUserList.value = res.data as any
     selectUserList.value.forEach((item) => {
       item.permusername = item.username
     })
@@ -137,7 +137,7 @@ const getTeamMember = async () => {
 }
 const getCollaborations = async () => {
   const params = {
-    book: route.query.lid
+    book: route.query.lid as string
   }
   const res = await getCollaborationsApi(params)
   if (res.code === 1000) {
@@ -149,7 +149,7 @@ const getCollaborations = async () => {
 
 const getArticleCollaborations = async () => {
   const params = {
-    content: route.query.aid
+    content: route.query.aid as string
   }
   const res = await getArticleCollaborationsApi(params)
   if (res.code === 1000) {
@@ -168,7 +168,7 @@ const editArticle = async () => {
   }
   let res = await editArticleApi(Number(route.query.aid), params)
   if (res.code === 1000) {
-    ElMessage.success('编辑成功')
+    ElMessage.success('发布成功')
     useAddArticleAfterToLink(route, router, spaceType.value, res.data, false, 'old', false)
   } else {
     ElMessage.error(res.msg)
@@ -176,7 +176,7 @@ const editArticle = async () => {
 }
 
 const getLibraryDetail = async () => {
-  let res = await getLibraryDetailApi(route.query.lid as string)
+  let res = await getLibraryDetailApi(Number(route.query.lid))
   if (res.code === 1000) {
     publicType.value = res.data.public
   } else {

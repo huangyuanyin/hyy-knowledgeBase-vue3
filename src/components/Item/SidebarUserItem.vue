@@ -32,7 +32,9 @@ watchEffect(() => {
 })
 
 onBeforeMount(() => {
-  icon.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon || '/src/assets/icons/spaceIcon.svg'
+  if (sessionStorage.getItem('currentSidebar') === 'SpaceSidebar') {
+    icon.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon || '/src/assets/icons/spaceIcon.svg'
+  }
 })
 </script>
 

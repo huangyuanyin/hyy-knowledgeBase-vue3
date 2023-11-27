@@ -62,7 +62,11 @@ watch(
 
 const initData = () => {
   spaceId.value = props.data.space
-  teamId.value = Number(route.query.gid)
+  if (route.path.split('/')[1] === 'directory') {
+    teamId.value = JSON.parse(localStorage.getItem('personalSpaceInfo')).default_group
+  } else {
+    teamId.value = Number(route.query.gid)
+  }
   bookId.value = props.data.book
   articleId.value = null
   pinPosition.value = '0'
@@ -190,7 +194,7 @@ const getBook = async () => {
   let res = await getLibraryApi(params)
   if (res.code === 1000) {
     bookList.value = res.data || ([] as any)
-    if (teamId.value !== Number(route.query.gid)) {
+    if (teamId.value !== Number(route.query.gid) && spaceType.value === '组织') {
       bookId.value = bookList.value.length > 0 ? bookList.value[0].id : null
     } else {
       bookId.value = props.data.book

@@ -69,6 +69,7 @@ declare module 'vue' {
     ElUpload: typeof import('element-plus/es')['ElUpload']
     Empty: typeof import('./src/components/Empty/index.vue')['default']
     Excel: typeof import('./src/components/Excel/Excel.vue')['default']
+    ExportFileDialog: typeof import('./src/components/Dialog/ExportFileDialog.vue')['default']
     GroupDialog: typeof import('./src/components/Dialog/GroupDialog.vue')['default']
     HandleArticleDialog: typeof import('./src/components/Dialog/HandleArticleDialog.vue')['default']
     IEpAdd: typeof import('~icons/ep/add')['default']

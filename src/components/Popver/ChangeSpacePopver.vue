@@ -54,7 +54,9 @@ const initData = () => {
   spaceId.value = route.query.sid as string
   state.currentSpaceName = route.query.sname || ''
   isSpaceAdmin.value = sessionStorage.getItem('isSpaceAdmin')
-  icon.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon || '/src/assets/icons/spaceIcon.svg'
+  if (sessionStorage.getItem('currentSidebar') === 'SpaceSidebar') {
+    icon.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon || '/src/assets/icons/spaceIcon.svg'
+  }
 }
 
 const toShow = async () => {
@@ -167,15 +169,15 @@ const toLink = (type, val?) => {
             <img :src="icon" alt="" />
             <div class="title">
               <span>{{ state.currentSpaceName }}</span>
-              <p>享受标准版空间权益</p>
+              <!-- <p>享受标准版空间权益</p> -->
             </div>
           </div>
           <div class="card-content">
             <div class="content" v-if="isSpaceAdmin == 'true'">
-              <div class="type">
+              <!-- <div class="type">
                 <span>标准版</span>
                 <span>升级</span>
-              </div>
+              </div> -->
               <div class="member">
                 <div class="member-left">
                   <div class="count">

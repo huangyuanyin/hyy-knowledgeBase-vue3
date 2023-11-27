@@ -21,5 +21,5 @@ export interface OperationPopoverProps {
   parent?: number
   userList?: Array<any>
   selectUserList?: Array<any>
-  selectId: string | number
+  selectId?: string | number
 }

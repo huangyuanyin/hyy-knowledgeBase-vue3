@@ -2,11 +2,11 @@
 import Container from '../Components/Container.vue'
 
 const modelValue = ref('')
-const iframeSrc = ref('http://192.168.94.221:8081')
+const iframeSrc = ref('http://192.168.94.221:8080')
 </script>
 
 <template>
-  <div class="PPT_wrap">
+  <div class="MindMap_wrap">
     <Container :content="modelValue" :isHasPermission="true">
       <iframe class="iframe" :src="iframeSrc" frameborder="0" width="100%" height="100%"></iframe>
     </Container>
@@ -14,7 +14,7 @@ const iframeSrc = ref('http://192.168.94.221:8081')
 </template>
 
 <style lang="scss" scoped>
-.PPT_wrap {
+.MindMap_wrap {
   height: 100vh;
   .Container_wrap {
     height: 100%;

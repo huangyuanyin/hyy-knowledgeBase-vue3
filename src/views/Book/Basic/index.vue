@@ -14,6 +14,7 @@ interface BookForm {
 
 const route = useRoute()
 const refreshStore = useRefreshStore()
+const spaceType = ref('')
 const bookId = ref(Number(route.query.lid) || null)
 const bookFormRef = ref<FormInstance>()
 const bookForm = reactive<BookForm>({
@@ -70,6 +71,7 @@ const getBooksDetail = async (id) => {
     bookForm.slug = (res.data as any).slug
     bookForm.description = (res.data as any).description
     bookForm.icon = (res.data as any).icon
+    bookForm.group = (res.data as any).group
     bookForm.stacks = (res.data as any).stacks
     sessionStorage.setItem('currentBookInfo', JSON.stringify(res.data))
   } else {

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { sidebarSearchMenuItemsData, articleOperationData, linkOperationData, titleOperationData, fileOperationData, directorySidebarOperationData } from '@/data/data'
-import { addArticleApi, deleteArticleApi, editArticleApi, exportDocApi, getArticleTreeApi } from '@/api/article'
+import { addArticleApi, deleteArticleApi, editArticleApi, getArticleTreeApi } from '@/api/article'
 import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
 
 const route = useRoute()
@@ -22,6 +22,9 @@ const group_name = ref<string>('')
 const nickName = ref<string>(infoStore.currentSpaceInfo.nickname || route.fullPath.split('/')[1])
 const showHandleArticleDialog = ref(false)
 const isShowLinkDialog = ref(false)
+const isShowExportFileDialog = ref(false)
+const exportId = ref(null)
+const exportType = ref('')
 const handleArticleDialogTitle = ref('')
 const handleArticleDialogDesc = ref('')
 const handleData = ref(null) // 复制 || 移动的数据
@@ -83,7 +86,7 @@ watch(
     setTimeout(() => {
       bookTree.value.setCurrentKey(newVal)
       isLoading.value = false
-    }, 1000)
+    }, 500)
   }
 )
 
@@ -174,6 +177,7 @@ const getArticle = async () => {
       toLinkId.value = res.data[0].id
       toLinkName.value = res.data[0].title
     }
+    currentNodeKey.value = Number(route.query.aid)
   } else {
     ElMessage({
       message: res.msg,
@@ -184,8 +188,8 @@ const getArticle = async () => {
 }
 
 const toArticleDetail = (val) => {
-  val.type === 'links' || val.type === 'title' ? bookTree.value.setCurrentKey(Number(route.query.aid)) : (currentNodeKey.value = val.id)
   if (val.id == route.query.aid) return
+  val.type === 'links' || val.type === 'title' ? bookTree.value.setCurrentKey(Number(route.query.aid)) : (currentNodeKey.value = val.id)
   switch (val.type) {
     case 'links':
       val.open_windows === '1' ? window.open(val.description) : (window.location.href = val.description)
@@ -250,30 +254,9 @@ const toHandleArticle = (type, val) => {
 
 // 导出
 const toExport = (val) => {
-  ElMessageBox.confirm(`确认导出 【${val.title}】 ？`, '', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'success'
-  })
-    .then(() => {
-      val.type === 'doc' ? exportDoc(val.id) : handleDownload(val)
-    })
-    .catch(() => {
-      ElMessage.info('取消操作')
-    })
-}
-
-const handleDownload = async (val) => {
-  console.log(`output->val`, val)
-}
-
-const exportDoc = async (id) => {
-  let res = await exportDocApi(id)
-  if (res.code === 1000) {
-    window.open(res.data as unknown as string)
-  } else {
-    ElMessage.error(res.msg)
-  }
+  exportId.value = val.id
+  exportType.value = val.type
+  isShowExportFileDialog.value = true
 }
 
 const toTodo = (val) => {
@@ -652,6 +635,7 @@ onMounted(async () => {})
     @closeDialog="showHandleArticleDialog = false"
   />
   <LinkDialog :isShow="isShowLinkDialog" :parent="parentId" :type="linkType" :id="linkDialogId" @closeDialog="closeLinkDialog" />
+  <ExportFileDialog :isShow="isShowExportFileDialog" @closeDialog="isShowExportFileDialog = false" :type="exportType" :id="exportId" />
 </template>
 
 <style lang="scss" scoped>
