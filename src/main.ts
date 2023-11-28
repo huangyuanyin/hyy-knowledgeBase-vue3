@@ -5,6 +5,8 @@ import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import SvgIcon from '@/components/SvgIcon/SvgIcon.vue'
 import './assets/iconfont/iconfont.js'
+import mavonEditor from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
 import XEUtils from 'xe-utils'
 import {
   // 全局对象
@@ -102,7 +104,7 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
 const app = createApp(App)
-app.use(router).use(pinia).use(useTable)
+app.use(router).use(pinia).use(useTable).use(mavonEditor)
 app.component('SvgIcon', SvgIcon)
 app.mount('#app')
 

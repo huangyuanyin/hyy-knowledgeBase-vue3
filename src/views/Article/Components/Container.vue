@@ -56,7 +56,7 @@ const buttonList = ref([])
 
 watchEffect(() => {
   spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
-  spaceId.value = spaceType.value === '个人' ? (localStorage.getItem('personalSpaceId') as string) : (route.query.sid as string)
+  spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
   route.path.split('/').slice(-1)[0] === 'edit' ? (isEdit.value = true) : (isEdit.value = false)
   if (isEdit.value) {
     buttonList.value = [
@@ -261,9 +261,11 @@ const toCloseDrawer = () => {
 
 <style lang="scss" scoped>
 .Container_wrap {
+  display: flex;
+  flex-direction: column;
   .header {
     height: 52px;
-    width: 100%;
+    width: -webkit-fill-available;
     border-bottom: 1px solid rgba(0, 0, 0, 0.04);
     font-size: 14px;
     display: flex;
@@ -381,10 +383,7 @@ const toCloseDrawer = () => {
   }
   .body {
     width: 100%;
-    height: 100%;
-    align-items: center;
-    display: flex;
-    justify-content: center;
+    flex: 1;
   }
   .el-main {
     padding: 0;

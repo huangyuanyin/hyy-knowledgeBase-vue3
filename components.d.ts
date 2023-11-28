@@ -92,6 +92,7 @@ declare module 'vue' {
     LibraryOperationPopver: typeof import('./src/components/Popver/LibraryOperationPopver.vue')['default']
     LibraryTable: typeof import('./src/components/Table/LibraryTable.vue')['default']
     LinkDialog: typeof import('./src/components/Dialog/LinkDialog.vue')['default']
+    MavonEditor: typeof import('./src/components/Doc/MavonEditor.vue')['default']
     MemberDialog: typeof import('./src/components/Dialog/MemberDialog.vue')['default']
     ModuleItem: typeof import('./src/components/Item/ModuleItem.vue')['default']
     MoreFeaturesDrawer: typeof import('./src/components/Drawer/MoreFeaturesDrawer.vue')['default']
@@ -118,6 +119,7 @@ declare module 'vue' {
     Tinymce: typeof import('./src/components/Doc/Tinymce.vue')['default']
     TinyMCE: typeof import('./src/components/Doc/TinyMCE.vue')['default']
     UserPopver: typeof import('./src/components/Popver/UserPopver.vue')['default']
+    VMdEditor: typeof import('./src/components/Doc/VMdEditor.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

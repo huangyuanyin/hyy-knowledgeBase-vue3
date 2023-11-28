@@ -1,7 +1,7 @@
 export interface collaborationsParams {
+  content?: string
   book?: string
   id?: number
-  conetnet?: string
 }
 
 export interface collaborationsData {

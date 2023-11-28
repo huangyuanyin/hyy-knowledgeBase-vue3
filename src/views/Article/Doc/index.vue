@@ -51,13 +51,27 @@ onBeforeMount(() => {
 <template>
   <div class="Doc_wrap">
     <Container :content="modelValue" :isHasPermission="isHasPermissionCode">
-      <TinyMCE v-if="isUpdate" v-model="modelValue" :readonly="isPreview" />
+      <TinyMCE v-if="isUpdate && !isPreview" v-model="modelValue" :readonly="isPreview" />
+      <MavonEditor v-if="isPreview" :html="modelValue" />
     </Container>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .Doc_wrap {
-  height: 100vh;
+  width: -webkit-fill-available;
+  box-sizing: border-box;
+  :deep(.MavonEditor_wrap) {
+    width: -webkit-fill-available;
+    height: calc(100vh - 52px);
+    box-sizing: border-box;
+    .v-note-wrapper {
+      border: none;
+      height: 100%;
+    }
+    .v-note-show {
+      padding: 0 250px 0 150px;
+    }
+  }
 }
 </style>

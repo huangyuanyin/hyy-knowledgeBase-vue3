@@ -35,6 +35,9 @@ dependencies:
   luckysheet:
     specifier: ^2.1.13
     version: registry.npmmirror.com/luckysheet@2.1.13
+  mavon-editor:
+    specifier: ^3.0.1
+    version: registry.npmmirror.com/mavon-editor@3.0.1
   mitt:
     specifier: ^3.0.1
     version: registry.npmmirror.com/mitt@3.0.1
@@ -1256,7 +1259,6 @@ packages:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/commander/-/commander-2.20.3.tgz}
     name: commander
     version: 2.20.3
-    dev: true
 
   registry.npmmirror.com/console@0.7.2:
     resolution: {integrity: sha512-+JSDwGunA4MTEgAV/4VBKwUHonP8CzJ/6GIuwPi6acKFqFfHUdSGCm89ZxZ5FfGWdZfkdgAroy5bJ5FSeN/t4g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/console/-/console-0.7.2.tgz}
@@ -1295,6 +1297,12 @@ packages:
     resolution: {integrity: sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/crypto-js/-/crypto-js-4.1.1.tgz}
     name: crypto-js
     version: 4.1.1
+    dev: false
+
+  registry.npmmirror.com/cssfilter@0.0.10:
+    resolution: {integrity: sha512-FAaLDaplstoRsDR8XGYH51znUN0UY7nMc6Z9/fvE8EXGwvJE9hu7W2vHwx1+bd6gCYnln9nLbzxFTrcO9YQDZw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/cssfilter/-/cssfilter-0.0.10.tgz}
+    name: cssfilter
+    version: 0.0.10
     dev: false
 
   registry.npmmirror.com/csstype@3.1.2:
@@ -1645,17 +1653,10 @@ packages:
     dev: true
     optional: true
 
-  registry.npmmirror.com/function-bind@1.1.1:
-    resolution: {integrity: sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/function-bind/-/function-bind-1.1.1.tgz}
-    name: function-bind
-    version: 1.1.1
-    dev: true
-
   registry.npmmirror.com/function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/function-bind/-/function-bind-1.1.2.tgz}
     name: function-bind
     version: 1.1.2
-    dev: false
 
   registry.npmmirror.com/get-intrinsic@1.2.2:
     resolution: {integrity: sha512-0gSo4ml/0j98Y3lngkFEot/zhiCeWsbYIlZ+uZOVgzLyLaUw7wxUL+nCTP0XJvJg1AXulJRI3UJi8GsbDuxdGA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/get-intrinsic/-/get-intrinsic-1.2.2.tgz}
@@ -1747,7 +1748,7 @@ packages:
     version: 1.0.3
     engines: {node: '>= 0.4.0'}
     dependencies:
-      function-bind: registry.npmmirror.com/function-bind@1.1.1
+      function-bind: registry.npmmirror.com/function-bind@1.1.2
     dev: true
 
   registry.npmmirror.com/hasown@2.0.0:
@@ -2044,6 +2045,14 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       '@jridgewell/sourcemap-codec': registry.npmmirror.com/@jridgewell/sourcemap-codec@1.4.15
+
+  registry.npmmirror.com/mavon-editor@3.0.1:
+    resolution: {integrity: sha512-973cYCwv+AB+fcecsU6Ua6UXATxDMaY0Q7QzKQ/GmRW1sg+3DolZDnCGXth7XHDgrmqKTO57N42fVYujt0wfFw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/mavon-editor/-/mavon-editor-3.0.1.tgz}
+    name: mavon-editor
+    version: 3.0.1
+    dependencies:
+      xss: registry.npmmirror.com/xss@1.0.14
+    dev: false
 
   registry.npmmirror.com/memoize-one@6.0.0:
     resolution: {integrity: sha512-rkpe71W0N0c0Xz6QD0eJETuWAJGnJ9afsl1srmwPrI+yBCkge5EycXXbYRyvL29zZVUWQCY7InPRCv3GDXuZNw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/memoize-one/-/memoize-one-6.0.0.tgz}
@@ -3184,6 +3193,17 @@ packages:
     resolution: {integrity: sha512-ORT6ghCRk0mUVavMBxetcPzUPskS6NGfntzpWazJ86e+XU0uK4HwHfDhN/jKATiyInrOH5RwQo9SO/+DB8XeBw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/xe-utils/-/xe-utils-3.5.13.tgz}
     name: xe-utils
     version: 3.5.13
+    dev: false
+
+  registry.npmmirror.com/xss@1.0.14:
+    resolution: {integrity: sha512-og7TEJhXvn1a7kzZGQ7ETjdQVS2UfZyTlsEdDOqvQF7GoxNfY+0YLCzBy1kPdsDDx4QuNAonQPddpsn6Xl/7sw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/xss/-/xss-1.0.14.tgz}
+    name: xss
+    version: 1.0.14
+    engines: {node: '>= 0.10.0'}
+    hasBin: true
+    dependencies:
+      commander: registry.npmmirror.com/commander@2.20.3
+      cssfilter: registry.npmmirror.com/cssfilter@0.0.10
     dev: false
 
   registry.npmmirror.com/yallist@4.0.0:
