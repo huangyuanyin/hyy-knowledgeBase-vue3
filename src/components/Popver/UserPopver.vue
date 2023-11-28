@@ -8,6 +8,7 @@ const toExit = () => {
   localStorage.removeItem('personalSpaceInfo')
   localStorage.removeItem('personalGroupId')
   localStorage.setItem('isAuth', 'false')
+  sessionStorage.clear()
   router.push('/login')
 }
 

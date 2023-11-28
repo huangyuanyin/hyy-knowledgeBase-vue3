@@ -69,11 +69,11 @@ watchEffect(() => {
     if (bookId.value) {
       await getArticle()
     }
+    if (sessionStorage.getItem('currentBookInfo')) {
+      bookIcon.value = JSON.parse(sessionStorage.getItem('currentBookInfo')).icon
+      currentBookInfo.value = JSON.parse(sessionStorage.getItem('currentBookInfo'))
+    }
   })
-  if (sessionStorage.getItem('currentBookInfo')) {
-    bookIcon.value = JSON.parse(sessionStorage.getItem('currentBookInfo')).icon
-    currentBookInfo.value = JSON.parse(sessionStorage.getItem('currentBookInfo'))
-  }
 })
 
 const isLoading = ref(false)
@@ -468,7 +468,7 @@ onMounted(async () => {})
     <div class="header-box">
       <div class="header">
         <img v-if="spaceType === '个人'" class="favicon" src="/src/assets/favicon.ico" @click="toLink('back')" />
-        <img v-else class="favicon" :src="currentBookInfo.group_icon" @click="toLink('back')" />
+        <img v-else class="favicon" :src="currentBookInfo && currentBookInfo.group_icon" @click="toLink('back')" />
         <img class="rightArrowIcon" src="/src/assets/icons/rightArrowIcon.svg" alt="" />
         <span @click="toLink('link')">{{ spaceType === '个人' ? '个人知识库' : `${group_name}` }}</span>
       </div>

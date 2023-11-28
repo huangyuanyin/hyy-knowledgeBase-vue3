@@ -41,8 +41,8 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
         query: {
           sid: route.query.sid,
           sname: route.query.sname,
-          gid: route.query.gid,
-          gname: route.query.gname,
+          gid: route.query.gid || data.group,
+          gname: route.query.gname || data.group_name,
           lid: data.id,
           lname: data.name
         }
@@ -67,8 +67,8 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
         query: {
           sid: route.query.sid,
           sname: route.query.sname,
-          gid: route.query.gid,
-          gname: route.query.gname,
+          gid: route.query.gid || data.group,
+          gname: route.query.gname || data.group_name,
           lid: data.id,
           lname: data.name
         }

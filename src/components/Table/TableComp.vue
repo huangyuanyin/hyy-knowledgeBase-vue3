@@ -33,9 +33,9 @@ const deleteInfo = ref<{
   stack?: string
 }>({})
 const libraryOperationData = [
-  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限', nick: 'toBookSetting2' },
-  { type: 'item', icon: '/src/assets/icons/renameIcon.svg', label: '重命名' },
-  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置', nick: 'toBookSetting' },
+  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限', nick: 'toPermission' },
+  { type: 'item', icon: '/src/assets/icons/renameIcon.svg', label: '重命名', nick: 'toRename' },
+  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置', nick: 'toMoreSetting' },
   { type: 'divider' },
   { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteBook' }
 ]
@@ -146,8 +146,18 @@ const toLink = (val, type) => {
   }
 }
 
-const toBookSetting = (val) => {
+const toMoreSetting = (val) => {
   console.log(`output->val`, val)
+  useLink(routeInfo, 'bookSet', val)
+}
+
+const toPermission = (val) => {
+  useLink(routeInfo, 'bookPermission', val)
+}
+
+const toRename = (val) => {
+  console.log(`output->val`, val)
+  ElMessage.warning('功能暂未开放，敬请期待')
 }
 
 const toDeleteBook = (val) => {
@@ -261,7 +271,14 @@ const toQuitTeam = (val: any) => {
                 <img src="@/assets/icons/pinOutIcon.svg" alt="" @click="toQuickLink('add', document, 'book')" />
               </span>
             </el-tooltip>
-            <LibraryOperationPopver :menuItems="libraryOperationData" :width="126" @toBookSetting="toBookSetting" @toDeleteBook="toDeleteBook(document)">
+            <LibraryOperationPopver
+              :menuItems="libraryOperationData"
+              :width="126"
+              @toRename="toRename(document)"
+              @toPermission="toPermission(document)"
+              @toMoreSetting="toMoreSetting(document)"
+              @toDeleteBook="toDeleteBook(document)"
+            >
               <span>
                 <img v-show="hoveredDocument === document.id" src="@/assets/icons/moreIcon1_after.svg" alt="" />
               </span>

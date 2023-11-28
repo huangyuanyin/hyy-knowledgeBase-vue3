@@ -1,13 +1,12 @@
-import { useUserStore } from '@/store/user'
+import { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 
 export function setupRouterInterceptor(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
-  const store = useUserStore()
-  console.log(111, to, from, store.isAuth)
-  // if (to.meta.is_login && !store.isAuth) {
-  //   ElMessage.error('请先登录')
-  //   router.push('/login')
-  // }
-
+  if (to.path === '/login') {
+    next()
+  } else {
+    let token = localStorage.getItem('token')
+    token ? next() : next('/login')
+  }
   if (to.path === '/directory/sheet/edit' && from.path === '/') {
     const query = to.query
     next({
