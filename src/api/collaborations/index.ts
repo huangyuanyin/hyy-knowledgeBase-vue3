@@ -20,6 +20,10 @@ export function addArticleCollaborationsApi(data: collaborationsData) {
   return http.post<collaborationsRes>('article/collaborations/', data, 'base')
 }
 
+export function editArticleCollaborationsApi(id: number, data: collaborationsData) {
+  return http.put<collaborationsRes>(`article/collaborations/${id}/`, data, 'base')
+}
+
 export function deleteArticleCollaborationsApi(id: number) {
   return http.delete<collaborationsRes>(`article/collaborations/${id}/`, {}, 'base')
 }

@@ -12,4 +12,10 @@ onMounted(() => {})
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.v-note-navigation-title) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+</style>

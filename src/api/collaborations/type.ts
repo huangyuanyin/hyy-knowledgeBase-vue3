@@ -5,9 +5,10 @@ export interface collaborationsParams {
 }
 
 export interface collaborationsData {
-  permtype: string
-  permusername: Array<string>
-  book: string
+  permtype?: string
+  permusername?: Array<string>
+  book?: string
+  role?: string
   [x: string]: any
 }
 

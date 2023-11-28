@@ -67,23 +67,42 @@ const formatterStatus: VxeColumnPropTypes.Formatter<MemberItem> = ({ cellValue }
   return item ? item.label : cellValue
 }
 
-const toDeleteMmber = (data) => {
-  ElMessageBox.confirm(`确定删除${data.name}吗？删除后对方就无法再访问本团队`, '确定删除该成员？', {
-    confirmButtonText: '删除',
-    cancelButtonText: '取消',
-    customClass: 'deleteMemberDialog',
-    confirmButtonClass: 'deleteButton',
-    cancelButtonClass: 'cancelButton',
-    appendTo: '.Member_wrap',
-    showClose: false,
-    type: 'warning'
-  })
-    .then(() => {
-      deleteTeamMember(data.id)
+const toDeleteMmber = (type, data) => {
+  if (type === 'exit') {
+    ElMessageBox.confirm(`确定退出吗？退出后就无法再访问本团队`, '确定退出该团队？', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      customClass: 'deleteMemberDialog',
+      confirmButtonClass: 'deleteButton',
+      cancelButtonClass: 'cancelButton',
+      appendTo: '.Member_wrap',
+      showClose: false,
+      type: 'warning'
     })
-    .catch(() => {
-      ElMessage.info('取消删除')
+      .then(() => {
+        deleteTeamMember(data.id)
+      })
+      .catch(() => {
+        ElMessage.info('取消操作')
+      })
+  } else {
+    ElMessageBox.confirm(`确定删除${data.name}吗？删除后对方就无法再访问本团队`, '确定删除该成员？', {
+      confirmButtonText: '删除',
+      cancelButtonText: '取消',
+      customClass: 'deleteMemberDialog',
+      confirmButtonClass: 'deleteButton',
+      cancelButtonClass: 'cancelButton',
+      appendTo: '.Member_wrap',
+      showClose: false,
+      type: 'warning'
     })
+      .then(() => {
+        deleteTeamMember(data.id)
+      })
+      .catch(() => {
+        ElMessage.info('取消删除')
+      })
+  }
 }
 
 const toChangeRole = (data, row) => {
@@ -98,6 +117,7 @@ const toChangeRole = (data, row) => {
 }
 
 const toExit = (data) => {
+  console.log(`output->data`, data)
   ElMessage.warning('功能暂未开放，敬请期待')
 }
 
@@ -204,12 +224,12 @@ onMounted(() => {
           <vxe-column field="role" title="角色" :formatter="formatterRole" width="200" sortable>
             <template #default="{ row, rowIndex }">
               <DropdownPopver :menuItems="sexList" :selectId="sexList[row.role].value" @toChange="toChangeRole($event, row)">
-                <span class="el-dropdown" v-if="rowIndex !== 0">
+                <span class="el-dropdown" v-if="rowIndex !== 0 && row.username !== user">
                   {{ sexList[row.role].label }}
                   <i-ep-ArrowDown />
                 </span>
               </DropdownPopver>
-              <span v-if="rowIndex === 0">{{ sexList[row.role].label }}</span>
+              <span v-if="rowIndex === 0 || row.username === user">{{ sexList[row.role].label }}</span>
             </template>
           </vxe-column>
           <vxe-column field="dept" width="200" title="所属部门" :formatter="formatterStatus" sortable></vxe-column>
@@ -217,13 +237,18 @@ onMounted(() => {
           <vxe-column title="操作">
             <template #default="{ row, rowIndex }">
               <el-tooltip effect="dark" content="退出" placement="top" :show-arrow="false">
-                <span class="icon" v-if="rowIndex === 0">
+                <span class="icon" v-if="rowIndex === 0 && row.username === user">
                   <img src="/src/assets/icons/team/editIcon.svg" alt="" @click="toExit(row)" />
                 </span>
               </el-tooltip>
+              <el-tooltip effect="dark" content="退出" placement="top" :show-arrow="false">
+                <span class="icon" v-if="rowIndex !== 0 && row.username === user">
+                  <img src="/src/assets/icons/team/editIcon.svg" alt="" @click="toDeleteMmber('exit', row)" />
+                </span>
+              </el-tooltip>
               <el-tooltip effect="dark" content="删除" placement="top" :show-arrow="false">
-                <span class="icon" v-if="rowIndex !== 0">
-                  <img src="/src/assets/icons/organize/deleteIcon.svg" alt="" @click="toDeleteMmber(row)" />
+                <span class="icon" v-if="rowIndex !== 0 && row.username !== user">
+                  <img src="/src/assets/icons/organize/deleteIcon.svg" alt="" @click="toDeleteMmber('delete', row)" />
                 </span>
               </el-tooltip>
             </template>

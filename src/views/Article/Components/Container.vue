@@ -2,7 +2,7 @@
 import { editArticleApi, getArticleApi } from '@/api/article'
 import NoPermission from '@/views/NoPermission/index.vue'
 import { getCollaborationsApi, getArticleCollaborationsApi } from '@/api/collaborations'
-import { getTeamMemberApi } from '@/api/member'
+// import { getTeamMemberApi } from '@/api/member'
 import { getLibraryDetailApi } from '@/api/library'
 
 const props = defineProps({
@@ -24,7 +24,9 @@ const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem(
 const isEdit = ref(false)
 const moreFeaturesDrawer = ref(false) // 更多功能抽屉
 const commentDrawer = ref(false) // 评论抽屉
-const moreFeaturesDrawerInfo = ref({}) // 更多功能抽屉tab
+const moreFeaturesDrawerInfo = ref({
+  public: ''
+}) // 更多功能抽屉tab
 const spaceType = ref('') // 当前空间类型
 const spaceId = ref('') // 当前空间id
 const publicType = ref('') // 知识库的公开性
@@ -89,8 +91,9 @@ watchEffect(() => {
 const toHandle = (item: any) => {
   switch (item.label) {
     case '分享':
-      const url = window.location.href
-      useCopy(url, '分享链接')
+      // const url = window.location.href
+      // useCopy(url, '分享链接')
+      getArticle()
       break
     case '发布':
       editArticle()
@@ -114,27 +117,35 @@ const toCooperate = async () => {
     getArticleCollaborations()
   })
   await getLibraryDetail()
-  if (publicType.value === '0') {
-    await getCollaborations()
-  } else if (publicType.value === '1') {
-    await getTeamMember()
+  await getCollaborations() // 不管public的值为多少，都从知识库成员中取出
+  // if (publicType.value === '0') {
+  //   await getCollaborations()
+  // } else if (publicType.value === '1') {
+  //   await getTeamMember()
+  // }
+}
+
+// const getTeamMember = async () => {
+//   const params = {
+//     group: route.query.gid as string
+//   }
+//   const res = await getTeamMemberApi(params)
+//   if (res.code === 1000) {
+//     selectUserList.value = res.data as any
+//     selectUserList.value.forEach((item) => {
+//       item.permusername = item.username
+//     })
+//   } else {
+//     ElMessage.error(res.msg)
+//   }
+// }
+
+const updateArticleCollaborations = (val) => {
+  if (val) {
+    getArticleCollaborations()
   }
 }
 
-const getTeamMember = async () => {
-  const params = {
-    group: route.query.gid as string
-  }
-  const res = await getTeamMemberApi(params)
-  if (res.code === 1000) {
-    selectUserList.value = res.data as any
-    selectUserList.value.forEach((item) => {
-      item.permusername = item.username
-    })
-  } else {
-    ElMessage.error(res.msg)
-  }
-}
 const getCollaborations = async () => {
   const params = {
     book: route.query.lid as string
@@ -154,6 +165,7 @@ const getArticleCollaborations = async () => {
   const res = await getArticleCollaborationsApi(params)
   if (res.code === 1000) {
     userList.value = res.data
+    console.log(`output->userList.value`, userList.value)
   } else {
     ElMessage.error(res.msg)
   }
@@ -200,7 +212,7 @@ const openDrawer = (val) => {
 const getArticle = async () => {
   let res = await getArticleApi(route.query.aid as string)
   if (res.code === 1000) {
-    moreFeaturesDrawerInfo.value = res.data
+    moreFeaturesDrawerInfo.value = res.data as any
   } else {
     ElMessage.error(res.msg)
   }
@@ -230,7 +242,7 @@ const toCloseDrawer = () => {
             </el-tooltip>
             <el-tooltip effect="dark" :content="item.label" placement="bottom" :show-arrow="false">
               <span v-if="item.label === '协作'" @click="toCooperate">
-                <CooperatePopver :selectUserList="selectUserList" :userList="userList" />
+                <CooperatePopver :selectUserList="selectUserList" :userList="userList" @updateArticleCollaborations="updateArticleCollaborations" />
               </span>
             </el-tooltip>
             <el-tooltip effect="dark" :content="item.label" placement="bottom" :show-arrow="false">
@@ -240,7 +252,10 @@ const toCloseDrawer = () => {
             </el-tooltip>
           </div>
           <div class="button" v-for="(item, index) in buttonList" :key="'itemList' + index">
-            <el-button :type="item.type" @click="toHandle(item)">{{ item.label }}</el-button>
+            <SharePopver :aInfo="moreFeaturesDrawerInfo">
+              <el-button v-if="item.label === '分享'" :type="item.type" @click="toHandle(item)">{{ item.label }}</el-button>
+            </SharePopver>
+            <el-button v-if="item.label !== '分享'" :type="item.type" @click="toHandle(item)">{{ item.label }}</el-button>
           </div>
           <div class="action" v-if="!isEdit">
             <span :class="[commentDrawer ? 'is_active' : '']"><img src="/src/assets/icons/article/commentIcon.svg" alt="" @click="openDrawer('comment')" /></span>

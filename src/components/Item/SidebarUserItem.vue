@@ -3,7 +3,7 @@
     <div class="left">
       <img v-if="currentSider === 'Sidebar'" src="@/assets/favicon.ico" />
       <span v-if="currentSider === 'Sidebar'">信安</span>
-      <img v-if="currentSider === 'SpaceSidebar'" :src="icon" />
+      <img v-if="currentSider === 'SpaceSidebar'" :src="props.icon" />
       <span class="name" v-if="currentSider === 'SpaceSidebar'">{{ currentSiderName }}</span>
       <ChangeSpacePopver :currentSider="currentSider" />
     </div>
@@ -20,21 +20,20 @@
 </template>
 
 <script lang="ts" setup>
+const props = defineProps({
+  icon: {
+    type: String,
+    default: ''
+  }
+})
+
 const route = useRoute()
 const currentSider = ref('')
 const currentSiderName = ref('')
-const icon = ref('')
 
 watchEffect(() => {
   currentSider.value = route.meta.asideComponent as string
   currentSiderName.value = route.query?.sname as string
-  console.log(`output->1212`, 1212)
-})
-
-onBeforeMount(() => {
-  if (sessionStorage.getItem('currentSidebar') === 'SpaceSidebar') {
-    icon.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon || '/src/assets/icons/spaceIcon.svg'
-  }
 })
 </script>
 

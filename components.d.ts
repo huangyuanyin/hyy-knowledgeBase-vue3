@@ -103,6 +103,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SelectIconPopver: typeof import('./src/components/Popver/SelectIconPopver.vue')['default']
+    SharePopver: typeof import('./src/components/Popver/SharePopver.vue')['default']
     Sidebar: typeof import('./src/components/Sidebar/Sidebar.vue')['default']
     SidebarMenuItem: typeof import('./src/components/Item/SidebarMenuItem.vue')['default']
     SidebarSearch: typeof import('./src/components/SidebarSearch.vue')['default']

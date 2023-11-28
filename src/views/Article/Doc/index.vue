@@ -35,7 +35,7 @@ const getArticle = async () => {
     modelValue.value = res.data.body
     isUpdate.value = true
   } else {
-    ElMessage.error(res.msg)
+    // ElMessage.error(res.msg)
   }
 }
 

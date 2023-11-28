@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { cooperateLink } from '@/data/data'
-import { MenuItem, OperationPopoverProps } from '@/type/operationPopoverType'
-import { getCollaborationsApi, addArticleCollaborationsApi, deleteArticleCollaborationsApi } from '@/api/collaborations'
+// import { cooperateLink } from '@/data/data'
+import { OperationPopoverProps } from '@/type/operationPopoverType'
+import { addArticleCollaborationsApi, editArticleCollaborationsApi, deleteArticleCollaborationsApi } from '@/api/collaborations'
 
 const props = withDefaults(defineProps<OperationPopoverProps>(), {
   placement: 'bottom-start',
@@ -10,13 +10,14 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
   hideAfter: 100,
   showArrow: false,
   userList: [],
-  selectUserList: []
+  selectUserList: [] // 可协作人员列表
 })
+const emit = defineEmits(['updateArticleCollaborations'])
 
 const route = useRoute()
 const cooperatePopverRef = ref(null)
 const searchValue = ref('')
-const link = ref(cooperateLink)
+// const link = ref(cooperateLink)
 const userList = ref([])
 const selectedUserList = ref([])
 const isShowUserOperationPopver = ref(false)
@@ -32,9 +33,12 @@ watchEffect(() => {
 const querySearch = async (queryString: string, cb: (result: any[]) => void): Promise<any> => {
   userList.value = []
   if (queryString) {
-    console.log(`output->`, props.selectUserList, queryString)
     userList.value = props.selectUserList.filter((item) => {
-      return item.permusername.toLowerCase().includes(queryString) || item.name.toLowerCase().includes(queryString) || item.username.toLowerCase().includes(queryString)
+      return (
+        (item.permusername && item.permusername.toLowerCase().includes(queryString)) ||
+        (item.name && item.name.toLowerCase().includes(queryString)) ||
+        (item.username && item.username.toLowerCase().includes(queryString))
+      )
     })
     userList.value = userList.value.filter((item) => {
       return !selectedUserList.value.some((selectedItem) => {
@@ -54,6 +58,12 @@ const toDelete = (val) => {
   deleteArticleCollaborations(val)
 }
 
+const toChangeArticlePublic = (type, val) => {
+  if (val.role === type) return
+  console.log(val)
+  editArticleCollaborations(type, val)
+}
+
 const deleteArticleCollaborations = async (val) => {
   const res = await deleteArticleCollaborationsApi(val.id)
   if (res.code === 1000) {
@@ -68,13 +78,27 @@ const deleteArticleCollaborations = async (val) => {
 
 const addArticleCollaborations = async (username) => {
   const params = {
-    role: '1',
+    role: '1', // 0: 可阅读，1: 可编辑
     username: [username],
     content: route.query.aid as string
   }
   const res = await addArticleCollaborationsApi(params)
   if (res.code === 1000) {
     ElMessage.success('添加成功')
+  }
+}
+
+const editArticleCollaborations = async (role, val) => {
+  const params = {
+    role, // 0: 可阅读，1: 可编辑
+    username: val.username
+  }
+  const res = await editArticleCollaborationsApi(val.id, params)
+  if (res.code === 1000) {
+    ElMessage.success('更新成功')
+    emit('updateArticleCollaborations', true)
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 
@@ -142,27 +166,30 @@ const onShowUserOperationPopver = (val: boolean) => {
                   @visible-change="onShowUserOperationPopver"
                 >
                   <div :class="['role-selector', isShowUserOperationPopver ? 'selected' : '']">
-                    <span class="user-dropdown"> 可编辑</span>
+                    <span class="user-dropdown">{{ item.role === '1' ? '可编辑' : '可阅读' }}</span>
                     <img src="@/assets/icons/arrowDownIcon.svg" alt="" />
                   </div>
                   <template #dropdown>
                     <el-dropdown-menu>
                       <el-dropdown-item>
-                        <div class="item">
+                        <div class="item" @click="toChangeArticlePublic('1', item)">
                           <div class="item-left">
                             <span>可编辑</span>
                             <span class="des">拥有文档的编辑权限</span>
                           </div>
-                          <div class="item-right">
+                          <div class="item-right" v-if="item.role === '1'">
                             <img src="@/assets/icons/selectIcon.svg" alt="" />
                           </div>
                         </div>
                       </el-dropdown-item>
-                      <el-dropdown-item disabled>
-                        <div class="item disabled">
+                      <el-dropdown-item>
+                        <div class="item" @click="toChangeArticlePublic('0', item)">
                           <div class="item-left">
                             <span>可阅读</span>
                             <span class="des">仅拥有只读和评论权限</span>
+                          </div>
+                          <div class="item-right" v-if="item.role === '0'">
+                            <img src="@/assets/icons/selectIcon.svg" alt="" />
                           </div>
                         </div>
                       </el-dropdown-item>
