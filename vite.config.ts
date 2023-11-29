@@ -8,48 +8,56 @@ import IconsResolver from 'unplugin-icons/resolver'
 import { join } from 'path'
 import { createStyleImportPlugin, VxeTableResolve } from 'vite-plugin-style-import'
 
-export default defineConfig({
-  plugins: [
-    vue(),
-    AutoImport({
-      resolvers: [
-        ElementPlusResolver(),
-        IconsResolver({
-          prefix: 'Icon'
-        })
-      ],
-      imports: ['vue', 'vue-router', 'pinia'],
-      include: [/\.[tj]sx?$/, /\.vue\??/],
-      dirs: ['./src/components', './src/hooks', './src/utils', './src/router', './src/api', './src/store'],
-      dts: 'src/auto-imports.d.ts'
-    }),
-    Components({
-      resolvers: [
-        ElementPlusResolver(),
-        IconsResolver({
-          enabledCollections: ['ep']
-        })
+export default defineConfig(({ mode }) => {
+  return {
+    base: mode === 'development' ? '/' : '/netKmp/',
+    build: {
+      outDir: './dist', // 指定输出目录为 "./dist"
+      assetsDir: './assets', // 指定静态文件引入路径为 "./assets"
+      minify: 'terser' // 使用 terser 进行代码压缩
+    },
+    plugins: [
+      vue(),
+      AutoImport({
+        resolvers: [
+          ElementPlusResolver(),
+          IconsResolver({
+            prefix: 'Icon'
+          })
+        ],
+        imports: ['vue', 'vue-router', 'pinia'],
+        include: [/\.[tj]sx?$/, /\.vue\??/],
+        dirs: ['./src/components', './src/hooks', './src/utils', './src/router', './src/api', './src/store'],
+        dts: 'src/auto-imports.d.ts'
+      }),
+      Components({
+        resolvers: [
+          ElementPlusResolver(),
+          IconsResolver({
+            enabledCollections: ['ep']
+          })
+        ]
+      }),
+      Icons({
+        autoInstall: true
+      })
+      // createStyleImportPlugin({
+      //   resolves: [VxeTableResolve()]
+      // })
+    ],
+    resolve: {
+      alias: [
+        {
+          find: '@',
+          replacement: join(__dirname, 'src/')
+        }
       ]
-    }),
-    Icons({
-      autoInstall: true
-    })
-    // createStyleImportPlugin({
-    //   resolves: [VxeTableResolve()]
-    // })
-  ],
-  resolve: {
-    alias: [
-      {
-        find: '@',
-        replacement: join(__dirname, 'src/')
-      }
-    ]
-  },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: `@import "./src/style/scssConfig.scss";`
+    },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `@import "./src/style/scssConfig.scss";`
+        }
       }
     }
   }

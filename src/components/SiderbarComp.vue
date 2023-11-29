@@ -85,9 +85,9 @@ watch(
 
 watch(
   () => route.path,
-  () => {
+  async () => {
     if (currentSpaceName.value !== route.path.split('/')[1] && sessionStorage.getItem('currentSidebar') === 'SpaceSidebar') {
-      getSpacesDeatil()
+      await getSpacesDeatil()
       currentSpaceName.value = route.path.split('/')[1]
     }
     infoStore.setCurrentSpaceName(route.path.split('/')[1])
