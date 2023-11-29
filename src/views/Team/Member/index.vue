@@ -48,7 +48,7 @@ watchEffect(() => {
     getTeamMember()
     refreshStore.isRefreshTeamMember = false
   }
-  if (route.query.gid) {
+  if (route.query.gid && route.query.gname !== '公共区') {
     init()
   }
 })
@@ -207,6 +207,7 @@ onMounted(() => {
           border="inner"
           ref="xTable"
           max-height="800"
+          min-height="50"
           :row-config="{ isHover: true }"
           @checkbox-all="selectAllChangeEvent"
           @checkbox-change="selectChangeEvent"
@@ -257,7 +258,7 @@ onMounted(() => {
       </div>
     </div>
   </div>
-  <AddMemberDialog :isShow="isShowAddMemberDialog" @closeDialog="isShowAddMemberDialog = false" :selectMember="memberList" />
+  <AddMemberDialog :isShow="isShowAddMemberDialog" @closeDialog="isShowAddMemberDialog = false" :selectMember="memberList" :isOnlyMember="false" />
 </template>
 
 <style lang="scss" scoped>

@@ -4,7 +4,7 @@ import { getQuickLinksApi } from '@/api/quickLinks'
 
 const refreshStroe = useRefreshStore()
 const dataStore = useDataStore()
-const personalSpaceId = JSON.parse(localStorage.getItem('personalSpaceInfo')).id.toString() || '' // 个人空间id
+const personalSpaceId = ref('') // 个人空间id
 const user = JSON.parse(localStorage.getItem('userInfo')).username || '' // 当前登录用户
 const menuItems = [
   { index: 'dashboard', icon: 'actionIcon', label: '开始' },
@@ -23,6 +23,14 @@ const contentItems = ref([
   }
 ])
 
+watchEffect(() => {
+  nextTick(() => {
+    if (JSON.parse(localStorage.getItem('personalSpaceInfo'))) {
+      personalSpaceId.value = JSON.parse(localStorage.getItem('personalSpaceInfo')).id.toString() || ''
+    }
+  })
+})
+
 watch(
   () => refreshStroe.isRefreshQuickBookList,
   (newVal) => {
@@ -38,7 +46,7 @@ watch(
 // 获取个人空间下的团队列表
 const getGroups = async () => {
   const params = {
-    space: personalSpaceId
+    space: personalSpaceId.value
   }
   let res = await getGroupsApi(params)
   if (res.code === 1000) {
@@ -51,7 +59,7 @@ const getGroups = async () => {
 // 获取常用知识库列表
 const getCommonLibrary = async () => {
   const params = {
-    space: personalSpaceId,
+    space: personalSpaceId.value,
     target_type: 'book',
     user
   }

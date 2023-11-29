@@ -58,6 +58,9 @@ const addSpace = async () => {
           sname: res.data.spacename
         }
       })
+      setTimeout(() => {
+        window.location.reload()
+      }, 500)
     }, 3000)
   } else {
     ElMessage.error(res.msg)
@@ -77,6 +80,7 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
   await formEl.validate((valid) => {
     if (valid) {
       spaceForm.icon ? spaceForm.icon : (spaceForm.icon = spaceIcon)
+      if (spaceForm.spacekey === 'directory') return ElMessage.error('具有 空间标识符 的 空间 已存在。')
       addSpace()
     }
   })

@@ -18,4 +18,7 @@ onMounted(() => {})
   align-items: center;
   justify-content: space-between;
 }
+:deep(.v-show-content) {
+  padding-top: 34px !important;
+}
 </style>

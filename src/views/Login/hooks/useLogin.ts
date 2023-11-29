@@ -30,7 +30,7 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
   const handleLoginSuccess = async (res: any): Promise<void> => {
     if (res.code === 1000) {
       await setUserInfo(res.data)
-      nickname.value = res.data.nickname
+      nickname.value = res.data.name
       ElMessage.success('登录成功')
       await getSpaces()
       router.push({ path: '/' })
@@ -89,7 +89,9 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
       permusername: loginForm.username
     }
     let res = await addSpaceApi(spaceForm)
-    if (res.code !== 1000) {
+    if (res.code === 1000) {
+      localStorage.setItem('personalSpaceInfo', JSON.stringify(res.data))
+    } else {
       ElMessage.error(res.msg)
     }
   }

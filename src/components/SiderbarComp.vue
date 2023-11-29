@@ -68,14 +68,18 @@ const typeIcon = {
 watchEffect(() => {
   spaceType.value = sessionStorage.getItem('currentSidebar') === 'SpaceSidebar' ? '组织' : '个人'
   if (spaceType.value === '个人') {
-    icon.value = '/src/assets/icons/personalIcon.svg'
+    icon.value = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar
   }
 })
 
 watch(
   () => route.query.gid,
   () => {
-    state.currentGroup = route.query.gid
+    if (route.query.gname === '公共区') {
+      state.currentGroup = null
+    } else {
+      state.currentGroup = route.query.gid
+    }
   }
 )
 
@@ -386,9 +390,9 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-    <div class="divider" v-if="infoStore.currentSidebar === 'SpaceSidebar'"></div>
+    <div class="divider" v-if="spaceType === '组织'"></div>
     <div class="last-comp">
-      <div class="more-item" v-if="infoStore.currentSidebar === 'SpaceSidebar' && isAdmin" @click="toSpaceManager">
+      <div class="more-item" v-if="spaceType === '组织' && isAdmin" @click="toSpaceManager">
         <img src="/src/assets/icons/settingIcon.svg" alt="" />
         <span>空间管理</span>
       </div>

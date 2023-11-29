@@ -24,7 +24,8 @@ watchEffect(() => {
 const getGroups = async () => {
   const params = {
     space: spaceId.value,
-    is_default: '0'
+    is_default: '0',
+    permusername: user
   }
   let res = await getGroupsApi(params)
   if (res.code === 1000) {

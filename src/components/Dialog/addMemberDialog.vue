@@ -13,6 +13,10 @@ const props = defineProps({
     type: Boolean,
     default: true
   }, // 是否自动添加
+  isOnlyMember: {
+    type: Boolean,
+    default: false
+  }, // 是否只能添加为成员
   selectMember: Array // 已添加的成员
 })
 const emit = defineEmits(['closeDialog', 'submitMember'])
@@ -22,6 +26,7 @@ const refreshStore = useRefreshStore()
 const selectTotal = ref(0)
 const dialogVisible = ref(false)
 const spaceName = ref('')
+const role = ref('2') // 2：成员；1：只读成员
 const memberListRef = ref<InstanceType<typeof ElTable>>()
 const selectMemberList = ref<Member[]>([])
 const memberList = ref<Member[]>([])
@@ -48,6 +53,10 @@ const handleClose = async () => {
   emit('closeDialog', false)
 }
 
+const toChangeRole = (command: string) => {
+  role.value = command
+}
+
 const toAddMember = () => {
   if (props.isAuto) {
     addTeamMember()
@@ -63,7 +72,7 @@ const addTeamMember = async () => {
     username: [],
     group: route.query.gid as string,
     space: route.query.sid as string,
-    role: '2' //成员
+    role: role.value //2：成员；1：只读成员
   }
   selectMemberList.value.forEach((item) => {
     params.username.push(item.permusername)
@@ -116,15 +125,16 @@ const getSpacepermissions = async () => {
           <span class="count">已选择 {{ selectTotal }}人</span>
           <span>
             添加为：
-            <el-dropdown trigger="click">
-              <span class="el-dropdown-link">
-                成员
+            <span v-if="props.isOnlyMember">成员</span>
+            <el-dropdown trigger="click" @command="toChangeRole" v-if="!props.isOnlyMember">
+              <span class="el-dropdown-link" v-if="!props.isOnlyMember">
+                {{ role === '1' ? '只读成员' : '成员' }}
                 <i-ep-ArrowDown />
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item>成员</el-dropdown-item>
-                  <el-dropdown-item disabled>只读成员</el-dropdown-item>
+                  <el-dropdown-item command="2">成员</el-dropdown-item>
+                  <el-dropdown-item command="1">只读成员</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>

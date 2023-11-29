@@ -103,6 +103,19 @@ onMounted(async () => {
         </el-tooltip>
       </div>
     </div>
+    <SwitchModuleItem
+      :moduleGenre="'info'"
+      :moduleGenreData="[
+        {
+          type: 'info',
+          name: '公告信息'
+        },
+        {
+          type: 'article',
+          name: '精选文章'
+        }
+      ]"
+    />
     <div class="announcement">
       <div>管理员可以添加面向全体成员的公告信息</div>
       <img src="/src/assets/icons/rightArrowIcon.svg" alt="" />
@@ -122,6 +135,7 @@ onMounted(async () => {
   .header {
     display: flex;
     align-items: center;
+    margin-bottom: 20px;
     span {
       height: 30px;
       line-height: 30px;

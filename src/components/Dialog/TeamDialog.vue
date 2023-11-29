@@ -99,7 +99,7 @@ const addGroups = async () => {
           gname: res.data.groupname
         }
       })
-    }, 1500)
+    }, 1000)
   } else {
     ElMessage.error(res.msg)
   }
@@ -195,7 +195,14 @@ const changeIcon = (icon: string) => {
       </span>
     </template>
   </el-dialog>
-  <AddMemberDialog :isShow="isShowAddMemberDialog" @closeDialog="isShowAddMemberDialog = false" @submitMember="submitMember" :selectMember="selectMemberList" :is-auto="false" />
+  <AddMemberDialog
+    :isShow="isShowAddMemberDialog"
+    @closeDialog="isShowAddMemberDialog = false"
+    @submitMember="submitMember"
+    :selectMember="selectMemberList"
+    :is-auto="false"
+    :isOnlyMember="true"
+  />
 </template>
 
 <style lang="scss" scoped>
