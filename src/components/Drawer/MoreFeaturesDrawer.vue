@@ -1,4 +1,16 @@
 <script lang="ts" setup>
+import docSet from '@/assets/icons/drawer/docSet.svg'
+import fullScreen from '@/assets/icons/drawer/fullScreen.svg'
+import saveTem from '@/assets/icons/drawer/saveTem.svg'
+import historyVersion from '@/assets/icons/drawer/historyVersion.svg'
+import reviewIcon from '@/assets/icons/reviewIcon.svg'
+import exportIcon from '@/assets/icons/drawer/export.svg'
+import copyIcon from '@/assets/icons/drawer/copy.svg'
+import moveIcon from '@/assets/icons/drawer/move.svg'
+import deleteIcon from '@/assets/icons/drawer/delete.svg'
+import operationIcon from '@/assets/icons/drawer/operation.svg'
+import infoIcon from '@/assets/icons/drawer/info.svg'
+
 const props = defineProps({
   drawer: {
     type: Boolean,
@@ -12,20 +24,20 @@ const props = defineProps({
 
 const drawerTab = ref('operation')
 const operationItems = [
-  { icon: '/src/assets/icons/drawer/docSet.svg', text: '文档设置', type: 'label' },
+  { icon: docSet, text: '文档设置', type: 'label' },
   { type: 'hr' },
-  { icon: '/src/assets/icons/drawer/fullScreen.svg', text: '全屏', type: 'label' },
-  { icon: '/src/assets/icons/drawer/saveTem.svg', text: '另存为模板', type: 'label' },
-  { icon: '/src/assets/icons/drawer/historyVersion.svg', text: '查看历史版本', type: 'label' },
-  { icon: '/src/assets/icons/reviewIcon.svg', text: '评审', type: 'label' },
-  { icon: '/src/assets/icons/drawer/export.svg', text: '导出...', type: 'label' },
-  { icon: '/src/assets/icons/drawer/copy.svg', text: '复制...', type: 'label' },
-  { icon: '/src/assets/icons/drawer/move.svg', text: '移动...', type: 'label' },
-  { icon: '/src/assets/icons/drawer/delete.svg', text: '删除...', type: 'label' }
+  { icon: fullScreen, text: '全屏', type: 'label' },
+  { icon: saveTem, text: '另存为模板', type: 'label' },
+  { icon: historyVersion, text: '查看历史版本', type: 'label' },
+  { icon: reviewIcon, text: '评审', type: 'label' },
+  { icon: exportIcon, text: '导出...', type: 'label' },
+  { icon: copyIcon, text: '复制...', type: 'label' },
+  { icon: moveIcon, text: '移动...', type: 'label' },
+  { icon: deleteIcon, text: '删除...', type: 'label' }
 ]
 const infoItems = ref([
   { icon: '/src/assets/icons/drawer/count.svg', text: '字数', value: '暂未统计', type: 'label' },
-  { icon: '/src/assets/icons/drawer/historyVersion.svg', text: '历史版本', value: '暂未统计', type: 'label' },
+  { icon: historyVersion, text: '历史版本', value: '暂未统计', type: 'label' },
   { text: '创建时间', value: '暂未统计', type: 'label' },
   { text: '更新时间', value: '暂未统计', type: 'label' },
   { icon: '/src/assets/icons/drawer/author.svg', text: '作者', value: '暂未统计', type: 'label' },
@@ -57,7 +69,7 @@ const noUse = () => {
     <el-tabs class="drawerTab" v-model="drawerTab" @tab-change="handleClick">
       <el-tab-pane name="operation">
         <template #label>
-          <img src="/src/assets/icons/drawer/operation.svg" alt="" />
+          <img :src="operationIcon" alt="" />
         </template>
         <div class="operate-wrap">
           <div class="list">
@@ -73,7 +85,7 @@ const noUse = () => {
       </el-tab-pane>
       <el-tab-pane name="info">
         <template #label>
-          <img src="/src/assets/icons/drawer/info.svg" alt="" />
+          <img :src="infoIcon" alt="" />
         </template>
         <div class="info-wrap">
           <template v-for="item in infoItems">

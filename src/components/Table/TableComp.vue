@@ -1,4 +1,17 @@
 <script lang="ts" setup>
+import limitsIcon from '@/assets/icons/limitsIcon.svg'
+import renameIcon from '@/assets/icons/renameIcon.svg'
+import menuIcon from '@/assets/icons/menuIcon.svg'
+import deleteIcon from '@/assets/icons/deleteIcon.svg'
+import starOutlineIcon from '@/assets/icons/starOutlineIcon.svg'
+import swipOutlineIcon from '@/assets/icons/swipOutlineIcon.svg'
+import newTabOutlineIcon from '@/assets/icons/newTabOutlineIcon.svg'
+import settingIcon from '@/assets/icons/team/settingIcon.svg'
+import editIcon from '@/assets/icons/team/editIcon.svg'
+import privateIcon from '@/assets/icons/privateIcon.svg'
+import empty from '@/assets/img/empty.png'
+import addIcon from '@/assets/icons/addIcon.svg'
+import addIcon_hover from '@/assets/icons/addIcon_hover.svg'
 import { addQuickLinksApi, deleteQuickLinksApi } from '@/api/quickLinks'
 
 const props = defineProps({
@@ -33,32 +46,32 @@ const deleteInfo = ref<{
   stack?: string
 }>({})
 const libraryOperationData = [
-  { type: 'item', icon: '/src/assets/icons/limitsIcon.svg', label: '权限', nick: 'toPermission' },
-  { type: 'item', icon: '/src/assets/icons/renameIcon.svg', label: '重命名', nick: 'toRename' },
-  { type: 'item', icon: '/src/assets/icons/menuIcon.svg', label: '更多设置', nick: 'toMoreSetting' },
+  { type: 'item', icon: limitsIcon, label: '权限', nick: 'toPermission' },
+  { type: 'item', icon: renameIcon, label: '重命名', nick: 'toRename' },
+  { type: 'item', icon: menuIcon, label: '更多设置', nick: 'toMoreSetting' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/deleteIcon.svg', label: '删除', nick: 'toDeleteBook' }
+  { type: 'item', icon: deleteIcon, label: '删除', nick: 'toDeleteBook' }
 ]
 const editTableOperation = [
   {
     type: 'item',
     label: '收藏',
-    icon: '/src/assets/icons/starOutlineIcon.svg'
+    icon: starOutlineIcon
   },
   {
     type: 'item',
     label: '移除记录',
-    icon: '/src/assets/icons/swipOutlineIcon.svg'
+    icon: swipOutlineIcon
   },
   {
     type: 'item',
     label: '浏览器打开',
-    icon: '/src/assets/icons/newTabOutlineIcon.svg'
+    icon: newTabOutlineIcon
   }
 ]
 const commonTeamData = [
-  { type: 'item', icon: '/src/assets/icons/team/settingIcon.svg', label: '团队设置', nick: 'toTeamSetting' },
-  { type: 'item', icon: '/src/assets/icons/team/editIcon.svg', label: '退出团队', nick: 'toQuitTeam' }
+  { type: 'item', icon: settingIcon, label: '团队设置', nick: 'toTeamSetting' },
+  { type: 'item', icon: editIcon, label: '退出团队', nick: 'toQuitTeam' }
 ]
 
 const hoveredDocument = ref<number | null>(null)
@@ -298,7 +311,7 @@ const toQuitTeam = (val: any) => {
               </div>
               <el-tooltip effect="dark" :content="'仅团队成员可访问'" placement="top" :show-arrow="false">
                 <span class="perIcon">
-                  <img v-if="document.public === '0'" src="/src/assets/icons/privateIcon.svg" alt="" />
+                  <img v-if="document.public === '0'" :src="privateIcon" alt="" />
                 </span>
               </el-tooltip>
             </div>
@@ -335,12 +348,12 @@ const toQuitTeam = (val: any) => {
     </template>
   </table>
   <div class="empty" v-if="!props.data.length && props.type === 'team'">
-    <img class="emptyImg" src="/src/assets/img/empty.png" alt="" />
+    <img class="emptyImg" :src="empty" alt="" />
     <p>团队可以是实际存在的部门，也可以是虚拟的项目组，空间中可以创建不同类型的团队完成日常工作与协同。</p>
     <el-button @click="isShowTeamDialog = true">
       <template #icon>
-        <img class="addIcon" src="/src/assets/icons/addIcon.svg" alt="" />
-        <img class="addIcon_hover" src="/src/assets/icons/addIcon_hover.svg" alt="" />
+        <img class="addIcon" :src="addIcon" alt="" />
+        <img class="addIcon_hover" :src="addIcon_hover" alt="" />
       </template>
       新建团队
     </el-button>

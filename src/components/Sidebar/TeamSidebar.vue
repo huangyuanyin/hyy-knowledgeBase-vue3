@@ -1,4 +1,9 @@
 <script lang="ts" setup>
+import teamInfoIcon from '@/assets/icons/teamSetting/teamInfo.svg'
+import permissionsIcon from '@/assets/icons/teamSetting/permissions.svg'
+import setIcon from '@/assets/icons/teamSetting/set.svg'
+import trashIcon from '@/assets/icons/teamSetting/trash.svg'
+import arrowRightIcon from '@/assets/icons/arrowRightIcon.svg'
 import { getGroupsDetailApi } from '@/api/groups'
 
 const route = useRoute()
@@ -14,14 +19,14 @@ const menuList = [
   {
     label: '设置',
     children: [
-      { label: '团队信息', nickName: 'basic', icon: '/src/assets/icons/teamSetting/teamInfo.svg', path: '/teamSetting/basic' },
-      { label: '权限', nickName: 'permission', icon: '/src/assets/icons/teamSetting/permissions.svg', path: '/teamSetting/permission' },
-      { label: '更多设置', nickName: 'settings', icon: '/src/assets/icons/teamSetting/set.svg', path: '/teamSetting/settings' }
+      { label: '团队信息', nickName: 'basic', icon: teamInfoIcon, path: '/teamSetting/basic' },
+      { label: '权限', nickName: 'permission', icon: permissionsIcon, path: '/teamSetting/permission' },
+      { label: '更多设置', nickName: 'settings', icon: setIcon, path: '/teamSetting/settings' }
     ]
   },
   {
     label: '高级设置',
-    children: [{ label: '回收站', nickName: 'trash', icon: '/src/assets/icons/teamSetting/trash.svg', path: '/teamSetting/trash' }]
+    children: [{ label: '回收站', nickName: 'trash', icon: trashIcon, path: '/teamSetting/trash' }]
   }
 ]
 
@@ -81,7 +86,7 @@ const getGroupsDetail = async () => {
 <template>
   <div class="TeamSidebar_wrap">
     <div class="back" @click="toBack">
-      <img src="/src/assets/icons/arrowRightIcon.svg" alt="" />
+      <img :src="arrowRightIcon" alt="" />
       <span>
         <img class="teamIcon" :src="currentTeamInfo.icon" alt="" />
         {{ currentTeamInfo.groupname }}

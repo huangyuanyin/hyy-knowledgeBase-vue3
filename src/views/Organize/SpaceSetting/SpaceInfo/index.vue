@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import spaceIcon2 from '@/assets/icons/spaceIcon.svg'
 import { FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { getSpacesDetailApi, editSpacesApi } from '@/api/spaces/index'
@@ -38,7 +39,7 @@ const rules = reactive<FormRules<SpaceForm>>({
 
 watchEffect(() => {
   nextTick(() => {
-    icon.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon || '/src/assets/icons/spaceIcon.svg'
+    icon.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon || spaceIcon2
   })
 })
 

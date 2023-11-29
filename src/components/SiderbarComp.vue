@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+import privateIcon from '@/assets/icons/privateIcon.svg'
+import publicIcon from '@/assets/icons/publicIcon.svg'
+import settingIcon from '@/assets/icons/settingIcon.svg'
+import moreIcon2 from '@/assets/icons/moreIcon2.svg'
 import { libraryOperationData, teamOperationData, moreOperationData, menuItemsData, spaceMenuItemsData } from '@/data/data'
 import { MenuItem } from '@/type/operationPopoverType'
 import { contentItemsData, moreMenuItemsData } from '@/data/data'
@@ -61,8 +65,8 @@ const deleteInfo = ref<{
   stack?: string
 }>({})
 const typeIcon = {
-  '0': '/src/assets/icons/privateIcon.svg',
-  '1': '/src/assets/icons/publicIcon.svg'
+  '0': privateIcon,
+  '1': publicIcon
 }
 
 watchEffect(() => {
@@ -365,7 +369,7 @@ onMounted(async () => {
                   <img :src="data.icon" alt="" />
                   <span class="title">{{ data.name || data.groupname || data.title }}</span>
                   <span class="type-icon">
-                    <img :src="typeIcon[data.public] || '/src/assets/icons/privateIcon.svg'" alt="" />
+                    <img :src="typeIcon[data.public] || privateIcon" alt="" />
                   </span>
                 </div>
                 <LibraryOperationPopver
@@ -393,12 +397,12 @@ onMounted(async () => {
     <div class="divider" v-if="spaceType === '组织'"></div>
     <div class="last-comp">
       <div class="more-item" v-if="spaceType === '组织' && isAdmin" @click="toSpaceManager">
-        <img src="/src/assets/icons/settingIcon.svg" alt="" />
+        <img :src="settingIcon" alt="" />
         <span>空间管理</span>
       </div>
       <MorePopver :menuItems="moreOperationData">
         <div class="more-item">
-          <img src="/src/assets/icons/moreIcon2.svg" alt="" />
+          <img :src="moreIcon2" alt="" />
           <span>更多</span>
         </div>
       </MorePopver>

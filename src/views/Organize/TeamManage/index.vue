@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import moreIcon from '@/assets/icons/organize/moreIcon.svg'
 import { getGroupsApi } from '@/api/groups'
 
 const route = useRoute()
@@ -61,7 +62,7 @@ onMounted(() => {
           <template #default="{ row }">
             <LibraryOperationPopver :menuItems="teamSettingData" @toTeamSetting="toTeamSetting(row)" @toTeamIndex="toTeamIndex(row)" @toDeleteTeam="toDeleteTeam(row)">
               <span class="more-icon" @click.stop>
-                <span class="more"><img src="/src/assets/icons/organize/moreIcon.svg" alt="" /></span>
+                <span class="more"><img :src="moreIcon" alt="" /></span>
               </span>
             </LibraryOperationPopver>
           </template>

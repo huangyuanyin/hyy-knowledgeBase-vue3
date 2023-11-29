@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import spaceIcon from '@/assets/icons/spaceIcon.svg'
+import teamIcon from '@/assets/icons/teamIcon.svg'
+import imgIcon from '@/assets/img/img.jpg'
 import { getLibraryDetailApi, editLibraryApi } from '@/api/library'
 import { getCollaborationsApi, deleteCollaborationsApi } from '@/api/collaborations'
 import { getTeamMemberApi } from '@/api/member'
@@ -27,13 +30,13 @@ const bookAdmin = ref([
 ])
 const teamInfo = ref([
   {
-    avatar: '/src/assets/icons/spaceIcon.svg',
+    avatar: spaceIcon,
     label: 'spaceAdmin',
     name: '空间管理员',
     member: null
   },
   {
-    avatar: '/src/assets/icons/teamIcon.svg',
+    avatar: teamIcon,
     label: 'teamAdmin',
     name: '团队管理员',
     member: null
@@ -120,7 +123,7 @@ const getBookDetail = async () => {
 }
 
 const editBook = async (params) => {
-  const res = await editLibraryApi(params, bookId.value)
+  const res = await editLibraryApi(params, Number(bookId.value))
   if (res.code === 1000) {
     ElMessage.success('更新成功')
   } else {
@@ -194,7 +197,7 @@ onMounted(() => {
           <el-table-column prop="name" label="用户">
             <template #default="{ row }">
               <div class="cell">
-                <img :src="row.avatar || '/src/assets/img/img.jpg'" alt="" />
+                <img :src="row.avatar || imgIcon" alt="" />
                 <span class="name" @click="toLink(row.label)">{{ row.name }}</span>
                 <span v-if="nickname === row.name" class="my_tag">你自己</span>
                 <span class="count" v-if="['teamAdmin', 'spaceAdmin'].includes(row.label)">({{ row.member }})</span>

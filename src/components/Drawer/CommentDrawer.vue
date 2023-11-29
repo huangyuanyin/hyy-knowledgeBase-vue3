@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import inputComment from '@/assets/icons/drawer/inputComment.svg'
+
 const props = defineProps({
   drawer: {
     type: Boolean,
@@ -24,7 +26,7 @@ const toDo = () => {
     <div class="submit_wrap">
       <div class="input_wrap">
         <div class="input" @click="toDo">
-          <img src="/src/assets/icons/drawer/inputComment.svg" alt="" />
+          <img :src="inputComment" alt="" />
           <span>输入全文评论</span>
         </div>
       </div>

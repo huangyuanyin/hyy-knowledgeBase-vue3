@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import imgIcon from '@/assets/img/img.jpg'
 import { v4 as uuidv4 } from 'uuid'
 import { FormInstance } from 'element-plus'
 import { addGroupsApi } from '@/api/groups'
@@ -178,7 +179,7 @@ const changeIcon = (icon: string) => {
           <el-option v-for="(item, index) in options" :key="'options' + index" :label="item.permname" :value="item.permusername">
             <div class="item">
               <span class="img">
-                <img src="/src/assets/img/img.jpg" alt="" />
+                <img :src="imgIcon" alt="" />
               </span>
               <div class="info">
                 <span class="label">

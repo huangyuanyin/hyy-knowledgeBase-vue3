@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import publicIcon from '@/assets/icons/library/publicIcon.svg'
 import { v4 as uuidv4 } from 'uuid'
 import { FormInstance } from 'element-plus'
 import { getBookStacksApi } from '@/api/bookstacks'
@@ -261,13 +262,13 @@ const changeIcon = (val: string) => {
       <el-form-item label="新建至" v-if="infoStore.currentSidebar === 'SpaceSidebar'">
         <el-select v-model="libraryForm.group" prop="group" @change="toSelectTeam">
           <template #prefix>
-            <img v-if="selectGroupName === '公共区'" class="prefix-icon" src="/src/assets/icons/library/publicIcon.svg" />
+            <img v-if="selectGroupName === '公共区'" class="prefix-icon" :src="publicIcon" />
             <img v-else class="prefix-icon" :src="selectGroupIcon" />
           </template>
           <el-option :label="item.groupname" :value="String(item.id)" v-for="(item, index) in teamList" :key="'teamList' + index">
             <div class="form-public">
               <div class="form-public-left">
-                <img v-if="item.groupname === '公共区'" src="/src/assets/icons/library/publicIcon.svg" />
+                <img v-if="item.groupname === '公共区'" :src="publicIcon" />
                 <img v-else :src="item.icon" />
                 <span style="float: left">{{ item.groupname }}</span>
               </div>

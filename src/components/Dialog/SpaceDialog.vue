@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import spaceIcon2 from '@/assets/icons/spaceIcon.svg'
 import type { FormInstance, FormRules } from 'element-plus'
 import { addSpaceApi } from '@/api/spaces'
 import { spaceIcon } from '@/data/iconBase64'
@@ -106,7 +107,7 @@ const handleClose = async () => {
         <div class="form-name">
           <el-upload class="upload-icon" accept=".png,.jpg,.svg" :auto-upload="false" :show-file-list="false" @change="toUploadImg">
             <div class="spaceIcon" v-if="!spaceForm.icon">
-              <img src="/src/assets/icons/spaceIcon.svg" alt="" />
+              <img :src="spaceIcon2" alt="" />
             </div>
             <img v-else class="spaceImg" :src="spaceForm.icon" alt="" />
           </el-upload>

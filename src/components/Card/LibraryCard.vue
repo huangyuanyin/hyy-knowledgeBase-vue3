@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+import publicIcon from '@/assets/icons/publicIcon.svg'
+import privateIcon from '@/assets/icons/privateIcon.svg'
+import moreIcon1_after from '@/assets/icons/moreIcon1_after.svg'
+import addIcon from '@/assets/icons/addIcon.svg'
 import { addQuickLinksApi, deleteQuickLinksApi } from '@/api/quickLinks'
 import { commonLibraryData, notCommonLibraryData } from '@/data/data'
 import { LibraryCard } from '@/type/card'
@@ -141,10 +145,10 @@ const toPermission = (val) => {
             <div style="display: flex; align-items: center" @click="toLink(card)">
               <span>{{ card.name }}</span>
               <el-tooltip effect="dark" content="共享知识库" placement="top" :show-arrow="false">
-                <span class="publicIcon" v-if="card.public === '0'"><img src="/src/assets/icons/publicIcon.svg" alt="" /></span>
+                <span class="publicIcon" v-if="card.public === '0'"><img :src="publicIcon" alt="" /></span>
               </el-tooltip>
               <el-tooltip effect="dark" content="私密知识库" placement="top" :show-arrow="false">
-                <span class="publicIcon" v-if="card.public === '1'"><img src="/src/assets/icons/privateIcon.svg" alt="" /></span>
+                <span class="publicIcon" v-if="card.public === '1'"><img :src="privateIcon" alt="" /></span>
               </el-tooltip>
             </div>
             <LibraryOperationPopver
@@ -156,7 +160,7 @@ const toPermission = (val) => {
               @toPermission="toPermission(card)"
               @toMoreSetting="toMoreSetting(card)"
             >
-              <span class="moreIcon"><img src="/src/assets/icons/moreIcon1_after.svg" alt="" /></span>
+              <span class="moreIcon"><img :src="moreIcon1_after" alt="" /></span>
             </LibraryOperationPopver>
           </div>
         </div>
@@ -180,7 +184,7 @@ const toPermission = (val) => {
   <template v-else>
     <div class="addCard" @click="isShowsLibraryDialog = true">
       <div>
-        <img src="/src/assets/icons/addIcon.svg" alt="" />
+        <img :src="addIcon" alt="" />
         新建知识库
       </div>
     </div>

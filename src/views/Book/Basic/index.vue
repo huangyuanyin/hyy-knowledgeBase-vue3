@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import cover from '@/assets/img/cover.png'
 import { editLibraryApi, getLibraryDetailApi } from '@/api/library'
 import { FormInstance, FormRules } from 'element-plus'
 
@@ -14,7 +15,6 @@ interface BookForm {
 
 const route = useRoute()
 const refreshStore = useRefreshStore()
-const spaceType = ref('')
 const bookId = ref(Number(route.query.lid) || null)
 const bookFormRef = ref<FormInstance>()
 const bookForm = reactive<BookForm>({
@@ -110,7 +110,7 @@ onMounted(() => {
         </el-form-item>
         <el-form-item label="封面">
           <div class="cover">
-            <el-image src="/src/assets/img/cover.png" fit="contain" />
+            <el-image :src="cover" fit="contain" />
             <el-button @click="uploadImg"> 重新上传 </el-button>
           </div>
         </el-form-item>

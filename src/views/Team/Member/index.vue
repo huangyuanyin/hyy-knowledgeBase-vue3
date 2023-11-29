@@ -2,6 +2,10 @@
 import { getGroupsDetailApi } from '@/api/groups'
 import { deleteTeamMemberApi, editTeamMemberApi, getTeamMemberApi } from '@/api/member'
 import { VxeTableInstance, VxeColumnPropTypes } from 'vxe-table'
+import departMemberIcon from '@/assets/icons/departMemberIcon.svg'
+import img from '@/assets/img/img.jpg'
+import editIcon from '@/assets/icons/team/editIcon.svg'
+import deleteIcon from '@/assets/icons/organize/deleteIcon.svg'
 
 interface MemberItem {
   id: number
@@ -187,7 +191,7 @@ onMounted(() => {
           <span class="counts">{{ memberTotal }}</span>
           <el-tooltip effect="dark" content="绑定部门后，部门成员访问该团队时将自动成为团队成员，未访问过的成员不生效。" placement="top">
             <span class="departMemberIcon" @click="toDo">
-              <img src="/src/assets/icons/departMemberIcon.svg" alt="" />
+              <img :src="departMemberIcon" alt="" />
               一键绑定空间成员
             </span>
           </el-tooltip>
@@ -216,7 +220,7 @@ onMounted(() => {
           <vxe-column title="姓名" width="451" sortable>
             <template #default="{ row }">
               <div class="cell">
-                <img :src="row.avatar || '/src/assets/img/img.jpg'" alt="" />
+                <img :src="row.avatar || img" alt="" />
                 <span>{{ row.name }}</span>
                 <span v-if="nickname === row.name" class="my_tag">你自己</span>
               </div>
@@ -239,17 +243,17 @@ onMounted(() => {
             <template #default="{ row, rowIndex }">
               <el-tooltip effect="dark" content="退出" placement="top" :show-arrow="false">
                 <span class="icon" v-if="rowIndex === 0 && row.username === user">
-                  <img src="/src/assets/icons/team/editIcon.svg" alt="" @click="toExit(row)" />
+                  <img :src="editIcon" alt="" @click="toExit(row)" />
                 </span>
               </el-tooltip>
               <el-tooltip effect="dark" content="退出" placement="top" :show-arrow="false">
                 <span class="icon" v-if="rowIndex !== 0 && row.username === user">
-                  <img src="/src/assets/icons/team/editIcon.svg" alt="" @click="toDeleteMmber('exit', row)" />
+                  <img :src="editIcon" alt="" @click="toDeleteMmber('exit', row)" />
                 </span>
               </el-tooltip>
               <el-tooltip effect="dark" content="删除" placement="top" :show-arrow="false">
                 <span class="icon" v-if="rowIndex !== 0 && row.username !== user">
-                  <img src="/src/assets/icons/organize/deleteIcon.svg" alt="" @click="toDeleteMmber('delete', row)" />
+                  <img :src="deleteIcon" alt="" @click="toDeleteMmber('delete', row)" />
                 </span>
               </el-tooltip>
             </template>

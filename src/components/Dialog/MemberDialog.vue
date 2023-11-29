@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import memberIcon from '@/assets/icons/user/memberIcon.svg'
 import { addSpacepermissionsApi } from '@/api/spacepermissions'
 import { getDepartmentsApi, getDepartUserApi } from '@/api/user'
 import { ElTable } from 'element-plus'
@@ -149,7 +150,7 @@ const arrayToTree = (list: DeptList[], id: string) => {
         <div class="header">
           <span>{{ deptName }}</span>
           <el-tooltip effect="dark" content="仅包含该部门中不在本空间下的成员数" placement="top">
-            <span class="memberIcon"><img src="/src/assets/icons/user/memberIcon.svg" alt="" />{{ memberTotal }} </span>
+            <span class="memberIcon"><img :src="memberIcon" alt="" />{{ memberTotal }} </span>
           </el-tooltip>
         </div>
         <div class="member-list">

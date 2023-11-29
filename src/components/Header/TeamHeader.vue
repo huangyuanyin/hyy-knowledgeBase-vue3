@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+import privateIcon from '@/assets/icons/privateIcon.svg'
+import startIcon from '@/assets/icons/startIcon.svg'
+import settingIcon from '/@/assets/icons/settingIcon.svg'
+
 const props = defineProps({
   icon: String
 })
@@ -61,10 +65,10 @@ const toTeamSetting = () => {
       <span class="teamIcon"><img :src="props.icon" alt="" /></span>
       <h3>{{ $route.query.gname }}</h3>
       <el-tooltip effect="dark" content="仅团队成员可访问" placement="bottom">
-        <span class="privateIcon"><img src="/src/assets/icons/privateIcon.svg" alt="" /></span>
+        <span class="privateIcon"><img :src="privateIcon" alt="" /></span>
       </el-tooltip>
       <el-tooltip effect="dark" content="收藏" placement="bottom">
-        <span class="starIcon"> <img src="/src/assets/icons/startIcon.svg" alt="" /></span>
+        <span class="starIcon"> <img :src="startIcon" alt="" /></span>
       </el-tooltip>
       <div class="tab">
         <span :class="[currentItem === item.value ? 'active' : '']" v-for="(item, index) in headerItem" :key="'headerItem' + index" @click="toLink(item.value)">
@@ -73,7 +77,7 @@ const toTeamSetting = () => {
       </div>
     </div>
     <div class="right">
-      <span @click="toTeamSetting"><img src="/src/assets/icons/settingIcon.svg" alt="" /></span>
+      <span @click="toTeamSetting"><img :src="settingIcon" alt="" /></span>
     </div>
   </div>
 </template>

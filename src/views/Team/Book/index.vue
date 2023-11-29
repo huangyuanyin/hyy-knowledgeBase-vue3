@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import rightArrowIcon from '@/assets/icons/rightArrowIcon.svg'
 import { getBookStacksApi } from '@/api/bookstacks'
 import { getGroupsDetailApi } from '@/api/groups'
 import { getLibraryApi } from '@/api/library'
@@ -130,8 +131,8 @@ onMounted(async () => {
   <div class="Book_wrap">
     <TeamHeader :icon="teamIcon" />
     <div class="announcement">
-      <div>管理员可以添加自定义内容，向 全体团队成员展示{{ isHasPermissionCode }}</div>
-      <img src="/src/assets/icons/rightArrowIcon.svg" alt="" />
+      <div>管理员可以添加自定义内容，向 全体团队成员展示</div>
+      <img :src="rightArrowIcon" alt="" />
     </div>
     <SwitchModuleItem moduleType="operation" @getBookStacks="getBookStacks">
       <template v-slot:left><span class="title">知识库</span></template>

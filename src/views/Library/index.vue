@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import addIcon from '@/assets/icons/addIcon.svg'
+import addIcon_hover from '@/assets/icons/addIcon_hover.svg'
 import { getBookStacksApi } from '@/api/bookstacks'
 import { getLibraryApi } from '@/api/library'
 import { getQuickLinksApi } from '@/api/quickLinks'
@@ -166,8 +168,8 @@ onMounted(async () => {
               </el-input>
               <el-button @click="isShowsLibraryDialog = true">
                 <template #icon>
-                  <img class="addIcon" src="/src/assets/icons/addIcon.svg" alt="" />
-                  <img class="addIcon_hover" src="/src/assets/icons/addIcon_hover.svg" alt="" />
+                  <img class="addIcon" :src="addIcon" alt="" />
+                  <img class="addIcon_hover" :src="addIcon_hover" alt="" />
                 </template>
                 新建知识库
               </el-button>

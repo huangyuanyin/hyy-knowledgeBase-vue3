@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+import publicTagIcon from '@/assets/icons/publicTagIcon.svg'
+import rightArrowIcon from '@/assets/icons/rightArrowIcon.svg'
+import edit from '@/assets/icons/public/edit.svg'
+import deleteIcon from '@/assets/icons/public/delete.svg'
 import { getBookStacksApi } from '@/api/bookstacks'
 import { editGroupsApi, getGroupsDetailApi } from '@/api/groups'
 import { getLibraryApi } from '@/api/library'
@@ -167,7 +171,7 @@ onMounted(async () => {
     <div class="header">
       <span>公共区</span>
       <div class="tag">
-        <img src="/src/assets/icons/publicTagIcon.svg" alt="" />
+        <img :src="publicTagIcon" alt="" />
         <el-tooltip class="box-item" effect="dark" content="公共区内容面向空间所有成员开放" placement="bottom">
           <span>全员可见</span>
         </el-tooltip>
@@ -188,7 +192,7 @@ onMounted(async () => {
     />
     <div class="announcement" v-if="!isEdit && !bulletinValue" @click="isEdit = true">
       <div>管理员可以添加面向全体成员的公告信息</div>
-      <img src="/src/assets/icons/rightArrowIcon.svg" alt="" />
+      <img :src="rightArrowIcon" alt="" />
     </div>
     <div class="announcement edit" v-if="isEdit">
       <TinyMCE v-model="bulletinValue" :resize="true" height="500px" :toolbar="toolbar" body-style="body { margin: 1rem 2% 1rem 2% }" />
@@ -200,10 +204,10 @@ onMounted(async () => {
     <div class="announcement preview" v-if="!isEdit && bulletinValue">
       <div class="operation">
         <span @click="isEdit = true">
-          <img src="/src/assets/icons/public/edit.svg" alt="" />
+          <img :src="edit" alt="" />
         </span>
         <span @click="toDelete">
-          <img src="/src/assets/icons/public/delete.svg" alt="" />
+          <img :src="deleteIcon" alt="" />
         </span>
       </div>
       <MavonEditor :html="bulletinValue" :navigation="false" />
