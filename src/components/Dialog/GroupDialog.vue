@@ -79,6 +79,7 @@ watch(
     border-top: 1px solid rgba(0, 0, 0, 0.06);
   }
   .group-footer {
+    // 确定按钮样式
     .el-button {
       height: 32px;
       border-radius: 6px;

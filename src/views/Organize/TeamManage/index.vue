@@ -69,7 +69,7 @@ onMounted(() => {
       </el-table>
     </div>
   </div>
-  <TeamDialog :isShow="isShowTeamDialog" @closeDialog="isShowTeamDialog = false" />
+  <TeamDialog :isShow="isShowTeamDialog" @closeDialog="isShowTeamDialog = false" @updateTeam="getGroups()" />
 </template>
 
 <style lang="scss" scoped>

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { addSpacepermissionsApi } from '@/api/spacepermissions'
 import { getDepartmentsApi, getDepartUserApi } from '@/api/user'
+import { ElTable } from 'element-plus'
 
 interface DeptList {
   id: string
@@ -66,7 +67,7 @@ const toChangeDeptId = (data: DeptList) => {
   getDepartUser(deptId.value)
 }
 
-const handleSelectionChange = (val: User[]) => {
+const handleSelectionChange = (val) => {
   selectMemberList.value = val
   console.log(`output->selectMemberList.value`, selectMemberList.value)
 }
@@ -286,7 +287,7 @@ const arrayToTree = (list: DeptList[], id: string) => {
   }
   .member-footer {
     display: flex;
-    align-center: center;
+    align-items: center;
     justify-content: flex-end;
     width: 100%;
     .el-button {

@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { getGroupsDetailApi } from '@/api/groups'
+
 const route = useRoute()
 const router = useRouter()
 const refreshStore = useRefreshStore()
@@ -25,8 +27,13 @@ const menuList = [
 
 watchEffect(() => {
   currentMenu.value = route.path.split('/')[3]
-  if (route.query.gid) {
+  if (route.query.gid && JSON.parse(sessionStorage.getItem('currentTeamInfo') as string).id == route.query.gid) {
     currentTeamInfo.value = JSON.parse(sessionStorage.getItem('currentTeamInfo') as string)
+  } else {
+    nextTick(async () => {
+      await getGroupsDetail()
+      currentTeamInfo.value = JSON.parse(sessionStorage.getItem('currentTeamInfo') as string)
+    })
   }
   if (refreshStore.isRefreshTeamSet) {
     currentTeamInfo.value = JSON.parse(sessionStorage.getItem('currentTeamInfo') as string)
@@ -58,6 +65,16 @@ const toLink = (item: any) => {
       sname: route.query.sname
     }
   })
+}
+
+// 获取团队详情
+const getGroupsDetail = async () => {
+  let res = await getGroupsDetailApi(Number(route.query.gid))
+  if (res.code === 1000) {
+    sessionStorage.setItem('currentTeamInfo', JSON.stringify(res.data))
+  } else {
+    ElMessage.error(res.msg)
+  }
 }
 </script>
 

@@ -113,7 +113,7 @@ const toUpload = async (file) => {
             <div class="add-icon">
               <img :src="item.icon as string" alt="" />
             </div>
-            <el-upload :http-request="toUpload" :headers="headers" :show-file-list="false" class="upload" action="" :limit="1">
+            <el-upload :http-request="toUpload" :headers="headers" :show-file-list="false" class="upload" action="">
               <el-button type="" link>上传文件</el-button>
             </el-upload>
           </li>

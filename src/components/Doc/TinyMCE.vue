@@ -26,6 +26,14 @@ const props = defineProps({
     type: String,
     default: 'calc(100vh - 52px)'
   },
+  bodyStyle: {
+    type: String,
+    default: 'body { margin: 3rem 30% 3rem 15% }'
+  },
+  resize: {
+    type: Boolean,
+    default: false
+  },
   /**
    * table:表格；code:源代码；preview:预览；fullscreen:全屏；emoticons:表情；wordcount:字数统计； image:图像；codesample:代码示例；
    * searchreplace:查找替换；charmap:特殊字符；link:超链接；advlist:高级列表；anchor:锚点；autolink:自动链接；autosave:自动存稿；hr:分割线；
@@ -62,7 +70,7 @@ const initOptions = ref({
   skin_url: '/tinymce/skins/ui/oxide',
   // skin: 'jam', //果酱图标
   // icons: 'jam', //果酱图标
-  content_style: 'body { margin: 3rem 30% 3rem 15% }', // 设置内容样式
+  content_style: props.bodyStyle, // 设置内容样式
   with: '100px',
   height: props.height,
   placeholder: '直接输入正文...', // 设置占位符
@@ -80,8 +88,32 @@ const initOptions = ref({
   statusbar: true, // 是否隐藏状态栏
   menubar: false, // 是否隐藏菜单栏
   branding: false, // 是否隐藏品牌
-  resize: false, // 是否允许调整大小
+  resize: props.resize, // 是否允许调整大小
   help_accessibility: true, // 是否在 TinyMCE 状态栏中显示用于访问“帮助”对话框的键盘快捷键。
+  image_title: true, // 是否启用图像标题
+  image_caption: true, // 是否显示图像标题
+  file_picker_types: 'image', // 设置文件选择器类型
+  automatic_uploads: true, // 是否自动上传
+  a11y_advanced_options: true, // 是否在“插入链接”对话框中显示高级选项
+  file_picker_callback: (cb) => {
+    const input = document.createElement('input')
+    input.setAttribute('type', 'file')
+    input.setAttribute('accept', 'image/*')
+    input.addEventListener('change', (e: any) => {
+      const file = e.target.files[0]
+      const reader = new FileReader() as any
+      reader.addEventListener('load', () => {
+        const id = 'blobid' + new Date().getTime()
+        const blobCache = tinymce.activeEditor.editorUpload.blobCache
+        const base64 = reader.result.split(',')[1]
+        const blobInfo = blobCache.create(id, file, base64)
+        blobCache.add(blobInfo)
+        cb(blobInfo.blobUri(), { title: file.name })
+      })
+      reader.readAsDataURL(file)
+    })
+    input.click()
+  },
   help_tabs: [
     'shortcuts',
     'keyboardnav'

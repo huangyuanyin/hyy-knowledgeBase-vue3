@@ -15,7 +15,7 @@ const props = defineProps({
   isShow: Boolean
 })
 
-const emit = defineEmits(['closeDialog'])
+const emit = defineEmits(['closeDialog', 'updateTeam'])
 
 const route = useRoute()
 const refreshStore = useRefreshStore()
@@ -69,7 +69,6 @@ const submitMember = (data: any) => {
     teamForm.members.push(item.permusername)
   })
   teamForm.members = Array.from(new Set(teamForm.members))
-  console.log(`output->data`, data, teamForm.members)
 }
 
 const handleSubmit = async () => {
@@ -87,6 +86,10 @@ const addGroups = async () => {
   let res = await addGroupsApi(teamForm)
   if (res.code === 1000) {
     handleClose()
+    if (route.path.includes('teamManage')) {
+      emit('updateTeam')
+      return
+    }
     ElMessage.success('团队创建成功，即将跳转...')
     refreshStore.setRefreshQuickTeamList(true)
     setTimeout(() => {
@@ -144,7 +147,7 @@ const changeIcon = (icon: string) => {
               <img :src="teamForm.icon" alt="" />
             </div>
           </SelectIconPopver>
-          <el-input v-model="teamForm.groupname" placeholder="团队名称" maxlength="10" show-word-limit />
+          <el-input v-model="teamForm.groupname" placeholder="团队名称" maxlength="64" show-word-limit />
         </div>
       </el-form-item>
       <el-form-item label="" class="form-description" prop="description">

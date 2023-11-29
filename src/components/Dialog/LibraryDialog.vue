@@ -236,7 +236,7 @@ const changeIcon = (val: string) => {
               <img :src="libraryForm.icon" alt="" />
             </div>
           </SelectIconPopver>
-          <el-input v-model="libraryForm.name" placeholder="知识库名称" maxlength="10" show-word-limit />
+          <el-input v-model="libraryForm.name" placeholder="知识库名称" maxlength="64" show-word-limit />
         </div>
       </el-form-item>
       <el-form-item label="" class="form-description" prop="description">
