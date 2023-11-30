@@ -1,4 +1,13 @@
 <script lang="ts" setup>
+import actionIcon from '@/assets/icons/actionIcon.svg'
+import noteIcon from '@/assets/icons/noteIcon.svg'
+import startIcon from '@/assets/icons/startIcon.svg'
+import publicAreaIcon from '@/assets/icons/publicAreaIcon.svg'
+import actionIcon_active from '@/assets/icons/actionIcon_active.svg'
+import noteIcon_active from '@/assets/icons/noteIcon_active.svg'
+import startIcon_active from '@/assets/icons/startIcon_active.svg'
+import publicAreaIcon_active from '@/assets/icons/publicAreaIcon_active.svg'
+
 interface MenuItem {
   index: string
   icon: string
@@ -20,12 +29,25 @@ const state = reactive({
 
 watchEffect(() => {
   const routerName = router.currentRoute.value.name
-  console.log(`output-> routerName `, routerName)
   state.defaultMenu = route.meta.asideComponent === 'Sidebar' ? routerName.toString().toLowerCase() : routerName.toString().toLowerCase().split('-')[1]
 })
 
-const getIconPath = (iconName) => `/src/assets/icons/${iconName}.svg`
-const getActiveIconPath = (iconName) => `/src/assets/icons/${iconName}_active.svg`
+const getIconPath = (iconName, isActive = false) => {
+  const iconMap = {
+    actionIcon: actionIcon,
+    noteIcon: noteIcon,
+    startIcon: startIcon,
+    publicAreaIcon: publicAreaIcon
+  }
+  const activeIconMap = {
+    actionIcon: actionIcon_active,
+    noteIcon: noteIcon_active,
+    startIcon: startIcon_active,
+    publicAreaIcon: publicAreaIcon_active
+  }
+
+  return isActive ? activeIconMap[iconName] || '' : iconMap[iconName] || ''
+}
 
 const toLink = (menuItem: MenuItem) => {
   const queryParams = {
@@ -65,7 +87,7 @@ const toLink = (menuItem: MenuItem) => {
       <template v-for="menuItem in props.menuItems" :key="menuItem.index">
         <el-menu-item :index="menuItem.index" @click="toLink(menuItem)">
           <img v-if="state.defaultMenu !== menuItem.index" :src="getIconPath(menuItem.icon)" alt="" />
-          <img v-else :src="getActiveIconPath(menuItem.icon)" alt="" />
+          <img v-else :src="getIconPath(menuItem.icon, true)" alt="" />
           <span>{{ menuItem.label }}</span>
         </el-menu-item>
       </template>

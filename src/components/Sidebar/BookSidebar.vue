@@ -1,22 +1,29 @@
 <script lang="ts" setup>
+import tocIcon from '@/assets/icons/bookSetting/tocIcon.svg'
+import docsIcon from '@/assets/icons/bookSetting/docsIcon.svg'
+import webhooksIcon from '@/assets/icons/bookSetting/webhooksIcon.svg'
+import trashIcon from '@/assets/icons/teamSetting/trash.svg'
+import teamInfoIcon from '@/assets/icons/teamSetting/teamInfo.svg'
+import permissionsIcon from '@/assets/icons/teamSetting/permissions.svg'
+import setIcon from '@/assets/icons/teamSetting/set.svg'
 import { getLibraryDetailApi } from '@/api/library'
 
 const menuList = [
   {
     label: '设置',
     children: [
-      { label: '知识库信息', nickName: 'basic', icon: '/src/assets/icons/teamSetting/teamInfo.svg', path: '/bookSetting/basic' },
-      { label: '权限', nickName: 'collaborators', icon: '/src/assets/icons/teamSetting/permissions.svg', path: '/bookSetting/collaborators' },
-      { label: '更多设置', nickName: 'settings', icon: '/src/assets/icons/teamSetting/set.svg', path: '/bookSetting/settings' }
+      { label: '知识库信息', nickName: 'basic', icon: teamInfoIcon, path: '/bookSetting/basic' },
+      { label: '权限', nickName: 'collaborators', icon: permissionsIcon, path: '/bookSetting/collaborators' },
+      { label: '更多设置', nickName: 'settings', icon: setIcon, path: '/bookSetting/settings' }
     ]
   },
   {
     label: '高级设置',
     children: [
-      { label: '目录管理', nickName: 'toc', icon: '/src/assets/icons/bookSetting/tocIcon.svg', path: '/bookSetting/toc' },
-      { label: '文档管理', nickName: 'docs', icon: '/src/assets/icons/bookSetting/docsIcon.svg', path: '/bookSetting/docs' },
-      { label: '消息推送', nickName: 'webhooks', icon: '/src/assets/icons/bookSetting/webhooksIcon.svg', path: '/bookSetting/webhooks' },
-      { label: '回收站', nickName: 'trash', icon: '/src/assets/icons/teamSetting/trash.svg', path: '/bookSetting/trash' }
+      { label: '目录管理', nickName: 'toc', icon: tocIcon, path: '/bookSetting/toc' },
+      { label: '文档管理', nickName: 'docs', icon: docsIcon, path: '/bookSetting/docs' },
+      { label: '消息推送', nickName: 'webhooks', icon: webhooksIcon, path: '/bookSetting/webhooks' },
+      { label: '回收站', nickName: 'trash', icon: trashIcon, path: '/bookSetting/trash' }
     ]
   }
 ]

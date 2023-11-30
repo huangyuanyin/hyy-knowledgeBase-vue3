@@ -70,6 +70,7 @@ const typeIcon = {
 }
 
 watchEffect(() => {
+  currentSpaceName.value = route.path.split('/')[1]
   spaceType.value = sessionStorage.getItem('currentSidebar') === 'SpaceSidebar' ? '组织' : '个人'
   if (spaceType.value === '个人') {
     icon.value = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar
@@ -90,8 +91,14 @@ watch(
 watch(
   () => route.path,
   async () => {
-    if (currentSpaceName.value !== route.path.split('/')[1] && sessionStorage.getItem('currentSidebar') === 'SpaceSidebar') {
-      await getSpacesDeatil()
+    if (
+      JSON.parse(sessionStorage.getItem('currentSpaceInfo')) &&
+      currentSpaceName.value !== JSON.parse(sessionStorage.getItem('currentSpaceInfo')).spacekey &&
+      sessionStorage.getItem('currentSidebar') === 'SpaceSidebar'
+    ) {
+      nextTick(async () => {
+        await getSpacesDeatil()
+      })
       currentSpaceName.value = route.path.split('/')[1]
     }
     infoStore.setCurrentSpaceName(route.path.split('/')[1])

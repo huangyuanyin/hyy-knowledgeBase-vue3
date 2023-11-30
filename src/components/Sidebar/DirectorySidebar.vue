@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import miniDropDownIcon from '@/assets/icons/miniDropDownIcon.svg'
 import { sidebarSearchMenuItemsData, articleOperationData, linkOperationData, titleOperationData, fileOperationData, directorySidebarOperationData } from '@/data/data'
 import { addArticleApi, deleteArticleApi, editArticleApi, getArticleTreeApi } from '@/api/article'
 import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
@@ -457,7 +458,7 @@ const toMoreSetting = () => {
 }
 
 const customIcon = () => {
-  return h('img', { src: '/src/assets/icons/miniDropDownIcon.svg' }) // 默认图标路径
+  return h('img', { src: miniDropDownIcon }) // 默认图标路径
 }
 
 onMounted(async () => {})

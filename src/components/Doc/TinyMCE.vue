@@ -61,20 +61,21 @@ const props = defineProps({
 
 const { modelValue } = toRefs(props)
 const key = '3wvx4jkjmreyeiqypzs5hnwrkncklep4xi69inkwgfoipxj7'
+const isDev = import.meta.env.VITE_BASE_SETTING === 'dev'
 const editorValue = ref(modelValue.value)
 const initOptions = ref({
   // selector: 'textarea',
   // skin: false,
   // menubar: false,
   // content_css: false,
-  skin_url: '/tinymce/skins/ui/oxide',
+  skin_url: isDev ? '/tinymce/skins/ui/oxide' : '/netKmp/tinymce/skins/ui/oxide',
   // skin: 'jam', //果酱图标
   // icons: 'jam', //果酱图标
   content_style: props.bodyStyle, // 设置内容样式
   with: '100px',
   height: props.height,
   placeholder: '直接输入正文...', // 设置占位符
-  language_url: '/tinymce/langs/zh-Hans.js', // 设置本地语言，在本地的路径
+  language_url: isDev ? '/tinymce/langs/zh-Hans.js' : '/netKmp/tinymce/langs/zh-Hans.js', // 设置本地语言，在本地的路径
   language: 'zh-Hans', // 设置本地语言
   plugins: props.plugins, // 插件
   toolbar: props.readonly ? false : props.toolbar, // 工具栏
@@ -134,7 +135,7 @@ watch(
 )
 
 onBeforeMount(() => {
-  tinymce.baseURL = '/tinymce'
+  tinymce.baseURL = isDev ? '/tinymce' : '/netKmp/tinymce'
 })
 </script>
 

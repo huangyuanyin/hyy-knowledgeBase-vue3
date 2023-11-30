@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import privateIcon from '@/assets/icons/privateIcon.svg'
 import startIcon from '@/assets/icons/startIcon.svg'
-import settingIcon from '/@/assets/icons/settingIcon.svg'
+import settingIcon from '@/assets/icons/settingIcon.svg'
 
 const props = defineProps({
   icon: String

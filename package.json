@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
+    "dev:stage": "vite --mode staging --host",
     "build": "vue-tsc && vite build",
     "build:stage": "vite build --mode staging",
     "preview": "vite preview"
