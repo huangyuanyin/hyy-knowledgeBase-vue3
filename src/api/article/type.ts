@@ -27,6 +27,12 @@ export interface HandleArticleData {
   action: string
 }
 
+export interface ArticleAttachmentData {
+  content: string
+  name: ''
+  file: any
+}
+
 export interface ArticleRes {
   code: number
   data: article

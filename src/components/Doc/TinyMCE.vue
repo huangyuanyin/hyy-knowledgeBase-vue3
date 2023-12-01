@@ -43,18 +43,22 @@ const props = defineProps({
    * bold:加粗；italic:斜体；underline:下划线；strikethrough:删除线；subscript:下标；superscript:上标；alignleft:左对齐；aligncenter:居中对齐；
    * alignright:右对齐；alignjustify:两端对齐；outdent:减少缩进；indent:增加缩进；visualaid:显示隐藏元素；print:打印；spellchecker:拼写检查；
    * insertfile:插入文件；insertimage:插入图片；insertvideo:插入视频；inserttable:插入表格；toc:插入目录；inserthr:插入水平线；pagebreak:插入分页符；
+   * editimage :编辑图片;
    * quickbars:快速工具栏；
    * numlist:有序列表；
+   * toc:目录；
+   * formatpainter:格式刷；
+   * tpImportword:导入word
    */
   plugins: {
     type: [String, Array],
     default:
-      '  customHyy help autosave lists advlist code charmap link fullscreen emoticons wordcount image codesample codeformat  directionality autosave  visualblocks autolink inserthr anchor  tableofcontents  importcss insertdatetime media pagebreak  preview searchreplace table'
+      '  customHyy  pasteuploadimage attachment upfile paste pastetext help autosave editimage lists advlist code charmap link fullscreen emoticons wordcount image codesample codeformat  directionality autosave  visualblocks autolink inserthr anchor  tableofcontents  importcss insertdatetime media pagebreak  preview searchreplace table'
   },
   toolbar: {
     type: [String, Array],
     default: [
-      '  custom_button  undo redo removeformat | blocks fontsize bold italic strikethrough underline superscript subscript codeformat   | forecolor backcolor |align bullist numlist  lineheight | link blockquote hr searchreplace anchor  charmap help tableofcontents tableofcontentsupdate  insertdatetime |  charmap emoticons wordcount |  code  codesample visualblocks image fullscreen   preview autolink  autosave'
+      'custom_button  pasteuploadimage attachment upfile paste pastetext  undo redo removeformat blocks fontsize bold italic strikethrough underline superscript subscript codeformat forecolor backcolor align bullist numlist  lineheight  link blockquote hr searchreplace anchor  charmap help tableofcontents tableofcontentsupdate  insertdatetime  charmap emoticons wordcount  code  codesample visualblocks image fullscreen   preview autolink  autosave'
     ]
   }
 })
@@ -91,10 +95,6 @@ const initOptions = ref({
   branding: false, // 是否隐藏品牌
   resize: props.resize, // 是否允许调整大小
   help_accessibility: true, // 是否在 TinyMCE 状态栏中显示用于访问“帮助”对话框的键盘快捷键。
-  image_title: true, // 是否启用图像标题
-  image_caption: true, // 是否显示图像标题
-  file_picker_types: 'image', // 设置文件选择器类型
-  automatic_uploads: true, // 是否自动上传
   a11y_advanced_options: true, // 是否在“插入链接”对话框中显示高级选项
   file_picker_callback: (cb) => {
     const input = document.createElement('input')
@@ -120,10 +120,55 @@ const initOptions = ref({
     'keyboardnav'
     //  'plugins', 'versions'
   ], // 设置帮助选项卡
+  image_advtab: true, // 是否显示高级选项卡
+  image_dimensions: true, // 是否显示图像尺寸
+  image_description: true, // 是否显示图像描述
+  image_caption: true, // 是否显示图像标题
+  image_title: true, // 是否显示图像标题
+  image_class_list: [
+    { title: '无', value: '' },
+    { title: '居中', value: 'img-center' },
+    { title: '左浮动', value: 'img-left' },
+    { title: '右浮动', value: 'img-right' }
+  ], // 设置图像类列表
+  file_picker_types: 'image', // 设置文件选择器类型
+  automatic_uploads: true, // 是否自动上传
+  paste_convert_word_fake_lists: true, // 插入word文档需要该属性
+  paste_webkit_styles: 'all', // 粘贴时的样式
+  paste_merge_formats: true, // 合并格式
+  nonbreaking_force_tab: false, // 禁用非打断空格
+  paste_auto_cleanup_on_paste: false, // 禁用粘贴时的自动清理
+  paste_remove_styles_if_webkit: false, // 禁用webkit粘贴时的样式
+  paste_strip_class_attributes: false, // 禁用粘贴时的类属性
+  paste_retain_style_properties: 'all', // 粘贴时的样式
+  paste_data_images: true, // 粘贴时的图片
+  paste_enable_default_filters: true, // 粘贴时的过滤器
+  paste_word_valid_elements: '*[*]', // 粘贴时的元素
+  paste_word_remove_styles: false, // 粘贴时的样式
+  paste_word_remove_font_styles: false, // 粘贴时的字体样式
+  paste_word_cleanup_on_paste: false, // 粘贴时的清理
+  paste_word_inline_styles: false, // 粘贴时的内联样式
+  paste_word_tab_interval: 0, // 粘贴时的间隔
+  skeletonScreen: true,
+  // quickbars_insert_toolbar: false, // 禁用快速插入上下文工具栏
+  // quickbars_selection_toolbar: false, // 禁用快速选择上下文工具栏
+  // quickbars_image_toolbar: false, // 禁用快速图像上下文工具栏
+  quickbars_image_toolbar: 'alignleft aligncenter alignright | rotateleft rotateright | imageoptions', // 快速图像工具栏
+  quickbars_selection_toolbar: 'bold italic underline quicklink h2 h3 blockquote quickimage quicktable', // 快速工具栏
+  quickbars_insert_toolbar: 'p h2 h3 bullist numlist quickimage quicktable hr', // 快速插入工具栏
   // ...getPasteOption(),
   // ...getImageOption(),
   setup: (editor) => {
-    editor.on('init', () => {})
+    editor.on('init', () => {
+      //
+    })
+    // editor.ui.registry.addContextToolbar('paragraphlink', {
+    //   predicate: (node) => {
+    //     return node.nodeName.toLowerCase() === 'p'
+    //   },
+    //   items: 'quicklink bold',
+    //   position: 'node'
+    // })
   }
 })
 
