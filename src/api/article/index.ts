@@ -1,4 +1,4 @@
-import { ArticleData, ArticleRes, HandleArticleData, ArticleAttachmentData } from './type'
+import { ArticleData, ArticleRes, HandleArticleData, ArticleAttachmentData, ArticleTemData } from './type'
 
 export function getArticleTreeApi(id: string) {
   return http.get<ArticleRes>(`article_tree/${id}/`, {}, 'base')
@@ -38,4 +38,16 @@ export function exportDocApi(id: number) {
 
 export function addArticleAttachmentsApi(data: ArticleAttachmentData) {
   return http.post<ArticleRes>(`article/attachments/`, data, 'base')
+}
+
+export function getArticleTemApi(params: ArticleTemData) {
+  return http.get<ArticleRes>(`/article/templates/`, { params }, 'base')
+}
+
+export function addArticleTemApi(data: ArticleTemData) {
+  return http.post<ArticleRes>(`/article/templates/`, data, 'base')
+}
+
+export function deleteArticleTemApi(id: number) {
+  return http.delete<ArticleRes>(`/article/templates/${id}`, {}, 'base')
 }

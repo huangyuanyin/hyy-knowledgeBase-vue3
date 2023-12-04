@@ -74,7 +74,7 @@ export const sidebarSearchMenuItemsData = [
   { type: 'item', icon: pptIcon, label: '幻灯片', nick: 'toAddPPT' },
   { type: 'item', icon: mindmapIcon, label: '思维导图' },
   { type: 'divider' },
-  { type: 'item', icon: templateIcon, label: '从模板新建' },
+  { type: 'item', icon: templateIcon, label: '从模板新建', nick: 'toImportTem' },
   { type: 'item', icon: importIcon, label: '导入...' },
   { type: 'divider' },
   { type: 'item', icon: groupIcon, label: '新建分组', nick: 'toAddGroup' },

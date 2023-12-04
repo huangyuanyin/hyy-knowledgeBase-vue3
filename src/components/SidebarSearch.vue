@@ -17,6 +17,7 @@ const spaceType = ref('') // 当前空间类型
 const spaceId = ref('') // 当前空间id
 const bookId = ref('') // 当前知识库id
 const isShowLinkDialog = ref(false)
+const isShowSelectTemDialog = ref(false)
 const articleType = {
   文档: { type: 'doc', title: '无标题文档' },
   表格: { type: 'sheet', title: '无标题表格' },
@@ -59,6 +60,7 @@ const addArticle = async (article, parent) => {
 }
 
 const toDo = (val) => {
+  console.log(`output->val`, val)
   ElMessage.warning('暂未开放，敬请期待！')
 }
 </script>
@@ -75,11 +77,13 @@ const toDo = (val) => {
       @toAddDoc="toAddArticle"
       @toAddSheet="toAddArticle"
       @toAddPPT="toAddArticle"
+      @toImportTem="isShowSelectTemDialog = true"
       @toAddGroup="toAddArticle"
       @toAddLink="isShowLinkDialog = true"
       @toDo="toDo"
     />
   </div>
+  <SelectTemDialog :isShow="isShowSelectTemDialog" @closeDialog="isShowSelectTemDialog = false" />
   <LinkDialog :isShow="isShowLinkDialog" :parent="null" @closeDialog="isShowLinkDialog = false" />
 </template>
 

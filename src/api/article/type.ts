@@ -33,6 +33,17 @@ export interface ArticleAttachmentData {
   file: any
 }
 
+export interface ArticleTemData {
+  name?: string
+  body?: string
+  icon?: string
+  template_type?: string
+  target_type?: string
+  target_id?: number
+
+  content_type?: string
+}
+
 export interface ArticleRes {
   code: number
   data: article

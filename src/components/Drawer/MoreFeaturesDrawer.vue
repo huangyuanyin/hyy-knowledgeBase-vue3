@@ -46,6 +46,7 @@ const infoItems = ref([
   { icon: '/src/assets/icons/drawer/comment.svg', text: '评论数', value: '暂未统计', type: 'label' },
   { icon: '/src/assets/icons/drawer/like.svg', text: '点赞数', value: '暂未统计', type: 'label' }
 ])
+const isSaveTemplateDialog = ref(false)
 
 watchEffect(() => {
   if (props.drawer) {
@@ -59,8 +60,15 @@ const handleClick = (tab) => {
   drawerTab.value = tab
 }
 
-const noUse = () => {
-  ElMessage.warning('功能暂未开放，敬请期待')
+const toHandle = (data) => {
+  switch (data.text) {
+    case '另存为模板':
+      isSaveTemplateDialog.value = true
+      break
+    default:
+      ElMessage.warning('功能暂未开放，敬请期待')
+      break
+  }
 }
 </script>
 
@@ -74,7 +82,7 @@ const noUse = () => {
         <div class="operate-wrap">
           <div class="list">
             <template v-for="item in operationItems">
-              <div v-if="item.type === 'label'" :class="['item', item.text === '删除...' ? 'delete' : '']" @click="noUse">
+              <div v-if="item.type === 'label'" :class="['item', item.text === '删除...' ? 'delete' : '']" @click="toHandle(item)">
                 <img :src="item.icon" alt="" />
                 <div>{{ item.text }}</div>
               </div>
@@ -103,6 +111,7 @@ const noUse = () => {
       </el-tab-pane>
     </el-tabs>
   </el-drawer>
+  <SaveTemplateDialog :isShow="isSaveTemplateDialog" :parent="null" @closeDialog="isSaveTemplateDialog = false" :info="props.info" />
 </template>
 
 <style lang="scss">

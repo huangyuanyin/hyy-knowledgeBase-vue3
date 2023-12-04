@@ -29,6 +29,7 @@ declare global {
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const h: typeof import('vue')['h']
   const http: typeof import('./utils/request')['http']
+  const imgToBase64: typeof import('./utils/imgToBase64')['imgToBase64']
   const inject: typeof import('vue')['inject']
   const isHasTeamPermission: typeof import('./hooks/usePermission')['isHasTeamPermission']
   const isProxy: typeof import('vue')['isProxy']

@@ -49,6 +49,9 @@ const toHandle = (val) => {
     case '幻灯片':
       emit(val.nick, val)
       break
+    case '从模板新建':
+      emit(val.nick, val)
+      break
     case '添加链接':
       emit(val.nick, val)
       break
