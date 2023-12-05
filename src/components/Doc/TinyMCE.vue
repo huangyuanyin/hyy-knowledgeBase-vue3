@@ -49,16 +49,17 @@ const props = defineProps({
    * toc:目录；
    * formatpainter:格式刷；
    * tpImportword:导入word
+   * pasteuploadimage,attachment,upfile
    */
   plugins: {
     type: [String, Array],
     default:
-      '  customHyy  pasteuploadimage attachment upfile paste pastetext help autosave editimage lists advlist code charmap link fullscreen emoticons wordcount image codesample codeformat  directionality autosave  visualblocks autolink inserthr anchor  tableofcontents  importcss insertdatetime media pagebreak  preview searchreplace table'
+      '  customHyy  pasteuploadimage attachment upfile paste pastetext formatpainter help autosave editimage lists advlist code charmap link fullscreen emoticons wordcount image codesample codeformat  directionality autosave  visualblocks autolink inserthr anchor  tableofcontents  importcss insertdatetime media pagebreak  preview searchreplace table'
   },
   toolbar: {
     type: [String, Array],
     default: [
-      'custom_button  pasteuploadimage attachment upfile paste pastetext  undo redo removeformat blocks fontsize bold italic strikethrough underline superscript subscript codeformat forecolor backcolor align bullist numlist  lineheight  link blockquote hr searchreplace anchor  charmap help tableofcontents tableofcontentsupdate  insertdatetime  charmap emoticons wordcount  code  codesample visualblocks image fullscreen   preview autolink  autosave'
+      'custom_button     paste pastetext   undo redo removeformat formatpainter blocks fontsize bold italic strikethrough underline superscript subscript codeformat forecolor backcolor align bullist numlist  lineheight  link blockquote hr searchreplace anchor  charmap help tableofcontents tableofcontentsupdate  insertdatetime  charmap emoticons wordcount  code  codesample visualblocks image fullscreen   preview autolink  autosave'
     ]
   }
 })
@@ -156,6 +157,33 @@ const initOptions = ref({
   quickbars_image_toolbar: 'alignleft aligncenter alignright | rotateleft rotateright | imageoptions', // 快速图像工具栏
   quickbars_selection_toolbar: 'bold italic underline quicklink h2 h3 blockquote quickimage quicktable', // 快速工具栏
   quickbars_insert_toolbar: 'p h2 h3 bullist numlist quickimage quicktable hr', // 快速插入工具栏
+  formats: {
+    formatpainter_checklist: { selector: 'ul', classes: 'tox-checklist' },
+    formatpainter_liststyletype: { selector: 'ul,ol', styles: { listStyleType: '%value' } },
+    formatpainter_borderstyle: {
+      selector: 'td,th',
+      styles: { borderTopStyle: '%valueTop', borderRightStyle: '%valueRight', borderBottomStyle: '%valueBottom', borderLeftStyle: '%valueLeft' },
+      remove_similar: true
+    },
+    formatpainter_bordercolor: {
+      selector: 'td,th',
+      styles: { borderTopColor: '%valueTop', borderRightColor: '%valueRight', borderBottomColor: '%valueBottom', borderLeftColor: '%valueLeft' },
+      remove_similar: true
+    },
+    formatpainter_backgroundcolor: { selector: 'td,th', styles: { backgroundColor: '%value' }, remove_similar: true },
+    formatpainter_removeformat: [
+      {
+        selector: 'b,strong,em,i,font,u,strike,sub,sup,dfn,code,samp,kbd,var,cite,mark,q,del,ins',
+        remove: 'all',
+        split: true,
+        expand: false,
+        block_expand: true,
+        deep: true
+      },
+      { selector: 'span', attributes: ['style', 'class'], remove: 'empty', split: true, expand: false, deep: true },
+      { selector: '*:not(tr,td,th,table)', attributes: ['style', 'class'], split: false, expand: false, deep: true }
+    ]
+  },
   // ...getPasteOption(),
   // ...getImageOption(),
   setup: (editor) => {

@@ -97,8 +97,10 @@ const toHandle = (item: any) => {
       break
     case '发布':
       editArticle()
+      moreFeaturesDrawer.value = false
       break
     case '编辑':
+      moreFeaturesDrawer.value = false
       const data = {
         type: route.path.split('/').slice(-2)[0],
         id: route.query.aid,

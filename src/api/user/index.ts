@@ -5,7 +5,7 @@ export function loginApi(data: LoginParams) {
 }
 
 export function getDepartmentsApi(params?: any) {
-  return http.get('system/departments/', { params }, 'login')
+  return http.get('system/dept_tree/', { params }, 'login')
 }
 
 export function getDepartUserApi(params?: any) {

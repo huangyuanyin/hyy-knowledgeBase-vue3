@@ -28,7 +28,8 @@ const operationItems = [
   { type: 'hr' },
   { icon: fullScreen, text: '全屏', type: 'label' },
   { icon: saveTem, text: '另存为模板', type: 'label' },
-  { icon: historyVersion, text: '查看历史版本', type: 'label' },
+  { icon: historyVersion, text: '另存为版本', type: 'label' },
+  { icon: historyVersion, text: '查看已存版本', type: 'label' },
   { icon: reviewIcon, text: '评审', type: 'label' },
   { icon: exportIcon, text: '导出...', type: 'label' },
   { icon: copyIcon, text: '复制...', type: 'label' },
@@ -47,6 +48,8 @@ const infoItems = ref([
   { icon: '/src/assets/icons/drawer/like.svg', text: '点赞数', value: '暂未统计', type: 'label' }
 ])
 const isSaveTemplateDialog = ref(false)
+const isSaveHistoryVersionDialog = ref(false)
+const isHistoryVersionDialog = ref(false)
 
 watchEffect(() => {
   if (props.drawer) {
@@ -64,6 +67,12 @@ const toHandle = (data) => {
   switch (data.text) {
     case '另存为模板':
       isSaveTemplateDialog.value = true
+      break
+    case '另存为版本':
+      isSaveHistoryVersionDialog.value = true
+      break
+    case '查看已存版本':
+      isHistoryVersionDialog.value = true
       break
     default:
       ElMessage.warning('功能暂未开放，敬请期待')
@@ -112,6 +121,8 @@ const toHandle = (data) => {
     </el-tabs>
   </el-drawer>
   <SaveTemplateDialog :isShow="isSaveTemplateDialog" :parent="null" @closeDialog="isSaveTemplateDialog = false" :info="props.info" />
+  <SaveHistoryVersionDialog :isShow="isSaveHistoryVersionDialog" @closeDialog="isSaveHistoryVersionDialog = false" :info="props.info" />
+  <HistoryVersionDialog :isShow="isHistoryVersionDialog" @closeDialog="isHistoryVersionDialog = false" :info="props.info" />
 </template>
 
 <style lang="scss">

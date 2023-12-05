@@ -44,6 +44,13 @@ export interface ArticleTemData {
   content_type?: string
 }
 
+export interface ArticleVersionData {
+  id?: number
+  name?: string
+  body?: string
+  content?: string
+}
+
 export interface ArticleRes {
   code: number
   data: article
