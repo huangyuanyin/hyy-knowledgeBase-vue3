@@ -46,7 +46,7 @@ import publicIcon from '@/assets/icons/publicIcon.svg'
 export const menuItemsData = [
   { type: 'item', icon: documentIcon, label: '文档' },
   { type: 'item', icon: formIcon, label: '表格' },
-  { type: 'item', icon: mindmapIcon, label: '思维导图' },
+  { type: 'item', icon: mindmapIcon, label: '脑图' },
   { type: 'item', icon: pptIcon, label: '幻灯片' },
   { type: 'divider' },
   { type: 'item', icon: bookIcon, label: '知识库' },
@@ -58,7 +58,7 @@ export const menuItemsData = [
 export const spaceMenuItemsData = [
   { type: 'item', icon: documentIcon, label: '文档', nick: 'toDo' },
   { type: 'item', icon: formIcon, label: '表格', nick: 'toDo' },
-  { type: 'item', icon: mindmapIcon, label: '思维导图', nick: 'toDo' },
+  { type: 'item', icon: mindmapIcon, label: '脑图', nick: 'toDo' },
   { type: 'item', icon: pptIcon, label: '幻灯片', nick: 'toDo' },
   { type: 'divider' },
   { type: 'item', icon: bookIcon, label: '知识库', nick: 'toAddBook' },
@@ -71,8 +71,8 @@ export const spaceMenuItemsData = [
 export const sidebarSearchMenuItemsData = [
   { type: 'item', icon: documentIcon, label: '文档', nick: 'toAddDoc' },
   { type: 'item', icon: formIcon, label: '表格', nick: 'toAddSheet' },
+  { type: 'item', icon: mindmapIcon, label: '脑图', nick: 'toAddMindmap' },
   { type: 'item', icon: pptIcon, label: '幻灯片', nick: 'toAddPPT' },
-  { type: 'item', icon: mindmapIcon, label: '思维导图' },
   { type: 'divider' },
   { type: 'item', icon: templateIcon, label: '从模板新建', nick: 'toImportTem' },
   { type: 'item', icon: importIcon, label: '导入...' },
@@ -85,7 +85,7 @@ export const sidebarSearchMenuItemsData = [
 export const moduleAddMenuData = [
   { type: 'item', icon: documentIcon, label: '新建文档' },
   { type: 'item', icon: formIcon, label: '新建表格' },
-  { type: 'item', icon: mindmapIcon, label: '新建思维导图' },
+  { type: 'item', icon: mindmapIcon, label: '新建脑图' },
   { type: 'item', icon: pptIcon, label: '新建幻灯片' },
   { type: 'divider' },
   { type: 'item', icon: importIcon, label: '导入...' }

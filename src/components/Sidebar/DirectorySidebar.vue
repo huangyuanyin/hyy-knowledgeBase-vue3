@@ -42,6 +42,7 @@ const bookIcon = ref('/src/assets/icons/bookIcon.svg')
 const articleType = {
   文档: { type: 'doc', title: '无标题文档' },
   表格: { type: 'sheet', title: '无标题表格' },
+  脑图: { type: 'mind', title: '无标题脑图' },
   幻灯片: { type: 'ppt', title: '无标题幻灯片' },
   新建分组: { type: 'title', title: '新建分组' }
 }
@@ -283,6 +284,10 @@ const toAddSheet = (data) => {
 
 const toAddPPT = (data) => {
   addArticle(articleType['幻灯片'], data.id)
+}
+
+const toAddMindmap = (data) => {
+  addArticle(articleType['脑图'], data.id)
 }
 
 const toAddLink = (data) => {
@@ -616,6 +621,7 @@ onMounted(async () => {})
                 @toAddDoc="toAddDoc(data)"
                 @toAddSheet="toAddSheet(data)"
                 @toAddPPT="toAddPPT(data)"
+                @toAddMindmap="toAddMindmap(data)"
                 @toAddGroup="toAddGroup(data)"
                 @toAddLink="toAddLink(data)"
               >

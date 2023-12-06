@@ -14,6 +14,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
     required: true
+  },
+  isPublish: {
+    type: Boolean,
+    default: false
   }
 })
 const emit = defineEmits(['toPublish'])
@@ -86,6 +90,11 @@ watchEffect(() => {
   if (route.query.aname) {
     name.value = route.query.aname as string
   }
+  if (props.isPublish) {
+    console.log(`output->props.content`, props.content)
+    editArticle()
+    moreFeaturesDrawer.value = false
+  }
 })
 
 const toHandle = (item: any) => {
@@ -96,8 +105,13 @@ const toHandle = (item: any) => {
       getArticle()
       break
     case '发布':
-      editArticle()
-      moreFeaturesDrawer.value = false
+      if (route.path.includes('mind')) {
+        emit('toPublish', 'mind')
+        return
+      } else {
+        editArticle()
+        moreFeaturesDrawer.value = false
+      }
       break
     case '编辑':
       moreFeaturesDrawer.value = false

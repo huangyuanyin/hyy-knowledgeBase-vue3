@@ -142,6 +142,15 @@ const customRoutes = [
     }
   },
   {
+    path: '/:spaceName?/directory/mind/:isEdit?',
+    name: 'Space-Mindmap',
+    component: pageComps['/src/views/Article/MindMap/index.vue'] as Component,
+    meta: {
+      title: 'Mindmap',
+      asideComponent: 'DirectorySidebar'
+    }
+  },
+  {
     path: '/:spaceName?/directory/file',
     name: 'Space-File',
     component: pageComps['/src/views/Article/File/index.vue'] as Component,

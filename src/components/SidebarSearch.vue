@@ -13,16 +13,18 @@ const props = defineProps({
 const route = useRoute()
 const router = useRouter()
 const refreshStroe = useRefreshStore()
+const dataStore = useDataStore()
 const spaceType = ref('') // 当前空间类型
 const spaceId = ref('') // 当前空间id
 const bookId = ref('') // 当前知识库id
 const isShowLinkDialog = ref(false)
 const isShowSelectTemDialog = ref(false)
 const articleType = {
-  文档: { type: 'doc', title: '无标题文档' },
-  表格: { type: 'sheet', title: '无标题表格' },
-  幻灯片: { type: 'ppt', title: '无标题幻灯片' },
-  新建分组: { type: 'title', title: '新建分组' }
+  文档: { type: 'doc', title: '无标题文档', body: '' },
+  表格: { type: 'sheet', title: '无标题表格', body: '' },
+  脑图: { type: 'mind', title: '无标题脑图', body: '' },
+  幻灯片: { type: 'ppt', title: '无标题幻灯片', body: '' },
+  新建分组: { type: 'title', title: '新建分组', body: '' }
 }
 
 watchEffect(() => {
@@ -32,6 +34,13 @@ watchEffect(() => {
 })
 
 const toAddArticle = (val) => {
+  switch (val.label) {
+    case '脑图':
+      articleType[val.label].body = dataStore.mindMapData
+      break
+    default:
+      break
+  }
   addArticle(articleType[val.label], null)
 }
 
@@ -40,7 +49,7 @@ const addArticle = async (article, parent) => {
   const params = {
     title: article.title,
     type: article.type,
-    body: '',
+    body: article.body,
     parent,
     book: bookId.value,
     space: spaceId.value,
@@ -77,6 +86,7 @@ const toDo = (val) => {
       @toAddDoc="toAddArticle"
       @toAddSheet="toAddArticle"
       @toAddPPT="toAddArticle"
+      @toAddMindmap="toAddArticle"
       @toImportTem="isShowSelectTemDialog = true"
       @toAddGroup="toAddArticle"
       @toAddLink="isShowLinkDialog = true"

@@ -40,7 +40,7 @@ const rules = reactive<FormRules>({
 const contentType = ref([
   { label: '文档', icon: documentIcon, value: 'doc' },
   { label: '数据表', icon: formIcon, value: 'sheet' },
-  { label: '思维导图', icon: mindmapIcon, value: 'mindmap' },
+  { label: '脑图', icon: mindmapIcon, value: 'mind' },
   { label: 'PPT', icon: pptIcon, value: 'ppt' }
 ])
 const temOpts = ref([

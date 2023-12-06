@@ -41,20 +41,11 @@ const toHandle = (val) => {
       isShowTeamDialog.value = true
       break
     case '文档':
-      emit(val.nick, val)
-      break
     case '表格':
-      emit(val.nick, val)
-      break
+    case '脑图':
     case '幻灯片':
-      emit(val.nick, val)
-      break
     case '从模板新建':
-      emit(val.nick, val)
-      break
     case '添加链接':
-      emit(val.nick, val)
-      break
     case '新建分组':
       emit(val.nick, val)
       break

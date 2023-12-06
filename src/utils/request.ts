@@ -11,7 +11,7 @@ declare module 'axios' {
 const createAxiosInstance = (baseUrlType: keyof typeof baseUrlList): AxiosInstance => {
   const instance = axios.create({
     baseURL: baseUrlList[baseUrlType],
-    timeout: 5000
+    timeout: 10000
   })
 
   instance.interceptors.request.use(
