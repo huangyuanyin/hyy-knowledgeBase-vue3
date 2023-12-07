@@ -38,6 +38,9 @@ const toAddArticle = (val) => {
     case '脑图':
       articleType[val.label].body = dataStore.mindMapData
       break
+    case '幻灯片':
+      articleType[val.label].body = dataStore.pptData
+      break
     default:
       break
   }

@@ -91,7 +91,6 @@ watchEffect(() => {
     name.value = route.query.aname as string
   }
   if (props.isPublish) {
-    console.log(`output->props.content`, props.content)
     editArticle()
     moreFeaturesDrawer.value = false
   }
@@ -105,8 +104,8 @@ const toHandle = (item: any) => {
       getArticle()
       break
     case '发布':
-      if (route.path.includes('mind')) {
-        emit('toPublish', 'mind')
+      if (route.path.includes('ppt') || route.path.includes('mind')) {
+        emit('toPublish', route.path.split('/').slice(-2)[0])
         return
       } else {
         editArticle()

@@ -1,9 +1,10 @@
-import { mindMapInitData } from '@/data/initData'
+import { mindMapInitData, pptInitData } from '@/data/initData'
 
 export const useDataStore = defineStore('data', () => {
   const commonLibraryList = ref([]) // 常用知识库列表
   const teamList = ref([]) // 当前空间下的团队列表
   const mindMapData = ref(JSON.stringify(mindMapInitData)) // 脑图数据
+  const pptData = ref(JSON.stringify(pptInitData))
 
   const setCommonLibraryList = (val) => {
     commonLibraryList.value = val
@@ -15,7 +16,6 @@ export const useDataStore = defineStore('data', () => {
 
   const setMindMap = (val) => {
     mindMapData.value = val
-    sessionStorage.setItem('xinAn-mindMap', JSON.stringify(val))
   }
 
   return {
@@ -24,6 +24,7 @@ export const useDataStore = defineStore('data', () => {
     teamList,
     setTeamList,
     mindMapData,
-    setMindMap
+    setMindMap,
+    pptData
   }
 })
