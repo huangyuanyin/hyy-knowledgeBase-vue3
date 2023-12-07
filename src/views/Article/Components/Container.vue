@@ -13,7 +13,7 @@ const props = defineProps({
   isHasPermission: {
     type: Boolean,
     default: true,
-    required: true
+    required: false
   },
   isPublish: {
     type: Boolean,

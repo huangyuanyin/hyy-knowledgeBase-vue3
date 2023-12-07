@@ -16,6 +16,8 @@ const spaceType = ref('')
 const dialogVisible = ref(false)
 const templateType = ref('null')
 const temList = ref([])
+const iframeSrc = ref('')
+const temIframe = ref(null)
 const selectTem = ref({
   id: null,
   body: '',
@@ -38,6 +40,24 @@ watch(
       spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
       getArticleTem({ template_type: 'template' })
     }
+  }
+)
+
+watch(
+  () => selectTem.value,
+  (newVal) => {
+    if (newVal.content_type === 'ppt') {
+      iframeSrc.value = 'http://192.168.94.221:8081?timestamp=' + Date.now()
+    } else if (newVal.content_type === 'mind') {
+      iframeSrc.value = 'http://192.168.94.221:8080?timestamp=' + Date.now()
+    }
+    nextTick(() => {
+      sendMessageToIframe(selectTem.value.body)
+    })
+  },
+  {
+    deep: true,
+    immediate: true
   }
 )
 
@@ -70,6 +90,15 @@ const getArticleTem = async (params) => {
     selectTem.value = temList.value[0] || {}
   } else {
     ElMessage.error(res.msg)
+  }
+}
+
+const sendMessageToIframe = (data) => {
+  const type = selectTem.value.content_type === 'mind' ? 'getData' : 'getPPTData'
+  if (temIframe.value) {
+    temIframe.value.onload = () => {
+      temIframe.value.contentWindow.postMessage({ type, data, isPreview: true }, '*')
+    }
   }
 }
 
@@ -111,7 +140,10 @@ const toAddArticle = async () => {
   }
 }
 
+const isreload = ref(false)
+
 const handleClose = async () => {
+  isreload.value = true
   templateType.value = 'null'
   dialogVisible.value = false
   emit('closeDialog', false)
@@ -122,7 +154,18 @@ const handleClose = async () => {
   <el-dialog class="SelectTemDialog" v-model="dialogVisible" width="1240" :show-close="false" :before-close="handleClose">
     <div class="box">
       <div class="left">
-        <MavonEditor :html="selectTem.body" :navigation="false" />
+        <MavonEditor v-if="selectTem.content_type === 'doc'" :html="selectTem.body" :navigation="false" />
+        <Excel v-if="selectTem.content_type === 'sheet'" :body="selectTem.body" :isPreview="true" :isTem="Date.now()" :isreload="isreload" />
+        <iframe
+          v-if="['ppt', 'mind'].includes(selectTem.content_type)"
+          class="iframe"
+          ref="temIframe"
+          :src="iframeSrc"
+          frameborder="0"
+          width="100%"
+          height="100%"
+          allowfullscreen="true"
+        ></iframe>
       </div>
       <div class="right">
         <div class="header">
@@ -305,6 +348,9 @@ const handleClose = async () => {
       }
     }
   }
+}
+.luckysheet_wrap {
+  height: 100%;
 }
 </style>
 

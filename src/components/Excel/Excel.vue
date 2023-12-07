@@ -15,6 +15,14 @@ const props = defineProps({
   body: {
     type: String,
     required: false
+  },
+  isTem: {
+    type: Number,
+    required: false
+  },
+  isreload: {
+    type: Boolean,
+    required: false
   }
 })
 const emit = defineEmits(['update:modelValue'])
@@ -50,7 +58,6 @@ const editConfig = ref({
 watch(
   () => route.query.aid,
   async () => {
-    const path = route.path.split('/')
     if (route.query.aid && route.path.includes('sheet')) {
       await getArticleTree()
       handleCreateSheet()
@@ -64,6 +71,33 @@ watch(
     handleCreateSheet(true)
   }
 )
+
+watch(
+  () => props.isTem,
+  () => {
+    createFromTemLuckysheet()
+  }
+)
+
+watch(
+  () => props.isreload,
+  async () => {
+    if (route.query.aid && route.path.includes('sheet')) {
+      window.location.reload()
+      await getArticleTree()
+      handleCreateSheet(true)
+    }
+  }
+)
+
+const createFromTemLuckysheet = () => {
+  LuckySheet.destroy()
+  excelBody.value = JSON.parse(props.body)
+  previewConfig.value.data = excelBody.value
+  setTimeout(() => {
+    LuckySheet.create(previewConfig.value)
+  }, 200)
+}
 
 const handleCreateSheet = async (isDestory?: boolean) => {
   if (route.path.split('/').slice(-2)[0] == 'sheet') {
@@ -88,8 +122,12 @@ const getArticleTree = async () => {
 }
 
 onMounted(async () => {
-  await getArticleTree()
-  handleCreateSheet(false)
+  if (!props.isTem) {
+    await getArticleTree()
+    handleCreateSheet(true)
+  } else {
+    createFromTemLuckysheet()
+  }
 })
 
 onBeforeUnmount(() => {
