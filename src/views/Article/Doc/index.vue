@@ -23,8 +23,12 @@ watch(
 watchEffect(() => {
   route.path.split('/').slice(-1)[0] === 'edit' ? (isPreview.value = false) : (isPreview.value = true)
   isUpdate.value = false
+  if (sessionStorage.getItem('recoverVersion')) {
+    modelValue.value = sessionStorage.getItem('recoverVersion')
+  }
   setTimeout(() => {
     isUpdate.value = true
+    sessionStorage.removeItem('recoverVersion')
   }, 200)
 })
 
@@ -32,10 +36,13 @@ const getArticle = async () => {
   const res = await getArticleApi(aid.value)
   isHasPermissionCode.value = res.code === 1003 ? false : true
   if (res.code === 1000) {
+    isUpdate.value = false
     modelValue.value = res.data.body
-    isUpdate.value = true
+    setTimeout(() => {
+      isUpdate.value = true
+    }, 200)
   } else {
-    // ElMessage.error(res.msg)
+    ElMessage.error(res.msg)
   }
 }
 

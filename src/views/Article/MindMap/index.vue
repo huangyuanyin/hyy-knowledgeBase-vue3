@@ -3,29 +3,60 @@ import { getArticleApi } from '@/api/article'
 import Container from '../Components/Container.vue'
 
 const route = useRoute()
+const refreshStore = useRefreshStore()
 const myIframe = ref(null)
 const isHasPermissionCode = ref(true)
 const isLoading = ref(false)
 const modelValue = ref('')
 const isPublish = ref(false)
 const isPreview = ref(false)
-const iframeSrc = ref('http://192.168.94.221:8080') // 8080：思维导图
+const iframeSrc = ref('http://192.168.94.221:8080?time' + Date.now()) // 8080：思维导图
 
 watch(
-  () => route.fullPath,
+  () => route.query.aid,
   () => {
-    nextTick(() => {
-      getArticle(route.query.aid)
-      route.path.split('/').slice(-1)[0] === 'edit' ? (isPreview.value = false) : (isPreview.value = true)
-    })
+    sessionStorage.removeItem('recoverVersion')
+    if (route.query.aid && route.path.includes('mind') && !sessionStorage.getItem('recoverVersion')) {
+      nextTick(() => {
+        getArticle(route.query.aid)
+      })
+    }
   },
   {
     immediate: true
   }
 )
 
+watch(
+  () => route.path.split('/').slice(-1)[0],
+  () => {
+    sessionStorage.removeItem('recoverVersion')
+    isPublish.value = false
+    if (route.path.split('/').slice(-1)[0] === 'edit' && !refreshStore.isRefreshMind && route.path.includes('mind') && !sessionStorage.getItem('recoverVersion')) {
+      nextTick(() => {
+        getArticle(route.query.aid)
+      })
+      refreshStore.setRefreshMind(false)
+    }
+  }
+)
+
+watchEffect(() => {
+  route.path.split('/').slice(-1)[0] === 'edit' ? (isPreview.value = false) : (isPreview.value = true)
+  if (sessionStorage.getItem('recoverVersion')) {
+    isLoading.value = true
+    modelValue.value = sessionStorage.getItem('recoverVersion')
+    isLoading.value = false
+    iframeSrc.value = null
+    iframeSrc.value = 'http://192.168.94.221:8080?time' + Date.now()
+    myIframe.value.contentWindow.postMessage({ type: 'getOldData', data: modelValue.value, isPreview: false }, '*')
+    sessionStorage.removeItem('recoverVersion')
+  }
+})
+
 const toPublish = (val) => {
   if (val === 'mind') {
+    isPublish.value = true
     myIframe.value && myIframe.value.contentWindow.postMessage({ type: 'saveData' }, '*')
   }
 }
@@ -37,18 +68,19 @@ const getArticle = async (aid) => {
   isHasPermissionCode.value = res.code === 1003 ? false : true
   if (res.code === 1000) {
     isPublish.value = false
+    modelValue.value = res.data.body
     setTimeout(() => {
-      sendMessageToIframe(res.data.body)
+      sendMessageToIframe()
     }, 0)
   } else {
     ElMessage.error(res.msg)
   }
 }
 
-const sendMessageToIframe = (data) => {
+const sendMessageToIframe = () => {
   if (myIframe.value) {
     myIframe.value.onload = () => {
-      myIframe.value.contentWindow.postMessage({ type: 'getData', data, isPreview: isPreview.value }, '*')
+      myIframe.value.contentWindow.postMessage({ type: 'getData', data: modelValue.value, isPreview: isPreview.value }, '*')
     }
   }
 }
@@ -57,7 +89,7 @@ const messageHandler = (event) => {
   const receivedData = event.data
   if (receivedData.type === 'saveMind') {
     modelValue.value = JSON.stringify(receivedData.data)
-    isPublish.value = true
+    // isPublish.value = true
   }
 }
 
@@ -73,7 +105,7 @@ onUnmounted(() => {
 <template>
   <div class="MindMap_wrap">
     <Container :content="modelValue" :isHasPermission="isHasPermissionCode" :isPublish="isPublish" @toPublish="toPublish">
-      <iframe v-if="!isLoading" class="iframe" ref="myIframe" name="myIframe" :src="iframeSrc" frameborder="0" width="100%" height="100%"></iframe>
+      <iframe v-if="!isLoading && iframeSrc" class="iframe" ref="myIframe" name="myIframe" :src="iframeSrc" frameborder="0" width="100%" height="100%"></iframe>
     </Container>
   </div>
 </template>

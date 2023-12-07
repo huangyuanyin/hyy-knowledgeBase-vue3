@@ -61,6 +61,8 @@ const itemList = [
 const buttonList = ref([])
 
 watchEffect(() => {
+  moreFeaturesDrawer.value = false
+  commentDrawer.value = false
   spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
   spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
   route.path.split('/').slice(-1)[0] === 'edit' ? (isEdit.value = true) : (isEdit.value = false)
@@ -195,7 +197,11 @@ const editArticle = async () => {
   }
   let res = await editArticleApi(Number(route.query.aid), params)
   if (res.code === 1000) {
-    ElMessage.success('发布成功')
+    ElMessage({
+      message: '发布成功',
+      type: 'success',
+      grouping: true
+    })
     useAddArticleAfterToLink(route, router, spaceType.value, res.data, false, 'old', false)
   } else {
     ElMessage.error(res.msg)

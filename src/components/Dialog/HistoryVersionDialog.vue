@@ -15,6 +15,9 @@ const props = defineProps({
 })
 const emit = defineEmits(['closeDialog'])
 
+const route = useRoute()
+const router = useRouter()
+const refreshStore = useRefreshStore()
 const dialogVisible = ref(false)
 const tabName = ref('version')
 const versionList = ref([])
@@ -22,18 +25,48 @@ const selectVersion = ref({
   id: null,
   body: '',
   name: '',
-  content_type: ''
+  type: ''
 })
+const temIframe = ref(null)
+const iframeSrc = ref('')
 
 watch(
   () => props.isShow,
   (newVal: boolean) => {
     dialogVisible.value = newVal
+    versionList.value = []
     if (newVal) {
       getArticleVersion(props.info.id)
     }
   }
 )
+
+watch(
+  () => selectVersion.value,
+  () => {
+    if (selectVersion.value.type === 'ppt') {
+      iframeSrc.value = 'http://192.168.94.221:8081?timestamp=' + Date.now()
+    } else if (selectVersion.value.type === 'mind') {
+      iframeSrc.value = 'http://192.168.94.221:8080?timestamp=' + Date.now()
+    }
+    nextTick(() => {
+      sendMessageToIframe(selectVersion.value.body)
+    })
+  },
+  {
+    deep: true,
+    immediate: true
+  }
+)
+
+const sendMessageToIframe = (data) => {
+  const type = selectVersion.value.type === 'mind' ? 'getData' : 'getPPTData'
+  if (temIframe.value) {
+    temIframe.value.onload = () => {
+      temIframe.value.contentWindow.postMessage({ type, data, isPreview: true }, '*')
+    }
+  }
+}
 
 const toChangeVersion = (item) => {
   selectVersion.value = item
@@ -60,7 +93,23 @@ const getArticleVersion = async (id) => {
   }
 }
 
+const toRecoverVersion = async () => {
+  const status = route.path.split('/').slice(-1)[0]
+  await handleClose()
+  router.push({
+    path: status === 'edit' ? route.path : `${route.path}edit`,
+    query: {
+      ...route.query
+    }
+  })
+  sessionStorage.setItem('recoverVersion', selectVersion.value.body)
+  refreshStore.setRefreshMind(true)
+}
+
+const isreload = ref(false)
+
 const handleClose = async () => {
+  isreload.value = true
   dialogVisible.value = false
   emit('closeDialog', false)
 }
@@ -75,7 +124,7 @@ const handleClose = async () => {
           <span>历史版本</span>
         </div>
         <div class="right">
-          <el-button :class="[!versionList.length ? 'disabled' : '']" :disabled="!versionList.length">恢复此版本</el-button>
+          <el-button :class="[!versionList.length ? 'disabled' : '']" :disabled="!versionList.length || selectVersion.body === ''" @click="toRecoverVersion">恢复此版本</el-button>
         </div>
       </div>
     </template>
@@ -103,7 +152,7 @@ const handleClose = async () => {
                       @confirm="deleteArticleVersion(item.id)"
                     >
                       <template #reference>
-                        <span><img :src="deleteIcon" alt="" /></span>
+                        <span @click.stop><img :src="deleteIcon" alt="" /></span>
                       </template>
                     </el-popconfirm>
                   </div>
@@ -119,8 +168,19 @@ const handleClose = async () => {
           </el-tab-pane>
         </el-tabs>
       </div>
-      <div class="preview">
-        <MavonEditor :html="selectVersion.body" :navigation="false" />
+      <div class="preview" v-if="selectVersion">
+        <MavonEditor v-if="selectVersion.type === 'doc'" :html="selectVersion.body" :navigation="false" />
+        <Excel v-if="selectVersion.type === 'sheet'" :body="selectVersion.body" :isPreview="true" :isTem="Date.now()" :isreload="isreload" />
+        <iframe
+          v-if="['ppt', 'mind'].includes(selectVersion.type)"
+          class="iframe"
+          ref="temIframe"
+          :src="iframeSrc"
+          frameborder="0"
+          width="100%"
+          height="100%"
+          allowfullscreen="true"
+        ></iframe>
       </div>
     </div>
   </el-dialog>
@@ -129,6 +189,7 @@ const handleClose = async () => {
 <style lang="scss">
 .HistoryVersionDialog {
   border-radius: 8px;
+  overflow: hidden !important;
   .header {
     display: flex;
     align-items: center;
@@ -137,6 +198,8 @@ const handleClose = async () => {
     box-shadow: 0 2px 6px 0 rgba(7, 74, 146, 0.06);
     padding: 12px 24px;
     box-sizing: border-box;
+    position: relative;
+
     .left {
       display: flex;
       align-items: center;
@@ -246,12 +309,8 @@ const handleClose = async () => {
       }
     }
     .preview {
-      width: calc(100% - 311px);
-      margin-top: 10px;
+      width: 100%;
       height: 100%;
-      padding: 24px;
-      box-sizing: border-box;
-      overflow: auto;
       .mavon-editor {
         height: 100%;
         .mavon-editor-preview {
@@ -259,6 +318,12 @@ const handleClose = async () => {
           .markdown-body {
             padding: 0;
           }
+        }
+      }
+      .MavonEditor_wrap {
+        margin-top: 10px;
+        .v-note-show {
+          padding-right: 0;
         }
       }
     }

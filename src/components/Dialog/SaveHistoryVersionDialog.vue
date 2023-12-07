@@ -15,7 +15,8 @@ const dialogVisible = ref(false)
 const versionForm = reactive({
   name: '',
   body: '',
-  content: ''
+  content: '',
+  type: ''
 })
 const saveHistoryVersionFormRef = ref<FormInstance>()
 const rules = reactive<FormRules>({
@@ -29,6 +30,7 @@ watch(
     if (newVal) {
       versionForm.body = props.info.body
       versionForm.content = props.info.id
+      versionForm.type = props.info.type
     }
   }
 )

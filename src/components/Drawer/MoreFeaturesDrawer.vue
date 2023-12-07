@@ -3,7 +3,7 @@ import docSet from '@/assets/icons/drawer/docSet.svg'
 import fullScreen from '@/assets/icons/drawer/fullScreen.svg'
 import saveTem from '@/assets/icons/drawer/saveTem.svg'
 import historyVersion from '@/assets/icons/drawer/historyVersion.svg'
-import reviewIcon from '@/assets/icons/reviewIcon.svg'
+// import reviewIcon from '@/assets/icons/reviewIcon.svg'
 import exportIcon from '@/assets/icons/drawer/export.svg'
 import copyIcon from '@/assets/icons/drawer/copy.svg'
 import moveIcon from '@/assets/icons/drawer/move.svg'
@@ -30,7 +30,7 @@ const operationItems = [
   { icon: saveTem, text: '另存为模板', type: 'label' },
   { icon: historyVersion, text: '另存为版本', type: 'label' },
   { icon: historyVersion, text: '查看已存版本', type: 'label' },
-  { icon: reviewIcon, text: '评审', type: 'label' },
+  // { icon: reviewIcon, text: '评审', type: 'label' },
   { icon: exportIcon, text: '导出...', type: 'label' },
   { icon: copyIcon, text: '复制...', type: 'label' },
   { icon: moveIcon, text: '移动...', type: 'label' },
