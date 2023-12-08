@@ -331,7 +331,7 @@ const editArticle = async () => {
   const params = {
     title: reName.value,
     book: route.query.lid as string,
-    space: spaceType.value === '个人' ? localStorage.getItem('personalSpaceId') : (route.query.sid as string)
+    space: spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
   }
   let res = await editArticleApi(reNameId.value, params)
   if (res.code === 1000) {
@@ -399,24 +399,45 @@ const deleteArticle = async (id) => {
 }
 
 const toDeleteArticle = (val) => {
-  ElMessageBox.confirm(`确认删除【${val.title}】吗？`, '', {
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
-    confirmButtonClass: 'submitBtn',
-    cancelButtonClass: 'cancelBtn',
-    customClass: 'deleteArticleDialog',
-    type: 'warning',
-    showClose: false
-  })
-    .then(() => {
-      deleteArticle(val.id)
+  if (val.children) {
+    ElMessageBox.confirm(`同时删除【${val.title}】下的所有文档`, `确认删除【${val.title}】吗？`, {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      confirmButtonClass: 'submitBtn',
+      cancelButtonClass: 'cancelBtn',
+      customClass: 'deleteArticleDialog',
+      type: 'warning',
+      showClose: false
     })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '取消操作'
+      .then(() => {
+        deleteArticle(val.id)
       })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '取消操作'
+        })
+      })
+  } else {
+    ElMessageBox.confirm(`确认删除【${val.title}】吗？`, '', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      confirmButtonClass: 'submitBtn',
+      cancelButtonClass: 'cancelBtn',
+      customClass: 'deleteArticleDialog',
+      type: 'warning',
+      showClose: false
     })
+      .then(() => {
+        deleteArticle(val.id)
+      })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '取消操作'
+        })
+      })
+  }
 }
 
 const closeLinkDialog = () => {
@@ -548,7 +569,7 @@ onMounted(async () => {})
         <template #default="{ data }">
           <span class="list-node">
             <div class="title">
-              <el-input v-if="reNameId === data.id" v-model="reName" :id="data.id" autofocus @change="handleRename" />
+              <el-input v-if="reNameId === data.id" v-model="reName" :id="data.id" autofocus @blur="handleRename" />
               <span v-else>{{ data.title }}</span>
             </div>
             <div class="button" v-if="reNameId !== data.id">

@@ -54,12 +54,12 @@ const props = defineProps({
   plugins: {
     type: [String, Array],
     default:
-      '  customHyy  pasteuploadimage attachment upfile paste pastetext formatpainter help autosave editimage lists advlist code charmap link fullscreen emoticons wordcount image codesample codeformat  directionality autosave  visualblocks autolink inserthr anchor  tableofcontents  importcss insertdatetime media pagebreak  preview searchreplace table'
+      'customHyy  pasteuploadimage attachment upfile paste pastetext formatpainter help autosave editimage lists advlist code charmap link fullscreen emoticons wordcount image codesample codeformat  directionality autosave  visualblocks autolink inserthr anchor  tableofcontents  importcss insertdatetime media pagebreak  preview searchreplace table toc'
   },
   toolbar: {
     type: [String, Array],
     default: [
-      'custom_button     paste pastetext   undo redo removeformat formatpainter blocks fontsize bold italic strikethrough underline superscript subscript codeformat forecolor backcolor align bullist numlist  lineheight  link blockquote hr searchreplace anchor  charmap help tableofcontents tableofcontentsupdate  insertdatetime  charmap emoticons wordcount  code  codesample visualblocks image fullscreen   preview autolink  autosave'
+      'custom_button     paste pastetext   undo redo removeformat formatpainter blocks fontsize bold italic strikethrough underline superscript subscript codeformat forecolor backcolor align bullist numlist  lineheight  link blockquote hr searchreplace anchor  charmap help tableofcontents tableofcontentsupdate  insertdatetime  charmap emoticons wordcount  code  codesample visualblocks toc image fullscreen   preview autolink  autosave'
     ]
   }
 })
@@ -184,6 +184,8 @@ const initOptions = ref({
       { selector: '*:not(tr,td,th,table)', attributes: ['style', 'class'], split: false, expand: false, deep: true }
     ]
   },
+  toc_header: 'div', // 设置目录的标题
+  toc_depth: 6, // 设置目录的深度
   // ...getPasteOption(),
   // ...getImageOption(),
   setup: (editor) => {
@@ -265,7 +267,34 @@ onBeforeMount(() => {
     .tox-sidebar-wrap {
       box-sizing: border-box;
     }
+    :deep(.mce-toc) {
+      position: absolute !important;
+      right: 8%;
+      min-width: 250px;
+      h2 {
+        font-size: 14px;
+      }
+    }
   }
+}
+</style>
+
+<style lang="scss">
+.tox-edit-area__iframe {
+  :deep(.mce-content-body) {
+    background-color: red !important;
+  }
+  .mce-toc {
+    position: absolute !important;
+    right: 8%;
+    min-width: 250px;
+    h2 {
+      font-size: 14px;
+    }
+  }
+}
+.mce-content-body {
+  background-color: red !important;
 }
 </style>
 

@@ -16,4 +16,8 @@ export function setupRouterInterceptor(to: RouteLocationNormalized, from: RouteL
   } else {
     next()
   }
+  if (to.path.includes('/recycles')) {
+    to.meta.asideComponent = sessionStorage.getItem('currentSidebar')
+    next()
+  }
 }

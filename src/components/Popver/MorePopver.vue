@@ -9,17 +9,49 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
   showArrow: false,
   menuItems: Array as () => MenuItem[]
 })
+
+const route = useRoute()
+const morePopverRef = ref(null)
+const spaceType = ref('')
+const spaceName = ref('')
+
+watchEffect(() => {
+  spaceType.value = sessionStorage.getItem('currentSidebar') === 'SpaceSidebar' ? '组织' : '个人'
+  spaceName.value = spaceType.value === '个人' ? '' : route.path.split('/')[1]
+})
+
+const toHandle = (item) => {
+  morePopverRef.value && morePopverRef.value.hide()
+  if (item.nick === 'toRecycle') {
+    const query = {
+      sid: route.query.sid,
+      sname: route.query.sname
+    }
+    router.push({
+      path: spaceType.value === '个人' ? '/recycles' : `/${spaceName.value}/recycles`,
+      query: spaceType.value === '个人' ? null : { ...query }
+    })
+  }
+}
 </script>
 
 <template>
-  <el-popover popper-class="morePopver" :placement="props.placement" :width="props.width" :trigger="props.trigger" :hide-after="props.hideAfter" :show-arrow="props.showArrow">
+  <el-popover
+    popper-class="morePopver"
+    ref="morePopverRef"
+    :placement="props.placement"
+    :width="props.width"
+    :trigger="props.trigger"
+    :hide-after="props.hideAfter"
+    :show-arrow="props.showArrow"
+  >
     <template #reference>
       <slot></slot>
     </template>
     <header>更多</header>
     <ul>
       <template v-for="(item, _index) in props.menuItems" :key="'menuItems' + _index">
-        <li class="operation_detail_item" v-if="item.type === 'detailItem'">
+        <li class="operation_detail_item" v-if="item.type === 'detailItem'" @click="toHandle(item)">
           <img v-if="item.icon" :src="item.icon as string" alt="" />
           <div>
             <span>{{ item.label }}</span>

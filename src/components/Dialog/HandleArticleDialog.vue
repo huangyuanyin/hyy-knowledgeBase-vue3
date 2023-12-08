@@ -22,7 +22,7 @@ const props = defineProps({
     default: () => {}
   }
 })
-const emit = defineEmits(['closeDialog'])
+const emit = defineEmits(['closeDialog', 'recover'])
 
 const route = useRoute()
 const router = useRouter()
@@ -51,11 +51,18 @@ watch(
   async (newVal: boolean) => {
     visible.value = newVal
     props.title === '复制到...' ? (with_children.value = false) : (with_children.value = true)
-    spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
-    if (visible.value) {
+    if (route.meta.asideComponent === 'BookSidebar') {
+      spaceType.value = route.path.split('/')[1] === 'bookSetting' ? '个人' : '组织'
+    } else {
+      spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
+    }
+    if (visible.value && props.title !== '恢复文档') {
       await initData()
       await getTeams()
       await getBook()
+    } else {
+      teamId.value = spaceType.value === '个人' ? localStorage.getItem('personalGroupId') : Number(route.query.gid)
+      getBook()
     }
   }
 )
@@ -112,7 +119,24 @@ const toChange = (type) => {
 }
 
 const toSubmit = () => {
-  props.title === '复制到...' ? copyArticle() : moveArticle()
+  switch (props.title) {
+    case '复制到...':
+      copyArticle()
+      break
+    case '移动到...':
+      moveArticle()
+      break
+    case '恢复文档':
+      const data = {
+        action: levelType.value === '1' ? 'moveAfter' : 'prependChild',
+        target_id: articleId.value,
+        node_id: props.data.id
+      }
+      emit('recover', data)
+      break
+    default:
+      break
+  }
 }
 
 // 复制文章
@@ -220,7 +244,7 @@ const getBook = async () => {
     </template>
     <p>{{ props.desc }}</p>
     <div class="body">
-      <div class="select">
+      <div class="select" v-if="props.title !== '恢复文档'">
         <el-select v-model="teamId" placement="bottom-start" popper-class="selectList" @change="toChange('team')">
           <template #prefix>
             <img v-if="selectTeamName === '公共区'" class="prefix-icon" src="/src/assets/icons/library/publicIcon.svg" />
@@ -287,7 +311,9 @@ const getBook = async () => {
                   <span v-else>{{ data.title }}</span>
                 </div>
                 <div class="button" v-if="articleId === data.id">
-                  <span>移动为</span>
+                  <span v-if="props.title === '移动到...'">移动为</span>
+                  <span v-if="props.title === '复制到...'">复制为</span>
+                  <span v-if="props.title === '恢复文档'">插入为</span>
                   <div>
                     <el-radio-group v-model="levelType" class="radio-group">
                       <el-radio label="1">同级</el-radio>
@@ -310,8 +336,8 @@ const getBook = async () => {
       </div>
     </div>
     <template #footer>
-      <span class="dialog-footer">
-        <el-checkbox v-model="with_children" label="包含子文档" size="large" disabled />
+      <span class="dialog-footer" :style="{ 'justify-content': props.title !== '恢复文档' ? 'space-between' : 'flex-end' }">
+        <el-checkbox v-if="props.title !== '恢复文档'" v-model="with_children" label="包含子文档" size="large" :disabled="props.title === '复制到...'" />
         <div>
           <el-button @click="closeDialog">取消</el-button>
           <el-button type="success" @click="toSubmit">确认</el-button>

@@ -338,6 +338,15 @@ const customRoutes = [
       title: '知识库管理·回收站',
       asideComponent: 'BookSidebar'
     }
+  },
+  {
+    path: '/:spaceName?/recycles',
+    name: 'Recycles',
+    component: pageComps['/src/views/Recycles/index.vue'] as Component,
+    meta: {
+      title: '回收站',
+      asideComponent: 'SpaceSidebar'
+    }
   }
 ]
 

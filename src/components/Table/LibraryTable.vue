@@ -334,7 +334,7 @@ const toExistLibrary = () => {
             confirm-button-type="success"
             :icon="WarningFilled"
             icon-color="#ecaa04"
-            title="该分组下如有知识库，可能会导致删除失败"
+            title="删除后，该分组下的知识库将移动到【默认分组】"
             @confirm="toDeleteGroup(item)"
           >
             <template #reference>

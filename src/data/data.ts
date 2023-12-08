@@ -126,10 +126,10 @@ export const directorySidebarOperationData = [
 ]
 
 export const moreOperationData = [
-  { type: 'detailItem', icon: deleteIcon2, label: '回收站', desc: '找回删除的文档与内容' },
+  { type: 'detailItem', icon: deleteIcon2, label: '回收站', desc: '找回删除的文档与内容', nick: 'toRecycle' },
   { type: 'divider' },
-  { type: 'item', icon: limitsIcon, label: '产品计划' },
-  { type: 'item', icon: menuIcon, label: '我要反馈' }
+  { type: 'item', icon: limitsIcon, label: '产品计划与更新日志' },
+  { type: 'item', icon: menuIcon, label: '帮助' }
 ]
 
 export const commonLibraryData = [
