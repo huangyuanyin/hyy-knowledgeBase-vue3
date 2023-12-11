@@ -4,6 +4,7 @@ import NoPermission from '@/views/NoPermission/index.vue'
 import { getCollaborationsApi, getArticleCollaborationsApi } from '@/api/collaborations'
 // import { getTeamMemberApi } from '@/api/member'
 import { getLibraryDetailApi } from '@/api/library'
+import CommentDrawer from '@/components/Drawer/CommentDrawer/index.vue'
 
 const props = defineProps({
   content: {
