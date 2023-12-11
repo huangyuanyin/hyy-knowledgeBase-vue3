@@ -10,6 +10,7 @@ const searchInput = ref('')
 const memberData = ref([])
 const myData = ref([])
 const isShowTeamDialog = ref(false)
+const loadTable = ref(false)
 
 watchEffect(async () => {
   if (refreshStroe.isRefreshSpaceMember) {
@@ -23,7 +24,9 @@ const getSpacepermissions = async () => {
   const params = {
     space: route.query.sid as string
   }
+  loadTable.value = true
   const res = await getSpacepermissionsApi(params)
+  loadTable.value = false
   if (res.code === 1000) {
     memberData.value = res.data || ([] as any)
   } else {
@@ -125,7 +128,7 @@ onMounted(async () => {
           </div>
         </template>
       </SwitchModuleItem>
-      <el-table :data="memberData" stripe style="width: 100%">
+      <el-table :data="memberData" stripe style="width: 100%" max-height="75vh" v-loading="loadTable" element-loading-text="加载成员中...">
         <el-table-column type="selection" width="55" />
         <el-table-column label="姓名" width="180">
           <template #default="{ row }">

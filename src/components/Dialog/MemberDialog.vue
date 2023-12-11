@@ -24,6 +24,7 @@ const refreshStroe = useRefreshStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const avatarUrl = import.meta.env.VITE_BASE_LOGIN_URL
 const dialogVisible = ref(false)
+const loadTable = ref(false)
 const defaultProps = {
   children: 'children',
   label: 'name'
@@ -97,7 +98,9 @@ const getDepartUser = async (id: string) => {
   const params = {
     dept_id: id
   }
+  loadTable.value = true
   let res = await getDepartUserApi(params)
+  loadTable.value = false
   if (res.code === 1000) {
     if (props.spaceMember.length) {
       memberList.value = res.data.filter((item) => {
@@ -114,6 +117,7 @@ const getDepartUser = async (id: string) => {
 }
 
 const getDepartments = async () => {
+  loadTable.value = true
   let res = await getDepartmentsApi()
   if (res.code === 1000) {
     deptList.value = arrayToTree(res.data, null)
@@ -150,7 +154,7 @@ const arrayToTree = (list: DeptList[], id: string) => {
         <div class="header">
           <span>{{ deptName }}</span>
           <el-tooltip effect="dark" content="仅包含该部门中不在本空间下的成员数" placement="top">
-            <span class="memberIcon"><img :src="memberIcon" alt="" />{{ memberTotal }} </span>
+            <span class="memberIcon"><img :src="memberIcon" alt="" />{{ loadTable ? '加载中...' : memberTotal }} </span>
           </el-tooltip>
         </div>
         <div class="member-list">
@@ -160,7 +164,18 @@ const arrayToTree = (list: DeptList[], id: string) => {
               <el-button link type="danger">取消选择</el-button>
             </div>
           </div> -->
-          <el-table ref="memberTableRef" :data="memberList" style="width: 100%" row-key="user_id" @selection-change="handleSelectionChange" empty-text="该部门下暂无可添加成员">
+          <el-table
+            ref="memberTableRef"
+            :data="memberList"
+            style="width: 100%"
+            row-key="user_id"
+            @selection-change="handleSelectionChange"
+            empty-text="该部门下暂无可添加成员"
+            height="500"
+            max-height="500"
+            v-loading="loadTable"
+            element-loading-text="加载成员中..."
+          >
             <el-table-column type="selection" width="55" :reserve-selection="true" />
             <el-table-column property="name" label="姓名" width="120">
               <template #default="{ row }">
@@ -203,6 +218,7 @@ const arrayToTree = (list: DeptList[], id: string) => {
     padding-top: 16px;
     overflow-x: hidden;
     box-sizing: border-box;
+    max-height: 560px;
   }
   &-right {
     padding: 16px 0;

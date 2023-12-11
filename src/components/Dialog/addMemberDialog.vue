@@ -25,6 +25,7 @@ const route = useRoute()
 const refreshStore = useRefreshStore()
 const selectTotal = ref(0)
 const dialogVisible = ref(false)
+const loadTable = ref(false)
 const spaceName = ref('')
 const role = ref('2') // 2：成员；1：只读成员
 const memberListRef = ref<InstanceType<typeof ElTable>>()
@@ -36,6 +37,7 @@ watch(
   async (newVal: boolean) => {
     dialogVisible.value = newVal
     if (dialogVisible.value) {
+      memberList.value = []
       spaceName.value = route.query.sname as string
       getSpacepermissions()
     }
@@ -91,7 +93,9 @@ const getSpacepermissions = async () => {
   const params = {
     space: route.query.sid as string
   }
+  loadTable.value = true
   const res = await getSpacepermissionsApi(params)
+  loadTable.value = false
   if (res.code === 1000) {
     memberList.value = res.data.filter((item) => {
       return !props.selectMember.some((item2: any) => {
@@ -107,7 +111,16 @@ const getSpacepermissions = async () => {
 <template>
   <el-dialog class="addMemberDialog" v-model="dialogVisible" title="从空间添加成员" width="360" :before-close="handleClose">
     <div class="header">{{ spaceName }}</div>
-    <el-table ref="memberListRef" :data="memberList" @selection-change="handleSelectionChange" min-height="100" max-height="800" empty-text="该空间下暂无可添加成员">
+    <el-table
+      ref="memberListRef"
+      :data="memberList"
+      @selection-change="handleSelectionChange"
+      min-height="100"
+      max-height="55vh"
+      empty-text="该空间下暂无可添加成员"
+      v-loading="loadTable"
+      element-loading-text="加载成员中..."
+    >
       <el-table-column type="selection" width="55" />
       <el-table-column property="permusername" label="全选">
         <template #default="{ row }">

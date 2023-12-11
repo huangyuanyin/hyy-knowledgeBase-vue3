@@ -5,7 +5,7 @@ import { MenuItem, OperationPopoverProps } from '@/type/operationPopoverType'
 const props = withDefaults(defineProps<OperationPopoverProps>(), {
   placement: 'bottom',
   width: 312,
-  trigger: 'hover',
+  trigger: 'click',
   hideAfter: 200,
   showArrow: false,
   menuItems: () => [] as MenuItem[],
@@ -136,20 +136,22 @@ const toLink = (type, val?) => {
         <div v-for="(item, index) in spaces" :key="'spaces' + index">
           <div class="space_wrap">
             <h4>{{ item.type === 'personal' ? '个人' : '空间' }}</h4>
-            <div class="menuItem" v-for="space in item.list" :key="space.id" @click="toLink(item.type, item.type === 'personal' ? null : space)">
-              <div class="left">
-                <div class="img">
-                  <img v-if="item.type === 'personal'" :src="avatar" />
-                  <img class="spaceIcon" v-else :src="space.icon || '/src/assets/icons/spaceIcon.svg'" alt="" />
+            <div class="menuItem_wrap">
+              <div class="menuItem" v-for="space in item.list" :key="space.id" @click="toLink(item.type, item.type === 'personal' ? null : space)">
+                <div class="left">
+                  <div class="img">
+                    <img v-if="item.type === 'personal'" :src="avatar" />
+                    <img class="spaceIcon" v-else :src="space.icon || '/src/assets/icons/spaceIcon.svg'" alt="" />
+                  </div>
+                  <div class="content">
+                    <p>{{ space.spacename }}</p>
+                    <p class="tag" v-if="item.type === 'personal'">我自己</p>
+                    <p class="member" v-else>{{ space.member_count + 1 || 1 }}成员</p>
+                  </div>
                 </div>
-                <div class="content">
-                  <p>{{ space.spacename }}</p>
-                  <p class="tag" v-if="item.type === 'personal'">我自己</p>
-                  <p class="member" v-else>{{ space.member_count + 1 || 1 }}成员</p>
+                <div class="right" v-if="item.type === 'personal'">
+                  <img src="@/assets/icons/selectIcon.svg" alt="" />
                 </div>
-              </div>
-              <div class="right" v-if="item.type === 'personal'">
-                <img src="@/assets/icons/selectIcon.svg" alt="" />
               </div>
             </div>
             <div class="menuItem" @click="isShowsSpaceDialog = true" v-if="item.type === 'organize'">
@@ -212,20 +214,22 @@ const toLink = (type, val?) => {
         <div v-for="(item, index) in spaceReverse" :key="'spaces' + index">
           <div class="space_wrap">
             <h4>{{ item.type === 'personal' ? '个人' : '空间' }}</h4>
-            <div class="menuItem" v-for="space in item.list" :key="space.id" @click="toLink(item.type, item.type === 'personal' ? null : space)">
-              <div class="left">
-                <div class="img">
-                  <img v-if="item.type === 'personal'" :src="avatar" />
-                  <img class="spaceIcon" v-else :src="space.icon || '/src/assets/icons/spaceIcon.svg'" alt="" />
+            <div class="menuItem_wrap" :style="{ 'max-height': isSpaceAdmin == 'true' ? '312px' : '364px' }">
+              <div class="menuItem" v-for="space in item.list" :key="space.id" @click="toLink(item.type, item.type === 'personal' ? null : space)">
+                <div class="left">
+                  <div class="img">
+                    <img v-if="item.type === 'personal'" :src="avatar" />
+                    <img class="spaceIcon" v-else :src="space.icon || '/src/assets/icons/spaceIcon.svg'" alt="" />
+                  </div>
+                  <div class="content">
+                    <p>{{ space.spacename }}</p>
+                    <p class="tag" v-if="item.type === 'personal'">我自己</p>
+                    <p class="member" v-else>{{ space.member_count + 1 || 1 }}成员</p>
+                  </div>
                 </div>
-                <div class="content">
-                  <p>{{ space.spacename }}</p>
-                  <p class="tag" v-if="item.type === 'personal'">我自己</p>
-                  <p class="member" v-else>{{ space.member_count + 1 || 1 }}成员</p>
+                <div class="right" v-if="spaceId == space.id">
+                  <img src="@/assets/icons/selectIcon.svg" alt="" />
                 </div>
-              </div>
-              <div class="right" v-if="spaceId == space.id">
-                <img src="@/assets/icons/selectIcon.svg" alt="" />
               </div>
             </div>
             <div class="menuItem" @click="isShowsSpaceDialog = true" v-if="item.type === 'organize'">
@@ -271,6 +275,24 @@ const toLink = (type, val?) => {
         font-size: 12px;
         line-height: 17px;
         color: #8a8f8d;
+      }
+      .menuItem_wrap {
+        max-height: 468px;
+        overflow-y: auto;
+        // 修改浏览器滚动条样式
+        &::-webkit-scrollbar {
+          width: 4px;
+          height: 4px;
+        }
+        &::-webkit-scrollbar-track {
+          background: rgb(239, 239, 239);
+          border-radius: 2px;
+        }
+        &::-webkit-scrollbar-thumb {
+          background: #bfbfbf;
+          border-radius: 10px;
+          cursor: pointer;
+        }
       }
       .menuItem {
         padding: 6px 8px;

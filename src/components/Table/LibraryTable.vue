@@ -73,16 +73,16 @@ const addLibraryOperation = [
     label: '新建知识库',
     nick: 'addLibrary',
     icon: ''
-  },
-  {
-    type: 'divider'
-  },
-  {
-    type: 'item',
-    label: '新建分组',
-    nick: 'addGroup',
-    icon: ''
   }
+  // {
+  //   type: 'divider'
+  // },
+  // {
+  //   type: 'item',
+  //   label: '新建分组',
+  //   nick: 'addGroup',
+  //   icon: ''
+  // }
 ]
 
 watch(

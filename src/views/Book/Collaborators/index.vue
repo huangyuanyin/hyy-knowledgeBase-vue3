@@ -19,6 +19,7 @@ const bookId = ref('')
 const slug = ref('')
 const name = ref('')
 const isShowAddBookMemberDialog = ref(false)
+const loadTable = ref(false)
 const publicType = ref('2')
 const memberList = ref([])
 const memberData = ref([])
@@ -95,7 +96,10 @@ const getCollaborations = async () => {
   const params = {
     book: bookId.value
   }
+
+  loadTable.value = true
   const res = await getCollaborationsApi(params)
+  loadTable.value = false
   if (res.code === 1000) {
     memberList.value = res.data
     memberData.value = [...teamInfo.value, ...bookAdmin.value, ...memberList.value]
@@ -193,7 +197,7 @@ onMounted(() => {
             <el-button v-if="spaceType === '组织空间'" @click="isShowAddBookMemberDialog = true">添加</el-button>
           </div>
         </div>
-        <el-table :data="memberData" stripe style="width: 100%">
+        <el-table :data="memberData" stripe style="width: 100%" min-height="100" max-height="80vh" v-loading="loadTable" element-loading-text="加载成员中...">
           <el-table-column prop="name" label="用户">
             <template #default="{ row }">
               <div class="cell">

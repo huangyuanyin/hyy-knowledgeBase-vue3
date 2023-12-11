@@ -1,44 +1,3 @@
-<template>
-  <el-dialog class="addBookMemberDialog" v-model="dialogVisible" title="从团队添加成员" width="360" :before-close="handleClose">
-    <div class="header">{{ teamName }}</div>
-    <el-table ref="memberListRef" :data="memberList" @selection-change="handleSelectionChange" min-height="100" max-height="800" empty-text="该团队下暂无可添加成员">
-      <el-table-column type="selection" width="45" />
-      <el-table-column property="username" label="全选">
-        <template #default="{ row }">
-          <div class="cell">
-            <img :src="row.avatar || '/src/assets/img/img.jpg'" alt="" />
-            <span class="name">{{ row.name }}</span>
-            <span class="nick">（{{ row.username }}）</span>
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
-    <template #footer>
-      <span class="footer">
-        <div class="left">
-          <span class="count">已选择 {{ selectTotal }}人</span>
-          <span>
-            添加为：
-            <el-dropdown trigger="click">
-              <span class="el-dropdown-link">
-                成员
-                <i-ep-ArrowDown />
-              </span>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item>成员</el-dropdown-item>
-                  <el-dropdown-item disabled>只读成员</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-          </span>
-        </div>
-        <el-button type="success" @click="toAddMember"> 添加 </el-button>
-      </span>
-    </template>
-  </el-dialog>
-</template>
-
 <script lang="ts" setup>
 import { addCollaborationsApi } from '@/api/collaborations'
 import { getTeamMemberApi } from '@/api/member'
@@ -58,6 +17,7 @@ const route = useRoute()
 const refreshStore = useRefreshStore()
 const selectTotal = ref(0)
 const dialogVisible = ref(false)
+const loadTable = ref(false)
 const teamName = ref('')
 const memberListRef = ref<InstanceType<typeof ElTable>>()
 const selectMemberList = ref<Member[]>([])
@@ -68,6 +28,7 @@ watch(
   async (newVal: boolean) => {
     dialogVisible.value = newVal
     if (dialogVisible.value) {
+      memberList.value = []
       teamName.value = route.query.gname as string
       getTeamMember()
     }
@@ -112,7 +73,9 @@ const getTeamMember = async () => {
   const params = {
     group: route.query.gid as string
   }
+  loadTable.value = true
   const res = await getTeamMemberApi(params)
+  loadTable.value = false
   if (res.code === 1000) {
     memberList.value = res.data.filter((item) => {
       return !props.selectMember.some((it) => item.username === it.permusername)
@@ -122,6 +85,56 @@ const getTeamMember = async () => {
   }
 }
 </script>
+
+<template>
+  <el-dialog class="addBookMemberDialog" v-model="dialogVisible" title="从团队添加成员" width="360" :before-close="handleClose">
+    <div class="header">{{ teamName }}</div>
+    <el-table
+      ref="memberListRef"
+      :data="memberList"
+      @selection-change="handleSelectionChange"
+      min-height="100"
+      max-height="55vh"
+      empty-text="该团队下暂无可添加成员"
+      v-loading="loadTable"
+      element-loading-text="加载成员中..."
+    >
+      <el-table-column type="selection" width="45" />
+      <el-table-column property="username" label="全选">
+        <template #default="{ row }">
+          <div class="cell">
+            <img :src="row.avatar || '/src/assets/img/img.jpg'" alt="" />
+            <span class="name">{{ row.name }}</span>
+            <span class="nick">（{{ row.username }}）</span>
+          </div>
+        </template>
+      </el-table-column>
+    </el-table>
+    <template #footer>
+      <span class="footer">
+        <div class="left">
+          <span class="count">已选择 {{ selectTotal }}人</span>
+          <span>
+            添加为：
+            <el-dropdown trigger="click">
+              <span class="el-dropdown-link">
+                成员
+                <i-ep-ArrowDown />
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item>成员</el-dropdown-item>
+                  <el-dropdown-item disabled>只读成员</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </span>
+        </div>
+        <el-button type="success" @click="toAddMember"> 添加 </el-button>
+      </span>
+    </template>
+  </el-dialog>
+</template>
 
 <style lang="scss" scoped></style>
 

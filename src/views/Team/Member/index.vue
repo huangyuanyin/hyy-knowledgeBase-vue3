@@ -26,6 +26,7 @@ const xTable = ref<VxeTableInstance<MemberItem>>()
 const memberList = ref<MemberItem[]>([])
 const memberTotal = ref(0)
 const isShowAddMemberDialog = ref(false)
+const loadTable = ref(false)
 const currentTeamInfo = ref({
   id: null,
   icon: ''
@@ -149,7 +150,9 @@ const getTeamMember = async () => {
   const params = {
     group: String(route.query.gid)
   }
+  loadTable.value = true
   let res = await getTeamMemberApi(params)
+  loadTable.value = false
   if (res.code === 1000) {
     memberList.value = res.data || ([] as any)
     memberTotal.value = memberList.value.length + 1
@@ -210,11 +213,13 @@ onMounted(() => {
           :data="memberList"
           border="inner"
           ref="xTable"
-          max-height="800"
+          max-height="750"
           min-height="50"
           :row-config="{ isHover: true }"
           @checkbox-all="selectAllChangeEvent"
           @checkbox-change="selectChangeEvent"
+          v-loading="loadTable"
+          element-loading-text="加载成员中..."
         >
           <vxe-column type="checkbox" width="60"></vxe-column>
           <vxe-column title="姓名" width="451" sortable>

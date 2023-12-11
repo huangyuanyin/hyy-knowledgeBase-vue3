@@ -71,7 +71,7 @@ const typeIcon = {
 
 watchEffect(() => {
   currentSpaceName.value = route.path.split('/')[1]
-  spaceType.value = sessionStorage.getItem('currentSidebar') === 'SpaceSidebar' ? '组织' : '个人'
+  spaceType.value = route.meta.asideComponent === 'SpaceSidebar' ? '组织' : '个人'
   if (spaceType.value === '个人') {
     icon.value = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar
   }
@@ -94,7 +94,7 @@ watch(
     if (
       JSON.parse(sessionStorage.getItem('currentSpaceInfo')) &&
       currentSpaceName.value !== JSON.parse(sessionStorage.getItem('currentSpaceInfo')).spacekey &&
-      sessionStorage.getItem('currentSidebar') === 'SpaceSidebar'
+      route.meta.asideComponent === 'SpaceSidebar'
     ) {
       nextTick(async () => {
         await getSpacesDeatil()
@@ -333,7 +333,7 @@ const toExpandCollapse = (opera, type, data) => {
 }
 
 onMounted(async () => {
-  if (sessionStorage.getItem('currentSidebar') === 'SpaceSidebar') {
+  if (spaceType.value === '组织') {
     await getSpacesDeatil()
   }
 })
@@ -440,7 +440,7 @@ onMounted(async () => {
     .content-box {
       flex: 1;
       overflow-y: scroll;
-      padding-right: 6px;
+      padding-right: 3px;
       .library,
       .team {
         margin-top: 14px;
@@ -580,23 +580,14 @@ onMounted(async () => {
           }
         }
       }
-      &:hover {
-        &::-webkit-scrollbar {
-          display: flex;
-        }
-        &::-webkit-scrollbar-thumb {
-          display: flex;
-        }
-      }
       &::-webkit-scrollbar {
-        display: none;
         max-height: 60px;
-        width: 6px;
+        width: 3px;
       }
       &::-webkit-scrollbar-thumb {
-        display: none;
         height: 60px;
         border-radius: 30px;
+        width: 3px;
         background-color: #e7e9e8;
         &:hover {
           background-color: #c1c1c1;

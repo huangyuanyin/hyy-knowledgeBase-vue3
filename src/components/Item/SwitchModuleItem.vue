@@ -16,6 +16,7 @@ const props = defineProps<{
 const emit = defineEmits(['getBookStacks'])
 
 const route = useRoute()
+const refreshStroe = useRefreshStore()
 const spaceType = ref('') // 当前空间类型
 const spaceId = ref('') // 当前空间id
 const groupId = ref('') // 当前团队id
@@ -72,6 +73,8 @@ const addBookStacks = async () => {
   let res = await addBookStacksApi(params)
   if (res.code === 1000) {
     emit('getBookStacks')
+    // fix 公共区下新建分组不刷新
+    route.query.gname && route.query.gname === '公共区' && refreshStroe.setRefreshPublicBookStacks(true)
     ElMessage.success('新建分组成功')
   } else {
     ElMessage.error(res.msg)

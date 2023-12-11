@@ -166,8 +166,9 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
       router.push({
         path: `${spaceType === '个人' ? '' : `/${spaceName}`}/directory/index`,
         query: {
-          ...(type === '个人'
+          ...(spaceType === '个人'
             ? {
+                sid: data.space,
                 lid: data.id,
                 lname: data.name
               }

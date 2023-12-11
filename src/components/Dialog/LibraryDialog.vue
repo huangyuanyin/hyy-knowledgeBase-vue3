@@ -76,7 +76,9 @@ watch(
           selectGroupName.value = String(route.query.gname)
           await getBookStacks(route.query.gid)
           selectGroupIcon.value = teamList.value.filter((item) => item.id == route.query.gid)[0].icon
-          libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || ''
+          libraryForm.stacks !== '' || (libraryForm.stacks !== 'undefined' && props.stackId)
+            ? ''
+            : (libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || '')
         } else {
           await getBookStacks(libraryForm.group)
         }
@@ -99,7 +101,7 @@ watch(
 )
 
 const handleID = () => {
-  sessionStorage.getItem('currentSidebar') === 'Sidebar' ? (spaceType.value = '个人') : (spaceType.value = '组织')
+  route.meta.asideComponent === 'Sidebar' ? (spaceType.value = '个人') : (spaceType.value = '组织')
   spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
 }
 
@@ -161,7 +163,7 @@ const toClose = async () => {
   emit('closeDialog', false)
 }
 
-// 如果当前团队与选择的团队不一直被，就默认选中第一个知识库分组
+// 如果当前团队与选择的团队不一致，就默认选中第一个知识库分组
 const handleStackId = (val) => {
   if (val === libraryForm.group) {
     if (props.stackId === 'undefined') {

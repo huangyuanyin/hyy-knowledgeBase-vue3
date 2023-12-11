@@ -33,18 +33,24 @@ watchEffect(() => {
   spaceId.value = route.query.sid as string
   groupId.value = route.query.gid as string
   toolbar.value = 'blocks fontsize bold  align bullist numlist  lineheight  link  hr  tableofcontents tableofcontentsupdate | emoticons image fullscreen  preview autolink  '
+  if (refreshStroe.isRefreshQuickBookList) {
+    nextTick(async () => {
+      await initHandle()
+    })
+  }
+  if (refreshStroe.isRefreshPublicBookStacks) {
+    nextTick(async () => {
+      await initHandle()
+      refreshStroe.setRefreshPublicBookStacks(false)
+    })
+  }
 })
 
-watch(
-  () => refreshStroe.isRefreshQuickBookList,
-  async (newVal) => {
-    if (newVal) {
-      await getBookStacks()
-      await getLibrary()
-      await getQuickLinks()
-    }
-  }
-)
+const initHandle = async () => {
+  await getBookStacks()
+  await getLibrary()
+  await getQuickLinks()
+}
 
 const toCancel = () => {
   isEdit.value = false
