@@ -50,19 +50,21 @@ watch(
   () => props.show,
   async (newVal: boolean) => {
     visible.value = newVal
-    props.title === '复制到...' ? (with_children.value = false) : (with_children.value = true)
-    if (route.meta.asideComponent === 'BookSidebar') {
-      spaceType.value = route.path.split('/')[1] === 'bookSetting' ? '个人' : '组织'
-    } else {
-      spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
-    }
-    if (visible.value && props.title !== '恢复文档') {
-      await initData()
-      await getTeams()
-      await getBook()
-    } else {
-      teamId.value = spaceType.value === '个人' ? localStorage.getItem('personalGroupId') : Number(route.query.gid)
-      getBook()
+    if (newVal) {
+      props.title === '复制到...' ? (with_children.value = false) : (with_children.value = true)
+      if (route.meta.asideComponent === 'BookSidebar') {
+        spaceType.value = route.path.split('/')[1] === 'bookSetting' ? '个人' : '组织'
+      } else {
+        spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
+      }
+      if (visible.value && props.title !== '恢复文档') {
+        await initData()
+        await getTeams()
+        await getBook()
+      } else {
+        teamId.value = spaceType.value === '个人' ? localStorage.getItem('personalGroupId') : Number(route.query.gid) || props.data.group_id
+        getBook()
+      }
     }
   }
 )

@@ -1,28 +1,62 @@
 <script lang="ts" setup>
+import { FormInstance } from 'element-plus'
+
 const props = defineProps({
-  isShow: Boolean
+  isShow: Boolean,
+  title: String,
+  name: String
 })
 
-const emit = defineEmits(['closeDialog'])
+const emit = defineEmits(['closeDialog', 'toAddTag', 'toEditTag'])
 
-const formData = {
+const dialogVisible = ref(false)
+const groupFormRef = ref(null)
+const groupForm = reactive({
   name: ''
-}
-
-const { dialogVisible, dialogFormRef: groupFormRef, dialogForm: groupForm, handleClose, handleSubmit } = useFormDialog({ isShow: ref(props.isShow), emit, formData })
+})
+const rules = reactive({
+  name: [{ required: true, message: 'Please input Activity name', trigger: 'blur' }]
+})
 
 watch(
   () => props.isShow,
   (newVal: boolean) => {
-    console.log(`output->newVal`, newVal)
-    dialogVisible.value = newVal
+    if (newVal) {
+      dialogVisible.value = newVal
+      groupForm.name = props.name
+    }
   }
 )
+
+const handleSubmit = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  await formEl.validate((valid) => {
+    if (valid) {
+      if (props.title === '新建分组') {
+        emit('toAddTag', groupForm.name)
+      } else {
+        emit('toEditTag', groupForm.name)
+      }
+      handleClose()
+    }
+  })
+}
+
+const handleClose = () => {
+  resetForm(groupFormRef.value)
+  dialogVisible.value = false
+  emit('closeDialog')
+}
+
+const resetForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.resetFields()
+}
 </script>
 
 <template>
-  <el-dialog class="GroupDialog" v-model="dialogVisible" title="新建分组" width="424" :before-close="handleClose">
-    <el-form ref="groupFormRef" :model="groupForm" label-width="120px" label-position="top">
+  <el-dialog class="GroupDialog" v-model="dialogVisible" :title="props.title" width="424" :before-close="handleClose">
+    <el-form ref="groupFormRef" :model="groupForm" :rules="rules" label-width="120px" label-position="top">
       <el-form-item label="分组名称" prop="name">
         <div class="form-name">
           <el-input v-model="groupForm.name" placeholder="" show-word-limit />
@@ -32,7 +66,7 @@ watch(
     <template #footer>
       <span class="group-footer">
         <el-button class="cancel" type="default" @click="handleClose"> 取消 </el-button>
-        <el-button class="submit" type="primary" @click="handleSubmit"> 确定 </el-button>
+        <el-button class="submit" type="primary" @click="handleSubmit(groupFormRef)"> 确定 </el-button>
       </span>
     </template>
   </el-dialog>

@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { getLibraryDetailApi } from '@/api/library'
+import { addMarksApi } from '@/api/marks'
 import { directoryIndexOperationData } from '@/data/data'
+import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
 
 const route = useRoute()
 const routeInfo = { route, router }
@@ -9,7 +11,12 @@ const isShowsDeleteDialog = ref(false)
 const bookId = ref(route.query.lid as string)
 const bookName = ref(route.query.lname)
 const deleteInfo = ref({})
-const currentBookInfo = ref({})
+const currentBookInfo = ref({
+  icon: ''
+})
+const defaultProps = {
+  class: 'forumList'
+} as unknown as TreeOptionProps
 
 watchEffect(() => {
   if (route.query.lid) {
@@ -32,6 +39,10 @@ const toDo = () => {
   ElMessage.warning('功能暂未开放，敬请期待')
 }
 
+const toMark = () => {
+  addMarks()
+}
+
 const toShare = () => {
   const url = window.location.href
   useCopy(url, '分享链接')
@@ -51,7 +62,7 @@ const getBookDetail = async (id) => {
   let res = await getLibraryDetailApi(id)
   if (res.code === 1000) {
     sessionStorage.setItem('currentBookInfo', JSON.stringify(res.data))
-    currentBookInfo.value = res.data
+    currentBookInfo.value = res.data as any
   } else {
     ElMessage.error(res.msg)
   }
@@ -69,6 +80,20 @@ const toArticleDetail = (val) => {
     default:
       useAddArticleAfterToLink(route, router, spaceType, val, false)
       break
+  }
+}
+
+const addMarks = async () => {
+  const params = {
+    target_type: 'book',
+    target_id: route.query.lid as string,
+    space: route.query.sid as string
+  }
+  let res = await addMarksApi(params)
+  if (res.code === 1000) {
+    ElMessage.success('收藏成功')
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 
@@ -90,7 +115,7 @@ onMounted(() => {
           </div>
           <div class="header-right">
             <div class="button-wrap">
-              <div class="button" @click="toDo">
+              <div class="button" @click="toMark">
                 <img src="@/assets/icons/startIcon.svg" alt="" />
                 <span>收藏</span>
               </div>
@@ -126,7 +151,7 @@ onMounted(() => {
           </div>
         </div>
         <div class="list" v-if="articleStore.articleList.length">
-          <el-tree :data="articleStore.articleList" node-key="id" :props="{ class: 'forumList' }" default-expand-all>
+          <el-tree :data="articleStore.articleList" node-key="id" :props="defaultProps" default-expand-all>
             <template #default="{ node, data }">
               <span class="list-node" @click="toArticleDetail(data)">
                 <div class="title">

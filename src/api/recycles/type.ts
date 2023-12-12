@@ -14,8 +14,9 @@ export interface recyclesData {
 }
 
 export interface recoverData {
-  target_id: number
-  action: string
+  target_id?: number
+  action?: string
+  type?: string
 }
 
 export interface recyclesRes {

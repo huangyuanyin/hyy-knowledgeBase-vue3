@@ -5,7 +5,7 @@ export function getSpaceRecyclesApi(params: recyclesParams) {
 }
 
 export function recoverSpaceRecyclesApi(id: number) {
-  return http.put<recyclesRes>(`space/recycles/restore/${id}/`, {}, 'base')
+  return http.put<recyclesRes>(`space/recycle/restore/${id}/`, {}, 'base')
 }
 
 export function deleteSpaceRecyclesApi(id: number) {
@@ -17,7 +17,7 @@ export function getTeamRecyclesApi(params: recyclesParams) {
 }
 
 export function recoverTeamRecyclesApi(id: number) {
-  return http.put<recyclesRes>(`group/recycles/restore/${id}/`, {}, 'base')
+  return http.put<recyclesRes>(`group/recycle/restore/${id}/`, {}, 'base')
 }
 
 export function deleteTeamRecyclesApi(id: number) {
@@ -29,9 +29,21 @@ export function getBookRecyclesApi(params: recyclesParams) {
 }
 
 export function recoverBookRecyclesApi(id: number, data: recoverData) {
-  return http.put<recyclesRes>(`book/recycles/restore/${id}/`, data, 'base')
+  return http.put<recyclesRes>(`book/recycle/restore/${id}/`, data, 'base')
 }
 
 export function deleteBookRecyclesApi(id: number) {
   return http.delete<recyclesRes>(`book/recycles/${id}/`, {}, 'base')
+}
+
+export function getMyRecyclesApi(params: recyclesParams) {
+  return http.get<recyclesRes>('mine/recycles/', { params }, 'base')
+}
+
+export function recoverMyRecyclesApi(id: number, data?: recoverData) {
+  return http.put<recyclesRes>(`mine/recycle/restore/${id}/`, data, 'base')
+}
+
+export function deleteMyRecyclesApi(id: number, data?: recoverData) {
+  return http.delete<recyclesRes>(`mine/recycles/${id}/`, data, 'base')
 }

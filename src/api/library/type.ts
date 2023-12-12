@@ -7,6 +7,7 @@ export interface libraryParams {
 interface Category {
   id: number
   name: string
+  icon?: string
   [key: string]: any
 }
 

@@ -12,6 +12,7 @@ import privateIcon from '@/assets/icons/privateIcon.svg'
 import empty from '@/assets/img/empty.png'
 import addIcon from '@/assets/icons/addIcon.svg'
 import addIcon_hover from '@/assets/icons/addIcon_hover.svg'
+import articleIcon from '@/assets/icons/articleIcon.svg'
 import { addQuickLinksApi, deleteQuickLinksApi } from '@/api/quickLinks'
 
 const props = defineProps({
@@ -233,7 +234,7 @@ const toQuitTeam = (val: any) => {
         <tr class="docItem" v-for="document in (props.data as any)" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">
           <td class="item-title">
             <div>
-              <img :src="document.icon" alt="" />
+              <img :src="document.target_type === 'book' ? document.icon : articleIcon" alt="" />
               <div class="item-title-right">
                 <el-tooltip effect="light" :content="document.title" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
                   <span>{{ document.title }}</span>
@@ -247,7 +248,7 @@ const toQuitTeam = (val: any) => {
             <span class="library">{{ document.library }}</span>
           </td>
           <td class="item-time">
-            <span>{{ document.time }}</span>
+            <span>{{ document.create_datetime }}</span>
           </td>
           <td class="item-operation">
             <span v-if="props.type === 'star'"><img src="@/assets/icons/startIcon_select.svg" alt="" /></span>
