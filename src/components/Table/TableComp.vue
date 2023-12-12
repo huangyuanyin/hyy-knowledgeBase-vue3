@@ -368,11 +368,13 @@ const toQuitTeam = (val: any) => {
   border-collapse: collapse;
   border-spacing: 0;
   tr {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     th {
       padding: 8px 0;
       font-size: 14px;
       color: #8a8f8d;
       text-align: left;
+      box-sizing: border-box;
     }
   }
   .docItem {
@@ -382,7 +384,7 @@ const toQuitTeam = (val: any) => {
     }
     td {
       padding: 16px 1px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      box-sizing: border-box;
     }
     .item-title {
       min-width: 200px;
@@ -472,7 +474,10 @@ const toQuitTeam = (val: any) => {
       }
     }
     .more {
-      width: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-right: 20px;
       span {
         display: inline-flex;
         align-items: center;
@@ -481,7 +486,7 @@ const toQuitTeam = (val: any) => {
         width: 28px;
         height: 28px;
         border-radius: 4px;
-        max-height: 26px;
+        max-height: 28px;
         &:hover {
           background-color: #e7e9e8;
         }

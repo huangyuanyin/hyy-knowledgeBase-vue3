@@ -158,7 +158,7 @@ const arrayToTree = (list) => {
           <template v-if="item.children">
             <div class="item-bottom" v-for="(it, index) in item.children" :key="'children' + index">
               <CommentItem
-                :parent="null"
+                :parent="item"
                 :data="it"
                 :replyId="replyId"
                 :replyValue="replyValue"
@@ -262,117 +262,14 @@ const arrayToTree = (list) => {
         display: flex;
         flex-direction: column;
         border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-        .item-top {
-          display: flex;
-          margin-bottom: 20px;
-          .avatar {
-            padding-right: 12px;
-            box-sizing: border-box;
-            img {
-              width: 24px;
-              height: 24px;
-              border-radius: 12px;
-            }
-          }
-          .content {
-            flex: 1;
-            .name {
-              color: #585a5a;
-              font-size: 14px;
-              line-height: 22px;
-            }
-            .time {
-              font-size: 12px;
-              color: #8a8f8d;
-              line-height: 22px;
-            }
-            .text {
-              margin-top: 8px;
-            }
-          }
-          .operation {
-            margin-left: -4px;
-            margin-top: 6px;
-            display: flex;
-            span {
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              width: 24px;
-              height: 24px;
-              border-radius: 3px;
-              margin-right: 8px;
-              img {
-                width: 16px;
-                height: 16px;
-              }
-              &:hover {
-                background-color: #eff0f0;
-                cursor: pointer;
-              }
-            }
-          }
-          .reply {
-            margin-top: 16px;
-            div {
-              margin-top: 12px;
-              display: flex;
-              align-items: center;
-              justify-content: flex-end;
-              .el-button {
-                height: 32px;
-                border-radius: 6px;
-              }
-              .cancel,
-              .submit {
-                &:hover {
-                  border-color: #009456;
-                  color: #009456;
-                  background-color: transparent;
-                }
-              }
-              .disabled {
-                background-color: transparent;
-                border-color: #d9d9d9;
-                color: #bec0bf;
-                &:hover {
-                  border-color: #d9d9d9;
-                  color: #bec0bf;
-                  background-color: transparent;
-                }
-              }
-            }
-          }
-          // 如果是最后一个item-top
-          &:last-child {
-            margin-bottom: 0;
-          }
-        }
-
         .item-bottom {
           padding-left: 36px;
           box-sizing: border-box;
+          margin-bottom: 20px;
         }
         .three {
           padding-left: 0px !important;
-          .name {
-            display: flex !important;
-            align-items: center !important;
-            max-width: 100% !important;
-            span {
-              max-width: 70px !important;
-              margin-right: 10px !important;
-              display: block;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-            }
-            img {
-              margin-right: 6px;
-              // 逆时针旋转90度
-              transform: rotate(-90deg);
-            }
-          }
+          margin-bottom: 0px;
         }
       }
       .item:last-child {

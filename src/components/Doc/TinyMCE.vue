@@ -50,6 +50,7 @@ const props = defineProps({
    * formatpainter:格式刷；
    * tpImportword:导入word
    * pasteuploadimage,attachment,upfile
+   * visualblocks:显示块级元素
    */
   plugins: {
     type: [String, Array],
@@ -59,7 +60,7 @@ const props = defineProps({
   toolbar: {
     type: [String, Array],
     default: [
-      'custom_button     paste pastetext   undo redo removeformat formatpainter blocks fontsize bold italic strikethrough underline superscript subscript codeformat forecolor backcolor align bullist numlist  lineheight  link blockquote hr searchreplace anchor  charmap help tableofcontents tableofcontentsupdate  insertdatetime  charmap emoticons wordcount  code  codesample visualblocks toc image fullscreen   preview autolink  autosave'
+      ' pastetext   undo redo removeformat formatpainter blocks fontsize bold italic strikethrough underline superscript subscript codeformat forecolor backcolor align bullist numlist  lineheight  link blockquote hr searchreplace anchor help tableofcontents tableofcontentsupdate  charmap emoticons wordcount  code  codesample toc image fullscreen   preview autolink  autosave'
     ]
   }
 })

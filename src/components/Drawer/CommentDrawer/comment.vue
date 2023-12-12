@@ -58,7 +58,7 @@ const toDeleteComment = (data: any) => {
 </script>
 
 <template>
-  <div class="item-top" :style="{ 'margin-bottom': props.data.children.length ? '20px' : ' 0px' }">
+  <div class="comment_wrap" :style="{ 'margin-bottom': props.data.children.length ? '20px' : ' 0px' }">
     <div class="avatar">
       <img :src="props.data.avatar || '/src/assets/img/img.jpg'" alt="" />
     </div>
@@ -99,4 +99,106 @@ const toDeleteComment = (data: any) => {
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.comment_wrap {
+  display: flex;
+  margin-bottom: 20px;
+  .avatar {
+    padding-right: 12px;
+    box-sizing: border-box;
+    img {
+      width: 24px;
+      height: 24px;
+      border-radius: 12px;
+    }
+  }
+  .content {
+    flex: 1;
+    .name {
+      display: flex;
+      align-items: center;
+      max-width: 100%;
+      color: #585a5a;
+      font-size: 14px;
+      line-height: 22px;
+      span {
+        max-width: 70px;
+        margin-right: 10px;
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      img {
+        margin-right: 6px;
+        transform: rotate(-90deg);
+      }
+    }
+    .time {
+      font-size: 12px;
+      color: #8a8f8d;
+      line-height: 22px;
+    }
+    .text {
+      margin-top: 8px;
+    }
+  }
+  .operation {
+    margin-left: -4px;
+    margin-top: 6px;
+    display: flex;
+    span {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 3px;
+      margin-right: 8px;
+      img {
+        width: 16px;
+        height: 16px;
+      }
+      &:hover {
+        background-color: #eff0f0;
+        cursor: pointer;
+      }
+    }
+  }
+  .reply {
+    margin-top: 16px;
+    div {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      .el-button {
+        height: 32px;
+        border-radius: 6px;
+      }
+      .cancel,
+      .submit {
+        &:hover {
+          border-color: #009456;
+          color: #009456;
+          background-color: transparent;
+        }
+      }
+      .disabled {
+        background-color: transparent;
+        border-color: #d9d9d9;
+        color: #bec0bf;
+        &:hover {
+          border-color: #d9d9d9;
+          color: #bec0bf;
+          background-color: transparent;
+        }
+      }
+    }
+  }
+  // 如果是最后一个item-top
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+</style>
