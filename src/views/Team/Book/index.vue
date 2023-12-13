@@ -28,12 +28,13 @@ watchEffect(() => {
 
 watch(
   () => groupId.value,
-  (newVal) => {
+  async (newVal) => {
     if (newVal) {
       groupId.value = newVal
-      getBookStacks()
-      getLibrary()
-      getGroupsDetail()
+      await getBookStacks()
+      await getLibrary()
+      await getQuickLinks()
+      await getGroupsDetail()
     }
   }
 )
