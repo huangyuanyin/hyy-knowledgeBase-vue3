@@ -5,9 +5,9 @@ export interface MarksParams {
 }
 
 export interface MarksData {
-  target_type: string
-  target_id: string
-  space: string
+  target_type?: string
+  target_id?: string
+  space?: string
   [x: string]: any
 }
 

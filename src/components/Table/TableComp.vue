@@ -186,6 +186,10 @@ const toTeamSetting = (val: any) => {
 const toQuitTeam = (val: any) => {
   useLink(routeInfo, 'teamQuit', val)
 }
+
+const cancelMark = () => {
+  refreshStroe.setRefreshMark(true)
+}
 </script>
 
 <template>
@@ -251,7 +255,9 @@ const toQuitTeam = (val: any) => {
             <span>{{ document.create_datetime }}</span>
           </td>
           <td class="item-operation">
-            <span v-if="props.type === 'star'"><img src="@/assets/icons/startIcon_select.svg" alt="" /></span>
+            <StarPopver @cancelMark="cancelMark" :startId="document.id" :tag_mark="document.tags_id" :target_id="document.target_id" type="star">
+              <span v-if="props.type === 'star'"><img src="@/assets/icons/startIcon_select.svg" alt="" /></span>
+            </StarPopver>
           </td>
         </tr>
       </tbody>

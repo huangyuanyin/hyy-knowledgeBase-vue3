@@ -11,6 +11,7 @@ export const useRefreshStore = defineStore('refresh', () => {
   const isRefreshTeamSet = ref(false) // 刷新团队设置
   const isRefreshSpaceSet = ref(false) // 刷新空间设置
   const isRefreshMind = ref(false) // 刷新思维导图
+  const isRefreshMark = ref(false) // 刷新收藏
 
   const setRefreshBookStacks = (val: boolean) => {
     isRefreshBookStacks.value = val
@@ -60,6 +61,10 @@ export const useRefreshStore = defineStore('refresh', () => {
     isRefreshMind.value = val
   }
 
+  const setRefreshMark = (val: boolean) => {
+    isRefreshMark.value = val
+  }
+
   return {
     isRefreshBookStacks,
     setRefreshBookStacks,
@@ -84,6 +89,8 @@ export const useRefreshStore = defineStore('refresh', () => {
     isRefreshSpaceSet,
     setRefreshSpaceSet,
     isRefreshMind,
-    setRefreshMind
+    setRefreshMind,
+    isRefreshMark,
+    setRefreshMark
   }
 })

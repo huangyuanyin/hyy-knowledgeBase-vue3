@@ -4,6 +4,7 @@ import { getMarksApi } from '@/api/marks'
 import { addTagApi, deleteTagApi, editTagApi, getTagApi } from '@/api/tag'
 
 const route = useRoute()
+const refreshStroe = useRefreshStore()
 const isShowsGroupDialog = ref(false)
 const groupTitle = ref('新建分组')
 const groupName = ref('')
@@ -22,6 +23,13 @@ const groupMenuItems = [
 ]
 const starList = ref([])
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
+
+watchEffect(() => {
+  if (refreshStroe.isRefreshMark) {
+    getMarks()
+    refreshStroe.setRefreshMark(false)
+  }
+})
 
 watch(
   () => route.path,

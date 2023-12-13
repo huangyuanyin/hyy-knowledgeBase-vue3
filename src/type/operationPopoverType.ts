@@ -23,4 +23,8 @@ export interface OperationPopoverProps {
   selectUserList?: any
   selectId?: string | number
   aInfo?: any
+  startId?: string | number
+  tag_mark?: string
+  type?: string
+  target_id?: string
 }
