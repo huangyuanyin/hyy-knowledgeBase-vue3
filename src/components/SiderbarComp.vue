@@ -222,23 +222,32 @@ const toTopic = (val) => {
 }
 
 const getTeamMember = async (val) => {
-  const params = {
-    group: val.target_id
-  }
-  let res = await getTeamMemberApi(params)
-  if (res.code === 1000) {
-    router.push({
-      path: `/${infoStore.currentSpaceName}/team/book`,
-      query: {
-        sid: route.query.sid,
-        sname: route.query.sname,
-        gid: val.target_id,
-        gname: val.title
-      }
-    })
-  } else {
-    ElMessage.error(res.msg)
-  }
+  // const params = {
+  //   group: val.target_id
+  // }
+  // let res = await getTeamMemberApi(params)
+  // if (res.code === 1000) {
+  //   router.push({
+  //     path: `/${infoStore.currentSpaceName}/team/book`,
+  //     query: {
+  //       sid: route.query.sid,
+  //       sname: route.query.sname,
+  //       gid: val.target_id,
+  //       gname: val.title
+  //     }
+  //   })
+  // } else {
+  //   ElMessage.error(res.msg)
+  // }
+  router.push({
+    path: `/${infoStore.currentSpaceName}/team/book`,
+    query: {
+      sid: route.query.sid,
+      sname: route.query.sname,
+      gid: val.target_id,
+      gname: val.title
+    }
+  })
 }
 
 const toReminderFree = (val) => {

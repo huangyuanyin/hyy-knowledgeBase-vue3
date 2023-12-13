@@ -43,9 +43,9 @@ const statusList = [
 
 const init = () => {
   currentTeamInfo.value = sessionStorage.getItem('currentTeamInfo') ? JSON.parse(sessionStorage.getItem('currentTeamInfo')) : {}
-  if (currentTeamInfo.value.id != route.query.gid) {
-    ElMessage.warning('前端存储团队错误！')
-  }
+  // if (currentTeamInfo.value.id != route.query.gid) {
+  //   ElMessage.warning('前端存储团队错误！')
+  // }
 }
 
 watchEffect(() => {
