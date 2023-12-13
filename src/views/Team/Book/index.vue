@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import rightArrowIcon from '@/assets/icons/rightArrowIcon.svg'
 import { getBookStacksApi } from '@/api/bookstacks'
 import { getGroupsDetailApi } from '@/api/groups'
 import { getLibraryApi } from '@/api/library'
@@ -15,6 +14,7 @@ const route = useRoute()
 const refreshStroe = useRefreshStore()
 const spaceId = ref('') // 当前组织空间id
 const groupId = ref('') // 当前团队id
+const teamInfo = ref({})
 const bookGroup = ref<BookGroup[]>([])
 const libarayList = ref([])
 const commonList = ref([])
@@ -114,9 +114,14 @@ const getGroupsDetail = async () => {
   if (res.code === 1000) {
     sessionStorage.setItem('currentTeamInfo', JSON.stringify(res.data))
     teamIcon.value = res.data.icon
+    teamInfo.value = res.data
   } else {
     ElMessage.error(res.msg)
   }
+}
+
+const updateBulletin = () => {
+  getGroupsDetail()
 }
 
 onMounted(async () => {
@@ -130,10 +135,7 @@ onMounted(async () => {
 <template>
   <div class="Book_wrap">
     <TeamHeader :icon="teamIcon" />
-    <div class="announcement">
-      <div>管理员可以添加自定义内容，向 全体团队成员展示</div>
-      <img :src="rightArrowIcon" alt="" />
-    </div>
+    <Announcement :info="teamInfo" @update="updateBulletin" type="team" />
     <SwitchModuleItem moduleType="operation" @getBookStacks="getBookStacks">
       <template v-slot:left><span class="title">知识库</span></template>
     </SwitchModuleItem>
@@ -152,26 +154,9 @@ onMounted(async () => {
   margin: -26px -36px !important;
   padding: 0 36px;
   width: 100%;
-  .announcement {
+  .Announcement_wrap {
     margin-top: 20px;
     margin-bottom: 32px;
-    height: 57px;
-    border-radius: 8px;
-    color: #bec0bf;
-    border: 1px dashed #d8dad9;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    div {
-      color: #bec0bf;
-      cursor: pointer;
-      font-size: 14px;
-      font-family: Chinese Quote, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Helvetica Neue, Helvetica, Arial, sans-serif;
-    }
-    img {
-      transform: rotate(180deg);
-    }
   }
   .book_header {
     display: flex;

@@ -14,7 +14,7 @@ const groups = ref([
   {
     id: 0,
     name: '全部收藏',
-    count: '两'
+    marks_count: ''
   }
 ])
 const groupMenuItems = [
@@ -26,7 +26,7 @@ const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 
 watchEffect(() => {
   if (refreshStroe.isRefreshMark) {
-    getMarks()
+    getMarks(groupActive.value === 0 ? '' : groupActive.value)
     refreshStroe.setRefreshMark(false)
   }
 })
@@ -47,7 +47,7 @@ const toDo = () => {
 
 const toSelectGroup = (val: any) => {
   groupActive.value = val.id
-  getMarks(val.name === '全部收藏' ? '' : val.id)
+  getMarks(val.name === '全部收藏' ? '' : groupActive.value)
 }
 
 const toAddTag = (name: string) => {
@@ -80,7 +80,7 @@ const deleteTag = async (group: any) => {
       toSelectGroup({
         id: 0,
         name: '全部收藏',
-        count: '两'
+        marks_count: ''
       })
     }
   } else {
@@ -139,10 +139,13 @@ const getMarks = async (id?) => {
     space: route.query.sid as string,
     creator: user
   } as any
-  id && (params.target_id = id)
+  id && (params.tags_id = id)
   let res = await getMarksApi(params)
   if (res.code === 1000) {
     starList.value = res.data as any
+    if (groupActive.value === 0) {
+      groups.value[0].marks_count = res.data.length
+    }
   } else {
     ElMessage.error(res.msg)
   }
@@ -177,7 +180,7 @@ onMounted(async () => {
               </LibraryOperationPopver>
             </span>
           </div>
-          <div class="count">{{ group.count }} 条内容</div>
+          <div class="count">{{ group.marks_count }} 条内容</div>
         </div>
       </div>
       <div class="right">

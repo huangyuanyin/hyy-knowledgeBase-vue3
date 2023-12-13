@@ -116,7 +116,7 @@ onMounted(() => {
       </div>
       <div class="tag">
         <el-radio-group v-model="tagValue" @change="changeTag">
-          <el-radio :label="item.name" :value="item.id" v-for="(item, index) in tagList" :key="'tagList' + index" />
+          <el-radio :label="String(item.id)" v-for="(item, index) in tagList" :key="'tagList' + index">{{ item.name }}</el-radio>
         </el-radio-group>
       </div>
       <div class="bottom" @click="isShowsGroupDialog = true"><i-ep-Plus />新建分组</div>
