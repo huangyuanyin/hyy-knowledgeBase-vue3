@@ -103,7 +103,9 @@ watchEffect(() => {
     moreFeaturesDrawer.value = false
   }
   nextTick(() => {
-    getArticle()
+    if (route.path.includes('/directory') && !route.path.includes('/directory/index')) {
+      getArticle()
+    }
   })
 })
 

@@ -211,7 +211,7 @@ export const useAddArticleAfterToLink = (route, router, type, data, is, newTab =
     })
   } else {
     window.open(
-      `${type === '个人' ? '' : `/${spaceName}`}/directory/${data.type}/?${qs.stringify({
+      `${type === '个人' ? '' : `/#/${spaceName}`}/directory/${data.type}/?${qs.stringify({
         ...(type === '个人' ? {} : spaceQuery),
         ...query
       })}`

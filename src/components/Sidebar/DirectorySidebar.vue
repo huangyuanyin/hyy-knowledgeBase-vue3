@@ -49,6 +49,7 @@ const articleType = {
 const defaultProps = {
   class: 'forumList'
 } as unknown as TreeOptionProps
+const inputName = ref(null)
 
 watchEffect(() => {
   if (isHasPermissionCode.value === 1003) {
@@ -209,6 +210,10 @@ const toRename = (val) => {
   reNameId.value = val.id
   reNameParent.value = val.parent
   reName.value = val.title
+  nextTick(() => {
+    inputName.value.focus()
+    inputName.value.select()
+  })
 }
 
 const handleRename = () => {
@@ -228,9 +233,9 @@ const toCopyLink = (val) => {
     linkUrl.value = val.description
   } else {
     if (spaceType.value === '个人') {
-      linkUrl.value = `${window.location.origin}/directory/${val.type}?lid=${val.book}&lname=${route.query.lname}&aid=${val.id}&aname=${val.title}`
+      linkUrl.value = `${window.location.origin}/#/directory/${val.type}?lid=${val.book}&lname=${route.query.lname}&aid=${val.id}&aname=${val.title}`
     } else {
-      linkUrl.value = `${window.location.origin}/${spaceName}/directory/${val.type}?sid=${route.query.sid}&sname=${route.query.sname}&gid=${route.query.gid}&gname=${route.query.gname}&lid=${val.book}&lname=${route.query.lname}&aid=${val.id}&aname=${val.title}`
+      linkUrl.value = `${window.location.origin}/#/${spaceName}/directory/${val.type}?sid=${route.query.sid}&sname=${route.query.sname}&gid=${route.query.gid}&gname=${route.query.gname}&lid=${val.book}&lname=${route.query.lname}&aid=${val.id}&aname=${val.title}`
     }
   }
   useCopy(linkUrl.value)
@@ -569,7 +574,7 @@ onMounted(async () => {})
         <template #default="{ data }">
           <span class="list-node">
             <div class="title">
-              <el-input v-if="reNameId === data.id" v-model="reName" :id="data.id" autofocus @blur="handleRename" />
+              <input class="editTitle" ref="inputName" id="inputName" v-if="reNameId === data.id" v-model="reName" type="text" @blur="handleRename" />
               <span v-else>{{ data.title }}</span>
             </div>
             <div class="button" v-if="reNameId !== data.id">
@@ -872,7 +877,7 @@ onMounted(async () => {})
     padding: 0 8px;
     box-sizing: border-box;
     :deep(.forumList) {
-      padding-right: 6px;
+      // padding-right: 6px;
       width: 100%;
       box-sizing: border-box;
       .el-tree-node__content {
@@ -959,6 +964,15 @@ onMounted(async () => {})
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+          }
+          .editTitle {
+            border-radius: 6px;
+            border: 1px solid #00b96b;
+            box-shadow: none;
+            height: 24px;
+            outline: none;
+            padding: 1px 6px;
+            box-sizing: border-box;
           }
         }
         .button {

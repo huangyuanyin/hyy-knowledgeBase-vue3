@@ -8,7 +8,7 @@ import { MenuItem } from '@/type/operationPopoverType'
 import { contentItemsData, moreMenuItemsData } from '@/data/data'
 import { getSpacesDetailApi } from '@/api/spaces/index'
 import { deleteQuickLinksApi } from '@/api/quickLinks'
-import { getTeamMemberApi } from '@/api/member'
+// import { getTeamMemberApi } from '@/api/member'
 
 interface ContentItem {
   title: string
@@ -50,12 +50,15 @@ const spaceType = ref('')
 const state = reactive({
   headerActive: null,
   currentGroup: null,
-  currentSpace: infoStore.currentSpaceInfo.nickname || route.path.split('/')[1],
+  currentSpace: JSON.parse(sessionStorage.getItem('currentSpaceInfo')).nickname || route.path.split('/')[1],
   operatData: []
+})
+const currentSpaceInfo = ref({
+  icon: ''
 })
 const currentSpaceName = ref(route.path.split('/')[1])
 const isShowsDeleteDialog = ref(false)
-const isAdmin = ref(false)
+const isAdmin = ref(sessionStorage.getItem('isSpaceAdmin') === 'true' ? true : false)
 const deleteInfo = ref<{
   id?: string
   name?: string
@@ -70,10 +73,13 @@ const typeIcon = {
 }
 
 watchEffect(() => {
+  currentSpaceInfo.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo'))
   currentSpaceName.value = route.path.split('/')[1]
   spaceType.value = route.meta.asideComponent === 'SpaceSidebar' ? '组织' : '个人'
   if (spaceType.value === '个人') {
     icon.value = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar
+  } else {
+    icon.value = currentSpaceInfo.value.icon
   }
 })
 
@@ -104,7 +110,7 @@ watch(
     infoStore.setCurrentSpaceName(route.path.split('/')[1])
     infoStore.setCurrentMenu(route.path.split('/')[2] || route.path.split('/')[1])
     infoStore.setCurrentSidebar(route.meta.asideComponent.toString())
-    if (infoStore.currentSidebar === 'SpaceSidebar') {
+    if (route.meta.asideComponent === 'SpaceSidebar') {
       state.operatData = spaceMenuItemsData
       switch (infoStore.currentMenu) {
         case 'library':

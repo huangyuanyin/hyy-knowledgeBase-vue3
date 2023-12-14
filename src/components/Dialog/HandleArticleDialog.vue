@@ -261,7 +261,14 @@ const getBook = async () => {
           </el-option>
         </el-select>
         <span class="line"> / </span>
-        <el-select v-model="bookId" popper-class="selectList" placement="bottom-start" @change="toChange('book')">
+        <el-select
+          v-model="bookId"
+          popper-class="selectList"
+          placement="bottom-start"
+          @change="toChange('book')"
+          :placeholder="!bookList.length ? '暂无知识库' : ''"
+          no-data-text="暂无知识库"
+        >
           <template #prefix>
             <img class="prefix-icon" src="/src/assets/icons/bookIcon.svg" />
           </template>
@@ -342,7 +349,7 @@ const getBook = async () => {
         <el-checkbox v-if="props.title !== '恢复文档'" v-model="with_children" label="包含子文档" size="large" :disabled="props.title === '复制到...'" />
         <div>
           <el-button @click="closeDialog">取消</el-button>
-          <el-button type="success" @click="toSubmit">确认</el-button>
+          <el-button type="success" @click="toSubmit" :disabled="!bookList.length">确认</el-button>
         </div>
       </span>
     </template>
