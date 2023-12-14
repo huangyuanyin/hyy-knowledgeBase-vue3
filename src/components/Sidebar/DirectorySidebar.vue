@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import miniDropDownIcon from '@/assets/icons/miniDropDownIcon.svg'
+import linkTypeIcon from '@/assets/icons/linkType.svg'
+import fileTypeIcon from '@/assets/icons/fileType.svg'
 import { sidebarSearchMenuItemsData, articleOperationData, linkOperationData, titleOperationData, fileOperationData, directorySidebarOperationData } from '@/data/data'
 import { addArticleApi, deleteArticleApi, editArticleApi, getArticleTreeApi } from '@/api/article'
 import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
@@ -11,6 +13,7 @@ const routeInfo = {
 }
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
+const dataStore = useDataStore()
 const spaceId = ref('') // 当前空间id
 const bookId = ref('') // 当前知识库id
 const spaceType = ref<string>('') // 空间类型：个人 组织
@@ -24,6 +27,7 @@ const nickName = ref<string>(infoStore.currentSpaceInfo.nickname || route.fullPa
 const showHandleArticleDialog = ref(false)
 const isShowLinkDialog = ref(false)
 const isShowExportFileDialog = ref(false)
+const isLoading = ref(false)
 const exportId = ref(null)
 const exportType = ref('')
 const handleArticleDialogTitle = ref('')
@@ -40,11 +44,11 @@ const toLinkName = ref('')
 const isHasPermissionCode = ref(null)
 const bookIcon = ref('/src/assets/icons/bookIcon.svg')
 const articleType = {
-  文档: { type: 'doc', title: '无标题文档' },
-  表格: { type: 'sheet', title: '无标题表格' },
-  脑图: { type: 'mind', title: '无标题脑图' },
-  幻灯片: { type: 'ppt', title: '无标题幻灯片' },
-  新建分组: { type: 'title', title: '新建分组' }
+  文档: { type: 'doc', title: '无标题文档', body: '' },
+  表格: { type: 'sheet', title: '无标题表格', body: '' },
+  脑图: { type: 'mind', title: '无标题脑图', body: '' },
+  幻灯片: { type: 'ppt', title: '无标题幻灯片', body: '' },
+  新建分组: { type: 'title', title: '新建分组', body: '' }
 }
 const defaultProps = {
   class: 'forumList'
@@ -79,9 +83,19 @@ watchEffect(() => {
   })
 })
 
-const isLoading = ref(false)
+watch(
+  () => route.query.lid,
+  (newVal) => {
+    if (newVal) {
+      currentNodeKey.value = Number(route.query.aid)
+    }
+  },
+  {
+    immediate: true
+  }
+)
 
-// // 监听currentNodeKey
+// 监听currentNodeKey
 watch(
   () => currentNodeKey.value,
   (newVal) => {
@@ -143,6 +157,7 @@ const toLink = (type?: string) => {
         break
     }
   } else if (type === 'index') {
+    currentNodeKey.value = null
     if (spaceType.value === '个人') {
       router.push({
         path: `/directory/index`,
@@ -288,10 +303,12 @@ const toAddSheet = (data) => {
 }
 
 const toAddPPT = (data) => {
+  articleType['幻灯片'].body = dataStore.pptData
   addArticle(articleType['幻灯片'], data.id)
 }
 
 const toAddMindmap = (data) => {
+  articleType['脑图'].body = dataStore.mindMapData
   addArticle(articleType['脑图'], data.id)
 }
 
@@ -310,7 +327,7 @@ const addArticle = async (article, parent) => {
     book: route.query.lid as string,
     space: spaceId.value,
     type: article.type,
-    body: '',
+    body: article.type === 'mind' || article.type === 'ppt' ? article.body : '',
     public: '1', // 知识库所有成员都可以访问
     parent
   }
@@ -576,6 +593,7 @@ onMounted(async () => {})
             <div class="title">
               <input class="editTitle" ref="inputName" id="inputName" v-if="reNameId === data.id" v-model="reName" type="text" @blur="handleRename" />
               <span v-else>{{ data.title }}</span>
+              <img class="articleIcon" v-if="data.type === 'links' || data.type === 'file'" :src="data.type === 'links' ? linkTypeIcon : fileTypeIcon" alt="" />
             </div>
             <div class="button" v-if="reNameId !== data.id">
               <LibraryOperationPopver
@@ -973,6 +991,11 @@ onMounted(async () => {})
             outline: none;
             padding: 1px 6px;
             box-sizing: border-box;
+          }
+          .articleIcon {
+            width: 16px;
+            height: 16px;
+            margin-left: 4px;
           }
         }
         .button {

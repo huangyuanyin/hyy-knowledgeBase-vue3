@@ -16,6 +16,7 @@ const aId = route.query.aid
 const sharePopverRef = ref(null)
 const publicType = ref('0')
 const currentPage = ref('0')
+const indexed_level = ref(false)
 const copyLink = ref('')
 const operaList = ref([
   {
@@ -57,6 +58,23 @@ watchEffect(() => {
 })
 
 watch(
+  () => props.aInfo,
+  (newVal) => {
+    if (newVal.indexed_level === '1') {
+      operaList.value[2].value = '开启'
+      indexed_level.value = true
+    } else {
+      operaList.value[2].value = '关闭'
+      indexed_level.value = false
+    }
+  },
+  {
+    deep: true,
+    immediate: true
+  }
+)
+
+watch(
   () => publicType.value,
   () => {
     if (publicType.value === '1') {
@@ -82,9 +100,29 @@ const toHandle = (item: any) => {
     case '关闭空间分享':
       toChangePublic('0')
       break
+    case '允许空间内搜索':
+      currentPage.value = '2'
+      break
     default:
       ElMessage.warning('功能暂未开放，敬请期待')
       break
+  }
+}
+
+const changeLevel = async () => {
+  const params = {
+    title: props.aInfo.title,
+    book: props.aInfo.book,
+    space: props.aInfo.space,
+    indexed_level: indexed_level.value ? '1' : '0'
+  }
+  const res = await editArticleApi(Number(aId), params)
+  if (res.code === 1000) {
+    ElMessage.success('更新成功')
+    publicType.value = res.data.public
+    operaList.value[2].value = indexed_level.value ? '开启' : '关闭'
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 
@@ -172,12 +210,20 @@ const toCopy = () => {
         </div>
       </div>
     </div>
-    <div class="box" v-else>
+    <div class="box" v-if="currentPage === '1'">
       <div class="back" @click="currentPage = '0'"><img src="/src/assets/icons/sharePopver/back.svg" alt="" />分享范围</div>
       <p class="tip">默认分享范围是空间所有成员。可以选择分享给互联网所有人，内容需符合相关法律法规及语雀 服务协议 约定。</p>
       <div class="public-item" v-for="(item, index) in publicTypeList" :key="'publicTypeList' + index" @click="toChangePublic(item.value)">
         <span>{{ item.label }}</span>
         <img v-if="publicType === item.value" src="/src/assets/icons/sharePopver/select.svg" alt="" />
+      </div>
+    </div>
+    <div class="box" v-if="currentPage === '2'">
+      <div class="back" @click="currentPage = '0'"><img src="/src/assets/icons/sharePopver/back.svg" alt="" />允许空间内搜索</div>
+      <p class="tip">开启后，空间成员可在空间里搜索到当前内容（如果开启了密码，则搜索设置无效）</p>
+      <div class="public-item">
+        <span>允许空间内搜索</span>
+        <el-switch v-model="indexed_level" style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8a8f8d" @change="changeLevel" />
       </div>
     </div>
   </el-popover>

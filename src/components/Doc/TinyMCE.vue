@@ -55,7 +55,7 @@ const props = defineProps({
   plugins: {
     type: [String, Array],
     default:
-      'customHyy  pasteuploadimage attachment upfile paste pastetext formatpainter help autosave editimage lists advlist code charmap link fullscreen emoticons wordcount image codesample codeformat  directionality autosave  visualblocks autolink inserthr anchor  tableofcontents  importcss insertdatetime media pagebreak  preview searchreplace table toc'
+      'customHyy quickbars  pasteuploadimage attachment upfile paste pastetext formatpainter help autosave editimage lists advlist code charmap link fullscreen emoticons wordcount image codesample codeformat  directionality autosave  visualblocks autolink inserthr anchor  tableofcontents  importcss insertdatetime media pagebreak  preview searchreplace table toc'
   },
   toolbar: {
     type: [String, Array],

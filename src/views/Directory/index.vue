@@ -12,7 +12,10 @@ const bookId = ref(route.query.lid as string)
 const bookName = ref(route.query.lname)
 const deleteInfo = ref({})
 const currentBookInfo = ref({
-  icon: ''
+  icon: '',
+  marked: false,
+  mark_id: '',
+  tag_mark: ''
 })
 const defaultProps = {
   class: 'forumList'
@@ -40,7 +43,13 @@ const toDo = () => {
 }
 
 const toMark = () => {
-  addMarks()
+  if (!currentBookInfo.value.marked) {
+    addMarks()
+  }
+}
+
+const cancelMark = () => {
+  getBookDetail(bookId.value)
 }
 
 const toShare = () => {
@@ -115,10 +124,12 @@ onMounted(() => {
           </div>
           <div class="header-right">
             <div class="button-wrap">
-              <div class="button" @click="toMark">
-                <img src="@/assets/icons/startIcon.svg" alt="" />
-                <span>收藏</span>
-              </div>
+              <StarPopver @cancelMark="cancelMark" :startId="currentBookInfo.mark_id" :tag_mark="currentBookInfo.tag_mark" type="book">
+                <div class="button" @click="toMark">
+                  <img :src="currentBookInfo.marked ? '/src/assets/icons/startIcon_select.svg' : '/src/assets/icons/startIcon.svg'" alt="" />
+                  <span>{{ currentBookInfo.marked ? '已收藏' : '收藏' }}</span>
+                </div>
+              </StarPopver>
               <div class="button" @click="toShare">
                 <span>分享</span>
               </div>

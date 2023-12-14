@@ -323,7 +323,9 @@ const toCloseDrawer = () => {
             <span :class="[commentDrawer ? 'is_active' : '']"><img src="/src/assets/icons/article/commentIcon.svg" alt="" @click="openDrawer('comment')" /></span>
             <span :class="[moreFeaturesDrawer ? 'is_active' : '']"><img src="/src/assets/icons/article/rightboardIcon.svg" alt="" @click="openDrawer('more')" /></span>
           </div>
-          <span class="rightboardIcon" v-else><img src="/src/assets/icons/article/rightboardIcon.svg" alt="" /></span>
+          <span class="rightboardIcon" :class="[moreFeaturesDrawer ? 'is_active' : '']" v-else @click="openDrawer('more')">
+            <img src="/src/assets/icons/article/rightboardIcon.svg" alt="" />
+          </span>
         </div>
       </el-header>
       <el-main class="body">
@@ -455,6 +457,9 @@ const toCloseDrawer = () => {
         &:hover {
           background-color: #eff0f0;
         }
+      }
+      .is_active {
+        background-color: #eff0f0;
       }
     }
   }

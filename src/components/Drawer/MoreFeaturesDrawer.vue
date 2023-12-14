@@ -53,6 +53,7 @@ const isHistoryVersionDialog = ref(false)
 
 watchEffect(() => {
   if (props.drawer) {
+    drawerTab.value = 'operation'
     infoItems.value[2].value = props.info.create_datetime
     infoItems.value[3].value = props.info.update_datetime
     infoItems.value[4].value = props.info.creator
