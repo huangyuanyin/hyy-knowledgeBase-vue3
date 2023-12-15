@@ -50,7 +50,7 @@ const spaceType = ref('')
 const state = reactive({
   headerActive: null,
   currentGroup: null,
-  currentSpace: JSON.parse(sessionStorage.getItem('currentSpaceInfo')).nickname || route.path.split('/')[1],
+  currentSpace: infoStore.currentSpaceInfo.nickname || route.path.split('/')[1],
   operatData: []
 })
 const currentSpaceInfo = ref({
@@ -73,7 +73,7 @@ const typeIcon = {
 }
 
 watchEffect(() => {
-  currentSpaceInfo.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo'))
+  currentSpaceInfo.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')) || { icon: '' }
   currentSpaceName.value = route.path.split('/')[1]
   spaceType.value = route.meta.asideComponent === 'SpaceSidebar' ? '组织' : '个人'
   if (spaceType.value === '个人') {

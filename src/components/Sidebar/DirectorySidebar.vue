@@ -393,20 +393,20 @@ const deleteArticle = async (id) => {
     } else {
       if (spaceType.value === '个人') {
         router.push({
-          path: `/directory/doc`,
+          path: `/directory/${res.data.parent_type}`,
           query: {
             ...route.query,
-            aid: toLinkId.value,
-            aname: toLinkName.value
+            aid: res.data.parent_id,
+            aname: res.data.parent_name
           }
         })
       } else {
         router.push({
-          path: `/${route.path.split('/')[1]}/directory/doc`,
+          path: `/${route.path.split('/')[1]}/directory/${res.data.parent_type}`,
           query: {
             ...route.query,
-            aid: toLinkId.value,
-            aname: toLinkName.value
+            aid: res.data.parent_id,
+            aname: res.data.parent_name
           }
         })
       }
