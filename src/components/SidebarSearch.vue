@@ -19,6 +19,8 @@ const spaceId = ref('') // 当前空间id
 const bookId = ref('') // 当前知识库id
 const isShowLinkDialog = ref(false)
 const isShowSelectTemDialog = ref(false)
+const isBookListDialog = ref(false)
+const bookListDialogTitle = ref('')
 const articleType = {
   文档: { type: 'doc', title: '无标题文档', body: '' },
   表格: { type: 'sheet', title: '无标题表格', body: '' },
@@ -31,20 +33,26 @@ watchEffect(() => {
   spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
   spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
   bookId.value = route.query.lid as string
+  console.log(`output->`, props.menuItems)
 })
 
 const toAddArticle = (val) => {
-  switch (val.label) {
-    case '脑图':
-      articleType[val.label].body = dataStore.mindMapData
-      break
-    case '幻灯片':
-      articleType[val.label].body = dataStore.pptData
-      break
-    default:
-      break
+  if (['SpaceSidebar', 'Sidebar'].includes(route.meta.asideComponent as string)) {
+    isBookListDialog.value = true
+    bookListDialogTitle.value = val.label
+  } else {
+    switch (val.label) {
+      case '脑图':
+        articleType[val.label].body = dataStore.mindMapData
+        break
+      case '幻灯片':
+        articleType[val.label].body = dataStore.pptData
+        break
+      default:
+        break
+    }
+    addArticle(articleType[val.label], null)
   }
-  addArticle(articleType[val.label], null)
 }
 
 // 处理新建不同文章逻辑
@@ -98,6 +106,7 @@ const toDo = (val) => {
   </div>
   <SelectTemDialog :isShow="isShowSelectTemDialog" @closeDialog="isShowSelectTemDialog = false" />
   <LinkDialog :isShow="isShowLinkDialog" :parent="null" @closeDialog="isShowLinkDialog = false" />
+  <BookListDialog :show="isBookListDialog" @closeDialog="isBookListDialog = false" :title="bookListDialogTitle" />
 </template>
 
 <style lang="scss" scoped>

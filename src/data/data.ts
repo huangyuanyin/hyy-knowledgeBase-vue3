@@ -56,15 +56,15 @@ export const menuItemsData = [
 ]
 
 export const spaceMenuItemsData = [
-  { type: 'item', icon: documentIcon, label: '文档', nick: 'toDo' },
-  { type: 'item', icon: formIcon, label: '表格', nick: 'toDo' },
-  { type: 'item', icon: mindmapIcon, label: '脑图', nick: 'toDo' },
-  { type: 'item', icon: pptIcon, label: '幻灯片', nick: 'toDo' },
+  { type: 'item', icon: documentIcon, label: '文档', nick: 'toAddDoc' },
+  { type: 'item', icon: formIcon, label: '表格', nick: 'toAddSheet' },
+  { type: 'item', icon: mindmapIcon, label: '脑图', nick: 'toAddMindmap' },
+  { type: 'item', icon: pptIcon, label: '幻灯片', nick: 'toAddPPT' },
   { type: 'divider' },
   { type: 'item', icon: bookIcon, label: '知识库', nick: 'toAddBook' },
   { type: 'item', icon: teamIcon, label: '团队', nick: 'toAddTeam' },
   { type: 'divider' },
-  { type: 'item', icon: templateIcon, label: '从模板新建', nick: 'toDo' },
+  { type: 'item', icon: templateIcon, label: '从模板新建', nick: 'toImportTem' },
   { type: 'item', icon: importIcon, label: '导入...', nick: 'toDo' }
 ]
 

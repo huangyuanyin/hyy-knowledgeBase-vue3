@@ -20,3 +20,7 @@ export function editLibraryApi(data: libraryParams, id?: number) {
 export function deleteLibraryApi(id: number, data: libraryParams) {
   return http.delete<libraryRes>(`books/${id}/`, data, 'base')
 }
+
+export function getMineBookApi(params?: libraryParams) {
+  return http.get<libraryRes>(`mine/books/`, { params }, 'base')
+}

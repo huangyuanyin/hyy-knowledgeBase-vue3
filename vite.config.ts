@@ -7,6 +7,7 @@ import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import { join } from 'path'
 import { createStyleImportPlugin, VxeTableResolve } from 'vite-plugin-style-import'
+import UnoCSS from 'unocss/vite'
 
 export default defineConfig(({ mode }) => {
   return {
@@ -40,10 +41,11 @@ export default defineConfig(({ mode }) => {
       }),
       Icons({
         autoInstall: true
-      })
+      }),
       // createStyleImportPlugin({
       //   resolves: [VxeTableResolve()]
       // })
+      UnoCSS()
     ],
     resolve: {
       alias: [

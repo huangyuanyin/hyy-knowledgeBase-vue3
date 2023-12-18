@@ -15,7 +15,6 @@ type RecycleData = {
 }
 
 const route = useRoute()
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const spaceType = ref('')
 const spaceId = ref('')
 const showHandleArticleDialog = ref(false)
@@ -69,8 +68,7 @@ const handleRecover = async (data) => {
 
 const getMyRecycles = async () => {
   const params = {
-    space: spaceId.value,
-    permusername: user
+    space: spaceId.value
   }
   let res = await getMyRecyclesApi(params)
   if (res.code === 1000) {

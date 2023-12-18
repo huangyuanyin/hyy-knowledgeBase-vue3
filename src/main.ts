@@ -7,6 +7,8 @@ import SvgIcon from '@/components/SvgIcon/SvgIcon.vue'
 import './assets/iconfont/iconfont.js'
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
+import '@unocss/reset/tailwind.css'
+import 'virtual:uno.css'
 import XEUtils from 'xe-utils'
 import {
   // 全局对象

@@ -56,16 +56,21 @@ const defaultProps = {
 const inputName = ref(null)
 
 watchEffect(() => {
+  bookId.value = route.query.lid as string
   if (isHasPermissionCode.value === 1003) {
     isHasPermissionCode.value = null
     router.replace('/no-permission')
   }
   if (refreshStroe.isRefreshBookList) {
-    getArticle()
+    nextTick(() => {
+      getArticle()
+    })
     refreshStroe.setRefreshBookList(false)
   }
   if (refreshStroe.isRefreshArticleList) {
-    getArticle()
+    nextTick(() => {
+      getArticle()
+    })
     refreshStroe.setRefreshArticleList(false)
   }
   nextTick(async () => {
