@@ -47,6 +47,10 @@ const toHandle = (val) => {
     case '从模板新建':
     case '添加链接':
     case '新建分组':
+    case '新建文档':
+    case '新建表格':
+    case '新建脑图':
+    case '新建幻灯片':
       emit(val.nick, val)
       break
     case '上传文件':
@@ -99,13 +103,13 @@ const toUpload = async (file) => {
         <template v-for="(item, _index) in props.menuItems" :key="'menuItems' + _index">
           <li v-if="item.type === 'item' && item.label !== '上传文件'" @click="toHandle(item)">
             <div class="add-icon">
-              <img :src="item.icon as string" alt="" />
+              <img :src="item.icon" alt="" />
             </div>
             <span>{{ item.label }}</span>
           </li>
           <li v-if="item.type === 'item' && item.label === '上传文件'">
             <div class="add-icon">
-              <img :src="item.icon as string" alt="" />
+              <img :src="item.icon" alt="" />
             </div>
             <el-upload :http-request="toUpload" :headers="headers" :show-file-list="false" class="upload" action="">
               <el-button type="" link>上传文件</el-button>

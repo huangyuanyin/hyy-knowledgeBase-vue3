@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { addArticleApi } from '@/api/article'
 import { menuItemsData } from '@/data/data'
 import { MenuItem } from '@/type/operationPopoverType'
+import { useArticle } from '@/hooks/useArticle'
 
 const props = defineProps({
   menuItems: {
@@ -11,9 +11,6 @@ const props = defineProps({
 })
 
 const route = useRoute()
-const router = useRouter()
-const refreshStroe = useRefreshStore()
-const dataStore = useDataStore()
 const spaceType = ref('') // 当前空间类型
 const spaceId = ref('') // 当前空间id
 const bookId = ref('') // 当前知识库id
@@ -21,19 +18,11 @@ const isShowLinkDialog = ref(false)
 const isShowSelectTemDialog = ref(false)
 const isBookListDialog = ref(false)
 const bookListDialogTitle = ref('')
-const articleType = {
-  文档: { type: 'doc', title: '无标题文档', body: '' },
-  表格: { type: 'sheet', title: '无标题表格', body: '' },
-  脑图: { type: 'mind', title: '无标题脑图', body: '' },
-  幻灯片: { type: 'ppt', title: '无标题幻灯片', body: '' },
-  新建分组: { type: 'title', title: '新建分组', body: '' }
-}
 
 watchEffect(() => {
   spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
   spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
   bookId.value = route.query.lid as string
-  console.log(`output->`, props.menuItems)
 })
 
 const toAddArticle = (val) => {
@@ -41,41 +30,13 @@ const toAddArticle = (val) => {
     isBookListDialog.value = true
     bookListDialogTitle.value = val.label
   } else {
-    switch (val.label) {
-      case '脑图':
-        articleType[val.label].body = dataStore.mindMapData
-        break
-      case '幻灯片':
-        articleType[val.label].body = dataStore.pptData
-        break
-      default:
-        break
+    const book = {
+      id: bookId.value,
+      name: route.query.lname as string,
+      group: route.query.gid as string,
+      groupname: route.query.gname as string
     }
-    addArticle(articleType[val.label], null)
-  }
-}
-
-// 处理新建不同文章逻辑
-const addArticle = async (article, parent) => {
-  const params = {
-    title: article.title,
-    type: article.type,
-    body: article.body,
-    parent,
-    book: bookId.value,
-    space: spaceId.value,
-    public: '1'
-  }
-  let res = await addArticleApi(params)
-  if (res.code === 1000) {
-    if (res.data.type === 'title') {
-      ElMessage.success('分组新建成功')
-      refreshStroe.setRefreshBookList(true)
-    } else {
-      useAddArticleAfterToLink(route, router, spaceType.value, res.data, true)
-    }
-  } else {
-    ElMessage.error(res.msg)
+    useArticle().handleAddArticle({ book, title: val.label }, () => {})
   }
 }
 

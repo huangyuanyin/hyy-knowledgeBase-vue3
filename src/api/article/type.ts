@@ -13,7 +13,7 @@ export interface ArticleData {
   book: string
   space?: string
   type?: string
-  parent?: string
+  parent?: number
   body?: string
   open_window?: string
 }

@@ -83,10 +83,10 @@ export const sidebarSearchMenuItemsData = [
 ]
 
 export const moduleAddMenuData = [
-  { type: 'item', icon: documentIcon, label: '新建文档' },
-  { type: 'item', icon: formIcon, label: '新建表格' },
-  { type: 'item', icon: mindmapIcon, label: '新建脑图' },
-  { type: 'item', icon: pptIcon, label: '新建幻灯片' },
+  { type: 'item', icon: documentIcon, label: '新建文档', nick: 'toAddDoc' },
+  { type: 'item', icon: formIcon, label: '新建表格', nick: 'toAddSheet' },
+  { type: 'item', icon: mindmapIcon, label: '新建脑图', nick: 'toAddMindmap' },
+  { type: 'item', icon: pptIcon, label: '新建幻灯片', nick: 'toAddPPT' },
   { type: 'divider' },
   { type: 'item', icon: importIcon, label: '导入...' }
 ]
@@ -212,7 +212,7 @@ export const moduleData = [
     id: 1,
     icon: docModuleIcon,
     title: '新建文档',
-    description: '文档、表格、画板、数据表',
+    description: '文档、表格、脑图、数据表',
     rightIcon: downIcon
   },
   {

@@ -135,6 +135,8 @@ const toUserInfo = () => {
             margin: 4px 6px;
             border-radius: 6px;
             color: #262626;
+            display: flex;
+            align-items: center;
             svg {
               width: 16px;
               height: 16px;

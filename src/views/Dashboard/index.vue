@@ -2,6 +2,8 @@
 import { moduleData, documentsData, moduleAddMenuData } from '@/data/data'
 
 const isShowsLibraryDialog = ref(false)
+const isBookListDialog = ref(false)
+const bookListDialogTitle = ref('')
 
 const handleModule = (id: number): void => {
   switch (id) {
@@ -17,7 +19,8 @@ const handleModule = (id: number): void => {
 }
 
 const toAddArticle = (val: any): void => {
-  console.log(val)
+  isBookListDialog.value = true
+  bookListDialogTitle.value = val.label.includes('新建') ? val.label.slice(2) : val.label
 }
 </script>
 
@@ -26,7 +29,15 @@ const toAddArticle = (val: any): void => {
     <div class="title">开始</div>
     <div class="module">
       <template v-for="module in moduleData" :key="module.id">
-        <AddOperationPopver v-if="module.id === 1" :menuItems="moduleAddMenuData" :width="259" @toAddArticle="toAddArticle">
+        <AddOperationPopver
+          v-if="module.id === 1"
+          :menuItems="moduleAddMenuData"
+          :width="259"
+          @toAddDoc="toAddArticle"
+          @toAddSheet="toAddArticle"
+          @toAddMindmap="toAddArticle"
+          @toAddPPT="toAddArticle"
+        >
           <ModuleItem :module="module" />
         </AddOperationPopver>
         <ModuleItem :module="module" v-else @click="handleModule(module.id)" />
@@ -51,6 +62,7 @@ const toAddArticle = (val: any): void => {
   </div>
 
   <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
+  <BookListDialog :show="isBookListDialog" @closeDialog="isBookListDialog = false" :title="bookListDialogTitle" />
 </template>
 
 <style lang="scss" scoped>
