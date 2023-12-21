@@ -19,7 +19,7 @@ const currentSidebar = ref<null | any>(null)
 const asideComponent = ref(route.meta.asideComponent)
 const asideComponentWidth = {
   Sidebar: {
-    with: '210px',
+    with: '254px',
     padding: '26px 36px !important'
   },
   SpaceSidebar: {

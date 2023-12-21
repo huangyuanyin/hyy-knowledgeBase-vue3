@@ -33,19 +33,19 @@ const timeList = [
   },
   {
     name: '24小时内',
-    value: '1d'
+    value: '1'
   },
   {
     name: '7天内',
-    value: '7d'
+    value: '7'
   },
   {
     name: '30天内',
-    value: '30d'
+    value: '30'
   },
   {
     name: '半年内',
-    value: '180d'
+    value: '180'
   }
 ]
 
@@ -89,6 +89,20 @@ function initData() {
   getSearch()
 }
 
+function getTimeLabel() {
+  const selectedTime = timeList.find((item) => item.value === time_horizon.value)
+  return selectedTime?.name === '时间不限' ? '更新时间' : selectedTime?.name
+}
+
+function getSubTypeName() {
+  const selectedSubType = subTypeList.find((item) => item.value === sub_type.value)
+  return selectedSubType?.name
+}
+
+function judegeArticleType(type: string) {
+  return useData().judegeArticleType(type)
+}
+
 const handleTime = (val) => {
   time_horizon.value = val
   getSearch()
@@ -116,12 +130,14 @@ const getSearch = async () => {
     sub_type: sub_type.value,
     time_horizon: time_horizon.value
   }
+  scope_id.value === '0' && delete params.scope_id && (params.scope = 'all')
   time_horizon.value === '' && delete params.time_horizon
   let res = await getSearchApi(params)
   if (res.code === 1000) {
     list.value = res.data as any
   } else {
     ElMessage.error(res.msg)
+    list.value = []
   }
 }
 </script>
@@ -185,7 +201,7 @@ const getSearch = async () => {
         <div flex items-center>
           <el-dropdown trigger="click" @command="handleSubType">
             <span flex items-center ml-18px cursor-pointer text-14px text="#262626">
-              内容
+              {{ getSubTypeName() }}
               <img ml-2px :src="arrowDownIcon2" alt="" />
             </span>
             <template #dropdown>
@@ -205,7 +221,7 @@ const getSearch = async () => {
           </span>
           <el-dropdown trigger="click" @command="handleTime">
             <span flex items-center ml-18px cursor-pointer text-14px text="#262626">
-              更新时间
+              {{ getTimeLabel() }}
               <img ml-2px :src="arrowDownIcon2" alt="" />
             </span>
             <template #dropdown>
@@ -229,11 +245,14 @@ const getSearch = async () => {
         <div flex items-start flex-col v-for="(item, index) in list" :key="'list' + index">
           <div w-full flex items-start pt-20px pb-20px box-border border-b border-solid border="#0000000f">
             <span>
-              <img w-26px h-26px mr-14px :src="goIcon" alt="" />
+              <img w-26px h-26px mr-14px :src="judegeArticleType(item.type)" alt="" />
             </span>
             <div flex flex-col items-start>
-              <span line-22px text="16px #262626" mb-8px>{{ item.name }}</span>
-              <p text="12px #8a8f8d" line-18px>公共区 / 会议记录汇总<span ml-12px>2023-08-09 17:16:56</span></p>
+              <span line-22px text="16px #262626" mb-8px cursor-pointer>{{ item.title }}</span>
+              <p text="14px #262626" mb-8px>{{ item.abstract }}</p>
+              <p text="12px #8a8f8d" line-18px>
+                {{ item.book_name }}<span ml-12px>{{ item.update_datetime }}</span>
+              </p>
             </div>
           </div>
         </div>

@@ -56,10 +56,20 @@ watch(
   (newVal: boolean) => {
     visible.value = newVal
     if (newVal) {
-      value.value = ''
+      const { spaceType, space, spaceIcon } = useData()
+      if (route.path.includes('/search')) {
+        value.value = route.query.q ? (route.query.q as string) : ''
+        selectId.value = `${route.query.scope_id}${route.query.scope_name}`
+      } else {
+        selectId.value = String(JSON.parse(sessionStorage.getItem('currentSpaceInfo')).id) + list.value[0].children[0].name
+      }
       handleBookList()
-      handleTeamList()
-      selectId.value = String(JSON.parse(sessionStorage.getItem('currentSpaceInfo')).id) + list.value[0].children[0].name
+      if (spaceType.value === '组织') {
+        handleTeamList()
+      } else {
+        list.value[0].children[0].id = space.value
+        list.value[0].children[0].icon = spaceIcon.value
+      }
     }
   }
 )
@@ -118,7 +128,6 @@ function handleKeyPress(event) {
 
 function navigateToSearch(type, val) {
   const { spaceType, spaceName } = useData()
-
   router.push({
     path: `${spaceType.value === '个人' ? '' : `/${spaceName.value}`}/search`,
     query: {
