@@ -17,6 +17,7 @@ const bookId = ref('') // 当前知识库id
 const isShowLinkDialog = ref(false)
 const isShowSelectTemDialog = ref(false)
 const isBookListDialog = ref(false)
+const isSearchDialog = ref(false)
 const bookListDialogTitle = ref('')
 
 watchEffect(() => {
@@ -48,11 +49,9 @@ const toDo = (val) => {
 
 <template>
   <div class="SidebarSearch-wrap">
-    <el-input class="search-input" placeholder="搜索" disabled :autofocus="false">
-      <template #prefix>
-        <i-ep-Search />
-      </template>
-    </el-input>
+    <div class="search-input">
+      <span @click="isSearchDialog = true"><i-ep-Search />搜索</span>
+    </div>
     <AddOperationPopver
       :menu-items="props.menuItems"
       @toAddDoc="toAddArticle"
@@ -68,6 +67,7 @@ const toDo = (val) => {
   <SelectTemDialog :isShow="isShowSelectTemDialog" @closeDialog="isShowSelectTemDialog = false" />
   <LinkDialog :isShow="isShowLinkDialog" :parent="null" @closeDialog="isShowLinkDialog = false" />
   <BookListDialog :show="isBookListDialog" @closeDialog="isBookListDialog = false" :title="bookListDialogTitle" />
+  <SearchDialog :show="isSearchDialog" @closeDialog="isSearchDialog = false" />
 </template>
 
 <style lang="scss" scoped>
@@ -77,11 +77,36 @@ const toDo = (val) => {
   justify-content: space-between;
   margin: 16px 0;
   .search-input {
+    margin-right: 12px;
+    flex: 1;
+    span {
+      width: 100%;
+      background: #eff0f0;
+      height: 32px;
+      cursor: pointer;
+      border: 0;
+      opacity: 1;
+      border-radius: 8px;
+      color: #bec0bf;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      padding: 4px 11px;
+      box-sizing: border-box;
+      svg {
+        height: 18px;
+        width: 18px;
+        margin-right: 4px;
+      }
+    }
     :deep(.el-input__wrapper) {
       border-radius: 8px;
       margin-right: 12px;
       box-shadow: none;
       background-color: #eff0f0;
+    }
+    :deep(.el-input__inner) {
+      cursor: pointer !important;
     }
     :deep(.el-input__prefix-inner) {
       font-size: 18px;

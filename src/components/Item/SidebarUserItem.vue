@@ -62,7 +62,6 @@ watchEffect(() => {
     .name {
       font-size: 14px;
       font-weight: 500;
-      width: 100%;
       max-width: 115px;
       overflow: hidden;
       text-overflow: ellipsis;

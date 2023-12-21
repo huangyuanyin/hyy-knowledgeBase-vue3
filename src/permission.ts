@@ -17,7 +17,11 @@ export function setupRouterInterceptor(to: RouteLocationNormalized, from: RouteL
     next()
   }
   if (to.path.includes('/recycles')) {
-    to.meta.asideComponent = sessionStorage.getItem('currentSidebar')
+    to.meta.asideComponent = from.meta.asideComponent || sessionStorage.getItem('currentSidebar')
+    next()
+  }
+  if (to.path.includes('/search')) {
+    to.meta.asideComponent = from.meta.asideComponent || sessionStorage.getItem('currentSidebar')
     next()
   }
 }

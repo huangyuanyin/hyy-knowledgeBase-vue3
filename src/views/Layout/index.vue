@@ -1,11 +1,11 @@
 <template>
   <el-container class="layout-wrap">
-    <el-aside v-if="currentSidebar" class="layout-wrap-left" :style="{ width: asideComponentWidth[asideComponent  as keyof typeof asideComponentWidth].with }">
+    <el-aside v-if="currentSidebar" class="layout-wrap-left" :style="{ width: asideComponentWidth[asideComponent as keyof typeof asideComponentWidth].with }">
       <component :is="currentSidebar" />
     </el-aside>
     <el-main
       :class="['layout-wrap-right', asideComponent === 'DirectorySidebar' ? 'no-padding' : 'use-padding', isShowPreviewFile ? 'previewFile' : '']"
-      :style="{ padding: asideComponentWidth[asideComponent  as keyof typeof asideComponentWidth].padding }"
+      :style="{ padding: asideComponentWidth[asideComponent as keyof typeof asideComponentWidth].padding }"
     >
       <router-view />
     </el-main>

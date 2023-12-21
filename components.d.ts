@@ -90,6 +90,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SaveHistoryVersionDialog: typeof import('./src/components/Dialog/SaveHistoryVersionDialog.vue')['default']
     SaveTemplateDialog: typeof import('./src/components/Dialog/SaveTemplateDialog.vue')['default']
+    SearchDialog: typeof import('./src/components/Dialog/SearchDialog.vue')['default']
     SelectIconPopver: typeof import('./src/components/Popver/SelectIconPopver.vue')['default']
     SelectTemDialog: typeof import('./src/components/Dialog/SelectTemDialog.vue')['default']
     SharePopver: typeof import('./src/components/Popver/SharePopver.vue')['default']

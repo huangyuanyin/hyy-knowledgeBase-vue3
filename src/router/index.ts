@@ -347,6 +347,15 @@ const customRoutes = [
       title: '回收站',
       asideComponent: 'SpaceSidebar'
     }
+  },
+  {
+    path: '/:spaceName?/search',
+    name: 'Search',
+    component: pageComps['/src/views/Search/index.vue'] as Component,
+    meta: {
+      title: '搜索',
+      asideComponent: 'SpaceSidebar'
+    }
   }
 ]
 
