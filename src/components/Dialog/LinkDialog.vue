@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { FormInstance, FormRules } from 'element-plus'
-import { addArticleApi, editArticleApi, getArticleApi } from '@/api/article'
+import { addArticleApi, editArticleApi } from '@/api/article'
 
 const props = defineProps({
   isShow: Boolean,
@@ -42,7 +42,7 @@ watch(
     dialogVisible.value = newVal
     if (props.type === 'edit') {
       linkDialogTitle.value = '编辑链接'
-      getArticleDetail(props.id)
+      handleArticleDetail(props.id)
     } else {
       linkDialogTitle.value = '添加链接'
     }
@@ -52,6 +52,15 @@ watch(
     linkForm.parent = props.parent
   }
 )
+
+// 获取链接详情
+async function handleArticleDetail(id: number) {
+  const { ainfo, getArticleDetail } = useArticle()
+  await getArticleDetail(id)
+  linkForm.title = ainfo.value.title
+  linkForm.description = ainfo.value.description
+  linkForm.open_windows = ainfo.value.open_windows === '1' ? true : false
+}
 
 const handleSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
@@ -73,18 +82,6 @@ const addArticle = async (params) => {
     handleClose()
     ElMessage.success('新建成功')
     refreshStroe.setRefreshBookList(true)
-  } else {
-    ElMessage.error(res.msg)
-  }
-}
-
-// 获取链接详情
-const getArticleDetail = async (id) => {
-  let res = await getArticleApi(id)
-  if (res.code === 1000) {
-    linkForm.title = res.data.title
-    linkForm.description = res.data.description
-    linkForm.open_windows = res.data.open_windows === '1' ? true : false
   } else {
     ElMessage.error(res.msg)
   }

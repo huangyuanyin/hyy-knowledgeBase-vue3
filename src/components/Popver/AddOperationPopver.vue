@@ -74,7 +74,7 @@ const toUpload = async (file) => {
   let res = await uploadArticleApi(formData)
   if (res.code === 1000) {
     ElMessage.success('上传成功')
-    useAddArticleAfterToLink(route, router, spaceType.value, res.data, false, 'old')
+    useLinkHooks().handleArticleTypeLink(res.data as any, false)
   } else {
     ElMessage.error(res.msg)
   }

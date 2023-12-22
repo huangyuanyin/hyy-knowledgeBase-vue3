@@ -79,7 +79,6 @@ const getBookDetail = async (id) => {
 
 // 跳转到文章详情
 const toArticleDetail = (val) => {
-  const spaceType = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
   switch (val.type) {
     case 'links':
       val.open_windows === '1' ? window.open(val.description) : (window.location.href = val.description)
@@ -87,7 +86,7 @@ const toArticleDetail = (val) => {
     case 'title':
       break
     default:
-      useAddArticleAfterToLink(route, router, spaceType, val, false)
+      useLinkHooks().handleArticleTypeLink(val, false)
       break
   }
 }

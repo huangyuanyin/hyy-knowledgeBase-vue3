@@ -1,3 +1,4 @@
+import Vrouter from '@/router'
 import qs from 'qs'
 
 const infoStore = useInfoStore()
@@ -186,36 +187,56 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
   }
 }
 
-// 新建不同类型文章后跳转
-export const useAddArticleAfterToLink = (route, router, type, data, is, newTab = 'old', refresh = true) => {
-  const spaceName = route.path.split('/')[1]
-  const query = {
-    lid: route.query.lid,
-    lname: route.query.lname,
-    aid: data.id,
-    aname: data.title
+interface ArticleData {
+  id?: Number
+  title: String
+  type: String
+  [key: string]: any
+}
+
+export const useLinkHooks = () => {
+  const route = Vrouter.currentRoute.value
+
+  const { spaceType, spaceName } = useData()
+  const basePath = spaceType.value === '个人' ? '' : `/${spaceName.value}`
+
+  /**
+   * 处理文章类型的跳转
+   * @param {ArticleData}  data 文章数据
+   * @param {Boolean} isEdit 是否编辑状态
+   * @param {Boolean} newTab 是否新标签页打开
+   * @param {Boolean} refresh 是否重新获取文章目录
+   */
+  function handleArticleTypeLink(data: ArticleData, isEdit: Boolean, newTab: Boolean = false, refresh: Boolean = false) {
+    const query = {
+      lid: route.query.lid,
+      lname: route.query.lname,
+      aid: data.id,
+      aname: data.title
+    }
+    const spaceQuery = {
+      sid: route.query.sid,
+      sname: route.query.sname,
+      gid: route.query.gid,
+      gname: route.query.gname
+    }
+    if (!newTab) {
+      router.push({
+        path: `${basePath}/directory/${data.type}/${isEdit ? 'edit' : ''}`,
+        query: {
+          ...(spaceType.value === '个人' ? {} : spaceQuery),
+          ...query
+        } as any
+      })
+    } else {
+      window.open(
+        `${spaceType.value === '个人' ? '' : `/#/${spaceName.value}`}/directory/${data.type}/?${qs.stringify({
+          ...(spaceType.value === '个人' ? {} : spaceQuery),
+          ...query
+        })}`
+      )
+    }
   }
-  const spaceQuery = {
-    sid: route.query.sid,
-    sname: route.query.sname,
-    gid: route.query.gid,
-    gname: route.query.gname
-  }
-  if (newTab === 'old') {
-    router.push({
-      path: `${type === '个人' ? '' : `/${spaceName}`}/directory/${data.type}/${is ? 'edit' : ''}`,
-      query: {
-        ...(type === '个人' ? {} : spaceQuery),
-        ...query
-      }
-    })
-  } else {
-    window.open(
-      `${type === '个人' ? '' : `/#/${spaceName}`}/directory/${data.type}/?${qs.stringify({
-        ...(type === '个人' ? {} : spaceQuery),
-        ...query
-      })}`
-    )
-  }
-  refresh && refreshStore.setRefreshArticleList(true)
+
+  return { handleArticleTypeLink }
 }

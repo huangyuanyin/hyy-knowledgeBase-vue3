@@ -25,7 +25,6 @@ const props = defineProps({
 const emit = defineEmits(['closeDialog', 'recover'])
 
 const route = useRoute()
-const router = useRouter()
 const refreshStroe = useRefreshStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const spaceType = ref('') // 当前空间类型
@@ -156,7 +155,7 @@ const copyArticle = async () => {
     ElMessage.success('复制成功')
     closeDialog()
     if (props.data.book === bookId.value) {
-      useAddArticleAfterToLink(route, router, spaceType.value, handleAfterData(res.data), false, 'old')
+      useLinkHooks().handleArticleTypeLink(handleAfterData(res.data), false)
     }
     refreshStroe.setRefreshArticleList(true)
   } else {
@@ -179,7 +178,7 @@ const moveArticle = async () => {
     ElMessage.success('移动成功')
     closeDialog()
     if (props.data.book === bookId.value) {
-      useAddArticleAfterToLink(route, router, spaceType.value, handleAfterData(res.data), false, 'old')
+      useLinkHooks().handleArticleTypeLink(handleAfterData(res.data), false)
     }
     refreshStroe.setRefreshArticleList(true)
   } else {

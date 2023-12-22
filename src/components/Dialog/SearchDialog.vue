@@ -28,10 +28,10 @@ const list = ref<any[]>([
     label: '搜索范围：空间',
     children: [
       {
-        id: JSON.parse(sessionStorage.getItem('currentSpaceInfo')).id,
+        id: JSON.parse(sessionStorage.getItem('currentSpaceInfo'))?.id || JSON.parse(localStorage.getItem('personalSpaceInfo')).id,
         name: '当前空间',
         type: 'organization',
-        icon: JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon
+        icon: JSON.parse(sessionStorage.getItem('currentSpaceInfo'))?.icon || 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('personalSpaceInfo')).icon
       },
       {
         id: 0,
@@ -61,7 +61,8 @@ watch(
         value.value = route.query.q ? (route.query.q as string) : ''
         selectId.value = `${route.query.scope_id}${route.query.scope_name}`
       } else {
-        selectId.value = String(JSON.parse(sessionStorage.getItem('currentSpaceInfo')).id) + list.value[0].children[0].name
+        selectId.value =
+          String(JSON.parse(sessionStorage.getItem('currentSpaceInfo'))?.id || JSON.parse(localStorage.getItem('personalSpaceInfo')).id) + list.value[0].children[0].name
       }
       handleBookList()
       if (spaceType.value === '组织') {

@@ -134,7 +134,7 @@ const toAddArticle = async () => {
   let res = await addArticleApi(params)
   if (res.code === 1000) {
     handleClose()
-    useAddArticleAfterToLink(route, router, spaceType.value, res.data, true)
+    useLinkHooks().handleArticleTypeLink(res.data as any, true)
   } else {
     ElMessage.error(res.msg)
   }

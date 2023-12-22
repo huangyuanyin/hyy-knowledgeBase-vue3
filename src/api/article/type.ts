@@ -12,10 +12,11 @@ export interface ArticleData {
   title: string
   book: string
   space?: string
-  type?: string
+  type?: String
   parent?: number
   body?: string
   open_window?: string
+  [key: string]: any
 }
 
 export interface HandleArticleData {
@@ -49,6 +50,7 @@ export interface ArticleVersionData {
   name?: string
   body?: string
   content?: string
+  type: String
 }
 
 export interface ArticleRes {

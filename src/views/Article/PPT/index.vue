@@ -15,7 +15,9 @@ watch(
   () => route.fullPath,
   () => {
     nextTick(() => {
-      getArticle(route.query.aid)
+      if (route.path.includes('/ppt')) {
+        getArticle(route.query.aid)
+      }
       route.path.split('/').slice(-1)[0] === 'edit' ? (isPreview.value = false) : (isPreview.value = true)
     })
   },

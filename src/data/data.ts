@@ -168,7 +168,7 @@ export const articleOperationData = [
 ]
 
 export const linkOperationData = [
-  { type: 'item', icon: editIcon, label: '修改链接信息', nick: 'toRename' },
+  { type: 'item', icon: editIcon, label: '修改链接信息', nick: 'toEditLink' },
   { type: 'item', icon: copyLinkIcon, label: '复制链接', nick: 'toCopyLink' },
   { type: 'divider' },
   // { type: 'item', icon: limitsIcon, label: '移除目录', nick: 'toTodo' },

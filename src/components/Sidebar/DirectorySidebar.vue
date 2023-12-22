@@ -1,11 +1,11 @@
 <script lang="ts" setup>
+import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
 import miniDropDownIcon from '@/assets/icons/miniDropDownIcon.svg'
 import linkTypeIcon from '@/assets/icons/linkType.svg'
 import fileTypeIcon from '@/assets/icons/fileType.svg'
 // @ts-ignore
 import { sidebarSearchMenuItemsData, articleOperationData, linkOperationData, titleOperationData, fileOperationData, directorySidebarOperationData } from '@/data/data'
-import { deleteArticleApi, editArticleApi, getArticleTreeApi } from '@/api/article'
-import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
+import { useLinkHooks } from '@/hooks/useLink'
 
 const route = useRoute()
 const routeInfo = {
@@ -39,8 +39,6 @@ const parentId = ref(null) // 父级节点id
 const reName = ref('')
 const reNameId = ref(null)
 const reNameParent = ref(null)
-const toLinkId = ref(null) // 删除完成后跳转的id
-const toLinkName = ref('')
 const isHasPermissionCode = ref(null)
 const bookIcon = ref('/src/assets/icons/bookIcon.svg')
 const defaultProps = {
@@ -56,14 +54,15 @@ watchEffect(() => {
   }
   if (refreshStroe.isRefreshBookList) {
     nextTick(() => {
-      getArticle()
+      handleArticleList()
     })
     refreshStroe.setRefreshBookList(false)
   }
   if (refreshStroe.isRefreshArticleList) {
     nextTick(() => {
-      getArticle()
+      handleArticleList()
     })
+    console.log(`output->111`, 111)
     refreshStroe.setRefreshArticleList(false)
   }
   nextTick(async () => {
@@ -72,7 +71,8 @@ watchEffect(() => {
     group_name.value = route.query.gname as string
     bookId.value = route.query.lid as string
     if (bookId.value) {
-      await getArticle()
+      console.log(`output->2222`, 2222)
+      handleArticleList()
     }
     if (sessionStorage.getItem('currentBookInfo')) {
       bookIcon.value = JSON.parse(sessionStorage.getItem('currentBookInfo')).icon
@@ -117,6 +117,13 @@ function getBookInfo() {
 function handleAddArticle(title: string, data?) {
   const book = getBookInfo()
   useArticle().handleAddArticle({ book, title }, () => {}, data === null ? null : data?.id)
+}
+
+async function handleArticleList() {
+  const { articleList, currentNodeKey: node, getArticleList } = useArticle()
+  await getArticleList(Number(bookId.value))
+  dataSource.value = articleList.value
+  currentNodeKey.value = node.value
 }
 
 const toLink = (type?: string) => {
@@ -169,6 +176,7 @@ const toLink = (type?: string) => {
         break
     }
   } else if (type === 'index') {
+    console.log(`output->111`, 111)
     currentNodeKey.value = null
     if (spaceType.value === '个人') {
       router.push({
@@ -196,27 +204,6 @@ const toLink = (type?: string) => {
   }
 }
 
-// 获取目录
-const getArticle = async () => {
-  let res = await getArticleTreeApi(bookId.value as string)
-  isHasPermissionCode.value = res.code
-  if (res.code === 1000) {
-    dataSource.value = res.data || ([] as any)
-    // 取出res.data中的第一项的id
-    if (res.data.length) {
-      toLinkId.value = res.data[0].id
-      toLinkName.value = res.data[0].title
-    }
-    currentNodeKey.value = Number(route.query.aid)
-  } else {
-    ElMessage({
-      message: res.msg,
-      type: 'error',
-      grouping: true
-    })
-  }
-}
-
 const toArticleDetail = (val) => {
   if (val.id == route.query.aid) return
   val.type === 'links' || val.type === 'title' ? bookTree.value.setCurrentKey(Number(route.query.aid)) : (currentNodeKey.value = val.id)
@@ -227,7 +214,7 @@ const toArticleDetail = (val) => {
     case 'title':
       break
     default:
-      useAddArticleAfterToLink(route, router, spaceType.value, val, false)
+      useLinkHooks().handleArticleTypeLink(val, false)
       break
   }
 }
@@ -244,12 +231,8 @@ const toRename = (val) => {
 }
 
 const handleRename = () => {
-  editArticle()
-}
-
-// 编辑文档
-const toEditArticle = (val) => {
-  useAddArticleAfterToLink(route, router, spaceType.value, val, true)
+  useArticle().handleEditArticle(reNameId.value, reName.value)
+  reNameId.value = null
 }
 
 // 复制链接
@@ -266,11 +249,6 @@ const toCopyLink = (val) => {
     }
   }
   useCopy(linkUrl.value)
-}
-
-// 新标签页打开
-const toNewTab = (val) => {
-  useAddArticleAfterToLink(route, router, spaceType.value, val, true, 'new')
 }
 
 // 复制 || 移动
@@ -311,117 +289,31 @@ const toAddLink = (data) => {
   isShowLinkDialog.value = true
 }
 
-const editArticle = async () => {
-  const params = {
-    title: reName.value,
-    book: route.query.lid as string,
-    space: spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
-  }
-  let res = await editArticleApi(reNameId.value, params)
-  if (res.code === 1000) {
-    reNameId.value = null
-    if (res.data.type === 'title') {
-      getArticle()
-    } else {
-      useAddArticleAfterToLink(route, router, spaceType.value, res.data, false)
-    }
-  } else {
-    ElMessage({
-      message: res.msg,
-      type: 'error',
-      grouping: true
-    })
-  }
-}
-
-const deleteArticle = async (id) => {
-  let res = await deleteArticleApi(id)
-  if (res.code === 1000) {
-    ElMessage.success('删除成功')
-    await getArticle()
-    if (id != route.query.aid) return
-    if (dataSource.value.length === 0) {
-      router.push({
-        path: `/${route.path.split('/')[1]}/directory/index`,
-        query: {
-          sid: route.query.sid,
-          sname: route.query.sname,
-          gid: route.query.gid,
-          gname: route.query.gname,
-          lid: route.query.lid,
-          lname: route.query.lname
-        }
-      })
-    } else {
-      if (spaceType.value === '个人') {
-        router.push({
-          path: `/directory/${res.data.parent_type}`,
-          query: {
-            ...route.query,
-            aid: res.data.parent_id,
-            aname: res.data.parent_name
-          }
-        })
-      } else {
-        router.push({
-          path: `/${route.path.split('/')[1]}/directory/${res.data.parent_type}`,
-          query: {
-            ...route.query,
-            aid: res.data.parent_id,
-            aname: res.data.parent_name
-          }
-        })
-      }
-    }
-  } else {
-    ElMessage({
-      message: res.msg,
-      type: 'error',
-      grouping: true
-    })
-  }
+async function deleteArticle(id: Number) {
+  const { articleList, currentNodeKey: node, handleDeleteArticle } = useArticle()
+  await handleDeleteArticle(id)
+  dataSource.value = articleList.value
+  currentNodeKey.value = node.value
 }
 
 const toDeleteArticle = (val) => {
-  if (val.children) {
-    ElMessageBox.confirm(`同时删除【${val.title}】下的所有文档`, `确认删除【${val.title}】吗？`, {
-      confirmButtonText: '确认',
-      cancelButtonText: '取消',
-      confirmButtonClass: 'submitBtn',
-      cancelButtonClass: 'cancelBtn',
-      customClass: 'deleteArticleDialog',
-      type: 'warning',
-      showClose: false
+  const confirmMessage = val.children ? `同时删除【${val.title}】下的所有文档` : `确认删除【${val.title}】吗？`
+  const confirmTitle = val.children ? `确认删除【${val.title}】吗？` : ''
+  ElMessageBox.confirm(confirmMessage, confirmTitle, {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    confirmButtonClass: 'submitBtn',
+    cancelButtonClass: 'cancelBtn',
+    customClass: 'deleteArticleDialog',
+    type: 'warning',
+    showClose: false
+  })
+    .then(() => {
+      deleteArticle(val.id)
     })
-      .then(() => {
-        deleteArticle(val.id)
-      })
-      .catch(() => {
-        ElMessage({
-          type: 'info',
-          message: '取消操作'
-        })
-      })
-  } else {
-    ElMessageBox.confirm(`确认删除【${val.title}】吗？`, '', {
-      confirmButtonText: '确认',
-      cancelButtonText: '取消',
-      confirmButtonClass: 'submitBtn',
-      cancelButtonClass: 'cancelBtn',
-      customClass: 'deleteArticleDialog',
-      type: 'warning',
-      showClose: false
+    .catch(() => {
+      ElMessage.info('取消操作')
     })
-      .then(() => {
-        deleteArticle(val.id)
-      })
-      .catch(() => {
-        ElMessage({
-          type: 'info',
-          message: '取消操作'
-        })
-      })
-  }
 }
 
 const closeLinkDialog = () => {
@@ -470,8 +362,6 @@ const toMoreSetting = () => {
 const customIcon = () => {
   return h('img', { src: miniDropDownIcon }) // 默认图标路径
 }
-
-onMounted(async () => {})
 </script>
 
 <template>
@@ -563,9 +453,17 @@ onMounted(async () => {})
                 :height="32"
                 :width="150"
                 @toRename="toRename(data)"
-                @toEditArticle="toEditArticle(data)"
+                @toEditArticle="
+                  () => {
+                    useLinkHooks().handleArticleTypeLink(data, true)
+                  }
+                "
                 @toCopyLink="toCopyLink(data)"
-                @toNewTab="toNewTab(data)"
+                @toNewTab="
+                  () => {
+                    useLinkHooks().handleArticleTypeLink(data, false, true)
+                  }
+                "
                 @toCopyArticle="toHandleArticle('copy', data)"
                 @toMoveArticle="toHandleArticle('move', data)"
                 @toTodo="toTodo(data)"
@@ -580,7 +478,7 @@ onMounted(async () => {})
                 :menuItems="linkOperationData"
                 :height="32"
                 :width="150"
-                @toRename="toEditLink(data)"
+                @toEditLink="toEditLink(data)"
                 @toCopyLink="toCopyLink(data)"
                 @toCopyArticle="toHandleArticle('copy', data)"
                 @toMoveArticle="toHandleArticle('move', data)"

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { editArticleApi, getArticleApi } from '@/api/article'
 import NoPermission from '@/views/NoPermission/index.vue'
 import { getCollaborationsApi, getArticleCollaborationsApi } from '@/api/collaborations'
 // import { getTeamMemberApi } from '@/api/member'
@@ -109,6 +108,17 @@ watchEffect(() => {
   })
 })
 
+// 发布文章
+function editArticle() {
+  const params = {
+    title: name.value,
+    book: route.query.lid as string,
+    space: spaceId.value,
+    body: props.content
+  }
+  useArticle().handleEditArticle(Number(route.query.aid), params)
+}
+
 const toHandle = (item: any) => {
   switch (item.label) {
     case '分享':
@@ -128,11 +138,11 @@ const toHandle = (item: any) => {
     case '编辑':
       moreFeaturesDrawer.value = false
       const data = {
-        type: route.path.split('/').slice(-2)[0],
-        id: route.query.aid,
-        title: route.query.aname
+        id: Number(route.query.aid),
+        title: route.query.aname as String,
+        type: route.path.split('/').slice(-2)[0]
       }
-      useAddArticleAfterToLink(route, router, spaceType.value, data, true, 'old', false)
+      useLinkHooks().handleArticleTypeLink(data, true)
       break
     case '已收藏':
     case '收藏':
@@ -218,27 +228,6 @@ const getArticleCollaborations = async () => {
   const res = await getArticleCollaborationsApi(params)
   if (res.code === 1000) {
     userList.value = res.data
-    console.log(`output->userList.value`, userList.value)
-  } else {
-    ElMessage.error(res.msg)
-  }
-}
-
-const editArticle = async () => {
-  const params = {
-    title: name.value,
-    book: route.query.lid as string,
-    space: spaceId.value,
-    body: props.content
-  }
-  let res = await editArticleApi(Number(route.query.aid), params)
-  if (res.code === 1000) {
-    ElMessage({
-      message: '发布成功',
-      type: 'success',
-      grouping: true
-    })
-    useAddArticleAfterToLink(route, router, spaceType.value, res.data, false, 'old', false)
   } else {
     ElMessage.error(res.msg)
   }
@@ -267,18 +256,15 @@ const openDrawer = (val) => {
 }
 
 const getArticle = async () => {
-  let res = await getArticleApi(route.query.aid as string)
-  if (res.code === 1000) {
-    moreFeaturesDrawerInfo.value = res.data as any
-    if (res.data.marked) {
-      itemList.value[0].label = '已收藏'
-      itemList.value[0].icon = '/src/assets/icons/startIcon_select.svg'
-    } else {
-      itemList.value[0].label = '收藏'
-      itemList.value[0].icon = '/src/assets/icons/article/starIcon.svg'
-    }
+  const { ainfo, getArticleDetail } = useArticle()
+  await getArticleDetail(Number(route.query.aid))
+  moreFeaturesDrawerInfo.value = ainfo.value as any
+  if (moreFeaturesDrawerInfo.value.marked) {
+    itemList.value[0].label = '已收藏'
+    itemList.value[0].icon = '/src/assets/icons/startIcon_select.svg'
   } else {
-    ElMessage.error(res.msg)
+    itemList.value[0].label = '收藏'
+    itemList.value[0].icon = '/src/assets/icons/article/starIcon.svg'
   }
 }
 

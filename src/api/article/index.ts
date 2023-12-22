@@ -1,10 +1,10 @@
 import { ArticleData, ArticleRes, HandleArticleData, ArticleAttachmentData, ArticleTemData, ArticleVersionData } from './type'
 
-export function getArticleTreeApi(id: string) {
+export function getArticleTreeApi(id: string | Number) {
   return http.get<ArticleRes>(`article_tree/${id}/`, {}, 'base')
 }
 
-export function getArticleApi(id: string) {
+export function getArticleApi(id: Number) {
   return http.get<ArticleRes>(`articles/${id}/`, {}, 'base')
 }
 
@@ -12,11 +12,11 @@ export function addArticleApi(data: ArticleData) {
   return http.post<ArticleRes>(`articles/`, data, 'base')
 }
 
-export function editArticleApi(id: number, data: ArticleData) {
+export function editArticleApi(id: Number, data: ArticleData) {
   return http.put<ArticleRes>(`articles/${id}/`, data, 'base')
 }
 
-export function deleteArticleApi(id: number) {
+export function deleteArticleApi(id: Number) {
   return http.delete<ArticleRes>(`articles/${id}/`, {}, 'base')
 }
 
@@ -32,7 +32,7 @@ export function uploadArticleApi(data: FormData) {
   return http.post<ArticleRes>(`article_file/`, data, 'base')
 }
 
-export function exportDocApi(id: number) {
+export function exportDocApi(id: Number) {
   return http.get<ArticleRes>(`article_export/${id}/`, {}, 'base')
 }
 
@@ -48,7 +48,7 @@ export function addArticleTemApi(data: ArticleTemData) {
   return http.post<ArticleRes>(`/article/templates/`, data, 'base')
 }
 
-export function deleteArticleTemApi(id: number) {
+export function deleteArticleTemApi(id: Number) {
   return http.delete<ArticleRes>(`/article/templates/${id}/`, {}, 'base')
 }
 
@@ -60,6 +60,6 @@ export function addArticleVersionApi(data: ArticleVersionData) {
   return http.post<ArticleRes>(`/article/versions/`, data, 'base')
 }
 
-export function deleteArticleVersionApi(id: number) {
+export function deleteArticleVersionApi(id: Number) {
   return http.delete<ArticleRes>(`/article/versions/${id}`, {}, 'base')
 }
