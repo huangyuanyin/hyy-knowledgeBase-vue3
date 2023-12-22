@@ -103,6 +103,14 @@ function judegeArticleType(type: string) {
   return useData().judegeArticleType(type)
 }
 
+function highlightKeywords(text, keyword) {
+  if (!keyword) {
+    return text
+  }
+  const regex = new RegExp(keyword, 'gi')
+  return text.replace(regex, (match) => `<em text="#df2a3f">${match}</em>`)
+}
+
 const handleTime = (val) => {
   time_horizon.value = val
   getSearch()
@@ -249,7 +257,7 @@ const getSearch = async () => {
             </span>
             <div flex flex-col items-start>
               <span line-22px text="16px #262626" mb-8px cursor-pointer>{{ item.title }}</span>
-              <p text="14px #262626" mb-8px>{{ item.abstract }}</p>
+              <p v-html="highlightKeywords(item.abstract, value)" text="14px #262626" mb-8px></p>
               <p text="12px #8a8f8d" line-18px>
                 {{ item.book_name }}<span ml-12px>{{ item.update_datetime }}</span>
               </p>
