@@ -55,8 +55,9 @@ export const useArticle = () => {
   /**
    * @param {Object} params   当前知识库信息 + 团队信息和新建文章类型
    * @param {Function} callback 回调函数
+   * @param {Number} parent   当前文章父级
    */
-  function handleAddArticle(params, callback: CallbackFunction) {
+  function handleAddArticle(params, callback: CallbackFunction, parent?: number | null = null) {
     const { book, title } = params
     switch (title) {
       case '脑图':
@@ -68,7 +69,7 @@ export const useArticle = () => {
       default:
         break
     }
-    handleAddArticleApi(book, articleType[title], null, callback)
+    handleAddArticleApi(book, articleType[title], parent, callback)
   }
 
   // 处理新建不同文章逻辑
@@ -86,8 +87,9 @@ export const useArticle = () => {
       parent,
       book: book.id,
       space: space.value,
-      public: '1'
+      public: '1' // 知识库所有成员都可以访问
     }
+    article.type === 'title' && delete params.body
     let res = await addArticleApi(params)
     if (res.code === 1000) {
       if (res.data.type === 'title') {

@@ -2,8 +2,9 @@
 import miniDropDownIcon from '@/assets/icons/miniDropDownIcon.svg'
 import linkTypeIcon from '@/assets/icons/linkType.svg'
 import fileTypeIcon from '@/assets/icons/fileType.svg'
+// @ts-ignore
 import { sidebarSearchMenuItemsData, articleOperationData, linkOperationData, titleOperationData, fileOperationData, directorySidebarOperationData } from '@/data/data'
-import { addArticleApi, deleteArticleApi, editArticleApi, getArticleTreeApi } from '@/api/article'
+import { deleteArticleApi, editArticleApi, getArticleTreeApi } from '@/api/article'
 import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
 
 const route = useRoute()
@@ -13,7 +14,6 @@ const routeInfo = {
 }
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const dataStore = useDataStore()
 const spaceId = ref('') // 当前空间id
 const bookId = ref('') // 当前知识库id
 const spaceType = ref<string>('') // 空间类型：个人 组织
@@ -43,13 +43,6 @@ const toLinkId = ref(null) // 删除完成后跳转的id
 const toLinkName = ref('')
 const isHasPermissionCode = ref(null)
 const bookIcon = ref('/src/assets/icons/bookIcon.svg')
-const articleType = {
-  文档: { type: 'doc', title: '无标题文档', body: '' },
-  表格: { type: 'sheet', title: '无标题表格', body: '' },
-  脑图: { type: 'mind', title: '无标题脑图', body: '' },
-  幻灯片: { type: 'ppt', title: '无标题幻灯片', body: '' },
-  新建分组: { type: 'title', title: '新建分组', body: '' }
-}
 const defaultProps = {
   class: 'forumList'
 } as unknown as TreeOptionProps
@@ -111,6 +104,20 @@ watch(
     }, 500)
   }
 )
+
+function getBookInfo() {
+  return {
+    id: route.query.lid as string,
+    name: route.query.lname as string,
+    group: route.query.gid as string,
+    groupname: route.query.gname as string
+  }
+}
+
+function handleAddArticle(title: string, data?) {
+  const book = getBookInfo()
+  useArticle().handleAddArticle({ book, title }, () => {}, data === null ? null : data?.id)
+}
 
 const toLink = (type?: string) => {
   if (type === 'link') {
@@ -299,59 +306,9 @@ const toEditLink = (val) => {
   isShowLinkDialog.value = true
 }
 
-const toAddDoc = (data?) => {
-  addArticle(articleType['文档'], data === null ? null : data.id)
-}
-
-const toAddSheet = (data) => {
-  addArticle(articleType['表格'], data.id)
-}
-
-const toAddPPT = (data) => {
-  articleType['幻灯片'].body = dataStore.pptData
-  addArticle(articleType['幻灯片'], data.id)
-}
-
-const toAddMindmap = (data) => {
-  articleType['脑图'].body = dataStore.mindMapData
-  addArticle(articleType['脑图'], data.id)
-}
-
 const toAddLink = (data) => {
   parentId.value = data.id
   isShowLinkDialog.value = true
-}
-
-const toAddGroup = (data) => {
-  addArticle(articleType['新建分组'], data.id)
-}
-
-const addArticle = async (article, parent) => {
-  const params = {
-    title: article.title,
-    book: route.query.lid as string,
-    space: spaceId.value,
-    type: article.type,
-    body: article.type === 'mind' || article.type === 'ppt' ? article.body : '',
-    public: '1', // 知识库所有成员都可以访问
-    parent
-  }
-  article.type === 'title' && delete params.body
-  let res = await addArticleApi(params)
-  if (res.code === 1000) {
-    if (res.data.type === 'title') {
-      getArticle()
-      ElMessage.success('分组新建成功')
-    } else {
-      useAddArticleAfterToLink(route, router, spaceType.value, res.data, true)
-    }
-  } else {
-    ElMessage({
-      message: res.msg,
-      type: 'error',
-      grouping: true
-    })
-  }
 }
 
 const editArticle = async () => {
@@ -576,7 +533,7 @@ onMounted(async () => {})
     </div>
     <div class="empty" v-if="!dataSource.length">
       <img src="@/assets/img/empty.png" alt="" />
-      <div>知识库为空，你可以<span @click="toAddDoc(null)">新建文档</span></div>
+      <div>知识库为空，你可以<span @click="handleAddArticle('文档', null)">新建文档</span></div>
     </div>
     <div class="list" v-else>
       <el-tree
@@ -667,11 +624,11 @@ onMounted(async () => {})
                 :menu-items="sidebarSearchMenuItemsData"
                 trigger="click"
                 :parent="data.id"
-                @toAddDoc="toAddDoc(data)"
-                @toAddSheet="toAddSheet(data)"
-                @toAddPPT="toAddPPT(data)"
-                @toAddMindmap="toAddMindmap(data)"
-                @toAddGroup="toAddGroup(data)"
+                @toAddDoc="handleAddArticle('文档', data)"
+                @toAddSheet="handleAddArticle('表格', data)"
+                @toAddPPT="handleAddArticle('幻灯片', data)"
+                @toAddMindmap="handleAddArticle('脑图', data)"
+                @toAddGroup="handleAddArticle('新建分组', data)"
                 @toAddLink="toAddLink(data)"
               >
                 <span class="addIcon" @click.stop>
