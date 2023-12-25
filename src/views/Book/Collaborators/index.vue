@@ -9,6 +9,7 @@ import { getSpacesDetailApi } from '@/api/spaces'
 
 const route = useRoute()
 const router = useRouter()
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
 const spaceType = ref('')
 const spaceId = ref('')
@@ -43,6 +44,11 @@ const teamInfo = ref([
     member: null
   }
 ])
+const sexList = [
+  { label: '可管理', value: '0', desc: '拥有知识库的所有权限' },
+  { label: '可编辑', value: '1', desc: '拥有文档的编辑权限' },
+  { label: '可阅读', value: '2', desc: '仅拥有只读和评论权限' }
+]
 
 watchEffect(() => {
   spaceType.value = route.path.split('/')[1] === 'bookSetting' ? '个人空间' : '组织空间'
@@ -113,7 +119,7 @@ const getBookDetail = async () => {
   if (res.code === 1000) {
     publicType.value = res.data.public
     spaceId.value = res.data.space
-    groupId.value = res.data.group
+    groupId.value = String(res.data.group)
     stacksId.value = res.data.stacks
     slug.value = res.data.slug
     name.value = res.data.name
@@ -167,6 +173,24 @@ const getSpacesDetail = async () => {
   }
 }
 
+function getSelected(row) {
+  return ['teamAdmin', 'spaceAdmin', 'bookAdmin'].includes(row.label) ? '' : sexList.find((it) => it.value === row.permtype).value
+}
+
+const toChangeRole = (data, row) => {
+  console.log(`output->data,row`, data, row)
+  const params = {
+    space: spaceId.value,
+    group: groupId.value,
+    book: bookId.value,
+    permtype: data.value,
+    permusername: row.permusername
+  }
+  useCollaborations().editCollaborations(row.id, params, () => {
+    getCollaborations()
+  })
+}
+
 onMounted(() => {
   if (spaceType.value === '组织空间') {
     getTeamMember()
@@ -209,9 +233,20 @@ onMounted(() => {
             </template>
           </el-table-column>
           <el-table-column prop="permtype" label="权限">
-            <template #default="{ row }">
+            <template #default="{ row, rowIndex }">
               <span v-if="['teamAdmin', 'spaceAdmin', 'bookAdmin'].includes(row.label)">可管理</span>
-              <span v-else>可编辑</span>
+              <DropdownPopver :menuItems="sexList" :selectId="getSelected(row)" @toChange="toChangeRole($event, row)">
+                <span
+                  flex
+                  items-center
+                  line-32px
+                  cursor-pointer
+                  v-if="rowIndex !== 0 && row.permusername !== user && !['teamAdmin', 'spaceAdmin', 'bookAdmin'].includes(row.label)"
+                >
+                  <span mr-4px> {{ sexList.find((it) => it.value === row.permtype).label }}</span>
+                  <i-ep-ArrowDown />
+                </span>
+              </DropdownPopver>
             </template>
           </el-table-column>
           <el-table-column prop="address" label="操作">

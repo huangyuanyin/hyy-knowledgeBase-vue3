@@ -8,8 +8,12 @@ export function addCollaborationsApi(data: collaborationsData) {
   return http.post<collaborationsRes>('book/collaborations/', data, 'base')
 }
 
+export function editCollaborationsApi(id: number, data: collaborationsData) {
+  return http.put<collaborationsRes>(`book/collaborations/${id}/`, data, 'base')
+}
+
 export function deleteCollaborationsApi(id: number) {
-  return http.delete<collaborationsRes>(`book/collaborations/${id}`, {}, 'base')
+  return http.delete<collaborationsRes>(`book/collaborations/${id}/`, {}, 'base')
 }
 
 export function getArticleCollaborationsApi(params: collaborationsParams) {

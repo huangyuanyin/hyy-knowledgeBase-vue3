@@ -84,7 +84,7 @@ const toTeamSetting = () => {
 
 <style lang="scss" scoped>
 .TeamHeader_wrap {
-  width: 100%;
+  width: calc(100vw - 255px);
   margin-left: -36px;
   padding: 0 36px;
   height: 61px;

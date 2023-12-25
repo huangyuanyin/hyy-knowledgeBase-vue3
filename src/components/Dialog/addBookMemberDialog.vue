@@ -19,6 +19,7 @@ const selectTotal = ref(0)
 const dialogVisible = ref(false)
 const loadTable = ref(false)
 const teamName = ref('')
+const permtype = ref<string>('1')
 const memberListRef = ref<InstanceType<typeof ElTable>>()
 const selectMemberList = ref<Member[]>([])
 const memberList = ref<Member[]>([])
@@ -53,7 +54,7 @@ const toAddMember = () => {
 const addBookMember = async () => {
   const params = {
     permusername: [],
-    permtype: '1',
+    permtype: permtype.value,
     book: route.query.lid as string
   }
   selectMemberList.value.forEach((item) => {
@@ -78,11 +79,15 @@ const getTeamMember = async () => {
   loadTable.value = false
   if (res.code === 1000) {
     memberList.value = res.data.filter((item) => {
-      return !props.selectMember.some((it) => item.username === it.permusername)
+      return !props.selectMember.some((it: any) => item.username === it.permusername)
     })
   } else {
     ElMessage.error(res.msg)
   }
+}
+
+const handleCommand = (val: string) => {
+  permtype.value = val
 }
 </script>
 
@@ -115,16 +120,16 @@ const getTeamMember = async () => {
         <div class="left">
           <span class="count">已选择 {{ selectTotal }}人</span>
           <span>
-            添加为：
-            <el-dropdown trigger="click">
+            权限：
+            <el-dropdown trigger="click" @command="handleCommand">
               <span class="el-dropdown-link">
-                成员
+                {{ permtype === '1' ? '可编辑' : '可阅读' }}
                 <i-ep-ArrowDown />
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item>成员</el-dropdown-item>
-                  <el-dropdown-item disabled>只读成员</el-dropdown-item>
+                  <el-dropdown-item command="1">可编辑</el-dropdown-item>
+                  <el-dropdown-item command="2">可阅读</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>

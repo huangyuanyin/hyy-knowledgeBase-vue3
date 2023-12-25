@@ -60,7 +60,7 @@ const props = defineProps({
   toolbar: {
     type: [String, Array],
     default: [
-      ' pastetext   undo redo removeformat formatpainter blocks fontsize bold italic strikethrough underline superscript subscript codeformat forecolor backcolor align bullist numlist  lineheight  link blockquote hr searchreplace anchor help tableofcontents tableofcontentsupdate  charmap emoticons wordcount  code  codesample toc image fullscreen   preview autolink  autosave'
+      'table pastetext undo redo removeformat formatpainter blocks fontsize bold italic strikethrough underline superscript subscript codeformat forecolor backcolor align bullist numlist  lineheight  link blockquote hr searchreplace anchor help tableofcontents tableofcontentsupdate  charmap emoticons wordcount  code  codesample toc image fullscreen   preview autolink  autosave'
     ]
   }
 })
@@ -156,7 +156,7 @@ const initOptions = ref({
   // quickbars_selection_toolbar: false, // 禁用快速选择上下文工具栏
   // quickbars_image_toolbar: false, // 禁用快速图像上下文工具栏
   quickbars_image_toolbar: 'alignleft aligncenter alignright | rotateleft rotateright | imageoptions', // 快速图像工具栏
-  quickbars_selection_toolbar: 'bold italic underline quicklink h2 h3 blockquote quickimage quicktable', // 快速工具栏
+  quickbars_selection_toolbar: 'bold italic underline quicklink h2 h3 blockquote quickimage quicktable tablemergecells', // 快速工具栏
   quickbars_insert_toolbar: 'p h2 h3 bullist numlist quickimage quicktable hr', // 快速插入工具栏
   formats: {
     formatpainter_checklist: { selector: 'ul', classes: 'tox-checklist' },

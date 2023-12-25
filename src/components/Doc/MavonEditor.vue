@@ -36,5 +36,12 @@ onMounted(() => {})
 }
 :deep(.v-show-content) {
   padding-top: 34px !important;
+  table {
+    border: none;
+    colgroup {
+      width: 300px;
+      min-width: 300px;
+    }
+  }
 }
 </style>

@@ -6,7 +6,7 @@ export interface collaborationsParams {
 
 export interface collaborationsData {
   permtype?: string
-  permusername?: Array<string>
+  permusername?: Array<string> | string
   book?: string
   role?: string
   [x: string]: any
