@@ -4,6 +4,12 @@ import { addMarksApi } from '@/api/marks'
 import { directoryIndexOperationData } from '@/data/data'
 import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
 
+interface BookInfo {
+  id: number
+  name: string
+  group: number
+}
+
 const route = useRoute()
 const routeInfo = { route, router }
 const articleStore = useArticleStore()
@@ -11,6 +17,9 @@ const isShowsDeleteDialog = ref(false)
 const bookId = ref(route.query.lid as string)
 const bookName = ref(route.query.lname)
 const deleteInfo = ref({})
+const bookBulletin = ref<string>('')
+const toolbar = 'blocks fontsize bold  align bullist numlist  lineheight  link  hr  tableofcontents tableofcontentsupdate | emoticons image fullscreen  preview autolink  '
+const isEdit = ref<boolean>(false)
 const currentBookInfo = ref({
   icon: '',
   marked: false,
@@ -61,6 +70,26 @@ const toMoreSetting = () => {
   useLink(routeInfo, 'fromBookToSet', {})
 }
 
+const toUpdateBulletin = () => {
+  const { space, group, stacks, name, slug, public: p } = JSON.parse(sessionStorage.getItem('currentBookInfo'))
+  const params = {
+    body: bookBulletin.value,
+    space,
+    group,
+    stacks,
+    slug,
+    name,
+    public: p
+  }
+  useBook().editBook(bookId.value, params, (res: BookInfo) => {
+    if (Reflect.ownKeys(res).length) {
+      ElMessage.success('更新成功')
+      isEdit.value = false
+      getBookDetail(res.id)
+    }
+  })
+}
+
 const toDeleteBook = () => {
   isShowsDeleteDialog.value = true
   const item = JSON.parse(sessionStorage.getItem('currentBookInfo') as string)
@@ -72,6 +101,7 @@ const getBookDetail = async (id) => {
   if (res.code === 1000) {
     sessionStorage.setItem('currentBookInfo', JSON.stringify(res.data))
     currentBookInfo.value = res.data as any
+    bookBulletin.value = res.data.body
   } else {
     ElMessage.error(res.msg)
   }
@@ -122,7 +152,7 @@ onMounted(() => {
             <span>{{ bookName }}</span>
           </div>
           <div class="header-right">
-            <div class="button-wrap">
+            <div class="button-wrap" v-if="!isEdit">
               <StarPopver @cancelMark="cancelMark" :startId="currentBookInfo.mark_id" :tag_mark="currentBookInfo.tag_mark" type="book">
                 <div class="button" @click="toMark">
                   <img :src="currentBookInfo.marked ? '/src/assets/icons/startIcon_select.svg' : '/src/assets/icons/startIcon.svg'" alt="" />
@@ -136,7 +166,7 @@ onMounted(() => {
                 :menuItems="directoryIndexOperationData"
                 placement="bottom-end"
                 @toRename="toDo"
-                @toEditIndex="toDo"
+                @toEditIndex="isEdit = true"
                 @toMoreSetting="toMoreSetting"
                 @toDeleteBook="toDeleteBook"
               >
@@ -145,13 +175,34 @@ onMounted(() => {
                 </div>
               </LibraryOperationPopver>
             </div>
+            <div v-else>
+              <div
+                flex
+                items-center
+                border="1px solid #e7e9e8"
+                rounded-6px
+                h-32px
+                mr-12px
+                border-box
+                cursor-pointer
+                text-center
+                p-7px
+                pr-14px
+                pl-14px
+                min-w-32px
+                @click="toUpdateBulletin"
+                hover="bg-#fafafa"
+              >
+                <span font-700 text-14px line-h-20px>更新</span>
+              </div>
+            </div>
           </div>
         </div>
         <div class="count">
           <span><b>未统计</b>文档</span>
           <span><b>未统计</b>字</span>
         </div>
-        <div class="welcome">
+        <div class="welcome" v-if="!isEdit && bookBulletin === ''">
           <div class="welcome-item">
             <span> 👋 &ensp;</span>
             <span style="font-weight: 700">欢迎来到知识库</span>
@@ -159,6 +210,10 @@ onMounted(() => {
           <div class="welcome-item left">
             <span>知识库就像书一样，让多篇文档结构化，方便知识的创作与沉淀</span>
           </div>
+        </div>
+        <MavonEditor mt-60px :html="bookBulletin" :navigation="false" v-else-if="!isEdit && bookBulletin" />
+        <div mt-60px border="1px solid #e7e9e8" rounded-4px v-if="isEdit">
+          <TinyMCE v-model="bookBulletin" :resize="true" height="500px" :toolbar="toolbar" body-style="body { margin: 1rem 2% 1rem 2% }" />
         </div>
         <div class="list" v-if="articleStore.articleList.length">
           <el-tree :data="articleStore.articleList" node-key="id" :props="defaultProps" default-expand-all>
@@ -306,6 +361,9 @@ onMounted(() => {
         .left {
           text-indent: 2em;
         }
+      }
+      :deep(.markdown-body) {
+        border: none;
       }
       .list {
         margin-top: 60px;

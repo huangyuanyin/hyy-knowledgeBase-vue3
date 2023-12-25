@@ -1,9 +1,13 @@
-import { getLibraryApi } from '@/api/library'
+import { editLibraryApi, getLibraryApi } from '@/api/library'
 
 interface BookParams {
   space?: string
   group?: string
   permusername: string
+}
+
+interface CallbackFunction {
+  (success: object): void
 }
 
 export const useBook = () => {
@@ -32,5 +36,20 @@ export const useBook = () => {
     }
   }
 
-  return { bookList, getBookList }
+  /**
+   * 编辑知识库
+   * @param {number} id 知识库id
+   * @param {object} params 知识库信息
+   * @param {function} callback 回调函数
+   */
+  const editBook = async (id, params, callback: CallbackFunction) => {
+    let res = await editLibraryApi(params, id)
+    if (res.code === 1000) {
+      callback(res.data)
+    } else {
+      ElMessage.error(res.msg)
+    }
+  }
+
+  return { bookList, getBookList, editBook }
 }

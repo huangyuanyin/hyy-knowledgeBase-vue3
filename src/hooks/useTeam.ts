@@ -1,41 +1,22 @@
 import Vrouter from '@/router'
-import { getGroupsApi } from '@/api/groups'
+import { editGroupsApi, getGroupsApi } from '@/api/groups'
+
+interface CallbackFunction {
+  (success: boolean): void
+}
 
 export const useTeam = () => {
   const route = Vrouter.currentRoute.value
   const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
   const space = ref<string>('')
   const spaceType = ref<string>('')
+  const spaceName = ref<string>('')
   const teamList = ref<Array<any>>([])
 
-  watch(
-    () => route.fullPath,
-    () => {
-      const setSpaceAndType = (value: string, type: string) => {
-        space.value = value
-        spaceType.value = type
-      }
-      const personalSpaceInfo = JSON.parse(localStorage.getItem('personalSpaceInfo'))
-      switch (route.meta.asideComponent) {
-        case 'SpaceSidebar':
-          setSpaceAndType(route.query.sid as string, '组织')
-          break
-        case 'Sidebar':
-          setSpaceAndType(personalSpaceInfo.id, '个人')
-          break
-        case 'DirectorySidebar':
-          if (route.path.split('/')[1] === 'directory') {
-            setSpaceAndType(personalSpaceInfo.id, '个人')
-          } else {
-            setSpaceAndType(route.query.sid as string, '组织')
-          }
-          break
-      }
-    },
-    {
-      immediate: true
-    }
-  )
+  const { space: sid, spaceType: stype, spaceName: sname } = useData()
+  space.value = sid.value
+  spaceType.value = stype.value
+  spaceName.value = sname.value
 
   /**
    * 获取团队列表
@@ -54,5 +35,20 @@ export const useTeam = () => {
     }
   }
 
-  return { teamList, getTeamList }
+  /**
+   * 编辑团队
+   * @param {number} id 团队id
+   * @param {object} params 团队信息
+   * @param {function} callback 回调函数
+   */
+  const editTeam = async (id, params, callback: CallbackFunction) => {
+    let res = await editGroupsApi(params, id)
+    if (res.code === 1000) {
+      await callback(res.data)
+    } else {
+      ElMessage.error(res.msg)
+    }
+  }
+
+  return { teamList, getTeamList, editTeam }
 }

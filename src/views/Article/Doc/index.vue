@@ -33,7 +33,7 @@ watchEffect(() => {
 })
 
 const getArticle = async () => {
-  const res = await getArticleApi(aid.value)
+  const res = await getArticleApi(Number(aid.value))
   isHasPermissionCode.value = res.code === 1003 ? false : true
   if (res.code === 1000) {
     isUpdate.value = false

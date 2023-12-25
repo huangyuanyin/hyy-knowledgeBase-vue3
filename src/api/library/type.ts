@@ -8,6 +8,7 @@ interface Category {
   id: number
   name: string
   icon?: string
+  group?: number
   [key: string]: any
 }
 
