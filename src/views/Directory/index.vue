@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { getLibraryDetailApi } from '@/api/library'
-import { addMarksApi } from '@/api/marks'
 import { directoryIndexOperationData } from '@/data/data'
 import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
 
@@ -13,9 +12,10 @@ interface BookInfo {
 const route = useRoute()
 const routeInfo = { route, router }
 const articleStore = useArticleStore()
-const isShowsDeleteDialog = ref(false)
-const bookId = ref(route.query.lid as string)
-const bookName = ref(route.query.lname)
+const sid = ref<string>(String(route.query.sid))
+const bookId = ref<string>(String(route.query.lid))
+const bookName = ref<string>(String(route.query.lname))
+const isShowsDeleteDialog = ref<boolean>(false)
 const deleteInfo = ref({})
 const bookBulletin = ref<string>('')
 const toolbar = 'blocks fontsize bold  align bullist numlist  lineheight  link  hr  tableofcontents tableofcontentsupdate | emoticons image fullscreen  preview autolink  '
@@ -30,22 +30,18 @@ const defaultProps = {
   class: 'forumList'
 } as unknown as TreeOptionProps
 
-watchEffect(() => {
+watchEffect(async () => {
   if (route.query.lid) {
-    bookId.value = route.query.lid as string
+    await initData()
     articleStore.getArticleList(bookId.value)
   }
 })
 
-watch(
-  () => route.query.lid,
-  (newVal) => {
-    if (newVal) {
-      bookName.value = route.query.lname as string
-      bookId.value = route.query.lid as string
-    }
-  }
-)
+function initData() {
+  sid.value = String(route.query.sid)
+  bookId.value = String(route.query.lid)
+  bookName.value = String(route.query.lname)
+}
 
 const toDo = () => {
   ElMessage.warning('功能暂未开放，敬请期待')
@@ -53,7 +49,16 @@ const toDo = () => {
 
 const toMark = () => {
   if (!currentBookInfo.value.marked) {
-    addMarks()
+    const params = {
+      target_type: 'book',
+      target_id: bookId.value as string,
+      space: route.query.sid as string
+    }
+    useCollect().addCollect(params, (res) => {
+      if (Reflect.ownKeys(res).length) {
+        getBookDetail(bookId.value)
+      }
+    })
   }
 }
 
@@ -118,20 +123,6 @@ const toArticleDetail = (val) => {
     default:
       useLinkHooks().handleArticleTypeLink(val, false)
       break
-  }
-}
-
-const addMarks = async () => {
-  const params = {
-    target_type: 'book',
-    target_id: route.query.lid as string,
-    space: route.query.sid as string
-  }
-  let res = await addMarksApi(params)
-  if (res.code === 1000) {
-    ElMessage.success('收藏成功')
-  } else {
-    ElMessage.error(res.msg)
   }
 }
 
@@ -364,6 +355,7 @@ onMounted(() => {
       }
       :deep(.markdown-body) {
         border: none;
+        min-height: 100px;
       }
       .list {
         margin-top: 60px;
