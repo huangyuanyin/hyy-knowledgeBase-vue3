@@ -186,7 +186,6 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .Library_wrap {
-  max-width: 1585px;
   .header {
     height: 30px;
     line-height: 30px;

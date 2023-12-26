@@ -156,7 +156,6 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .Public_wrap {
-  max-width: 1585px;
   :deep(.SwitchModuleItem-wrap) {
     margin-bottom: 0px;
   }

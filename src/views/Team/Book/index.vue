@@ -152,8 +152,8 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .Book_wrap {
-  margin: -26px -36px !important;
-  padding: 0 36px;
+  // margin: -26px -36px !important;
+  // padding: 0 36px;
   width: 100%;
   .Announcement_wrap {
     margin-top: 20px;

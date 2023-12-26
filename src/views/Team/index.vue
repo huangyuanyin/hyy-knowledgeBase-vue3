@@ -90,7 +90,6 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .Team_wrap {
-  max-width: 1585px;
   .header {
     display: flex;
     align-items: center;

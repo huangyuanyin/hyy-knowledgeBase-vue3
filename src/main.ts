@@ -110,4 +110,39 @@ app.use(router).use(pinia).use(useTable).use(mavonEditor)
 app.component('SvgIcon', SvgIcon)
 app.mount('#app')
 
+//注册自定义指令 v-resize
+app.directive('resize', {
+  beforeMount(el, binding) {
+    const handleResize = binding.value
+
+    let startX = 0
+    let startWidth = 0
+
+    const handleMouseDown = (event) => {
+      const parentElement = el.parentNode // 获取父级元素
+      startX = event.clientX
+      startWidth = parentElement.offsetWidth // 使用父级元素的宽度
+
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
+    }
+
+    const handleMouseMove = (event) => {
+      const deltaX = event.clientX - startX
+      const newWidth = startWidth + deltaX
+      if (newWidth < 270) return
+      if (newWidth > 400) return
+      el.parentNode.style.width = `${newWidth}px`
+      handleResize(newWidth)
+    }
+
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+
+    el.addEventListener('mousedown', handleMouseDown)
+  }
+})
+
 import './permission'

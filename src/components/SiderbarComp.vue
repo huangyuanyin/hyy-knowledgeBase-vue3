@@ -435,6 +435,7 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .SiderbarComp-wrap {
+  position: relative;
   width: 100%;
   height: 100%;
   padding: 10px 0px 0 12px;
