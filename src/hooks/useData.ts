@@ -15,9 +15,9 @@ const contentType = {
 
 export const useData = () => {
   const route = Vrouter.currentRoute.value
+  const infoStore = useInfoStore()
   const user = ref<string>('')
   const space = ref<string>('')
-  const spaceType = ref<string>('')
   const spaceName = ref<string>('')
   const spaceIcon = ref<string>('')
 
@@ -42,10 +42,9 @@ export const useData = () => {
    */
   function setSpaceAndType(value: string, type: string) {
     space.value = value
-    spaceType.value = type
-    spaceName.value = spaceType.value === '个人' ? '' : route.path.split('/')[1]
+    spaceName.value = infoStore.currentSpaceType === '个人' ? '' : route.path.split('/')[1]
     spaceIcon.value =
-      spaceType.value === '个人'
+      infoStore.currentSpaceType === '个人'
         ? 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar
         : JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon || ''
   }
@@ -82,5 +81,5 @@ export const useData = () => {
     return contentType[type]
   }
 
-  return { user, space, spaceType, spaceName, spaceIcon, judegeArticleType }
+  return { user, space, spaceName, spaceIcon, judegeArticleType }
 }

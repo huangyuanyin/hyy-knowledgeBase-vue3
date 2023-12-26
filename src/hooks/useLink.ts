@@ -6,6 +6,7 @@ const refreshStore = useRefreshStore()
 
 export const useLink = (routerInfo, type, data, spaceType?) => {
   const { route, router } = routerInfo
+  const infoStore = useInfoStore()
   const spaceName = route.path.split('/')[1]
   switch (type) {
     case 'teamSet':
@@ -165,9 +166,9 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
       break
     case 'toBookIndex':
       router.push({
-        path: `${spaceType === '个人' ? '' : `/${spaceName}`}/directory/index`,
+        path: `${infoStore.currentSpaceType === '个人' ? '' : `/${spaceName}`}/directory/index`,
         query: {
-          ...(spaceType === '个人'
+          ...(infoStore.currentSpaceType === '个人'
             ? {
                 sid: data.space,
                 lid: data.id,
@@ -196,9 +197,10 @@ interface ArticleData {
 
 export const useLinkHooks = () => {
   const route = Vrouter.currentRoute.value
+  const infoStore = useInfoStore()
 
-  const { spaceType, spaceName } = useData()
-  const basePath = spaceType.value === '个人' ? '' : `/${spaceName.value}`
+  const { spaceName } = useData()
+  const basePath = infoStore.currentSpaceType === '个人' ? '' : `/${spaceName.value}`
 
   /**
    * 处理文章类型的跳转
@@ -224,14 +226,14 @@ export const useLinkHooks = () => {
       router.push({
         path: `${basePath}/directory/${data.type}/${isEdit ? 'edit' : ''}`,
         query: {
-          ...(spaceType.value === '个人' ? {} : spaceQuery),
+          ...(infoStore.currentSpaceType === '个人' ? {} : spaceQuery),
           ...query
         } as any
       })
     } else {
       window.open(
-        `${spaceType.value === '个人' ? '' : `/#/${spaceName.value}`}/directory/${data.type}/?${qs.stringify({
-          ...(spaceType.value === '个人' ? {} : spaceQuery),
+        `${infoStore.currentSpaceType === '个人' ? '' : `/#/${spaceName.value}`}/directory/${data.type}/?${qs.stringify({
+          ...(infoStore.currentSpaceType === '个人' ? {} : spaceQuery),
           ...query
         })}`
       )

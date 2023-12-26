@@ -15,20 +15,19 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
 const emit = defineEmits()
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const spaceId = ref('')
 const bookId = ref('')
 const isShowsLibraryDialog = ref(false)
 const isShowTeamDialog = ref(false)
 const addOperationPopver = ref(null)
-const spaceType = ref('')
 const headers = ref({
   Authorization: localStorage.getItem('token')
 })
 
 watchEffect(() => {
-  spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
-  spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
+  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
   bookId.value = route.query.lid as string
 })
 

@@ -30,7 +30,6 @@ const routeInfo = { route, router }
 const infoStore = useInfoStore()
 const dataStore = useDataStore()
 const refreshStroe = useRefreshStore()
-const spaceType = ref('') // 当前空间类型
 const spaceId = ref('') // 当前空间id
 const selectGroupName = ref('')
 const selectGroupIcon = ref('')
@@ -101,8 +100,7 @@ watch(
 )
 
 const handleID = () => {
-  route.meta.asideComponent === 'Sidebar' ? (spaceType.value = '个人') : (spaceType.value = '组织')
-  spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
+  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
 }
 
 watchEffect(() => {
@@ -191,7 +189,7 @@ const addLibrary = async () => {
     ElMessage.success('新建成功，即将跳转到知识库首页...')
     refreshStroe.setRefreshBookList(false)
     setTimeout(() => {
-      useLink(routeInfo, 'toBookIndex', res.data, spaceType.value)
+      useLink(routeInfo, 'toBookIndex', res.data, infoStore.currentSpaceType)
     }, 1000)
   } else {
     ElMessage.error(res.msg)

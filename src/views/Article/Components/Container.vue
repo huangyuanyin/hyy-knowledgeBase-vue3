@@ -24,6 +24,7 @@ const props = defineProps({
 const emit = defineEmits(['toPublish'])
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const name = ref('')
 const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
 const isEdit = ref(false)
@@ -36,7 +37,6 @@ const moreFeaturesDrawerInfo = ref({
   mark_id: '',
   tag_mark: ''
 }) // 更多功能抽屉tab
-const spaceType = ref('') // 当前空间类型
 const spaceId = ref('') // 当前空间id
 const publicType = ref('') // 知识库的公开性
 const selectUserList = ref([]) // 可协作人员列表
@@ -68,8 +68,7 @@ const buttonList = ref([])
 watchEffect(() => {
   moreFeaturesDrawer.value = false
   commentDrawer.value = false
-  spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
-  spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
+  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
   route.path.split('/').slice(-1)[0] === 'edit' ? (isEdit.value = true) : (isEdit.value = false)
   if (isEdit.value) {
     buttonList.value = [

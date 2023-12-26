@@ -16,7 +16,6 @@ const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const spaceId = ref('') // 当前空间id
 const bookId = ref('') // 当前知识库id
-const spaceType = ref<string>('') // 空间类型：个人 组织
 const currentBookInfo = ref(null) // 当前知识库信息
 const dataSource = ref([])
 const bookTree = ref(null)
@@ -66,8 +65,7 @@ watchEffect(() => {
     refreshStroe.setRefreshArticleList(false)
   }
   nextTick(async () => {
-    spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
-    spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
+    spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
     group_name.value = route.query.gname as string
     bookId.value = route.query.lid as string
     if (bookId.value) {
@@ -128,7 +126,7 @@ async function handleArticleList() {
 
 const toLink = (type?: string) => {
   if (type === 'link') {
-    switch (spaceType.value) {
+    switch (infoStore.currentSpaceType) {
       case '个人':
         router.push('/library')
         break
@@ -159,7 +157,7 @@ const toLink = (type?: string) => {
         break
     }
   } else if (type === 'back') {
-    switch (spaceType.value) {
+    switch (infoStore.currentSpaceType) {
       case '个人':
         router.push('/')
         break
@@ -178,7 +176,7 @@ const toLink = (type?: string) => {
   } else if (type === 'index') {
     console.log(`output->111`, 111)
     currentNodeKey.value = null
-    if (spaceType.value === '个人') {
+    if (infoStore.currentSpaceType === '个人') {
       router.push({
         path: `/directory/index`,
         query: {
@@ -242,7 +240,7 @@ const toCopyLink = (val) => {
   if (val.type === 'links') {
     linkUrl.value = val.description
   } else {
-    if (spaceType.value === '个人') {
+    if (infoStore.currentSpaceType === '个人') {
       linkUrl.value = `${window.location.origin}/#/directory/${val.type}?lid=${val.book}&lname=${route.query.lname}&aid=${val.id}&aname=${val.title}`
     } else {
       linkUrl.value = `${window.location.origin}/#/${spaceName}/directory/${val.type}?sid=${route.query.sid}&sname=${route.query.sname}&gid=${route.query.gid}&gname=${route.query.gname}&lid=${val.book}&lname=${route.query.lname}&aid=${val.id}&aname=${val.title}`
@@ -368,11 +366,16 @@ const customIcon = () => {
   <div class="DirectorySidebar-wrap">
     <div class="header-box">
       <div class="header">
-        <img v-if="spaceType === '个人'" class="favicon" src="/src/assets/favicon.ico" @click="toLink('back')" />
-        <img v-else-if="spaceType !== '个人' && route.query.gname !== '公共区'" class="favicon" :src="currentBookInfo && currentBookInfo.group_icon" @click="toLink('back')" />
-        <img v-else-if="spaceType !== '个人' && route.query.gname === '公共区'" class="favicon" src="/src/assets/icons/spaceIcon.svg" alt="" />
+        <img v-if="infoStore.currentSpaceType === '个人'" class="favicon" src="/src/assets/favicon.ico" @click="toLink('back')" />
+        <img
+          v-else-if="infoStore.currentSpaceType !== '个人' && route.query.gname !== '公共区'"
+          class="favicon"
+          :src="currentBookInfo && currentBookInfo.group_icon"
+          @click="toLink('back')"
+        />
+        <img v-else-if="infoStore.currentSpaceType !== '个人' && route.query.gname === '公共区'" class="favicon" src="/src/assets/icons/spaceIcon.svg" alt="" />
         <img class="rightArrowIcon" src="/src/assets/icons/rightArrowIcon.svg" alt="" />
-        <span @click="toLink('link')">{{ spaceType === '个人' ? '个人知识库' : `${group_name}` }}</span>
+        <span @click="toLink('link')">{{ infoStore.currentSpaceType === '个人' ? '个人知识库' : `${group_name}` }}</span>
       </div>
       <div class="library-name">
         <div class="left">

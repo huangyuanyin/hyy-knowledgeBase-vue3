@@ -15,8 +15,8 @@ const props = defineProps({
 const emit = defineEmits(['closeDialog'])
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const spaceType = ref('')
 const linkDialogTitle = ref('添加链接')
 const dialogVisible = ref(false)
 const linkFormRef = ref<FormInstance>()
@@ -46,8 +46,7 @@ watch(
     } else {
       linkDialogTitle.value = '添加链接'
     }
-    spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
-    linkForm.space = spaceType.value === '个人' ? (localStorage.getItem('personalSpaceId') as string) : (route.query.sid as string)
+    linkForm.space = infoStore.currentSpaceType === '个人' ? (localStorage.getItem('personalSpaceId') as string) : (route.query.sid as string)
     linkForm.book = route.query.lid as string
     linkForm.parent = props.parent
   }

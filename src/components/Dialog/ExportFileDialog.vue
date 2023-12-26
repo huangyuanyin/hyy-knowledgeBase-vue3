@@ -12,13 +12,10 @@ const props = defineProps({
 
 const emit = defineEmits(['closeDialog'])
 
-const route = useRoute()
-const spaceType = ref('') // 空间类型
 const dialogVisible = ref(false)
 const fileTypeList = ref([])
 
 const initData = async () => {
-  spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
   switch (props.type) {
     case 'doc':
       fileTypeList.value = [

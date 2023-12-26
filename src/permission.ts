@@ -1,6 +1,10 @@
 import { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 
 export function setupRouterInterceptor(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
+  const infoStore = useInfoStore()
+  infoStore.setCurrentSidebar((to.meta.asideComponent as string) || '')
+  infoStore.setCurrentSpaceType(judegeSpaceType(to))
+
   if (to.path === '/login') {
     next()
   } else {
@@ -17,11 +21,26 @@ export function setupRouterInterceptor(to: RouteLocationNormalized, from: RouteL
     next()
   }
   if (to.path.includes('/recycles')) {
-    to.meta.asideComponent = from.meta.asideComponent || sessionStorage.getItem('currentSidebar')
+    to.meta.asideComponent = sessionStorage.getItem('currentSidebar')
     next()
   }
   if (to.path.includes('/search')) {
-    to.meta.asideComponent = from.meta.asideComponent || sessionStorage.getItem('currentSidebar')
+    to.meta.asideComponent = sessionStorage.getItem('currentSidebar')
     next()
+  }
+}
+
+function judegeSpaceType(to: any) {
+  const { asideComponent } = to.meta
+  switch (asideComponent) {
+    case 'SpaceSidebar':
+    case 'OrganizeSidebar':
+    case 'TeamSidebar':
+      return '组织'
+    case 'Sidebar':
+      return '个人'
+    case 'BookSidebar':
+    case 'DirectorySidebar':
+      return ['bookSetting', 'directory'].includes(to.path.split('/')[1]) ? '个人' : '组织'
   }
 }

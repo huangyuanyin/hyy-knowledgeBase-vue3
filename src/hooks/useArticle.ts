@@ -17,10 +17,10 @@ interface ArticleInfo {
 
 export const useArticle = () => {
   const route = Vrouter.currentRoute.value
+  const infoStore = useInfoStore()
   const dataStore = useDataStore()
   const refreshStroe = useRefreshStore()
   const space = ref<string>('')
-  const spaceType = ref<string>('')
   const spaceName = ref<string>('')
   const aid = Number(route.query.aid) // 当前文章id
   const ainfo = ref<ArticleInfo>({} as ArticleInfo) // 当前文章详情
@@ -36,9 +36,8 @@ export const useArticle = () => {
     新建分组: { type: 'title', title: '新建分组', body: '' }
   }
 
-  const { space: sid, spaceType: stype, spaceName: sname } = useData()
+  const { space: sid, spaceName: sname } = useData()
   space.value = sid.value
-  spaceType.value = stype.value
   spaceName.value = sname.value
 
   /**
@@ -129,9 +128,9 @@ export const useArticle = () => {
         await callback(true)
         setTimeout(() => {
           router.push({
-            path: `${spaceType.value === '个人' ? '' : `/${spaceName.value}`}/directory/${res.data.type}/${'edit'}`,
+            path: `${infoStore.currentSpaceType === '个人' ? '' : `/${spaceName.value}`}/directory/${res.data.type}/${'edit'}`,
             query: {
-              ...(spaceType.value === '个人' ? {} : spaceQuery),
+              ...(infoStore.currentSpaceType === '个人' ? {} : spaceQuery),
               ...query
             }
           })
@@ -187,13 +186,13 @@ export const useArticle = () => {
       ElMessage.success('删除成功')
       await getArticleList(Number(lid))
       if (id != aid && articleList.value.length) return
+      const basePath = infoStore.currentSpaceType === '个人' ? '' : `/${spaceName.value}`
       if (articleList.value.length === 0) {
         router.push({
-          path: `/${spaceName.value}/directory/index`,
+          path: `${basePath}/directory/index`,
           query
         })
       } else {
-        const basePath = spaceType.value === '个人' ? '' : `/${spaceName.value}`
         router.push({
           path: `${basePath}/directory/${res.data.parent_type}`,
           query: {
@@ -210,7 +209,6 @@ export const useArticle = () => {
 
   return {
     space: space.value,
-    spaceType: spaceType.value,
     ainfo,
     articleType,
     articleList,

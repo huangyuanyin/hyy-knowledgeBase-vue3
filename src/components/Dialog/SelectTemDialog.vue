@@ -12,7 +12,6 @@ const props = defineProps({
 const emit = defineEmits(['closeDialog'])
 
 const route = useRoute()
-const spaceType = ref('')
 const dialogVisible = ref(false)
 const templateType = ref('null')
 const temList = ref([])
@@ -37,7 +36,6 @@ watch(
   (newVal: boolean) => {
     dialogVisible.value = newVal
     if (newVal) {
-      spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
       getArticleTem({ template_type: 'template' })
     }
   }

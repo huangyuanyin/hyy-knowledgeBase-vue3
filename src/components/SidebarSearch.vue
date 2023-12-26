@@ -11,7 +11,7 @@ const props = defineProps({
 })
 
 const route = useRoute()
-const spaceType = ref('') // 当前空间类型
+const infoStore = useInfoStore()
 const spaceId = ref('') // 当前空间id
 const bookId = ref('') // 当前知识库id
 const isShowLinkDialog = ref(false)
@@ -21,8 +21,7 @@ const isSearchDialog = ref(false)
 const bookListDialogTitle = ref('')
 
 watchEffect(() => {
-  spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
-  spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
+  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
   bookId.value = route.query.lid as string
 })
 

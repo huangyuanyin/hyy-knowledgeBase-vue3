@@ -54,7 +54,7 @@ const initData = () => {
   spaceId.value = route.query.sid as string
   state.currentSpaceName = route.query.sname || ''
   isSpaceAdmin.value = sessionStorage.getItem('isSpaceAdmin')
-  if (sessionStorage.getItem('currentSidebar') === 'SpaceSidebar') {
+  if (infoStore.currentSidebar === 'SpaceSidebar') {
     icon.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon || '/src/assets/icons/spaceIcon.svg'
   }
 }
@@ -93,7 +93,7 @@ const toLink = (type, val?) => {
           sid: val.id
         }
       })
-      if (sessionStorage.getItem('currentSidebar') === 'Sidebar') return
+      if (infoStore.currentSidebar === 'Sidebar') return
       // fix 切换空间，左侧常用列表不刷新
       setTimeout(() => {
         location.reload()

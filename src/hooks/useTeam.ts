@@ -9,13 +9,11 @@ export const useTeam = () => {
   const route = Vrouter.currentRoute.value
   const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
   const space = ref<string>('')
-  const spaceType = ref<string>('')
   const spaceName = ref<string>('')
   const teamList = ref<Array<any>>([])
 
-  const { space: sid, spaceType: stype, spaceName: sname } = useData()
+  const { space: sid, spaceName: sname } = useData()
   space.value = sid.value
-  spaceType.value = stype.value
   spaceName.value = sname.value
 
   /**

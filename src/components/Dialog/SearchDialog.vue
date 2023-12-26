@@ -18,6 +18,7 @@ const emit = defineEmits(['closeDialog'])
 
 const route = useRoute()
 const router = useRouter()
+const infoStore = useInfoStore()
 const visible = ref<boolean>(false)
 const value = ref<string>('')
 const selectId = ref<string>('')
@@ -56,7 +57,7 @@ watch(
   (newVal: boolean) => {
     visible.value = newVal
     if (newVal) {
-      const { spaceType, space, spaceIcon } = useData()
+      const { space, spaceIcon } = useData()
       if (route.path.includes('/search')) {
         value.value = route.query.q ? (route.query.q as string) : ''
         selectId.value = `${route.query.scope_id}${route.query.scope_name}`
@@ -65,7 +66,7 @@ watch(
           String(JSON.parse(sessionStorage.getItem('currentSpaceInfo'))?.id || JSON.parse(localStorage.getItem('personalSpaceInfo')).id) + list.value[0].children[0].name
       }
       handleBookList()
-      if (spaceType.value === '组织') {
+      if (infoStore.currentSpaceType === '组织') {
         handleTeamList()
       } else {
         list.value[0].children[0].id = space.value
@@ -128,9 +129,9 @@ function handleKeyPress(event) {
 }
 
 function navigateToSearch(type, val) {
-  const { spaceType, spaceName } = useData()
+  const { spaceName } = useData()
   router.push({
-    path: `${spaceType.value === '个人' ? '' : `/${spaceName.value}`}/search`,
+    path: `${infoStore.currentSpaceType === '个人' ? '' : `/${spaceName.value}`}/search`,
     query: {
       sid: route.query.sid,
       sname: route.query.sname,

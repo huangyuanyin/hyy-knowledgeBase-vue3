@@ -6,7 +6,8 @@ export interface SidebarInfo {
 
 export const useInfoStore = defineStore('info', () => {
   const personalSpaceId = ref(JSON.parse(localStorage.getItem('personalSpaceId')) || null)
-  const currentSidebar = ref(sessionStorage.getItem('currentSidebar') || '')
+  const currentSidebar = ref(sessionStorage.getItem('currentSidebar') || '') // 当前侧边栏类型
+  const currentSpaceType = ref('') // 当前空间类型
   const currentMenu = ref('')
   const currentSpaceName = ref('')
   const currentSpaceInfo = ref<SidebarInfo>({
@@ -29,6 +30,10 @@ export const useInfoStore = defineStore('info', () => {
     sessionStorage.setItem('currentSidebar', currentSidebar.value)
   }
 
+  const setCurrentSpaceType = (val: string) => {
+    currentSpaceType.value = val
+  }
+
   const setCurrentSpaceName = (val: string) => {
     currentSpaceName.value = val
   }
@@ -43,6 +48,9 @@ export const useInfoStore = defineStore('info', () => {
 
     currentSidebar,
     setCurrentSidebar,
+
+    currentSpaceType,
+    setCurrentSpaceType,
 
     currentMenu,
     setCurrentMenu,

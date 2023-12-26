@@ -46,7 +46,6 @@ const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const icon = ref('')
-const spaceType = ref('')
 const state = reactive({
   headerActive: null,
   currentGroup: null,
@@ -75,8 +74,7 @@ const typeIcon = {
 watchEffect(() => {
   currentSpaceInfo.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')) || { icon: '' }
   currentSpaceName.value = route.path.split('/')[1]
-  spaceType.value = route.meta.asideComponent === 'SpaceSidebar' ? '组织' : '个人'
-  if (spaceType.value === '个人') {
+  if (infoStore.currentSpaceType === '个人') {
     icon.value = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar
   } else {
     icon.value = currentSpaceInfo.value.icon
@@ -348,7 +346,7 @@ const toExpandCollapse = (opera, type, data) => {
 }
 
 onMounted(async () => {
-  if (spaceType.value === '组织') {
+  if (infoStore.currentSpaceType === '组织') {
     await getSpacesDeatil()
   }
 })
@@ -416,9 +414,9 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-    <div class="divider" v-if="spaceType === '组织'"></div>
+    <div class="divider" v-if="infoStore.currentSpaceType === '组织'"></div>
     <div class="last-comp">
-      <div class="more-item" v-if="spaceType === '组织' && isAdmin" @click="toSpaceManager">
+      <div class="more-item" v-if="infoStore.currentSpaceType === '组织' && isAdmin" @click="toSpaceManager">
         <img :src="settingIcon" alt="" />
         <span>空间管理</span>
       </div>

@@ -9,9 +9,9 @@ import { getSpacesDetailApi } from '@/api/spaces'
 
 const route = useRoute()
 const router = useRouter()
+const infoStore = useInfoStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
-const spaceType = ref('')
 const spaceId = ref('')
 const spaceName = ref('')
 const groupId = ref('')
@@ -51,9 +51,8 @@ const sexList = [
 ]
 
 watchEffect(() => {
-  spaceType.value = route.path.split('/')[1] === 'bookSetting' ? '个人空间' : '组织空间'
   spaceName.value = route.path.split('/')[1]
-  spaceType.value === '个人空间' ? (spaceId.value = JSON.parse(localStorage.getItem('personalSpaceInfo')).id) : (spaceId.value = route.query.sid as string)
+  infoStore.currentSpaceType === '个人' ? (spaceId.value = JSON.parse(localStorage.getItem('personalSpaceInfo')).id) : (spaceId.value = route.query.sid as string)
   groupId.value = route.query.gid as string
   bookId.value = route.query.lid as string
 })
@@ -124,7 +123,7 @@ const getBookDetail = async () => {
     slug.value = res.data.slug
     name.value = res.data.name
     bookAdmin.value[0].name = res.data.creator_name
-    if (spaceType.value === '个人空间') {
+    if (infoStore.currentSpaceType === '个人') {
       memberData.value = [...bookAdmin.value]
     }
   } else {
@@ -192,7 +191,7 @@ const toChangeRole = (data, row) => {
 }
 
 onMounted(() => {
-  if (spaceType.value === '组织空间') {
+  if (infoStore.currentSpaceType === '组织') {
     getTeamMember()
     getSpacesDetail()
     getCollaborations()
@@ -209,8 +208,8 @@ onMounted(() => {
         <span>公开性</span>
         <el-radio-group v-model="publicType" class="publicityRadio" @change="toChangePublic">
           <el-radio label="0" size="large">仅协作者可访问</el-radio>
-          <el-radio v-if="spaceType === '组织空间'" label="1" size="large">团队所有成员可访问</el-radio>
-          <el-radio v-if="spaceType === '组织空间'" label="2" size="large">空间所有成员可访问</el-radio>
+          <el-radio v-if="infoStore.currentSpaceType === '组织'" label="1" size="large">团队所有成员可访问</el-radio>
+          <el-radio v-if="infoStore.currentSpaceType === '组织'" label="2" size="large">空间所有成员可访问</el-radio>
         </el-radio-group>
       </div>
       <div class="collaborator">
@@ -218,7 +217,7 @@ onMounted(() => {
           <span>知识库成员</span>
           <div>
             <el-input disabled placeholder="搜索成员"></el-input>
-            <el-button v-if="spaceType === '组织空间'" @click="isShowAddBookMemberDialog = true">添加</el-button>
+            <el-button v-if="infoStore.currentSpaceType === '组织'" @click="isShowAddBookMemberDialog = true">添加</el-button>
           </div>
         </div>
         <el-table :data="memberData" stripe style="width: 100%" min-height="100" max-height="80vh" v-loading="loadTable" element-loading-text="加载成员中...">

@@ -11,13 +11,12 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
 })
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const morePopverRef = ref(null)
-const spaceType = ref('')
 const spaceName = ref('')
 
 watchEffect(() => {
-  spaceType.value = sessionStorage.getItem('currentSidebar') === 'SpaceSidebar' ? '组织' : '个人'
-  spaceName.value = spaceType.value === '个人' ? '' : route.path.split('/')[1]
+  spaceName.value = infoStore.currentSpaceType === '个人' ? '' : route.path.split('/')[1]
 })
 
 const toHandle = (item) => {
@@ -28,8 +27,8 @@ const toHandle = (item) => {
       sname: route.query.sname
     }
     router.push({
-      path: spaceType.value === '个人' ? '/recycles' : `/${spaceName.value}/recycles`,
-      query: spaceType.value === '个人' ? null : { ...query }
+      path: infoStore.currentSpaceType === '个人' ? '/recycles' : `/${spaceName.value}/recycles`,
+      query: infoStore.currentSpaceType === '个人' ? null : { ...query }
     })
   }
 }
@@ -52,7 +51,7 @@ const toHandle = (item) => {
     <ul>
       <template v-for="(item, _index) in props.menuItems" :key="'menuItems' + _index">
         <li class="operation_detail_item" v-if="item.type === 'detailItem'" @click="toHandle(item)">
-          <img v-if="item.icon" :src="item.icon as string" alt="" />
+          <img v-if="item.icon" :src="item.icon" alt="" />
           <div>
             <span>{{ item.label }}</span>
             <p>{{ item.desc }}</p>

@@ -25,9 +25,9 @@ const props = defineProps({
 const emit = defineEmits(['closeDialog', 'recover'])
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
-const spaceType = ref('') // 当前空间类型
 const spaceId = ref(null) // 当前空间id
 const teamId = ref(null) // 团队id
 const bookId = ref(null) // 知识库id
@@ -51,17 +51,12 @@ watch(
     visible.value = newVal
     if (newVal) {
       props.title === '复制到...' ? (with_children.value = false) : (with_children.value = true)
-      if (route.meta.asideComponent === 'BookSidebar') {
-        spaceType.value = route.path.split('/')[1] === 'bookSetting' ? '个人' : '组织'
-      } else {
-        spaceType.value = route.path.split('/')[1] === 'directory' ? '个人' : '组织'
-      }
       if (visible.value && props.title !== '恢复文档') {
         await initData()
         await getTeams()
         await getBook()
       } else {
-        teamId.value = spaceType.value === '个人' ? localStorage.getItem('personalGroupId') : Number(route.query.gid) || props.data.group_id
+        teamId.value = infoStore.currentSpaceType === '个人' ? localStorage.getItem('personalGroupId') : Number(route.query.gid) || props.data.group_id
         getBook()
       }
     }
@@ -219,7 +214,7 @@ const getBook = async () => {
   let res = await getLibraryApi(params)
   if (res.code === 1000) {
     bookList.value = res.data || ([] as any)
-    if (teamId.value !== Number(route.query.gid) && spaceType.value === '组织') {
+    if (teamId.value !== Number(route.query.gid) && infoStore.currentSpaceType === '组织') {
       bookId.value = bookList.value.length > 0 ? bookList.value[0].id : null
     } else {
       bookId.value = props.data.book

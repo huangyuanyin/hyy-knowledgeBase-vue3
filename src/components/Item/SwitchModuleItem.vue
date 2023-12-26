@@ -16,8 +16,8 @@ const props = defineProps<{
 const emit = defineEmits(['getBookStacks'])
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const spaceType = ref('') // 当前空间类型
 const spaceId = ref('') // 当前空间id
 const groupId = ref('') // 当前团队id
 const moduleGenreLocal = ref(props.moduleGenre)
@@ -42,9 +42,8 @@ const addOperation = [
 ]
 
 watchEffect(() => {
-  sessionStorage.getItem('currentSidebar') === 'Sidebar' ? (spaceType.value = '个人') : (spaceType.value = '组织')
-  spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
-  groupId.value = spaceType.value === '个人' ? localStorage.getItem('personalGroupId') : (route.query.gid as string)
+  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
+  groupId.value = infoStore.currentSpaceType === '个人' ? localStorage.getItem('personalGroupId') : (route.query.gid as string)
 })
 
 const changeType = (type: string) => {

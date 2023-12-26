@@ -15,7 +15,7 @@ type RecycleData = {
 }
 
 const route = useRoute()
-const spaceType = ref('')
+const infoStore = useInfoStore()
 const spaceId = ref('')
 const showHandleArticleDialog = ref(false)
 const recycleData = ref([])
@@ -28,8 +28,7 @@ const contentType = ref({
 })
 
 watchEffect(() => {
-  spaceType.value = route.path.split('/')[1] === 'recycles' ? '个人' : '组织'
-  spaceId.value = spaceType.value === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
+  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
 })
 
 watch(

@@ -6,10 +6,10 @@ import { getLibraryApi } from '@/api/library'
 import { getQuickLinksApi } from '@/api/quickLinks'
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const dataStore = useDataStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
-const currentSidebar = ref(sessionStorage.getItem('currentSidebar')) // 当前类型：个人、公共
 const spaceId = ref('') // 当前空间id
 const personalGroupId = ref('') // 个人空间下的团队id
 const bookList = ref([]) // 当前空间下的知识库列表
@@ -35,7 +35,7 @@ watch(
   (newVal) => {
     if (newVal) {
       getBook()
-      if (currentSidebar.value === 'Sidebar') {
+      if (infoStore.currentSidebar === 'Sidebar') {
         getBookStacks()
       }
       setTimeout(() => {
@@ -46,8 +46,7 @@ watch(
 )
 
 watchEffect(() => {
-  currentSidebar.value = sessionStorage.getItem('currentSidebar')
-  if (currentSidebar.value === 'Sidebar') {
+  if (infoStore.currentSidebar === 'Sidebar') {
     spaceId.value = JSON.parse(localStorage.getItem('personalSpaceInfo')).id
   } else {
     spaceId.value = route.query.sid as string
@@ -117,7 +116,7 @@ const filterGroupFromPublic = (list) => {
 onMounted(async () => {
   await getBook()
   await getQuickLinks()
-  if (currentSidebar.value === 'Sidebar') {
+  if (infoStore.currentSidebar === 'Sidebar') {
     await getBookStacks()
   }
 })
@@ -130,7 +129,7 @@ onMounted(async () => {
     <div class="library_box">
       <div class="libraryList">
         <SwitchModuleItem
-          v-if="currentSidebar === 'Sidebar'"
+          v-if="infoStore.currentSidebar === 'Sidebar'"
           :moduleType="'operation'"
           :moduleGenre="'my'"
           :moduleGenreData="[
@@ -176,7 +175,7 @@ onMounted(async () => {
             </div>
           </template>
         </SwitchModuleItem>
-        <LibraryTable v-if="currentSidebar === 'Sidebar'" title="知识库" :commonList="commonList" :group="bookGroup" @getBookStacks="getBookStacks" />
+        <LibraryTable v-if="infoStore.currentSidebar === 'Sidebar'" title="知识库" :commonList="commonList" :group="bookGroup" @getBookStacks="getBookStacks" />
         <TableComp v-else :header="['名称', '归属', '创建人', '更新时间', '']" type="library" :data="filterGroupFromPublic(bookList)" />
         <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
       </div>

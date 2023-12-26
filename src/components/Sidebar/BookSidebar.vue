@@ -28,6 +28,7 @@ const menuList = [
   }
 ]
 const route = useRoute()
+const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
 const router = useRouter()
 const currentBookInfo = ref({
@@ -36,11 +37,9 @@ const currentBookInfo = ref({
   icon: ''
 })
 const currentMenu = ref('basic')
-const spaceType = ref('') // 当前空间类型
 const loading = ref(false)
 
 const init = () => {
-  spaceType.value = route.path.split('/')[1] === 'bookSetting' ? '个人' : '团队'
   currentBookInfo.value = JSON.parse(sessionStorage.getItem('currentBookInfo') as string) || {
     id: '',
     name: '',
@@ -91,7 +90,7 @@ const getBookDetail = async (id) => {
 const toBack = () => {
   const query = route.query
   router.push({
-    path: spaceType.value === '个人' ? `/directory/index` : `/${route.path.split('/')[1]}/directory/index`,
+    path: infoStore.currentSpaceType === '个人' ? `/directory/index` : `/${route.path.split('/')[1]}/directory/index`,
     query: { ...query }
   })
 }
