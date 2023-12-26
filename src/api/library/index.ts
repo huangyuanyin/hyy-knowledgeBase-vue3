@@ -5,7 +5,7 @@ export function getLibraryApi(params: libraryParams) {
   return http.get<libraryRes>('books/', { params }, 'base')
 }
 
-export function getLibraryDetailApi(id?: number) {
+export function getLibraryDetailApi(id: number) {
   return http.get<libraryRes>(`books/${id}/`, {}, 'base')
 }
 

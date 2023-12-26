@@ -6,7 +6,6 @@ import trashIcon from '@/assets/icons/teamSetting/trash.svg'
 import teamInfoIcon from '@/assets/icons/teamSetting/teamInfo.svg'
 import permissionsIcon from '@/assets/icons/teamSetting/permissions.svg'
 import setIcon from '@/assets/icons/teamSetting/set.svg'
-import { getLibraryDetailApi } from '@/api/library'
 
 const menuList = [
   {
@@ -59,32 +58,18 @@ watchEffect(() => {
   }
 })
 
-watch(
-  () => route.query.lid,
-  (newVal) => {
-    if (newVal && newVal != currentBookInfo.value.id) {
-      loading.value = true
-      nextTick(() => {
-        getBookDetail(newVal)
-      })
-    }
-  },
-  {
-    immediate: true
-  }
-)
+onMounted(() => {
+  loading.value = true
+  getBookDetail(route.query.lid)
+})
 
 const getBookDetail = async (id) => {
-  let res = await getLibraryDetailApi(id)
-  if (res.code === 1000) {
-    nextTick(() => {
-      sessionStorage.setItem('currentBookInfo', JSON.stringify(res.data))
-      currentBookInfo.value = JSON.parse(sessionStorage.getItem('currentBookInfo') as string)
+  useBook().getBookInfo(id, (res: any) => {
+    if (Reflect.ownKeys(res).length) {
+      currentBookInfo.value = res
       loading.value = false
-    })
-  } else {
-    ElMessage.error(res.msg)
-  }
+    }
+  })
 }
 
 const toBack = () => {

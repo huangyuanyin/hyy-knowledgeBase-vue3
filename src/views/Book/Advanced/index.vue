@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { getLibraryDetailApi } from '@/api/library'
-
 const route = useRoute()
 const router = useRouter()
 const refreshStroe = useRefreshStore()
@@ -39,20 +37,19 @@ const toMove = () => {
 }
 
 const getBooksDetail = async (id) => {
-  let res = await getLibraryDetailApi(id)
-  if (res.code === 1000) {
-    const { id, name, slug, space, group, stack } = res.data as any
-    Object.assign(deleteInfo.value, {
-      id,
-      name,
-      slug,
-      space,
-      group,
-      stack
-    })
-  } else {
-    ElMessage.error(res.msg)
-  }
+  useBook().getBookInfo(id, (res: any) => {
+    if (Reflect.ownKeys(res).length) {
+      const { id, name, slug, space, group, stack } = res as any
+      Object.assign(deleteInfo.value, {
+        id,
+        name,
+        slug,
+        space,
+        group,
+        stack
+      })
+    }
+  })
 }
 
 onMounted(() => {

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { getLibraryDetailApi } from '@/api/library'
 import { directoryIndexOperationData } from '@/data/data'
 import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
 
@@ -56,14 +55,14 @@ const toMark = () => {
     }
     useCollect().addCollect(params, (res) => {
       if (Reflect.ownKeys(res).length) {
-        getBookDetail(bookId.value)
+        getBookDetail()
       }
     })
   }
 }
 
 const cancelMark = () => {
-  getBookDetail(bookId.value)
+  getBookDetail()
 }
 
 const toShare = () => {
@@ -86,11 +85,15 @@ const toUpdateBulletin = () => {
     name,
     public: p
   }
-  useBook().editBook(bookId.value, params, (res: BookInfo) => {
+  useBook().editBook(Number(bookId.value), params, (res: BookInfo) => {
     if (Reflect.ownKeys(res).length) {
       ElMessage.success('更新成功')
       isEdit.value = false
-      getBookDetail(res.id)
+      useBook().getBookInfo(res.id, (res: any) => {
+        if (Reflect.ownKeys(res).length) {
+          getBookDetail()
+        }
+      })
     }
   })
 }
@@ -101,15 +104,9 @@ const toDeleteBook = () => {
   deleteInfo.value = item
 }
 
-const getBookDetail = async (id) => {
-  let res = await getLibraryDetailApi(id)
-  if (res.code === 1000) {
-    sessionStorage.setItem('currentBookInfo', JSON.stringify(res.data))
-    currentBookInfo.value = res.data as any
-    bookBulletin.value = res.data.body
-  } else {
-    ElMessage.error(res.msg)
-  }
+const getBookDetail = async () => {
+  currentBookInfo.value = JSON.parse(sessionStorage.getItem('currentBookInfo'))
+  bookBulletin.value = JSON.parse(sessionStorage.getItem('currentBookInfo')).body
 }
 
 // 跳转到文章详情
@@ -127,7 +124,7 @@ const toArticleDetail = (val) => {
 }
 
 onMounted(() => {
-  getBookDetail(bookId.value)
+  getBookDetail()
 })
 </script>
 

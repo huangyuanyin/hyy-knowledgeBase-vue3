@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import cover from '@/assets/img/cover.png'
-import { editLibraryApi, getLibraryDetailApi } from '@/api/library'
+import { editLibraryApi } from '@/api/library'
 import { FormInstance, FormRules } from 'element-plus'
 
 interface BookForm {
@@ -65,18 +65,16 @@ const editLibrary = async (params, id) => {
 }
 
 const getBooksDetail = async (id) => {
-  let res = await getLibraryDetailApi(id)
-  if (res.code === 1000) {
-    bookForm.name = (res.data as any).name
-    bookForm.slug = (res.data as any).slug
-    bookForm.description = (res.data as any).description
-    bookForm.icon = (res.data as any).icon
-    bookForm.group = (res.data as any).group
-    bookForm.stacks = (res.data as any).stacks
-    sessionStorage.setItem('currentBookInfo', JSON.stringify(res.data))
-  } else {
-    ElMessage.error(res.msg)
-  }
+  useBook().getBookInfo(id, (res: any) => {
+    if (Reflect.ownKeys(res).length) {
+      bookForm.name = (res as any).name
+      bookForm.slug = (res as any).slug
+      bookForm.description = (res as any).description
+      bookForm.icon = (res as any).icon
+      bookForm.group = (res as any).group
+      bookForm.stacks = (res as any).stacks
+    }
+  })
 }
 
 const uploadImg = () => {

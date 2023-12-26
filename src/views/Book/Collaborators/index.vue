@@ -2,7 +2,7 @@
 import spaceIcon from '@/assets/icons/spaceIcon.svg'
 import teamIcon from '@/assets/icons/teamIcon.svg'
 import imgIcon from '@/assets/img/img.jpg'
-import { getLibraryDetailApi, editLibraryApi } from '@/api/library'
+import { editLibraryApi } from '@/api/library'
 import { getCollaborationsApi, deleteCollaborationsApi } from '@/api/collaborations'
 import { getTeamMemberApi } from '@/api/member'
 import { getSpacesDetailApi } from '@/api/spaces'
@@ -114,21 +114,20 @@ const getCollaborations = async () => {
 }
 
 const getBookDetail = async () => {
-  const res = await getLibraryDetailApi(Number(bookId.value))
-  if (res.code === 1000) {
-    publicType.value = res.data.public
-    spaceId.value = res.data.space
-    groupId.value = String(res.data.group)
-    stacksId.value = res.data.stacks
-    slug.value = res.data.slug
-    name.value = res.data.name
-    bookAdmin.value[0].name = res.data.creator_name
-    if (infoStore.currentSpaceType === '个人') {
-      memberData.value = [...bookAdmin.value]
+  useBook().getBookInfo(Number(bookId.value), (res: any) => {
+    if (Reflect.ownKeys(res).length) {
+      publicType.value = res.public
+      spaceId.value = res.space
+      groupId.value = String(res.group)
+      stacksId.value = res.stacks
+      slug.value = res.slug
+      name.value = res.name
+      bookAdmin.value[0].name = res.creator_name
+      if (infoStore.currentSpaceType === '个人') {
+        memberData.value = [...bookAdmin.value]
+      }
     }
-  } else {
-    ElMessage.error(res.msg)
-  }
+  })
 }
 
 const editBook = async (params) => {

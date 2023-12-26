@@ -1,9 +1,13 @@
 import { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 
-export function setupRouterInterceptor(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
+export async function setupRouterInterceptor(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
   const infoStore = useInfoStore()
   infoStore.setCurrentSidebar((to.meta.asideComponent as string) || '')
   infoStore.setCurrentSpaceType(judegeSpaceType(to))
+  if (infoStore.currentSidebar === 'DirectorySidebar') {
+    if (!sessionStorage.getItem('currentBookInfo') || JSON.parse(sessionStorage.getItem('currentBookInfo')).id !== Number(to.query.lid))
+      await useBook().getBookInfo(Number(to.query.lid))
+  }
 
   if (to.path === '/login') {
     next()

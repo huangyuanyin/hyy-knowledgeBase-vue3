@@ -2,7 +2,6 @@
 import NoPermission from '@/views/NoPermission/index.vue'
 import { getCollaborationsApi, getArticleCollaborationsApi } from '@/api/collaborations'
 // import { getTeamMemberApi } from '@/api/member'
-import { getLibraryDetailApi } from '@/api/library'
 import CommentDrawer from '@/components/Drawer/CommentDrawer/index.vue'
 import { addMarksApi } from '@/api/marks'
 
@@ -233,12 +232,11 @@ const getArticleCollaborations = async () => {
 }
 
 const getLibraryDetail = async () => {
-  let res = await getLibraryDetailApi(Number(route.query.lid))
-  if (res.code === 1000) {
-    publicType.value = res.data.public
-  } else {
-    ElMessage.error(res.msg)
-  }
+  useBook().getBookInfo(Number(route.query.lid), (res: any) => {
+    if (Reflect.ownKeys(res).length) {
+      publicType.value = res.public
+    }
+  })
 }
 
 const openDrawer = (val) => {

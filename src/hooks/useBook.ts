@@ -1,4 +1,4 @@
-import { editLibraryApi, getLibraryApi } from '@/api/library'
+import { editLibraryApi, getLibraryApi, getLibraryDetailApi } from '@/api/library'
 
 interface BookParams {
   space?: string
@@ -13,6 +13,20 @@ interface CallbackFunction {
 export const useBook = () => {
   const user = (JSON.parse(localStorage.getItem('userInfo')) || {}).username || ''
   const bookList = ref<Array<any>>([])
+
+  /**
+   * 获取知识库详情
+   * @param {number} id 知识库id
+   */
+  const getBookInfo = async (id: number, callback?: CallbackFunction) => {
+    let res = await getLibraryDetailApi(id)
+    if (res.code === 1000) {
+      sessionStorage.setItem('currentBookInfo', JSON.stringify(res.data))
+      callback && (await callback(res.data))
+    } else {
+      ElMessage.error(res.msg)
+    }
+  }
 
   /**
    * 获取知识库列表
@@ -42,7 +56,7 @@ export const useBook = () => {
    * @param {object} params 知识库信息
    * @param {function} callback 回调函数
    */
-  const editBook = async (id, params, callback: CallbackFunction) => {
+  const editBook = async (id: number, params: object, callback: CallbackFunction) => {
     let res = await editLibraryApi(params, id)
     if (res.code === 1000) {
       callback(res.data)
@@ -51,5 +65,5 @@ export const useBook = () => {
     }
   }
 
-  return { bookList, getBookList, editBook }
+  return { bookList, getBookList, editBook, getBookInfo }
 }
