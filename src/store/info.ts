@@ -28,11 +28,12 @@ export interface BookInfo {
 
 export const useInfoStore = defineStore('info', () => {
   const personalSpaceId = ref(JSON.parse(localStorage.getItem('personalSpaceId')) || null)
-  const currentSidebar = ref(sessionStorage.getItem('currentSidebar') || '') // 当前侧边栏类型
-  const currentSpaceType = ref('') // 当前空间类型
+  const currentSidebar = ref<string>(sessionStorage.getItem('xinAn-sidebar') || '') // 当前侧边栏类型
+  const currentSpaceType = ref<string>('') // 当前空间类型
   const currentTeamInfo = ref(JSON.parse(sessionStorage.getItem('xinAn-teamInfo') || '{}')) // 当前团队信息
   const currentSpaceInfo = ref<SpaceInfo>(JSON.parse(sessionStorage.getItem('xinAn-spaceInfo') || '{}')) // 当前空间信息
   const currentBookInfo = ref<BookInfo>(JSON.parse(sessionStorage.getItem('xinAn-bookInfo') || '{}')) // 当前知识库信息
+  const isSpaceAdmin = ref<string>(sessionStorage.getItem('xinAn-spaceAdmin')) // 是否是当前空间管理员
   const currentMenu = ref('')
   const currentSpaceName = ref('')
 
@@ -47,7 +48,7 @@ export const useInfoStore = defineStore('info', () => {
 
   const setCurrentSidebar = (val: string) => {
     currentSidebar.value = val
-    sessionStorage.setItem('currentSidebar', val)
+    sessionStorage.setItem('xinAn-sidebar', val)
   }
 
   const setCurrentSpaceType = (val: string) => {
@@ -73,6 +74,11 @@ export const useInfoStore = defineStore('info', () => {
     sessionStorage.setItem('xinAn-bookInfo', JSON.stringify(val))
   }
 
+  const setIsSpaceAdmin = (val: string) => {
+    isSpaceAdmin.value = val
+    sessionStorage.setItem('xinAn-spaceAdmin', val)
+  }
+
   return {
     personalSpaceId,
     setPersonalSpaceId,
@@ -96,6 +102,9 @@ export const useInfoStore = defineStore('info', () => {
     setCurrentSpaceInfo,
 
     currentBookInfo,
-    setCurrentBookInfo
+    setCurrentBookInfo,
+
+    isSpaceAdmin,
+    setIsSpaceAdmin
   }
 })

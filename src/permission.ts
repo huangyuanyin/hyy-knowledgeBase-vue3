@@ -43,11 +43,11 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
     next()
   }
   if (to.path.includes('/recycles')) {
-    to.meta.asideComponent = sessionStorage.getItem('currentSidebar')
+    to.meta.asideComponent = sessionStorage.getItem('xinAn-sidebar')
     next()
   }
   if (to.path.includes('/search')) {
-    to.meta.asideComponent = sessionStorage.getItem('currentSidebar')
+    to.meta.asideComponent = sessionStorage.getItem('xinAn-sidebar')
     next()
   }
 }

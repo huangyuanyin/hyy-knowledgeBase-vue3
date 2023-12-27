@@ -32,7 +32,7 @@ export const useSpace = () => {
         }
       })
       infoStore.setCurrentSpaceInfo(res.data)
-      sessionStorage.setItem('isSpaceAdmin', String(spaceAdmin.value))
+      infoStore.setIsSpaceAdmin(String(spaceAdmin.value))
       callback && (await callback(res.data))
     } else {
       ElMessage.error(res.msg)

@@ -20,7 +20,6 @@ const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem(
 const spaceId = ref('') // 当前空间id
 const isShowsSpaceDialog = ref(false)
 const changeSpacePopverRef = ref<any>(null)
-const isSpaceAdmin = ref() // 是否是当前空间管理员
 const spacesList = ref([])
 const spaces = ref([
   {
@@ -53,7 +52,6 @@ const state = reactive({
 const initData = () => {
   spaceId.value = route.query.sid as string
   state.currentSpaceName = route.query.sname || ''
-  isSpaceAdmin.value = sessionStorage.getItem('isSpaceAdmin')
   if (infoStore.currentSidebar === 'SpaceSidebar') {
     icon.value = infoStore.currentSpaceInfo.icon || '/src/assets/icons/spaceIcon.svg'
   }
@@ -175,7 +173,7 @@ const toLink = (type, val?) => {
             </div>
           </div>
           <div class="card-content">
-            <div class="content" v-if="isSpaceAdmin == 'true'">
+            <div class="content" v-if="infoStore.isSpaceAdmin == 'true'">
               <!-- <div class="type">
                 <span>标准版</span>
                 <span>升级</span>
@@ -214,7 +212,7 @@ const toLink = (type, val?) => {
         <div v-for="(item, index) in spaceReverse" :key="'spaces' + index">
           <div class="space_wrap">
             <h4>{{ item.type === 'personal' ? '个人' : '空间' }}</h4>
-            <div class="menuItem_wrap" :style="{ 'max-height': isSpaceAdmin == 'true' ? '312px' : '364px' }">
+            <div class="menuItem_wrap" :style="{ 'max-height': infoStore.isSpaceAdmin == 'true' ? '312px' : '364px' }">
               <div class="menuItem" v-for="space in item.list" :key="space.id" @click="toLink(item.type, item.type === 'personal' ? null : space)">
                 <div class="left">
                   <div class="img">

@@ -52,7 +52,6 @@ const state = reactive({
 })
 const currentSpaceName = ref(route.path.split('/')[1])
 const isShowsDeleteDialog = ref(false)
-const isAdmin = ref(sessionStorage.getItem('isSpaceAdmin') === 'true' ? true : false)
 const deleteInfo = ref<{
   id?: string
   name?: string
@@ -383,7 +382,7 @@ onMounted(async () => {
     </div>
     <div class="divider" v-if="infoStore.currentSpaceType === '组织'"></div>
     <div class="last-comp">
-      <div class="more-item" v-if="infoStore.currentSpaceType === '组织' && isAdmin" @click="toSpaceManager">
+      <div class="more-item" v-if="infoStore.currentSpaceType === '组织' && infoStore.isSpaceAdmin === 'true'" @click="toSpaceManager">
         <img :src="settingIcon" alt="" />
         <span>空间管理</span>
       </div>
