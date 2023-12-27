@@ -4,7 +4,7 @@ export function getArticleTreeApi(id: string | Number) {
   return http.get<ArticleRes>(`article_tree/${id}/`, {}, 'base')
 }
 
-export function getArticleApi(id: Number) {
+export function getArticleApi(id: number) {
   return http.get<ArticleRes>(`articles/${id}/`, {}, 'base')
 }
 

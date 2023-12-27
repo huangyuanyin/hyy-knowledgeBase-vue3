@@ -5,6 +5,11 @@ interface article {
   space: string
   creator: string
   update_datetime: string
+  body: string
+  type: string
+  mark_id: number
+  tag_mark: string
+  marked: boolean
   [key: string]: any
 }
 

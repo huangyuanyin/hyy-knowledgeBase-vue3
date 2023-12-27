@@ -6,7 +6,7 @@ interface ArticleType {
 }
 
 interface CallbackFunction {
-  (success: boolean): void
+  (success: object | boolean | string): void
 }
 
 interface ArticleInfo {
@@ -57,13 +57,18 @@ export const useArticle = () => {
 
   /**
    * 获取文章详情
-   * @param {Number} articleId   当前文章id
+   * @param {number} articleId   当前文章id
+   * @param {CallbackFunction} callback 回调函数
    */
-  const getArticleDetail = async (articleId: Number) => {
+  const getArticleDetail = async (articleId: number, callback?: CallbackFunction) => {
     let res = await getArticleApi(articleId)
     if (res.code === 1000) {
+      await infoStore.setCurrentArticleInfo(res.data)
       await (ainfo.value = res.data as any)
+      callback && (await callback(res.data))
     } else {
+      await infoStore.setCurrentArticleInfo('无权限')
+      res.code === 1003 && (await callback('无权限'))
       ElMessage.error(res.msg)
     }
   }

@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import { getArticleApi } from '@/api/article'
 import Container from '../Components/Container.vue'
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
 const myIframe = ref(null)
-const isHasPermissionCode = ref(true)
 const isLoading = ref(false)
 const modelValue = ref('')
 const isPublish = ref(false)
@@ -63,18 +62,14 @@ const toPublish = (val) => {
 
 const getArticle = async (aid) => {
   isLoading.value = true
-  const res = await getArticleApi(aid)
-  isLoading.value = false
-  isHasPermissionCode.value = res.code === 1003 ? false : true
-  if (res.code === 1000) {
+  useArticle().getArticleDetail(aid, (res: any) => {
+    isLoading.value = false
     isPublish.value = false
-    modelValue.value = res.data.body
+    modelValue.value = res.body
     setTimeout(() => {
       sendMessageToIframe()
     }, 0)
-  } else {
-    ElMessage.error(res.msg)
-  }
+  })
 }
 
 const sendMessageToIframe = () => {
@@ -104,7 +99,7 @@ onUnmounted(() => {
 
 <template>
   <div class="MindMap_wrap">
-    <Container :content="modelValue" :isHasPermission="isHasPermissionCode" :isPublish="isPublish" @toPublish="toPublish">
+    <Container :content="modelValue" :isHasPermission="typeof infoStore.currentArticleInfo === 'object'" :isPublish="isPublish" @toPublish="toPublish">
       <iframe v-if="!isLoading && iframeSrc" class="iframe" ref="myIframe" name="myIframe" :src="iframeSrc" frameborder="0" width="100%" height="100%"></iframe>
     </Container>
   </div>

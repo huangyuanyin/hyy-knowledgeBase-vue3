@@ -3,13 +3,13 @@ import docSet from '@/assets/icons/drawer/docSet.svg'
 import fullScreen from '@/assets/icons/drawer/fullScreen.svg'
 import saveTem from '@/assets/icons/drawer/saveTem.svg'
 import historyVersion from '@/assets/icons/drawer/historyVersion.svg'
-// import reviewIcon from '@/assets/icons/reviewIcon.svg'
 import exportIcon from '@/assets/icons/drawer/export.svg'
 import copyIcon from '@/assets/icons/drawer/copy.svg'
 import moveIcon from '@/assets/icons/drawer/move.svg'
 import deleteIcon from '@/assets/icons/drawer/delete.svg'
 import operationIcon from '@/assets/icons/drawer/operation.svg'
 import infoIcon from '@/assets/icons/drawer/info.svg'
+import { ArticleInfo } from '@/store/info'
 
 const props = defineProps({
   drawer: {
@@ -22,6 +22,7 @@ const props = defineProps({
   }
 })
 
+const infoStore = useInfoStore()
 const drawerTab = ref('operation')
 const operationItems = [
   { icon: docSet, text: '文档设置', type: 'label' },
@@ -30,20 +31,19 @@ const operationItems = [
   { icon: saveTem, text: '另存为模板', type: 'label' },
   { icon: historyVersion, text: '另存为版本', type: 'label' },
   { icon: historyVersion, text: '查看已存版本', type: 'label' },
-  // { icon: reviewIcon, text: '评审', type: 'label' },
   { icon: exportIcon, text: '导出...', type: 'label' },
   { icon: copyIcon, text: '复制...', type: 'label' },
   { icon: moveIcon, text: '移动...', type: 'label' },
   { icon: deleteIcon, text: '删除...', type: 'label' }
 ]
-const infoItems = ref([
-  { icon: '/src/assets/icons/drawer/count.svg', text: '字数', value: '暂未统计', type: 'label' },
+const infoItems = ref<any>([
+  { icon: '/src/assets/icons/drawer/count.svg', text: '字数', value: `${(infoStore.currentArticleInfo as ArticleInfo).counts} 字`, type: 'label' },
   { icon: historyVersion, text: '历史版本', value: '暂未统计', type: 'label' },
-  { text: '创建时间', value: '暂未统计', type: 'label' },
-  { text: '更新时间', value: '暂未统计', type: 'label' },
-  { icon: '/src/assets/icons/drawer/author.svg', text: '作者', value: '暂未统计', type: 'label' },
+  { text: '创建时间', value: `${(infoStore.currentArticleInfo as ArticleInfo).create_datetime}`, type: 'label' },
+  { text: '更新时间', value: `${(infoStore.currentArticleInfo as ArticleInfo).update_datetime}`, type: 'label' },
+  { icon: '/src/assets/icons/drawer/author.svg', text: '作者', value: (infoStore.currentArticleInfo as ArticleInfo).creator_name, type: 'label' },
   { type: 'hr' },
-  { icon: '/src/assets/icons/drawer/views.svg', text: '阅读数', value: '暂未统计', type: 'label' },
+  { icon: '/src/assets/icons/drawer/views.svg', text: '阅读数', value: `${(infoStore.currentArticleInfo as ArticleInfo).views} 次`, type: 'label' },
   { icon: '/src/assets/icons/drawer/comment.svg', text: '评论数', value: '暂未统计', type: 'label' },
   { icon: '/src/assets/icons/drawer/like.svg', text: '点赞数', value: '暂未统计', type: 'label' }
 ])
@@ -52,12 +52,7 @@ const isSaveHistoryVersionDialog = ref(false)
 const isHistoryVersionDialog = ref(false)
 
 watchEffect(() => {
-  if (props.drawer) {
-    drawerTab.value = 'operation'
-    infoItems.value[2].value = props.info.create_datetime
-    infoItems.value[3].value = props.info.update_datetime
-    infoItems.value[4].value = props.info.creator
-  }
+  props.drawer && (drawerTab.value = 'operation')
 })
 
 const handleClick = (tab) => {
@@ -91,7 +86,7 @@ const toHandle = (data) => {
         </template>
         <div class="operate-wrap">
           <div class="list">
-            <template v-for="item in operationItems">
+            <template v-for="(item, _index) in operationItems" :key="'operationItems' + _index">
               <div v-if="item.type === 'label'" :class="['item', item.text === '删除...' ? 'delete' : '']" @click="toHandle(item)">
                 <img :src="item.icon" alt="" />
                 <div>{{ item.text }}</div>
@@ -106,10 +101,10 @@ const toHandle = (data) => {
           <img :src="infoIcon" alt="" />
         </template>
         <div class="info-wrap">
-          <template v-for="item in infoItems">
+          <template v-for="(item, _index) in infoItems" :key="'infoItems' + _index">
             <div v-if="item.type === 'label'" class="item">
               <div class="item-left">
-                <img v-if="item.icon" :src="(item.icon as string)" alt="" />
+                <img v-if="item.icon" :src="item.icon" alt="" />
                 <span v-else></span>
                 {{ item.text }}
               </div>

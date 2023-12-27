@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { getMineBookApi } from '@/api/library'
-import { useArticle } from '@/hooks/useArticle'
 
 const props = defineProps({
   show: {

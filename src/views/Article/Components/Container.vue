@@ -4,6 +4,7 @@ import { getCollaborationsApi, getArticleCollaborationsApi } from '@/api/collabo
 // import { getTeamMemberApi } from '@/api/member'
 import CommentDrawer from '@/components/Drawer/CommentDrawer/index.vue'
 import { addMarksApi } from '@/api/marks'
+import { ArticleInfo } from '@/store/info'
 
 const props = defineProps({
   content: {
@@ -29,13 +30,6 @@ const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem(
 const isEdit = ref(false)
 const moreFeaturesDrawer = ref(false) // 更多功能抽屉
 const commentDrawer = ref(false) // 评论抽屉
-const moreFeaturesDrawerInfo = ref({
-  public: '',
-  marked: false,
-  type: '',
-  mark_id: '',
-  tag_mark: ''
-}) // 更多功能抽屉tab
 const spaceId = ref('') // 当前空间id
 const publicType = ref('') // 知识库的公开性
 const selectUserList = ref([]) // 可协作人员列表
@@ -99,11 +93,6 @@ watchEffect(() => {
     editArticle()
     moreFeaturesDrawer.value = false
   }
-  nextTick(() => {
-    if (route.path.includes('/directory') && !route.path.includes('/directory/index')) {
-      getArticle()
-    }
-  })
 })
 
 // 发布文章
@@ -122,7 +111,6 @@ const toHandle = (item: any) => {
     case '分享':
       // const url = window.location.href
       // useCopy(url, '分享链接')
-      getArticle()
       break
     case '发布':
       if (route.path.includes('ppt') || route.path.includes('mind')) {
@@ -144,7 +132,7 @@ const toHandle = (item: any) => {
       break
     case '已收藏':
     case '收藏':
-      if (!moreFeaturesDrawerInfo.value.marked) {
+      if (!(infoStore.currentArticleInfo as ArticleInfo).marked) {
         addMarks()
       }
       break
@@ -156,7 +144,7 @@ const toHandle = (item: any) => {
 
 const addMarks = async () => {
   const params = {
-    target_type: moreFeaturesDrawerInfo.value.type,
+    target_type: (infoStore.currentArticleInfo as ArticleInfo).type,
     target_id: route.query.aid as string,
     space: route.query.sid as string
   }
@@ -243,9 +231,6 @@ const openDrawer = (val) => {
   if (val === 'more') {
     moreFeaturesDrawer.value = !moreFeaturesDrawer.value
     commentDrawer.value = false
-    if (moreFeaturesDrawer.value) {
-      getArticle()
-    }
   } else {
     commentDrawer.value = !commentDrawer.value
     moreFeaturesDrawer.value = false
@@ -253,16 +238,7 @@ const openDrawer = (val) => {
 }
 
 const getArticle = async () => {
-  const { ainfo, getArticleDetail } = useArticle()
-  await getArticleDetail(Number(route.query.aid))
-  moreFeaturesDrawerInfo.value = ainfo.value as any
-  if (moreFeaturesDrawerInfo.value.marked) {
-    itemList.value[0].label = '已收藏'
-    itemList.value[0].icon = '/src/assets/icons/startIcon_select.svg'
-  } else {
-    itemList.value[0].label = '收藏'
-    itemList.value[0].icon = '/src/assets/icons/article/starIcon.svg'
-  }
+  useArticle().getArticleDetail(Number(route.query.aid))
 }
 
 const toCloseDrawer = () => {
@@ -282,7 +258,7 @@ const toCloseDrawer = () => {
         </div>
         <div class="header_right">
           <div class="item" v-for="(item, index) in itemList" :key="'itemList' + index">
-            <StarPopver @cancelMark="cancelMark" :startId="moreFeaturesDrawerInfo.mark_id" :tag_mark="moreFeaturesDrawerInfo.tag_mark" type="article">
+            <StarPopver @cancelMark="cancelMark" :startId="infoStore.currentArticleInfo.mark_id" :tag_mark="infoStore.currentArticleInfo.tag_mark" type="article">
               <span v-if="item.label === '收藏' || item.label === '已收藏'" @click="toHandle(item)"> <img :src="item.icon" alt="" /></span>
             </StarPopver>
             <el-tooltip effect="dark" :content="item.label" placement="bottom" :show-arrow="false">
@@ -297,7 +273,7 @@ const toCloseDrawer = () => {
             </el-tooltip>
           </div>
           <div class="button" v-for="(item, index) in buttonList" :key="'buttonList' + index">
-            <SharePopver :aInfo="moreFeaturesDrawerInfo">
+            <SharePopver :aInfo="infoStore.currentArticleInfo">
               <el-button v-if="item.label === '分享'" :type="item.type" @click="toHandle(item)">{{ item.label }}</el-button>
             </SharePopver>
             <el-button v-if="item.label !== '分享'" :type="item.type" @click="toHandle(item)">{{ item.label }}</el-button>
@@ -313,12 +289,12 @@ const toCloseDrawer = () => {
       </el-header>
       <el-main class="body">
         <slot></slot>
-        <MoreFeaturesDrawer :drawer="moreFeaturesDrawer" :info="moreFeaturesDrawerInfo" />
+        <MoreFeaturesDrawer :drawer="moreFeaturesDrawer" :info="infoStore.currentArticleInfo" />
         <CommentDrawer :drawer="commentDrawer" @toCloseDrawer="toCloseDrawer" />
       </el-main>
     </el-container>
   </div>
-  <NoPermission v-else type="article" />
+  <NoPermission v-if="typeof infoStore.currentArticleInfo === 'string'" type="article" />
 </template>
 
 <style lang="scss" scoped>

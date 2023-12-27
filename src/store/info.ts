@@ -1,4 +1,4 @@
-export interface SpaceInfo {
+interface SpaceInfo {
   id: number
   spacename: string
   spacekey: string
@@ -9,7 +9,7 @@ export interface SpaceInfo {
   members: any[]
 }
 
-export interface BookInfo {
+interface BookInfo {
   id: number
   name: string
   icon: string
@@ -26,6 +26,19 @@ export interface BookInfo {
   creator: string
 }
 
+export interface ArticleInfo {
+  body: string
+  type: string
+  mark_id: number
+  tag_mark: string
+  marked: boolean
+  counts: number
+  views: number
+  creator_name: string
+  create_datetime: string
+  update_datetime: string
+}
+
 export const useInfoStore = defineStore('info', () => {
   const personalSpaceId = ref(JSON.parse(localStorage.getItem('personalSpaceId')) || null)
   const currentSidebar = ref<string>(sessionStorage.getItem('xinAn-sidebar') || '') // 当前侧边栏类型
@@ -33,16 +46,13 @@ export const useInfoStore = defineStore('info', () => {
   const currentTeamInfo = ref(JSON.parse(sessionStorage.getItem('xinAn-teamInfo') || '{}')) // 当前团队信息
   const currentSpaceInfo = ref<SpaceInfo>(JSON.parse(sessionStorage.getItem('xinAn-spaceInfo') || '{}')) // 当前空间信息
   const currentBookInfo = ref<BookInfo>(JSON.parse(sessionStorage.getItem('xinAn-bookInfo') || '{}')) // 当前知识库信息
+  const currentArticleInfo = ref<ArticleInfo | string>() // 当前文章信息
   const isSpaceAdmin = ref<string>(sessionStorage.getItem('xinAn-spaceAdmin')) // 是否是当前空间管理员
   const currentMenu = ref<string>('') // 当前菜单名称
 
   const setPersonalSpaceId = (val: number) => {
     personalSpaceId.value = val
     localStorage.setItem('personalSpaceId', JSON.stringify(val))
-  }
-
-  const setCurrentMenu = (val: string) => {
-    currentMenu.value = val
   }
 
   const setCurrentSidebar = (val: string) => {
@@ -69,9 +79,17 @@ export const useInfoStore = defineStore('info', () => {
     sessionStorage.setItem('xinAn-bookInfo', JSON.stringify(val))
   }
 
+  const setCurrentArticleInfo = (val: ArticleInfo | string) => {
+    currentArticleInfo.value = val
+  }
+
   const setIsSpaceAdmin = (val: string) => {
     isSpaceAdmin.value = val
     sessionStorage.setItem('xinAn-spaceAdmin', val)
+  }
+
+  const setCurrentMenu = (val: string) => {
+    currentMenu.value = val
   }
 
   return {
@@ -95,6 +113,9 @@ export const useInfoStore = defineStore('info', () => {
 
     currentBookInfo,
     setCurrentBookInfo,
+
+    currentArticleInfo,
+    setCurrentArticleInfo,
 
     isSpaceAdmin,
     setIsSpaceAdmin

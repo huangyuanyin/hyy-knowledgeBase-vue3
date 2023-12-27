@@ -1,13 +1,12 @@
 <script lang="ts" setup>
-import { getArticleApi } from '@/api/article'
 import Container from '../Components/Container.vue'
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const isUpdate = ref(false)
 const aid = ref(route.query.aid as string)
 const modelValue = ref('')
 const isPreview = ref(true)
-const isHasPermissionCode = ref(true)
 
 watch(
   () => route.query.aid,
@@ -33,17 +32,16 @@ watchEffect(() => {
 })
 
 const getArticle = async () => {
-  const res = await getArticleApi(Number(aid.value))
-  isHasPermissionCode.value = res.code === 1003 ? false : true
-  if (res.code === 1000) {
+  useArticle().getArticleDetail(Number(route.query.aid), (res: any) => {
     isUpdate.value = false
-    modelValue.value = res.data.body
-    setTimeout(() => {
-      isUpdate.value = true
-    }, 200)
-  } else {
-    ElMessage.error(res.msg)
-  }
+    if (typeof res === 'string') return
+    if (Reflect.ownKeys(res).length) {
+      modelValue.value = res.body
+      setTimeout(() => {
+        isUpdate.value = true
+      }, 200)
+    }
+  })
 }
 
 onMounted(() => {
@@ -57,7 +55,7 @@ onBeforeMount(() => {
 
 <template>
   <div class="Doc_wrap">
-    <Container :content="modelValue" :isHasPermission="isHasPermissionCode">
+    <Container :content="modelValue" :isHasPermission="typeof infoStore.currentArticleInfo === 'object'">
       <TinyMCE v-if="isUpdate && !isPreview" v-model="modelValue" :readonly="isPreview" />
       <MavonEditor v-if="isPreview" :html="modelValue" />
     </Container>

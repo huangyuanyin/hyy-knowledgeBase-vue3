@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import { getArticleApi } from '@/api/article'
 import Container from '../Components/Container.vue'
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const modelValue = ref('')
 const pptIframe = ref(null)
-const isHasPermissionCode = ref(true)
 const isPreview = ref(false)
 const isLoading = ref(false)
 const isPublish = ref(false)
@@ -34,17 +33,13 @@ const toPublish = (val) => {
 
 const getArticle = async (aid) => {
   isLoading.value = true
-  const res = await getArticleApi(aid)
-  isHasPermissionCode.value = res.code === 1003 ? false : true
-  isLoading.value = false
-  if (res.code === 1000) {
+  useArticle().getArticleDetail(aid, (res: any) => {
+    isLoading.value = false
     isPublish.value = false
     setTimeout(() => {
-      sendMessageToIframe(res.data.body)
+      sendMessageToIframe(res.body)
     }, 0)
-  } else {
-    ElMessage.error(res.msg)
-  }
+  })
 }
 
 const sendMessageToIframe = (data) => {
@@ -74,7 +69,7 @@ onUnmounted(() => {
 
 <template>
   <div class="PPT_wrap">
-    <Container :content="modelValue" :isHasPermission="isHasPermissionCode" :isPublish="isPublish" @toPublish="toPublish">
+    <Container :content="modelValue" :isHasPermission="typeof infoStore.currentArticleInfo === 'object'" :isPublish="isPublish" @toPublish="toPublish">
       <iframe v-if="!isLoading" class="iframe" ref="pptIframe" :src="iframeSrc" frameborder="0" width="100%" height="100%" allowfullscreen="true"></iframe>
     </Container>
   </div>

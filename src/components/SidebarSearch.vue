@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { menuItemsData } from '@/data/data'
 import { MenuItem } from '@/type/operationPopoverType'
-import { useArticle } from '@/hooks/useArticle'
 
 const props = defineProps({
   menuItems: {

@@ -3,7 +3,6 @@
 </template>
 
 <script lang="ts" setup>
-import { getArticleApi } from '@/api/article'
 import { initData } from '@/components/Excel/data'
 import LuckySheet from 'luckysheet'
 
@@ -107,18 +106,15 @@ const handleCreateSheet = async (isDestory?: boolean) => {
 }
 
 const getArticleTree = async () => {
-  const res = await getArticleApi(route.query.aid as string)
-  if (res.code === 1000) {
-    if (res.data.body === '') {
+  useArticle().getArticleDetail(Number(route.query.aid), (res: any) => {
+    if (res.body === '') {
       excelBody.value = JSON.parse(initData)
     } else {
-      excelBody.value = JSON.parse(res.data.body) || JSON.parse(initData)
+      excelBody.value = JSON.parse(res.body) || JSON.parse(initData)
     }
     previewConfig.value.data = excelBody.value
     editConfig.value.data = excelBody.value
-  } else {
-    ElMessage.error(res.msg)
-  }
+  })
 }
 
 onMounted(async () => {

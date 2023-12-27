@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 import { Base64 } from 'js-base64'
-import { getArticleApi } from '@/api/article'
 import NoPermission from '@/views/NoPermission/index.vue'
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const aid = ref(route.query.aid)
 const iframeSrc = ref('')
-const isHasPermissionCode = ref(true)
 
 watch(
   () => route.query.aid,
@@ -19,14 +18,10 @@ watch(
 )
 
 const getArticle = async (aid) => {
-  const res = await getArticleApi(aid)
-  isHasPermissionCode.value = res.code === 1003 ? false : true
-  if (res.code === 1000) {
-    let url = 'http://10.4.150.56:8012/onlinePreview?url=' + encodeURIComponent(Base64.encode(res.data.body))
+  useArticle().getArticleDetail(aid, (res: any) => {
+    let url = 'http://10.4.150.56:8012/onlinePreview?url=' + encodeURIComponent(Base64.encode(res.body))
     iframeSrc.value = url
-  } else {
-    ElMessage.error(res.msg)
-  }
+  })
 }
 
 onMounted(() => {
@@ -35,8 +30,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <iframe class="iframe" :src="iframeSrc" frameborder="0" width="100%" height="100%" v-if="isHasPermissionCode"></iframe>
-  <NoPermission v-else type="article" />
+  <iframe class="iframe" :src="iframeSrc" frameborder="0" width="100%" height="100%" v-if="typeof infoStore.currentArticleInfo === 'object'"></iframe>
+  <NoPermission v-if="typeof infoStore.currentArticleInfo === 'string'" type="article" />
 </template>
 
 <style lang="scss" scoped></style>
