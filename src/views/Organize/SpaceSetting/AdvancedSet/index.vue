@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { getSpacesDetailApi } from '@/api/spaces/index'
-
-const route = useRoute()
+const infoStore = useInfoStore()
 const isShowsDeleteDialog = ref(false)
 const deleteInfo = ref<{
   id?: string
@@ -11,19 +9,11 @@ const deleteInfo = ref<{
 
 const toDeleteSpace = () => {
   isShowsDeleteDialog.value = true
-  getSpacesDeatil()
-}
-
-const getSpacesDeatil = async () => {
-  let res = await getSpacesDetailApi(Number(route.query.sid))
-  if (res.code === 1000) {
-    deleteInfo.value = {
-      id: String(res.data.id),
-      name: res.data.spacename,
-      slug: res.data.spacekey
-    }
-  } else {
-    ElMessage.error(res.msg)
+  const { id, spacename, spacekey } = infoStore.currentSpaceInfo
+  deleteInfo.value = {
+    id: String(id),
+    name: spacename,
+    slug: spacekey
   }
 }
 </script>

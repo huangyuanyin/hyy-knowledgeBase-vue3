@@ -2,16 +2,17 @@
 import { organizeMenu } from '@/data/data'
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
 const expandedNodes = ref([])
 const icon = ref('')
 
 watchEffect(() => {
   nextTick(() => {
-    icon.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon
+    icon.value = infoStore.currentSpaceInfo.icon
   })
   if (refreshStore.isRefreshSpaceSet) {
-    icon.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon
+    icon.value = infoStore.currentSpaceInfo.icon
     refreshStore.isRefreshSpaceSet = false
   }
 })

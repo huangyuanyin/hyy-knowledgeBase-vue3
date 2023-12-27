@@ -44,9 +44,7 @@ export const useData = () => {
     space.value = value
     spaceName.value = infoStore.currentSpaceType === '个人' ? '' : route.path.split('/')[1]
     spaceIcon.value =
-      infoStore.currentSpaceType === '个人'
-        ? 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar
-        : JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon || ''
+      infoStore.currentSpaceType === '个人' ? 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar : infoStore.currentSpaceInfo.icon || ''
   }
 
   /**

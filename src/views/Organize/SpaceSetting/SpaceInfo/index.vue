@@ -2,7 +2,7 @@
 import spaceIcon2 from '@/assets/icons/spaceIcon.svg'
 import { FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
-import { getSpacesDetailApi, editSpacesApi } from '@/api/spaces/index'
+import { editSpacesApi } from '@/api/spaces/index'
 import { spaceIcon } from '@/data/iconBase64'
 
 interface SpaceForm {
@@ -15,6 +15,7 @@ interface SpaceForm {
 
 const route = useRoute()
 const router = useRouter()
+const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
 const icon = ref('')
 const spaceId = ref(Number(route.query.sid) || null)
@@ -39,7 +40,7 @@ const rules = reactive<FormRules<SpaceForm>>({
 
 watchEffect(() => {
   nextTick(() => {
-    icon.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon || spaceIcon2
+    icon.value = infoStore.currentSpaceInfo.icon || spaceIcon2
   })
 })
 
@@ -73,24 +74,24 @@ const editSpaces = async (params, id) => {
         sid: spaceId.value
       }
     })
-    sessionStorage.setItem('currentSpaceInfo', JSON.stringify(res.data))
+    infoStore.setCurrentSpaceInfo(res.data)
     refreshStore.setRefreshSpaceSet(true)
   } else {
     ElMessage.error(res.msg)
   }
 }
 
-const getDetailSpaces = async (id: number) => {
-  let res = await getSpacesDetailApi(id)
-  spaceForm.spacename = res.data.spacename
-  spaceForm.spacekey = 'http://10.4.150.55:8080/' + res.data.spacekey + '/dashboard'
-  spaceForm.spacetype = res.data.spacetype
-  spaceForm.description = res.data.description
-  spaceForm.icon = res.data.icon
+const getDetailSpaces = async () => {
+  const { spacename, spacekey, spacetype, description, icon } = infoStore.currentSpaceInfo
+  spaceForm.spacename = spacename
+  spaceForm.spacekey = 'http://10.4.150.55:8080/' + spacekey + '/dashboard'
+  spaceForm.spacetype = spacetype
+  spaceForm.description = description
+  spaceForm.icon = icon
 }
 
 onMounted(() => {
-  getDetailSpaces(spaceId.value)
+  getDetailSpaces()
 })
 </script>
 

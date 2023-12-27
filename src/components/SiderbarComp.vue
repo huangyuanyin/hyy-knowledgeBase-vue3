@@ -6,7 +6,6 @@ import moreIcon2 from '@/assets/icons/moreIcon2.svg'
 import { libraryOperationData, teamOperationData, moreOperationData, menuItemsData, spaceMenuItemsData } from '@/data/data'
 import { MenuItem } from '@/type/operationPopoverType'
 import { contentItemsData, moreMenuItemsData } from '@/data/data'
-import { getSpacesDetailApi } from '@/api/spaces/index'
 import { deleteQuickLinksApi } from '@/api/quickLinks'
 // import { getTeamMemberApi } from '@/api/member'
 
@@ -49,11 +48,7 @@ const icon = ref('')
 const state = reactive({
   headerActive: null,
   currentGroup: null,
-  currentSpace: infoStore.currentSpaceInfo.nickname || route.path.split('/')[1],
   operatData: []
-})
-const currentSpaceInfo = ref({
-  icon: ''
 })
 const currentSpaceName = ref(route.path.split('/')[1])
 const isShowsDeleteDialog = ref(false)
@@ -72,12 +67,11 @@ const typeIcon = {
 }
 
 watchEffect(() => {
-  currentSpaceInfo.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')) || { icon: '' }
   currentSpaceName.value = route.path.split('/')[1]
   if (infoStore.currentSpaceType === '个人') {
     icon.value = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar
   } else {
-    icon.value = currentSpaceInfo.value.icon
+    icon.value = infoStore.currentSpaceInfo.icon
   }
 })
 
@@ -95,11 +89,7 @@ watch(
 watch(
   () => route.path,
   async () => {
-    if (
-      JSON.parse(sessionStorage.getItem('currentSpaceInfo')) &&
-      currentSpaceName.value !== JSON.parse(sessionStorage.getItem('currentSpaceInfo')).spacekey &&
-      route.meta.asideComponent === 'SpaceSidebar'
-    ) {
+    if (infoStore.currentSpaceInfo && currentSpaceName.value !== infoStore.currentSpaceInfo.spacekey && route.meta.asideComponent === 'SpaceSidebar') {
       nextTick(async () => {
         await getSpacesDeatil()
       })
@@ -126,12 +116,6 @@ watch(
           state.headerActive = null
           break
       }
-      infoStore.setCurrentSpaceInfo({
-        nickname: infoStore.currentSpaceName || route.path.split('/')[1],
-        name: route.query.sname.toString(),
-        id: Number(route.query.sid)
-        // icon: ''
-      })
     } else {
       state.operatData = menuItemsData
       infoStore.currentMenu === 'library' ? (state.headerActive = 0) : (state.headerActive = null)
@@ -187,7 +171,7 @@ const handleClickLibrary = (val: any) => {
         break
       case 'SpaceSidebar':
         router.push({
-          path: `/${state.currentSpace}/directory/index`,
+          path: `/${infoStore.currentSpaceInfo.spacekey}/directory/index`,
           query: {
             ...query,
             gid: val.group_id,
@@ -203,7 +187,7 @@ const handleClickLibrary = (val: any) => {
 
 const toBook = (val) => {
   router.push({
-    path: `/${state.currentSpace}/team/book`,
+    path: `/${infoStore.currentSpaceInfo.spacekey}/team/book`,
     query: {
       sid: route.query.sid,
       sname: route.query.sname,
@@ -215,7 +199,7 @@ const toBook = (val) => {
 
 const toTopic = (val) => {
   router.push({
-    path: `/${state.currentSpace}/team/topic`,
+    path: `/${infoStore.currentSpaceInfo.spacekey}/team/topic`,
     query: {
       sid: route.query.sid,
       sname: route.query.sname,
@@ -312,27 +296,10 @@ const toPermission = (val) => {
 }
 
 const getSpacesDeatil = async () => {
-  let res = await getSpacesDetailApi(Number(route.query.sid))
-  if (res.code === 1000) {
-    // 循环res.data，找到item.permusername等于JSON.parse(localStorage.getItem('user')).userInfo.username的项，判断item.permtype是否为0，是则isAdmin为true,否则为false，找到则中止循环
-    res.data.members.map((item) => {
-      if (item.permusername === user) {
-        if (item.permtype === '0') {
-          isAdmin.value = true
-        } else {
-          isAdmin.value = false
-        }
-      }
-    })
-    if (res.data.creator === user) {
-      isAdmin.value = true
-    }
-    sessionStorage.setItem('currentSpaceInfo', JSON.stringify(res.data))
-    sessionStorage.setItem('isSpaceAdmin', isAdmin.value.toString())
-    icon.value = res.data.icon
-  } else {
-    ElMessage.error(res.msg)
-  }
+  useSpace().getSpaceInfo(Number(route.query.sid), (res: any) => {
+    if (Reflect.ownKeys(res).length === 0) return
+    icon.value = res.icon
+  })
 }
 
 const toExpandCollapse = (opera, type, data) => {

@@ -15,8 +15,11 @@ interface Spaces {
   id: number
   spacename: string
   spacekey: string
+  spacetype: string
   icon: string
+  description: string
   creator: string
+  members: any[]
   [key: string]: any
 }
 

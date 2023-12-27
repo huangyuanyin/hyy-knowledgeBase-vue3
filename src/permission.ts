@@ -22,6 +22,14 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
     }
   }
 
+  // 判断是否需要重新获取空间信息
+  if (
+    !sessionStorage.getItem('xinAn-spaceInfo') ||
+    (sessionStorage.getItem('xinAn-spaceInfo') && JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).id !== Number(to.query.sid))
+  ) {
+    await useSpace().getSpaceInfo(Number(to.query.sid))
+  }
+
   if (to.path === '/login') {
     next()
   } else {

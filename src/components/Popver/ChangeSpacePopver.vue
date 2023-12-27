@@ -55,7 +55,7 @@ const initData = () => {
   state.currentSpaceName = route.query.sname || ''
   isSpaceAdmin.value = sessionStorage.getItem('isSpaceAdmin')
   if (infoStore.currentSidebar === 'SpaceSidebar') {
-    icon.value = JSON.parse(sessionStorage.getItem('currentSpaceInfo')).icon || '/src/assets/icons/spaceIcon.svg'
+    icon.value = infoStore.currentSpaceInfo.icon || '/src/assets/icons/spaceIcon.svg'
   }
 }
 

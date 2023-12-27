@@ -1,7 +1,12 @@
 export interface SidebarInfo {
-  nickname: string
-  name: string
   id: number
+  spacename: string
+  spacekey: string
+  spacetype: string
+  icon: string
+  description: string
+  creator: string
+  members: any[]
 }
 
 export const useInfoStore = defineStore('info', () => {
@@ -9,17 +14,13 @@ export const useInfoStore = defineStore('info', () => {
   const currentSidebar = ref(sessionStorage.getItem('currentSidebar') || '') // 当前侧边栏类型
   const currentSpaceType = ref('') // 当前空间类型
   const currentTeamInfo = ref(JSON.parse(sessionStorage.getItem('xinAn-teamInfo') || '{}')) // 当前团队信息
+  const currentSpaceInfo = ref<SidebarInfo>(JSON.parse(sessionStorage.getItem('xinAn-spaceInfo') || '{}')) // 当前空间信息
   const currentMenu = ref('')
   const currentSpaceName = ref('')
-  const currentSpaceInfo = ref<SidebarInfo>({
-    nickname: '',
-    name: '',
-    id: 0
-  })
 
   const setPersonalSpaceId = (val: number) => {
     personalSpaceId.value = val
-    localStorage.setItem('personalSpaceId', JSON.stringify(personalSpaceId.value))
+    localStorage.setItem('personalSpaceId', JSON.stringify(val))
   }
 
   const setCurrentMenu = (val: string) => {
@@ -28,7 +29,7 @@ export const useInfoStore = defineStore('info', () => {
 
   const setCurrentSidebar = (val: string) => {
     currentSidebar.value = val
-    sessionStorage.setItem('currentSidebar', currentSidebar.value)
+    sessionStorage.setItem('currentSidebar', val)
   }
 
   const setCurrentSpaceType = (val: string) => {
@@ -37,7 +38,7 @@ export const useInfoStore = defineStore('info', () => {
 
   const setCurrentTeamInfo = (val: any) => {
     currentTeamInfo.value = val
-    sessionStorage.setItem('xinAn-teamInfo', JSON.stringify(currentTeamInfo.value))
+    sessionStorage.setItem('xinAn-teamInfo', JSON.stringify(val))
   }
 
   const setCurrentSpaceName = (val: string) => {
@@ -46,6 +47,7 @@ export const useInfoStore = defineStore('info', () => {
 
   const setCurrentSpaceInfo = (val: SidebarInfo) => {
     currentSpaceInfo.value = val
+    sessionStorage.setItem('xinAn-spaceInfo', JSON.stringify(val))
   }
 
   return {

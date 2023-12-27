@@ -5,7 +5,6 @@ import imgIcon from '@/assets/img/img.jpg'
 import { editLibraryApi } from '@/api/library'
 import { getCollaborationsApi, deleteCollaborationsApi } from '@/api/collaborations'
 import { getTeamMemberApi } from '@/api/member'
-import { getSpacesDetailApi } from '@/api/spaces'
 
 const route = useRoute()
 const router = useRouter()
@@ -163,12 +162,11 @@ const getTeamMember = async () => {
 }
 
 const getSpacesDetail = async () => {
-  const res = await getSpacesDetailApi(spaceId.value)
-  if (res.code === 1000) {
-    teamInfo.value[0].member = res.data.members.filter((it) => it.permtype !== '1').length + 1
-  } else {
-    ElMessage.error(res.msg)
-  }
+  useSpace().getSpaceInfo(Number(spaceId.value), (res: any) => {
+    if (Reflect.ownKeys(res).length === 0) return
+    const { members } = res
+    teamInfo.value[0].member = members.filter((it) => it.permtype !== '1').length + 1
+  })
 }
 
 function getSelected(row) {
