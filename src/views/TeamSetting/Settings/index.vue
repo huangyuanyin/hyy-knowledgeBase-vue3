@@ -1,3 +1,47 @@
+<script lang="ts" setup>
+const infoStore = useInfoStore()
+const optionsList = [
+  {
+    label: '动态',
+    desc: '开启后可展示本团队内文档、任务、话题等的更新动态，方面成员获取重要信息，提高协同效率。',
+    value: true
+  },
+  {
+    label: '话题知识库',
+    desc: '开启后成员可聚焦话题展开讨论，在线异步交流。',
+    value: true
+  },
+  {
+    label: '资源知识库',
+    desc: '开启后成员可分享和交流设计稿、图片或本地文件等，用于管理图片和文件资源。',
+    value: false
+  },
+  {
+    label: '任务',
+    desc: '开启后可用于管理团队事务，可帮助团队有序规划、执行和跟进任务。',
+    value: false
+  }
+]
+const isShowsDeleteDialog = ref<boolean>(false)
+const deleteInfo = ref<{
+  id?: number
+  name?: string
+  slug?: string
+}>({})
+
+const toDeleteTeam = async () => {
+  const { id, groupname, groupkey } = infoStore.currentTeamInfo
+  deleteInfo.value.id = id
+  deleteInfo.value.name = groupname
+  deleteInfo.value.slug = groupkey
+  isShowsDeleteDialog.value = true
+}
+
+const toChangeStatus = (item) => {
+  ElMessage.warning('暂不支持自定义')
+}
+</script>
+
 <template>
   <div class="Settings_wrap">
     <div class="header">更多设置</div>
@@ -31,61 +75,6 @@
   </div>
   <DeleteDialog title="删除团队" :isShow="isShowsDeleteDialog" :deleteInfo="deleteInfo" @closeDialog="isShowsDeleteDialog = false" />
 </template>
-
-<script lang="ts" setup>
-import { getGroupsDetailApi } from '@/api/groups/index'
-
-const route = useRoute()
-const optionsList = [
-  {
-    label: '动态',
-    desc: '开启后可展示本团队内文档、任务、话题等的更新动态，方面成员获取重要信息，提高协同效率。',
-    value: true
-  },
-  {
-    label: '话题知识库',
-    desc: '开启后成员可聚焦话题展开讨论，在线异步交流。',
-    value: true
-  },
-  {
-    label: '资源知识库',
-    desc: '开启后成员可分享和交流设计稿、图片或本地文件等，用于管理图片和文件资源。',
-    value: false
-  },
-  {
-    label: '任务',
-    desc: '开启后可用于管理团队事务，可帮助团队有序规划、执行和跟进任务。',
-    value: false
-  }
-]
-const isShowsDeleteDialog = ref(false)
-const deleteInfo = ref<{
-  id?: string
-  name?: string
-  slug?: string
-}>({})
-
-const toDeleteTeam = async () => {
-  await getGroupsDetail(route.query.gid)
-  isShowsDeleteDialog.value = true
-}
-
-const getGroupsDetail = async (id: number) => {
-  let res = await getGroupsDetailApi(id)
-  if (res.code === 1000) {
-    deleteInfo.value.id = res.data.id
-    deleteInfo.value.name = res.data.groupname
-    deleteInfo.value.slug = res.data.groupkey
-    console.log(`output->`)
-  } else {
-    ElMessage.error(res.msg)
-  }
-}
-
-const toChangeStatus = (item) => {
-  ElMessage.warning('暂不支持自定义')
-}
-</script>
 
 <style lang="scss" scoped>
 .Settings_wrap {

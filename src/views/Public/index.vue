@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import publicTagIcon from '@/assets/icons/publicTagIcon.svg'
 import { getBookStacksApi } from '@/api/bookstacks'
-import { getGroupsDetailApi } from '@/api/groups'
 import { getLibraryApi } from '@/api/library'
 import { getQuickLinksApi } from '@/api/quickLinks'
 
@@ -104,12 +103,11 @@ const getLibrary = async () => {
 }
 
 const getGroupsDetail = async () => {
-  let res = await getGroupsDetailApi(Number(groupId.value))
-  if (res.code === 1000) {
-    groupInfo.value = res.data
-  } else {
-    ElMessage.error(res.msg)
-  }
+  useTeam().getTeamInfo(Number(groupId.value), (res: any) => {
+    if (Reflect.ownKeys(res).length) {
+      groupInfo.value = res
+    }
+  })
 }
 
 onMounted(async () => {

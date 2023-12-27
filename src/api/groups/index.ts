@@ -4,7 +4,7 @@ export function getGroupsApi(params: groupsParams) {
   return http.get<groupsRes>('space/groups/', { params }, 'base')
 }
 
-export function getGroupsDetailApi(id?: number) {
+export function getGroupsDetailApi(id: number) {
   return http.get<groupsRes>(`space/groups/${id}/`, {}, 'base')
 }
 

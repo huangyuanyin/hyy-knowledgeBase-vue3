@@ -4,16 +4,10 @@ import permissionsIcon from '@/assets/icons/teamSetting/permissions.svg'
 import setIcon from '@/assets/icons/teamSetting/set.svg'
 import trashIcon from '@/assets/icons/teamSetting/trash.svg'
 import arrowRightIcon from '@/assets/icons/arrowRightIcon.svg'
-import { getGroupsDetailApi } from '@/api/groups'
 
 const route = useRoute()
 const router = useRouter()
-const refreshStore = useRefreshStore()
-const currentTeamInfo = ref({
-  id: '',
-  groupname: '',
-  icon: ''
-})
+const infoStore = useInfoStore()
 const currentMenu = ref('basic')
 const menuList = [
   {
@@ -32,18 +26,6 @@ const menuList = [
 
 watchEffect(() => {
   currentMenu.value = route.path.split('/')[3]
-  if (route.query.gid && JSON.parse(sessionStorage.getItem('currentTeamInfo') as string).id == route.query.gid) {
-    currentTeamInfo.value = JSON.parse(sessionStorage.getItem('currentTeamInfo') as string)
-  } else {
-    nextTick(async () => {
-      await getGroupsDetail()
-      currentTeamInfo.value = JSON.parse(sessionStorage.getItem('currentTeamInfo') as string)
-    })
-  }
-  if (refreshStore.isRefreshTeamSet) {
-    currentTeamInfo.value = JSON.parse(sessionStorage.getItem('currentTeamInfo') as string)
-    refreshStore.setRefreshTeamSet(false)
-  }
 })
 
 const toBack = () => {
@@ -71,16 +53,6 @@ const toLink = (item: any) => {
     }
   })
 }
-
-// 获取团队详情
-const getGroupsDetail = async () => {
-  let res = await getGroupsDetailApi(Number(route.query.gid))
-  if (res.code === 1000) {
-    sessionStorage.setItem('currentTeamInfo', JSON.stringify(res.data))
-  } else {
-    ElMessage.error(res.msg)
-  }
-}
 </script>
 
 <template>
@@ -88,8 +60,8 @@ const getGroupsDetail = async () => {
     <div class="back" @click="toBack">
       <img :src="arrowRightIcon" alt="" />
       <span>
-        <img class="teamIcon" :src="currentTeamInfo.icon" alt="" />
-        {{ currentTeamInfo.groupname }}
+        <img class="teamIcon" :src="infoStore.currentTeamInfo.icon" alt="" />
+        {{ infoStore.currentTeamInfo.groupname }}
       </span>
     </div>
     <h4>团队管理</h4>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
-import { getGroupsDetailApi, editGroupsApi } from '@/api/groups/index'
+import { editGroupsApi } from '@/api/groups/index'
 
 interface TeamForm {
   space: string
@@ -13,8 +13,9 @@ interface TeamForm {
 
 const route = useRoute()
 const router = useRouter()
+const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
-const groupId = ref(Number(route.query.gid) || null)
+const groupId = ref<number>(null)
 const teamFormRef = ref<FormInstance>()
 const teamForm = reactive<TeamForm>({
   space: route.query.sid as string,
@@ -29,16 +30,6 @@ const rules = reactive<FormRules<TeamForm>>({
     { min: 2, max: 50, message: '请输入团队名称，长度在 2-50 之间', trigger: 'blur' }
   ]
 })
-
-// const toUploadImg = (uploadFile) => {
-//   if (uploadFile) {
-//     const reader = new FileReader()
-//     reader.onload = (event) => {
-//       teamForm.icon = event.target?.result
-//     }
-//     reader.readAsDataURL(uploadFile['raw'])
-//   }
-// }
 
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
@@ -63,21 +54,8 @@ const editGroups = async (params, id) => {
         gid: route.query.gid
       }
     })
-    sessionStorage.setItem('currentTeamInfo', JSON.stringify(res.data))
+    infoStore.setCurrentTeamInfo(res.data)
     refreshStore.setRefreshTeamSet(true)
-  } else {
-    ElMessage.error(res.msg)
-  }
-}
-
-const getGroupsDetail = async (id: number) => {
-  let res = await getGroupsDetailApi(id)
-  if (res.code === 1000) {
-    teamForm.groupname = res.data.groupname
-    teamForm.groupkey = res.data.groupkey
-    teamForm.description = res.data.description
-    teamForm.icon = res.data.icon
-    sessionStorage.setItem('currentTeamInfo', JSON.stringify(res.data))
   } else {
     ElMessage.error(res.msg)
   }
@@ -87,8 +65,17 @@ const changeIcon = (icon: string) => {
   teamForm.icon = icon
 }
 
+function initData() {
+  groupId.value = Number(route.query.gid)
+  const { groupname, groupkey, description, icon } = infoStore.currentTeamInfo
+  teamForm.groupname = groupname
+  teamForm.groupkey = groupkey
+  teamForm.description = description
+  teamForm.icon = icon
+}
+
 onMounted(() => {
-  getGroupsDetail(groupId.value)
+  initData()
 })
 </script>
 

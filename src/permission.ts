@@ -5,8 +5,21 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
   infoStore.setCurrentSidebar((to.meta.asideComponent as string) || '')
   infoStore.setCurrentSpaceType(judegeSpaceType(to))
   if (infoStore.currentSidebar === 'DirectorySidebar') {
-    if (!sessionStorage.getItem('currentBookInfo') || JSON.parse(sessionStorage.getItem('currentBookInfo')).id !== Number(to.query.lid))
+    if (
+      !sessionStorage.getItem('currentBookInfo') ||
+      (sessionStorage.getItem('currentBookInfo') && JSON.parse(sessionStorage.getItem('currentBookInfo')).id !== Number(to.query.lid))
+    )
       await useBook().getBookInfo(Number(to.query.lid))
+  }
+
+  // 如果是团队设置页面，则判断是否需要重新获取团队信息
+  if (to.meta.asideComponent === 'TeamSidebar') {
+    if (
+      !sessionStorage.getItem('xinAn-teamInfo') ||
+      (sessionStorage.getItem('xinAn-teamInfo') && JSON.parse(sessionStorage.getItem('xinAn-teamInfo')).id !== Number(to.query.gid))
+    ) {
+      await useTeam().getTeamInfo(Number(to.query.gid))
+    }
   }
 
   if (to.path === '/login') {

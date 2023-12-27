@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { getBookStacksApi } from '@/api/bookstacks'
-import { getGroupsDetailApi } from '@/api/groups'
 import { getLibraryApi } from '@/api/library'
 import { getQuickLinksApi } from '@/api/quickLinks'
 
@@ -111,14 +110,12 @@ const getQuickLinks = async () => {
 
 // 获取团队详情
 const getGroupsDetail = async () => {
-  let res = await getGroupsDetailApi(Number(groupId.value))
-  if (res.code === 1000) {
-    sessionStorage.setItem('currentTeamInfo', JSON.stringify(res.data))
-    teamIcon.value = res.data.icon
-    teamInfo.value = res.data
-  } else {
-    ElMessage.error(res.msg)
-  }
+  useTeam().getTeamInfo(Number(groupId.value), (res: any) => {
+    if (Reflect.ownKeys(res).length) {
+      teamIcon.value = res.icon
+      teamInfo.value = res
+    }
+  })
 }
 
 const updateBulletin = () => {

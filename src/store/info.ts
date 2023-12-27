@@ -8,6 +8,7 @@ export const useInfoStore = defineStore('info', () => {
   const personalSpaceId = ref(JSON.parse(localStorage.getItem('personalSpaceId')) || null)
   const currentSidebar = ref(sessionStorage.getItem('currentSidebar') || '') // 当前侧边栏类型
   const currentSpaceType = ref('') // 当前空间类型
+  const currentTeamInfo = ref(JSON.parse(sessionStorage.getItem('xinAn-teamInfo') || '{}')) // 当前团队信息
   const currentMenu = ref('')
   const currentSpaceName = ref('')
   const currentSpaceInfo = ref<SidebarInfo>({
@@ -34,6 +35,11 @@ export const useInfoStore = defineStore('info', () => {
     currentSpaceType.value = val
   }
 
+  const setCurrentTeamInfo = (val: any) => {
+    currentTeamInfo.value = val
+    sessionStorage.setItem('xinAn-teamInfo', JSON.stringify(currentTeamInfo.value))
+  }
+
   const setCurrentSpaceName = (val: string) => {
     currentSpaceName.value = val
   }
@@ -51,6 +57,9 @@ export const useInfoStore = defineStore('info', () => {
 
     currentSpaceType,
     setCurrentSpaceType,
+
+    currentTeamInfo,
+    setCurrentTeamInfo,
 
     currentMenu,
     setCurrentMenu,

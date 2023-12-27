@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { getGroupsDetailApi } from '@/api/groups'
 import { deleteTeamMemberApi, editTeamMemberApi, getTeamMemberApi } from '@/api/member'
 import { VxeTableInstance, VxeColumnPropTypes } from 'vxe-table'
 import departMemberIcon from '@/assets/icons/departMemberIcon.svg'
@@ -18,6 +17,7 @@ interface MemberItem {
 }
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
 const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
@@ -27,8 +27,7 @@ const memberList = ref<MemberItem[]>([])
 const memberTotal = ref(0)
 const isShowAddMemberDialog = ref(false)
 const loadTable = ref(false)
-const currentTeamInfo = ref({
-  id: null,
+const teamInfo = ref({
   icon: ''
 })
 const sexList = [
@@ -42,10 +41,8 @@ const statusList = [
 ]
 
 const init = () => {
-  currentTeamInfo.value = sessionStorage.getItem('currentTeamInfo') ? JSON.parse(sessionStorage.getItem('currentTeamInfo')) : {}
-  // if (currentTeamInfo.value.id != route.query.gid) {
-  //   ElMessage.warning('前端存储团队错误！')
-  // }
+  const { icon } = infoStore.currentTeamInfo
+  teamInfo.value.icon = icon
 }
 
 watchEffect(() => {
@@ -53,7 +50,7 @@ watchEffect(() => {
     getTeamMember()
     refreshStore.isRefreshTeamMember = false
   }
-  if (route.query.gid && route.query.gname !== '公共区') {
+  if (route.path.includes('/team')) {
     init()
   }
 })
@@ -156,23 +153,15 @@ const getTeamMember = async () => {
   if (res.code === 1000) {
     memberList.value = res.data || ([] as any)
     memberTotal.value = memberList.value.length + 1
-    await getGroupsDetail()
-  } else {
-    ElMessage.error(res.msg)
-  }
-}
-
-const getGroupsDetail = async () => {
-  let res = await getGroupsDetailApi(Number(route.query.gid))
-  if (res.code === 1000) {
+    const { id, avatar, creator_name, dept, create_datetime } = infoStore.currentTeamInfo
     memberList.value.unshift({
-      id: res.data.id,
-      avatar: res.data.avatar,
-      name: res.data.creator_name,
+      id,
+      avatar,
+      name: creator_name,
       role: '0',
-      group: res.data.id,
-      dept: res.data.dept,
-      update_datetime: res.data.create_datetime
+      group: id,
+      dept,
+      update_datetime: create_datetime
     })
   } else {
     ElMessage.error(res.msg)
@@ -186,7 +175,7 @@ onMounted(() => {
 
 <template>
   <div class="Member_wrap">
-    <TeamHeader :icon="currentTeamInfo.icon" />
+    <TeamHeader :icon="teamInfo.icon" />
     <div class="member-box">
       <div class="header">
         <h2>
