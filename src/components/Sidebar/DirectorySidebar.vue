@@ -16,7 +16,6 @@ const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const spaceId = ref('') // 当前空间id
 const bookId = ref('') // 当前知识库id
-const currentBookInfo = ref(null) // 当前知识库信息
 const dataSource = ref([])
 const bookTree = ref(null)
 const currentNodeKey = ref(Number(route.query.aid)) // 当前选中的节点
@@ -39,7 +38,6 @@ const reName = ref('')
 const reNameId = ref(null)
 const reNameParent = ref(null)
 const isHasPermissionCode = ref(null)
-const bookIcon = ref('/src/assets/icons/bookIcon.svg')
 const defaultProps = {
   class: 'forumList'
 } as unknown as TreeOptionProps
@@ -71,10 +69,6 @@ watchEffect(() => {
     if (bookId.value) {
       console.log(`output->2222`, 2222)
       handleArticleList()
-    }
-    if (sessionStorage.getItem('currentBookInfo')) {
-      bookIcon.value = JSON.parse(sessionStorage.getItem('currentBookInfo')).icon
-      currentBookInfo.value = JSON.parse(sessionStorage.getItem('currentBookInfo'))
     }
   })
 })
@@ -370,7 +364,7 @@ const customIcon = () => {
         <img
           v-else-if="infoStore.currentSpaceType !== '个人' && route.query.gname !== '公共区'"
           class="favicon"
-          :src="currentBookInfo && currentBookInfo.group_icon"
+          :src="infoStore.currentBookInfo.group_icon"
           @click="toLink('back')"
         />
         <img v-else-if="infoStore.currentSpaceType !== '个人' && route.query.gname === '公共区'" class="favicon" src="/src/assets/icons/spaceIcon.svg" alt="" />
@@ -379,7 +373,7 @@ const customIcon = () => {
       </div>
       <div class="library-name">
         <div class="left">
-          <img class="bookIcon" :src="bookIcon" alt="" />
+          <img class="bookIcon" :src="infoStore.currentBookInfo.icon" alt="" />
           <div class="name">
             <span>{{ $route.query.lname }}</span>
             <img class="privateIcon" src="/src/assets/icons/privateIcon.svg" alt="" />

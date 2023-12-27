@@ -11,6 +11,7 @@ interface CallbackFunction {
 }
 
 export const useBook = () => {
+  const infoStore = useInfoStore()
   const user = (JSON.parse(localStorage.getItem('userInfo')) || {}).username || ''
   const bookList = ref<Array<any>>([])
 
@@ -21,7 +22,7 @@ export const useBook = () => {
   const getBookInfo = async (id: number, callback?: CallbackFunction) => {
     let res = await getLibraryDetailApi(id)
     if (res.code === 1000) {
-      sessionStorage.setItem('currentBookInfo', JSON.stringify(res.data))
+      infoStore.setCurrentBookInfo(res.data)
       callback && (await callback(res.data))
     } else {
       ElMessage.error(res.msg)

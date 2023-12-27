@@ -30,47 +30,16 @@ const route = useRoute()
 const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
 const router = useRouter()
-const currentBookInfo = ref({
-  id: '',
-  name: '',
-  icon: ''
-})
 const currentMenu = ref('basic')
-const loading = ref(false)
-
-const init = () => {
-  currentBookInfo.value = JSON.parse(sessionStorage.getItem('currentBookInfo') as string) || {
-    id: '',
-    name: '',
-    icon: ''
-  }
-  if (route.query.lid && route.query.lid != currentBookInfo.value.id && !route.path.includes('bookSetting')) {
-    ElMessage.warning('前端存储知识库错误！')
-  }
-}
 
 watchEffect(() => {
   route.path.split('/').length === 3 ? (currentMenu.value = route.path.split('/')[2]) : (currentMenu.value = route.path.split('/')[3])
-  init()
   if (refreshStore.isRefreshBookSet) {
-    getBookDetail(route.query.lid)
     refreshStore.setRefreshBookSet(false)
   }
 })
 
-onMounted(() => {
-  loading.value = true
-  getBookDetail(route.query.lid)
-})
-
-const getBookDetail = async (id) => {
-  useBook().getBookInfo(id, (res: any) => {
-    if (Reflect.ownKeys(res).length) {
-      currentBookInfo.value = res
-      loading.value = false
-    }
-  })
-}
+onMounted(() => {})
 
 const toBack = () => {
   const query = route.query
@@ -98,12 +67,12 @@ const toLink = (item: any) => {
 </script>
 
 <template>
-  <div class="BookSidebar_wrap" v-if="!loading">
+  <div class="BookSidebar_wrap">
     <div class="back" @click="toBack">
       <img src="/src/assets/icons/arrowRightIcon.svg" alt="" />
       <span>
-        <img class="bookIcon" :src="currentBookInfo.icon" alt="" />
-        {{ currentBookInfo.name }}
+        <img class="bookIcon" :src="infoStore.currentBookInfo.icon" alt="" />
+        {{ infoStore.currentBookInfo.name }}
       </span>
     </div>
     <h4>知识库管理</h4>

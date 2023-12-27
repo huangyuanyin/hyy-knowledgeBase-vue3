@@ -10,21 +10,15 @@ interface BookInfo {
 
 const route = useRoute()
 const routeInfo = { route, router }
+const infoStore = useInfoStore()
 const articleStore = useArticleStore()
 const sid = ref<string>(String(route.query.sid))
 const bookId = ref<string>(String(route.query.lid))
 const bookName = ref<string>(String(route.query.lname))
 const isShowsDeleteDialog = ref<boolean>(false)
-const deleteInfo = ref({})
 const bookBulletin = ref<string>('')
 const toolbar = 'blocks fontsize bold  align bullist numlist  lineheight  link  hr  tableofcontents tableofcontentsupdate | emoticons image fullscreen  preview autolink  '
 const isEdit = ref<boolean>(false)
-const currentBookInfo = ref({
-  icon: '',
-  marked: false,
-  mark_id: '',
-  tag_mark: ''
-})
 const defaultProps = {
   class: 'forumList'
 } as unknown as TreeOptionProps
@@ -47,22 +41,30 @@ const toDo = () => {
 }
 
 const toMark = () => {
-  if (!currentBookInfo.value.marked) {
+  if (!infoStore.currentBookInfo.marked) {
     const params = {
       target_type: 'book',
       target_id: bookId.value as string,
       space: route.query.sid as string
     }
-    useCollect().addCollect(params, (res) => {
+    useCollect().addCollect(params, (res: any) => {
       if (Reflect.ownKeys(res).length) {
-        getBookDetail()
+        useBook().getBookInfo(res.target_id, (val: any) => {
+          if (Reflect.ownKeys(val).length) {
+            getBookDetail()
+          }
+        })
       }
     })
   }
 }
 
 const cancelMark = () => {
-  getBookDetail()
+  useBook().getBookInfo(Number(route.query.lid), (res: any) => {
+    if (Reflect.ownKeys(res).length) {
+      getBookDetail()
+    }
+  })
 }
 
 const toShare = () => {
@@ -75,7 +77,7 @@ const toMoreSetting = () => {
 }
 
 const toUpdateBulletin = () => {
-  const { space, group, stacks, name, slug, public: p } = JSON.parse(sessionStorage.getItem('currentBookInfo'))
+  const { space, group, stacks, name, slug, public: p } = infoStore.currentBookInfo
   const params = {
     body: bookBulletin.value,
     space,
@@ -98,15 +100,8 @@ const toUpdateBulletin = () => {
   })
 }
 
-const toDeleteBook = () => {
-  isShowsDeleteDialog.value = true
-  const item = JSON.parse(sessionStorage.getItem('currentBookInfo') as string)
-  deleteInfo.value = item
-}
-
 const getBookDetail = async () => {
-  currentBookInfo.value = JSON.parse(sessionStorage.getItem('currentBookInfo'))
-  bookBulletin.value = JSON.parse(sessionStorage.getItem('currentBookInfo')).body
+  bookBulletin.value = infoStore.currentBookInfo.body
 }
 
 // 跳转到文章详情
@@ -135,16 +130,16 @@ onMounted(() => {
         <div class="header">
           <div class="header-left">
             <div class="bookIcon">
-              <img :src="currentBookInfo.icon" alt="" class="bookIcon" />
+              <img :src="infoStore.currentBookInfo.icon" alt="" class="bookIcon" />
             </div>
             <span>{{ bookName }}</span>
           </div>
           <div class="header-right">
             <div class="button-wrap" v-if="!isEdit">
-              <StarPopver @cancelMark="cancelMark" :startId="currentBookInfo.mark_id" :tag_mark="currentBookInfo.tag_mark" type="book">
+              <StarPopver @cancelMark="cancelMark" :startId="infoStore.currentBookInfo.mark_id" :tag_mark="infoStore.currentBookInfo.tag_mark" type="book">
                 <div class="button" @click="toMark">
-                  <img :src="currentBookInfo.marked ? '/src/assets/icons/startIcon_select.svg' : '/src/assets/icons/startIcon.svg'" alt="" />
-                  <span>{{ currentBookInfo.marked ? '已收藏' : '收藏' }}</span>
+                  <img :src="infoStore.currentBookInfo.marked ? '/src/assets/icons/startIcon_select.svg' : '/src/assets/icons/startIcon.svg'" alt="" />
+                  <span>{{ infoStore.currentBookInfo.marked ? '已收藏' : '收藏' }}</span>
                 </div>
               </StarPopver>
               <div class="button" @click="toShare">
@@ -156,7 +151,7 @@ onMounted(() => {
                 @toRename="toDo"
                 @toEditIndex="isEdit = true"
                 @toMoreSetting="toMoreSetting"
-                @toDeleteBook="toDeleteBook"
+                @toDeleteBook="isShowsDeleteDialog = true"
               >
                 <div class="button moreIcon">
                   <img src="@/assets/icons/moreIcon1_after.svg" alt="" />
@@ -223,7 +218,7 @@ onMounted(() => {
       </div>
     </div>
   </div>
-  <DeleteDialog :isShow="isShowsDeleteDialog" :deleteInfo="deleteInfo" @closeDialog="isShowsDeleteDialog = false" />
+  <DeleteDialog :isShow="isShowsDeleteDialog" :deleteInfo="infoStore.currentBookInfo" @closeDialog="isShowsDeleteDialog = false" />
 </template>
 
 <style lang="scss" scoped>

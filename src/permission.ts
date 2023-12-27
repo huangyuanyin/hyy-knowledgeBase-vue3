@@ -5,10 +5,7 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
   infoStore.setCurrentSidebar((to.meta.asideComponent as string) || '')
   infoStore.setCurrentSpaceType(judegeSpaceType(to))
   if (infoStore.currentSidebar === 'DirectorySidebar') {
-    if (
-      !sessionStorage.getItem('currentBookInfo') ||
-      (sessionStorage.getItem('currentBookInfo') && JSON.parse(sessionStorage.getItem('currentBookInfo')).id !== Number(to.query.lid))
-    )
+    if (!sessionStorage.getItem('xinAn-bookInfo') || (sessionStorage.getItem('xinAn-bookInfo') && JSON.parse(sessionStorage.getItem('xinAn-bookInfo')).id !== Number(to.query.lid)))
       await useBook().getBookInfo(Number(to.query.lid))
   }
 
