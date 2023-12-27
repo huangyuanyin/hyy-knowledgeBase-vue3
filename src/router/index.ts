@@ -30,6 +30,7 @@ const customRoutes = [
     component: pageComps['/src/views/Dashboard/index.vue'] as Component,
     meta: {
       title: '空间·开始',
+      menu: 'dashboard',
       asideComponent: 'SpaceSidebar'
     }
   },
@@ -39,6 +40,7 @@ const customRoutes = [
     component: pageComps['/src/views/Collections/index.vue'] as Component,
     meta: {
       title: '空间·收藏',
+      menu: 'collections',
       asideComponent: 'SpaceSidebar'
     }
   },
@@ -48,6 +50,7 @@ const customRoutes = [
     component: pageComps['/src/views/Public/index.vue'] as Component,
     meta: {
       title: '空间·公共区',
+      menu: 'public',
       asideComponent: 'SpaceSidebar'
     }
   },
@@ -57,6 +60,7 @@ const customRoutes = [
     component: pageComps['/src/views/Library/index.vue'] as Component,
     meta: {
       title: '空间·知识库',
+      menu: 'library',
       asideComponent: 'SpaceSidebar'
     }
   },
@@ -66,6 +70,7 @@ const customRoutes = [
     component: pageComps['/src/views/Team/index.vue'] as Component,
     meta: {
       title: '空间·团队',
+      menu: 'team',
       asideComponent: 'SpaceSidebar'
     }
   },
@@ -75,6 +80,7 @@ const customRoutes = [
     component: pageComps['/src/views/Team/Book/index.vue'] as Component,
     meta: {
       title: '团队·知识库',
+      menu: 'team',
       asideComponent: 'SpaceSidebar'
     }
   },
@@ -84,6 +90,7 @@ const customRoutes = [
     component: pageComps['/src/views/Team/Dynamic/index.vue'] as Component,
     meta: {
       title: '团队·动态',
+      menu: 'team',
       asideComponent: 'SpaceSidebar'
     }
   },
@@ -93,6 +100,7 @@ const customRoutes = [
     component: pageComps['/src/views/Team/Topic/index.vue'] as Component,
     meta: {
       title: '团队·话题',
+      menu: 'team',
       asideComponent: 'SpaceSidebar'
     }
   },
@@ -102,6 +110,7 @@ const customRoutes = [
     component: pageComps['/src/views/Team/Member/index.vue'] as Component,
     meta: {
       title: '团队·成员',
+      menu: 'team',
       asideComponent: 'SpaceSidebar'
     }
   },
@@ -111,6 +120,7 @@ const customRoutes = [
     component: pageComps['/src/views/Directory/index.vue'] as Component,
     meta: {
       title: '知识库详情',
+      menu: 'index',
       asideComponent: 'DirectorySidebar'
     }
   },
@@ -120,6 +130,7 @@ const customRoutes = [
     component: pageComps['/src/views/Article/Doc/index.vue'] as Component,
     meta: {
       title: '文档',
+      menu: 'doc',
       asideComponent: 'DirectorySidebar'
     }
   },
@@ -129,6 +140,7 @@ const customRoutes = [
     component: pageComps['/src/views/Article/Sheet/index.vue'] as Component,
     meta: {
       title: '数据表',
+      menu: 'sheet',
       asideComponent: 'DirectorySidebar'
     }
   },
@@ -138,6 +150,7 @@ const customRoutes = [
     component: pageComps['/src/views/Article/PPT/index.vue'] as Component,
     meta: {
       title: 'PPT',
+      menu: 'ppt',
       asideComponent: 'DirectorySidebar'
     }
   },
@@ -147,6 +160,7 @@ const customRoutes = [
     component: pageComps['/src/views/Article/MindMap/index.vue'] as Component,
     meta: {
       title: 'Mindmap',
+      menu: 'mind',
       asideComponent: 'DirectorySidebar'
     }
   },
@@ -156,6 +170,7 @@ const customRoutes = [
     component: pageComps['/src/views/Article/File/index.vue'] as Component,
     meta: {
       title: '文件',
+      menu: 'file',
       asideComponent: 'DirectorySidebar'
     }
   },
@@ -165,6 +180,7 @@ const customRoutes = [
     component: pageComps['/src/views/Organize/Dashboard/index.vue'] as Component,
     meta: {
       title: '空间管理·开始',
+      menu: 'dashboard',
       asideComponent: 'OrganizeSidebar'
     }
   },
@@ -174,6 +190,7 @@ const customRoutes = [
     component: pageComps['/src/views/Organize/PeoplePermissions/AddressBook/index.vue'] as Component,
     meta: {
       title: '空间管理·通讯录',
+      menu: 'addressBook',
       asideComponent: 'OrganizeSidebar'
     }
   },
@@ -183,6 +200,7 @@ const customRoutes = [
     component: pageComps['/src/views/Organize/PeoplePermissions/Permission/index.vue'] as Component,
     meta: {
       title: '空间管理·权限设置',
+      menu: 'permission',
       asideComponent: 'OrganizeSidebar'
     }
   },
@@ -192,6 +210,7 @@ const customRoutes = [
     component: pageComps['/src/views/Organize/PeoplePermissions/Administrator/index.vue'] as Component,
     meta: {
       title: '空间管理·管理员设置',
+      menu: 'administrator',
       asideComponent: 'OrganizeSidebar'
     }
   },
@@ -201,6 +220,7 @@ const customRoutes = [
     component: pageComps['/src/views/Organize/TeamManage/index.vue'] as Component,
     meta: {
       title: '空间管理·团队管理',
+      menu: 'teamManage',
       asideComponent: 'OrganizeSidebar'
     }
   },
@@ -210,6 +230,7 @@ const customRoutes = [
     component: pageComps['/src/views/Organize/SpaceSetting/SpaceInfo/index.vue'] as Component,
     meta: {
       title: '空间管理·空间信息',
+      menu: 'settings',
       asideComponent: 'OrganizeSidebar'
     }
   },
@@ -219,6 +240,7 @@ const customRoutes = [
     component: pageComps['/src/views/Organize/SpaceSetting/Preference/index.vue'] as Component,
     meta: {
       title: '空间管理·偏好设置',
+      menu: 'preference',
       asideComponent: 'OrganizeSidebar'
     }
   },
@@ -228,6 +250,7 @@ const customRoutes = [
     component: pageComps['/src/views/Organize/SpaceSetting/AdvancedSet/index.vue'] as Component,
     meta: {
       title: '空间管理·高级设置',
+      menu: 'advancedSet',
       asideComponent: 'OrganizeSidebar'
     }
   },
@@ -237,6 +260,7 @@ const customRoutes = [
     component: pageComps['/src/views/Organize/RecycleBin/index.vue'] as Component,
     meta: {
       title: '空间管理·回收站',
+      menu: 'recycleBin',
       asideComponent: 'OrganizeSidebar'
     }
   },
@@ -246,6 +270,7 @@ const customRoutes = [
     component: pageComps['/src/views/TeamSetting/Basic/index.vue'] as Component,
     meta: {
       title: '团队管理·团队信息',
+      menu: 'basic',
       asideComponent: 'TeamSidebar'
     }
   },
@@ -255,6 +280,7 @@ const customRoutes = [
     component: pageComps['/src/views/TeamSetting/Permission/index.vue'] as Component,
     meta: {
       title: '团队管理·权限',
+      menu: 'permission',
       asideComponent: 'TeamSidebar'
     }
   },
@@ -264,6 +290,7 @@ const customRoutes = [
     component: pageComps['/src/views/TeamSetting/Settings/index.vue'] as Component,
     meta: {
       title: '团队管理·更多设置',
+      menu: 'settings',
       asideComponent: 'TeamSidebar'
     }
   },
@@ -273,6 +300,7 @@ const customRoutes = [
     component: pageComps['/src/views/TeamSetting/Trash/index.vue'] as Component,
     meta: {
       title: '团队管理·回收站',
+      menu: 'trash',
       asideComponent: 'TeamSidebar'
     }
   },
@@ -282,6 +310,7 @@ const customRoutes = [
     component: pageComps['/src/views/Book/Basic/index.vue'] as Component,
     meta: {
       title: '知识库管理·信息',
+      menu: 'basic',
       asideComponent: 'BookSidebar'
     }
   },
@@ -291,6 +320,7 @@ const customRoutes = [
     component: pageComps['/src/views/Book/Collaborators/index.vue'] as Component,
     meta: {
       title: '知识库管理·权限',
+      menu: 'collaborators',
       asideComponent: 'BookSidebar'
     }
   },
@@ -300,6 +330,7 @@ const customRoutes = [
     component: pageComps['/src/views/Book/Advanced/index.vue'] as Component,
     meta: {
       title: '知识库管理·更多设置',
+      menu: 'settings',
       asideComponent: 'BookSidebar'
     }
   },
@@ -309,6 +340,7 @@ const customRoutes = [
     component: pageComps['/src/views/Book/Toc/index.vue'] as Component,
     meta: {
       title: '知识库管理·目录管理',
+      menu: 'toc',
       asideComponent: 'BookSidebar'
     }
   },
@@ -318,6 +350,7 @@ const customRoutes = [
     component: pageComps['/src/views/Book/Docs/index.vue'] as Component,
     meta: {
       title: '知识库管理·文档管理',
+      menu: 'docs',
       asideComponent: 'BookSidebar'
     }
   },
@@ -327,6 +360,7 @@ const customRoutes = [
     component: pageComps['/src/views/Book/Webhooks/index.vue'] as Component,
     meta: {
       title: '知识库管理·消息推送',
+      menu: 'webhooks',
       asideComponent: 'BookSidebar'
     }
   },
@@ -336,6 +370,7 @@ const customRoutes = [
     component: pageComps['/src/views/Book/Trash/index.vue'] as Component,
     meta: {
       title: '知识库管理·回收站',
+      menu: 'trash',
       asideComponent: 'BookSidebar'
     }
   },
@@ -345,6 +380,7 @@ const customRoutes = [
     component: pageComps['/src/views/Recycles/index.vue'] as Component,
     meta: {
       title: '回收站',
+      menu: 'recycles',
       asideComponent: 'SpaceSidebar'
     }
   },
@@ -354,6 +390,7 @@ const customRoutes = [
     component: pageComps['/src/views/Search/index.vue'] as Component,
     meta: {
       title: '搜索',
+      menu: 'search',
       asideComponent: 'SpaceSidebar'
     }
   }

@@ -30,16 +30,12 @@ const route = useRoute()
 const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
 const router = useRouter()
-const currentMenu = ref('basic')
 
 watchEffect(() => {
-  route.path.split('/').length === 3 ? (currentMenu.value = route.path.split('/')[2]) : (currentMenu.value = route.path.split('/')[3])
   if (refreshStore.isRefreshBookSet) {
     refreshStore.setRefreshBookSet(false)
   }
 })
-
-onMounted(() => {})
 
 const toBack = () => {
   const query = route.query
@@ -50,8 +46,7 @@ const toBack = () => {
 }
 
 const toLink = (item: any) => {
-  if (currentMenu.value === item.nickName) return
-  currentMenu.value = item.nickName
+  if (infoStore.currentMenu === item.nickName) return
   router.push({
     path: route.path.split('/').length === 3 ? `${item.path}` : '/' + route.path.split('/')[1] + item.path,
     query: {
@@ -78,7 +73,7 @@ const toLink = (item: any) => {
     <h4>知识库管理</h4>
     <div class="menu" v-for="(item, index) in menuList" :key="'menuList' + index">
       <div class="title">{{ item.label }}</div>
-      <span :class="[it.nickName === currentMenu ? 'active' : '']" v-for="(it, index) in item.children" :key="'children' + index" @click="toLink(it)">
+      <span :class="[it.nickName === infoStore.currentMenu ? 'active' : '']" v-for="(it, index) in item.children" :key="'children' + index" @click="toLink(it)">
         <img :src="it.icon" alt="" />
         {{ it.label }}
       </span>

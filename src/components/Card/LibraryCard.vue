@@ -95,7 +95,7 @@ const toLink = (item) => {
   } else {
     if (item.target_typ === 'group') {
       router.push({
-        path: `/${infoStore.currentSpaceName}/team/book`,
+        path: `/${infoStore.currentSpaceInfo.spacekey}/team/book`,
         query: {
           sid: item.space,
           sname: route.query.sname,
@@ -105,7 +105,7 @@ const toLink = (item) => {
       })
     } else {
       router.push({
-        path: `/${infoStore.currentSpaceName}/directory/index`,
+        path: `/${infoStore.currentSpaceInfo.spacekey}/directory/index`,
         query: {
           sid: item.space,
           sname: route.query.sname,

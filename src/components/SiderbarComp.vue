@@ -50,7 +50,6 @@ const state = reactive({
   currentGroup: null,
   operatData: []
 })
-const currentSpaceName = ref(route.path.split('/')[1])
 const isShowsDeleteDialog = ref(false)
 const deleteInfo = ref<{
   id?: string
@@ -66,7 +65,6 @@ const typeIcon = {
 }
 
 watchEffect(() => {
-  currentSpaceName.value = route.path.split('/')[1]
   if (infoStore.currentSpaceType === '个人') {
     icon.value = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar
   } else {
@@ -88,14 +86,6 @@ watch(
 watch(
   () => route.path,
   async () => {
-    if (infoStore.currentSpaceInfo && currentSpaceName.value !== infoStore.currentSpaceInfo.spacekey && route.meta.asideComponent === 'SpaceSidebar') {
-      nextTick(async () => {
-        await getSpacesDeatil()
-      })
-      currentSpaceName.value = route.path.split('/')[1]
-    }
-    infoStore.setCurrentSpaceName(route.path.split('/')[1])
-    infoStore.setCurrentMenu(route.path.split('/')[2] || route.path.split('/')[1])
     infoStore.setCurrentSidebar(route.meta.asideComponent.toString())
     if (route.meta.asideComponent === 'SpaceSidebar') {
       state.operatData = spaceMenuItemsData
@@ -117,7 +107,8 @@ watch(
       }
     } else {
       state.operatData = menuItemsData
-      infoStore.currentMenu === 'library' ? (state.headerActive = 0) : (state.headerActive = null)
+      console.log(`output->infoStore.currentMenu`, infoStore.currentMenu)
+      state.headerActive = infoStore.currentMenu === 'library' ? 0 : null
     }
   },
   {
@@ -209,25 +200,8 @@ const toTopic = (val) => {
 }
 
 const getTeamMember = async (val) => {
-  // const params = {
-  //   group: val.target_id
-  // }
-  // let res = await getTeamMemberApi(params)
-  // if (res.code === 1000) {
-  //   router.push({
-  //     path: `/${infoStore.currentSpaceName}/team/book`,
-  //     query: {
-  //       sid: route.query.sid,
-  //       sname: route.query.sname,
-  //       gid: val.target_id,
-  //       gname: val.title
-  //     }
-  //   })
-  // } else {
-  //   ElMessage.error(res.msg)
-  // }
   router.push({
-    path: `/${infoStore.currentSpaceName}/team/book`,
+    path: `/${infoStore.currentSpaceInfo.spacekey}/team/book`,
     query: {
       sid: route.query.sid,
       sname: route.query.sname,
@@ -244,7 +218,7 @@ const toReminderFree = (val) => {
 
 const toSpaceManager = () => {
   router.push({
-    path: `/${infoStore.currentSpaceName}/organize/dashboard`,
+    path: `/${infoStore.currentSpaceInfo.spacekey}/organize/dashboard`,
     query: {
       sid: route.query.sid,
       sname: route.query.sname

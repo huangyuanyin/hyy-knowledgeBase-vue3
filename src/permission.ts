@@ -2,11 +2,19 @@ import { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 
 export async function setupRouterInterceptor(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
   const infoStore = useInfoStore()
-  infoStore.setCurrentSidebar((to.meta.asideComponent as string) || '')
+
+  infoStore.setCurrentSidebar(to.meta.asideComponent as string)
   infoStore.setCurrentSpaceType(judegeSpaceType(to))
-  if (infoStore.currentSidebar === 'DirectorySidebar') {
-    if (!sessionStorage.getItem('xinAn-bookInfo') || (sessionStorage.getItem('xinAn-bookInfo') && JSON.parse(sessionStorage.getItem('xinAn-bookInfo')).id !== Number(to.query.lid)))
-      await useBook().getBookInfo(Number(to.query.lid))
+  infoStore.setCurrentMenu(to.meta.menu as string)
+
+  // 判断是否需要重新获取空间信息
+  if (infoStore.currentSpaceType === '个人') await useSpace().getSpaceInfo(null)
+  else {
+    if (
+      !sessionStorage.getItem('xinAn-spaceInfo') ||
+      (sessionStorage.getItem('xinAn-spaceInfo') && JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).id !== Number(to.query.sid))
+    )
+      await useSpace().getSpaceInfo(Number(to.query.sid))
   }
 
   // 如果是团队设置页面，则判断是否需要重新获取团队信息
@@ -19,12 +27,10 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
     }
   }
 
-  // 判断是否需要重新获取空间信息
-  if (
-    !sessionStorage.getItem('xinAn-spaceInfo') ||
-    (sessionStorage.getItem('xinAn-spaceInfo') && JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).id !== Number(to.query.sid))
-  ) {
-    await useSpace().getSpaceInfo(Number(to.query.sid))
+  // 如果是知识库目录页面，则判断是否需要重新获取知识库信息
+  if (infoStore.currentSidebar === 'DirectorySidebar') {
+    if (!sessionStorage.getItem('xinAn-bookInfo') || (sessionStorage.getItem('xinAn-bookInfo') && JSON.parse(sessionStorage.getItem('xinAn-bookInfo')).id !== Number(to.query.lid)))
+      await useBook().getBookInfo(Number(to.query.lid))
   }
 
   if (to.path === '/login') {
@@ -42,11 +48,8 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
   } else {
     next()
   }
-  if (to.path.includes('/recycles')) {
-    to.meta.asideComponent = sessionStorage.getItem('xinAn-sidebar')
-    next()
-  }
-  if (to.path.includes('/search')) {
+
+  if (to.path.includes('/search') || to.path.includes('/recycles')) {
     to.meta.asideComponent = sessionStorage.getItem('xinAn-sidebar')
     next()
   }

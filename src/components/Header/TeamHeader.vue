@@ -48,7 +48,7 @@ const toLink = (val) => {
 
 const toTeamSetting = () => {
   router.push({
-    path: `/${infoStore.currentSpaceName}/teamSetting/basic`,
+    path: `/${infoStore.currentSpaceInfo.spacekey}/teamSetting/basic`,
     query: {
       gid: route.query.gid,
       gname: route.query.gname,

@@ -98,7 +98,7 @@ const toLink = (item) => {
       getTeamMember(item)
     } else {
       router.push({
-        path: `/${infoStore.currentSpaceName}/directory/index`,
+        path: `/${infoStore.currentSpaceInfo.spacekey}/directory/index`,
         query: {
           sid: item.space,
           sname: route.query.sname,
@@ -119,7 +119,7 @@ const getTeamMember = async (val) => {
   let res = await getTeamMemberApi(params)
   if (res.code === 1000) {
     router.push({
-      path: `/${infoStore.currentSpaceName}/team/book`,
+      path: `/${infoStore.currentSpaceInfo.spacekey}/team/book`,
       query: {
         sid: route.query.sid,
         sname: route.query.sname,

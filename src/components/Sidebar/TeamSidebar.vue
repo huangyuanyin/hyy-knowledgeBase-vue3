@@ -8,7 +8,6 @@ import arrowRightIcon from '@/assets/icons/arrowRightIcon.svg'
 const route = useRoute()
 const router = useRouter()
 const infoStore = useInfoStore()
-const currentMenu = ref('basic')
 const menuList = [
   {
     label: '设置',
@@ -24,10 +23,6 @@ const menuList = [
   }
 ]
 
-watchEffect(() => {
-  currentMenu.value = route.path.split('/')[3]
-})
-
 const toBack = () => {
   router.push({
     path: `/${route.path.split('/')[1]}/team/book`,
@@ -41,8 +36,7 @@ const toBack = () => {
 }
 
 const toLink = (item: any) => {
-  if (currentMenu.value === item.nickName) return
-  currentMenu.value = item.nickName
+  if (infoStore.currentMenu === item.nickName) return
   router.push({
     path: '/' + route.path.split('/')[1] + item.path,
     query: {
@@ -67,7 +61,7 @@ const toLink = (item: any) => {
     <h4>团队管理</h4>
     <div class="menu" v-for="(item, index) in menuList" :key="'menuList' + index">
       <div class="title">{{ item.label }}</div>
-      <span :class="[it.nickName === currentMenu ? 'active' : '']" v-for="(it, index) in item.children" :key="'children' + index" @click="toLink(it)">
+      <span :class="[it.nickName === infoStore.currentMenu ? 'active' : '']" v-for="(it, index) in item.children" :key="'children' + index" @click="toLink(it)">
         <img :src="it.icon" alt="" />
         {{ it.label }}
       </span>

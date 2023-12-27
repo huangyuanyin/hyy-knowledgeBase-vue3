@@ -45,13 +45,9 @@ const spaceReverse = ref([
     list: []
   }
 ])
-const state = reactive({
-  currentSpaceName: route.query.sname || ''
-})
 
 const initData = () => {
   spaceId.value = route.query.sid as string
-  state.currentSpaceName = route.query.sname || ''
   if (infoStore.currentSidebar === 'SpaceSidebar') {
     icon.value = infoStore.currentSpaceInfo.icon || '/src/assets/icons/spaceIcon.svg'
   }
@@ -102,7 +98,7 @@ const toLink = (type, val?) => {
       break
     case 'set':
       router.push({
-        path: `/${infoStore.currentSpaceName}/organize/dashboard`,
+        path: `/${infoStore.currentSpaceInfo.spacekey}/organize/dashboard`,
         query: route.query
       })
       break
@@ -168,7 +164,7 @@ const toLink = (type, val?) => {
           <div class="header">
             <img :src="icon" alt="" />
             <div class="title">
-              <span>{{ state.currentSpaceName }}</span>
+              <span>{{ infoStore.currentSpaceInfo.spacename }}</span>
               <!-- <p>享受标准版空间权益</p> -->
             </div>
           </div>

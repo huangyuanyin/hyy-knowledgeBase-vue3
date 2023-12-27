@@ -34,8 +34,7 @@ export const useInfoStore = defineStore('info', () => {
   const currentSpaceInfo = ref<SpaceInfo>(JSON.parse(sessionStorage.getItem('xinAn-spaceInfo') || '{}')) // 当前空间信息
   const currentBookInfo = ref<BookInfo>(JSON.parse(sessionStorage.getItem('xinAn-bookInfo') || '{}')) // 当前知识库信息
   const isSpaceAdmin = ref<string>(sessionStorage.getItem('xinAn-spaceAdmin')) // 是否是当前空间管理员
-  const currentMenu = ref('')
-  const currentSpaceName = ref('')
+  const currentMenu = ref<string>('') // 当前菜单名称
 
   const setPersonalSpaceId = (val: number) => {
     personalSpaceId.value = val
@@ -58,10 +57,6 @@ export const useInfoStore = defineStore('info', () => {
   const setCurrentTeamInfo = (val: any) => {
     currentTeamInfo.value = val
     sessionStorage.setItem('xinAn-teamInfo', JSON.stringify(val))
-  }
-
-  const setCurrentSpaceName = (val: string) => {
-    currentSpaceName.value = val
   }
 
   const setCurrentSpaceInfo = (val: SpaceInfo) => {
@@ -94,9 +89,6 @@ export const useInfoStore = defineStore('info', () => {
 
     currentMenu,
     setCurrentMenu,
-
-    currentSpaceName,
-    setCurrentSpaceName,
 
     currentSpaceInfo,
     setCurrentSpaceInfo,

@@ -148,7 +148,7 @@ const toLink = (val, type) => {
     useTeamPermission(route, router, val)
   } else if (type === 'library') {
     router.push({
-      path: `/${infoStore.currentSpaceName}/directory/index`,
+      path: `/${infoStore.currentSpaceInfo.spacekey}/directory/index`,
       query: {
         sid: val.space,
         sname: route.query.sname,
