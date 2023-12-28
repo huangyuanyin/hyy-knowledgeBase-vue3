@@ -3,7 +3,6 @@
 </template>
 
 <script lang="ts" setup>
-import { initData } from '@/components/Excel/data'
 import LuckySheet from 'luckysheet'
 
 const props = defineProps({
@@ -33,7 +32,7 @@ const previewConfig = ref({
   container: luckysheetId.value,
   showinfobar: false, // 是否显示顶部信息栏
   lang: 'zh', // 中文
-  data: excelBody.value || '',
+  data: excelBody.value,
   showtoolbar: false, // 是否显示工具栏
   showstatisticBar: false, // 是否显示统计信息栏
   sheetBottomConfig: false, // sheet页下方的添加行按钮和回到顶部按钮配置
@@ -46,7 +45,7 @@ const editConfig = ref({
   container: luckysheetId.value,
   showinfobar: false, // 是否显示顶部信息栏
   lang: 'zh', // 中文
-  data: excelBody.value || '', // 数据
+  data: excelBody.value, // 数据
   hook: {
     updated: function () {
       emit('update:modelValue', JSON.stringify(LuckySheet.getAllSheets()))
@@ -55,12 +54,9 @@ const editConfig = ref({
 })
 
 watch(
-  () => route.query.aid,
+  () => props.body,
   async () => {
-    if (route.query.aid && route.path.includes('sheet')) {
-      await getArticleTree()
-      handleCreateSheet()
-    }
+    handleCreateSheet()
   }
 )
 
@@ -83,7 +79,6 @@ watch(
   async () => {
     if (route.query.aid && route.path.includes('sheet')) {
       window.location.reload()
-      await getArticleTree()
       handleCreateSheet(true)
     }
   }
@@ -101,25 +96,15 @@ const createFromTemLuckysheet = () => {
 const handleCreateSheet = async (isDestory?: boolean) => {
   if (route.path.split('/').slice(-2)[0] == 'sheet') {
     ;(await isDestory) && LuckySheet.destroy()
+    excelBody.value = props.body
+    previewConfig.value.data = excelBody.value
+    editConfig.value.data = excelBody.value
     LuckySheet.create(props.isPreview ? previewConfig.value : editConfig.value)
   }
 }
 
-const getArticleTree = async () => {
-  useArticle().getArticleDetail(Number(route.query.aid), (res: any) => {
-    if (res.body === '') {
-      excelBody.value = JSON.parse(initData)
-    } else {
-      excelBody.value = JSON.parse(res.body) || JSON.parse(initData)
-    }
-    previewConfig.value.data = excelBody.value
-    editConfig.value.data = excelBody.value
-  })
-}
-
 onMounted(async () => {
   if (!props.isTem) {
-    await getArticleTree()
     handleCreateSheet(true)
   } else {
     createFromTemLuckysheet()

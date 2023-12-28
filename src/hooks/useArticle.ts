@@ -1,5 +1,7 @@
 import Vrouter from '@/router'
 import { getArticleTreeApi, getArticleApi, addArticleApi, editArticleApi, deleteArticleApi } from '@/api/article'
+import { sheetData } from '@/components/Excel/data'
+import { useInfoStore } from '@/store/info'
 
 interface ArticleType {
   [key: string]: { type: string; title: string; body: string }
@@ -68,8 +70,8 @@ export const useArticle = () => {
       callback && (await callback(res.data))
     } else {
       await infoStore.setCurrentArticleInfo('无权限')
-      res.code === 1003 && (await callback('无权限'))
       ElMessage.error(res.msg)
+      res.code === 1003 && (await callback('无权限'))
     }
   }
 
@@ -87,6 +89,9 @@ export const useArticle = () => {
         break
       case '幻灯片':
         articleType[title].body = dataStore.pptData
+        break
+      case '表格':
+        articleType[title].body = sheetData
         break
       default:
         break

@@ -1,4 +1,5 @@
 import { editLibraryApi, getLibraryApi, getLibraryDetailApi } from '@/api/library'
+import { useInfoStore } from '@/store/info'
 
 interface BookParams {
   space?: string

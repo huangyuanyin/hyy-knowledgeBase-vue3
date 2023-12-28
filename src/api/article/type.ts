@@ -4,12 +4,16 @@ interface article {
   group: string
   space: string
   creator: string
-  update_datetime: string
   body: string
   type: string
   mark_id: number
   tag_mark: string
   marked: boolean
+  counts: number
+  views: number
+  creator_name: string
+  create_datetime: string
+  update_datetime: string
   [key: string]: any
 }
 
