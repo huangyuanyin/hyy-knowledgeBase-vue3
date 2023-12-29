@@ -165,11 +165,11 @@ const closeDialog = () => {
 }
 
 onMounted(() => {
-  document.addEventListener('keydown', handleKeyPress)
+  props.show && document.addEventListener('keydown', handleKeyPress)
 })
 
 onBeforeMount(() => {
-  document.removeEventListener('keydown', handleKeyPress)
+  !props.show && document.removeEventListener('keydown', handleKeyPress)
 })
 </script>
 

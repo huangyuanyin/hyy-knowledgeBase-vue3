@@ -119,8 +119,8 @@ const customRoutes = [
     name: 'Space-Directory',
     component: pageComps['/src/views/Directory/index.vue'] as Component,
     meta: {
-      title: '知识库详情',
-      menu: 'index',
+      title: '知识库目录',
+      menu: 'directory',
       asideComponent: 'DirectorySidebar'
     }
   },

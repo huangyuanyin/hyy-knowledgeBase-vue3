@@ -11,7 +11,6 @@ interface BookInfo {
 const route = useRoute()
 const routeInfo = { route, router }
 const infoStore = useInfoStore()
-const articleStore = useArticleStore()
 const sid = ref<string>(String(route.query.sid))
 const bookId = ref<string>(String(route.query.lid))
 const bookName = ref<string>(String(route.query.lname))
@@ -24,9 +23,8 @@ const defaultProps = {
 } as unknown as TreeOptionProps
 
 watchEffect(async () => {
-  if (route.query.lid) {
+  if (route.query.lid && infoStore.currentMenu === 'directory') {
     await initData()
-    articleStore.getArticleList(bookId.value)
   }
 })
 
@@ -198,8 +196,8 @@ onMounted(() => {
         <div mt-60px border="1px solid #e7e9e8" rounded-4px v-if="isEdit">
           <TinyMCE v-model="bookBulletin" :resize="true" height="500px" :toolbar="toolbar" body-style="body { margin: 1rem 2% 1rem 2% }" />
         </div>
-        <div class="list" v-if="articleStore.articleList.length">
-          <el-tree :data="articleStore.articleList" node-key="id" :props="defaultProps" default-expand-all>
+        <div class="list" v-if="infoStore.currentArticleTreeInfo">
+          <el-tree :data="infoStore.currentArticleTreeInfo" node-key="id" :props="defaultProps" default-expand-all>
             <template #default="{ node, data }">
               <span class="list-node" @click="toArticleDetail(data)">
                 <div class="title">
@@ -209,8 +207,8 @@ onMounted(() => {
                   </div>
                   <span>{{ data.title }}</span>
                 </div>
-                <span class="line" v-if="data.type !== 'l'"></span>
-                <span class="time" v-if="data.type !== 'l'">{{ data.update_datetime }}</span>
+                <span class="line" v-if="data.type !== 'title'"></span>
+                <span class="time" v-if="data.type !== 'title'">{{ data.update_datetime }}</span>
               </span>
             </template>
           </el-tree>

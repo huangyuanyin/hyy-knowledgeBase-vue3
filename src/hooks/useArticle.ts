@@ -46,12 +46,13 @@ export const useArticle = () => {
    * 获取知识库目录
    * @param {Number} bookId   当前知识库id
    */
-  const getArticleList = async (bookId: Number) => {
+  const getArticleList = async (bookId: Number, callback?: CallbackFunction) => {
     let res = await getArticleTreeApi(bookId)
     isHasPermission.value = res.code === 1003 ? false : true
     if (res.code === 1000) {
       articleList.value = res.data || ([] as any)
       currentNodeKey.value = Number(aid)
+      callback && (await callback(res.data))
     } else {
       ElMessage.error(res.msg)
     }
@@ -157,7 +158,8 @@ export const useArticle = () => {
    * @param {Number} id 文章id
    * @param {String | Object} data 文章标题 | 文章信息
    */
-  const handleEditArticle = async (id: Number, data: String | Object) => {
+  const handleEditArticle = async (id: Number, data: String | Object, callback?: CallbackFunction) => {
+    if (!id) return
     let params
     if (typeof data === 'string')
       params = {
@@ -169,8 +171,11 @@ export const useArticle = () => {
     let res = await editArticleApi(id, params)
     if (res.code === 1000) {
       if (res.data.type === 'title') {
-        await getArticleList(Number(lid))
+        await getArticleList(Number(lid), (val: any) => {
+          infoStore.currentArticleTreeInfo = val
+        })
       } else {
+        if (callback) return callback && (await callback(res.data))
         useLinkHooks().handleArticleTypeLink(res.data as any, false)
       }
     } else {

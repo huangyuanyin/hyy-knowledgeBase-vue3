@@ -258,7 +258,12 @@ const toCloseDrawer = () => {
         </div>
         <div class="header_right">
           <div class="item" v-for="(item, index) in itemList" :key="'itemList' + index">
-            <StarPopver @cancelMark="cancelMark" :startId="infoStore.currentArticleInfo.mark_id" :tag_mark="infoStore.currentArticleInfo.tag_mark" type="article">
+            <StarPopver
+              @cancelMark="cancelMark"
+              :startId="(infoStore.currentArticleInfo as ArticleInfo).mark_id"
+              :tag_mark="(infoStore.currentArticleInfo as ArticleInfo ).tag_mark"
+              type="article"
+            >
               <span v-if="item.label === '收藏' || item.label === '已收藏'" @click="toHandle(item)"> <img :src="item.icon" alt="" /></span>
             </StarPopver>
             <el-tooltip effect="dark" :content="item.label" placement="bottom" :show-arrow="false">
@@ -279,8 +284,13 @@ const toCloseDrawer = () => {
             <el-button v-if="item.label !== '分享'" :type="item.type" @click="toHandle(item)">{{ item.label }}</el-button>
           </div>
           <div class="action" v-if="!isEdit">
-            <span :class="[commentDrawer ? 'is_active' : '']"><img src="/src/assets/icons/article/commentIcon.svg" alt="" @click="openDrawer('comment')" /></span>
-            <span :class="[moreFeaturesDrawer ? 'is_active' : '']"><img src="/src/assets/icons/article/rightboardIcon.svg" alt="" @click="openDrawer('more')" /></span>
+            <span :class="[commentDrawer ? 'is_active' : 'comment']">
+              <img src="/src/assets/icons/article/commentIcon.svg" alt="" @click="openDrawer('comment')" />
+              <em v-if="(infoStore.currentArticleInfo as ArticleInfo).comments_count">{{ (infoStore.currentArticleInfo as ArticleInfo).comments_count }}</em>
+            </span>
+            <span :class="[moreFeaturesDrawer ? 'is_active' : '']">
+              <img src="/src/assets/icons/article/rightboardIcon.svg" alt="" @click="openDrawer('more')" />
+            </span>
           </div>
           <span class="rightboardIcon" :class="[moreFeaturesDrawer ? 'is_active' : '']" v-else @click="openDrawer('more')">
             <img src="/src/assets/icons/article/rightboardIcon.svg" alt="" />
@@ -289,7 +299,7 @@ const toCloseDrawer = () => {
       </el-header>
       <el-main class="body">
         <slot></slot>
-        <MoreFeaturesDrawer :drawer="moreFeaturesDrawer" :info="infoStore.currentArticleInfo" />
+        <MoreFeaturesDrawer :drawer="moreFeaturesDrawer" :info="(infoStore.currentArticleInfo as ArticleInfo)" />
         <CommentDrawer :drawer="commentDrawer" @toCloseDrawer="toCloseDrawer" />
       </el-main>
     </el-container>
@@ -402,6 +412,17 @@ const toCloseDrawer = () => {
         }
         .is_active {
           background-color: #eff0f0;
+        }
+        .comment {
+          position: relative;
+          em {
+            position: absolute;
+            right: 0px;
+            top: -2px;
+            color: red;
+            font-size: 12px;
+            font-weight: 700;
+          }
         }
       }
       .rightboardIcon {

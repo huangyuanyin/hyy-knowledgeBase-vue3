@@ -1,3 +1,4 @@
+import { ArticleInfo, ArticleTree } from '@/type/article'
 interface SpaceInfo {
   id: number
   spacename: string
@@ -26,19 +27,6 @@ interface BookInfo {
   creator: string
 }
 
-export interface ArticleInfo {
-  body: string
-  type: string
-  mark_id: number
-  tag_mark: string
-  marked: boolean
-  counts: number
-  views: number
-  creator_name: string
-  create_datetime: string
-  update_datetime: string
-}
-
 export const useInfoStore = defineStore('info', () => {
   const personalSpaceId = ref(JSON.parse(localStorage.getItem('personalSpaceId')) || null)
   const currentSidebar = ref<string>(sessionStorage.getItem('xinAn-sidebar') || '') // 当前侧边栏类型
@@ -46,6 +34,7 @@ export const useInfoStore = defineStore('info', () => {
   const currentTeamInfo = ref(JSON.parse(sessionStorage.getItem('xinAn-teamInfo') || '{}')) // 当前团队信息
   const currentSpaceInfo = ref<SpaceInfo>(JSON.parse(sessionStorage.getItem('xinAn-spaceInfo') || '{}')) // 当前空间信息
   const currentBookInfo = ref<BookInfo>(JSON.parse(sessionStorage.getItem('xinAn-bookInfo') || '{}')) // 当前知识库信息
+  const currentArticleTreeInfo = ref<ArticleTree[]>(null) // 当前知识库目录列表
   const currentArticleInfo = ref<ArticleInfo | string>() // 当前文章信息
   const isSpaceAdmin = ref<string>(sessionStorage.getItem('xinAn-spaceAdmin')) // 是否是当前空间管理员
   const currentMenu = ref<string>('') // 当前菜单名称
@@ -77,6 +66,10 @@ export const useInfoStore = defineStore('info', () => {
   const setCurrentBookInfo = (val: any) => {
     currentBookInfo.value = val
     sessionStorage.setItem('xinAn-bookInfo', JSON.stringify(val))
+  }
+
+  const setCurrentArticleTreeInfo = (val: ArticleTree[]) => {
+    currentArticleTreeInfo.value = val
   }
 
   const setCurrentArticleInfo = (val: ArticleInfo | string) => {
@@ -113,6 +106,9 @@ export const useInfoStore = defineStore('info', () => {
 
     currentBookInfo,
     setCurrentBookInfo,
+
+    currentArticleTreeInfo,
+    setCurrentArticleTreeInfo,
 
     currentArticleInfo,
     setCurrentArticleInfo,

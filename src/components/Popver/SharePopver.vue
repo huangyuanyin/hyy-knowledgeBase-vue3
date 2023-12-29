@@ -212,7 +212,7 @@ const toCopy = () => {
     </div>
     <div class="box" v-if="currentPage === '1'">
       <div class="back" @click="currentPage = '0'"><img src="/src/assets/icons/sharePopver/back.svg" alt="" />分享范围</div>
-      <p class="tip">默认分享范围是空间所有成员。可以选择分享给互联网所有人，内容需符合相关法律法规及语雀 服务协议 约定。</p>
+      <p class="tip">默认分享范围是该知识库所有成员。可以选择分享给该空间/团队所有成员。</p>
       <div class="public-item" v-for="(item, index) in publicTypeList" :key="'publicTypeList' + index" @click="toChangePublic(item.value)">
         <span>{{ item.label }}</span>
         <img v-if="publicType === item.value" src="/src/assets/icons/sharePopver/select.svg" alt="" />

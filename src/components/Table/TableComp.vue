@@ -238,18 +238,21 @@ const cancelMark = () => {
         <tr class="docItem" v-for="document in (props.data as any)" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">
           <td class="item-title">
             <div>
-              <img :src="document.target_type === 'book' ? document.icon : articleIcon" alt="" />
+              <img :src="document.target_type === 'book' ? document.owner_ship.book_icon : articleIcon" alt="" />
               <div class="item-title-right">
-                <el-tooltip effect="light" :content="document.title" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
-                  <span>{{ document.title }}</span>
+                <el-tooltip effect="light" :content="document.target_name" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
+                  <span>{{ document.target_name }}</span>
                 </el-tooltip>
               </div>
             </div>
           </td>
-          <td class="item-user">
-            <span class="username">{{ document.username }}</span>
+          <td class="item-user" v-if="document.target_type === 'book'">
+            <span class="username">{{ document.owner_ship.group_name }}</span>
+          </td>
+          <td class="item-user" v-else>
+            <span class="username">{{ document.owner_ship.group_name }}</span>
             <span class="divider">/</span>
-            <span class="library">{{ document.library }}</span>
+            <span class="library">{{ document.owner_ship.book_name }}</span>
           </td>
           <td class="item-time">
             <span>{{ document.create_datetime }}</span>

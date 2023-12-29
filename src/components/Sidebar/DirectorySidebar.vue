@@ -3,7 +3,6 @@ import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
 import miniDropDownIcon from '@/assets/icons/miniDropDownIcon.svg'
 import linkTypeIcon from '@/assets/icons/linkType.svg'
 import fileTypeIcon from '@/assets/icons/fileType.svg'
-// @ts-ignore
 import { sidebarSearchMenuItemsData, articleOperationData, linkOperationData, titleOperationData, fileOperationData, directorySidebarOperationData } from '@/data/data'
 import { useLinkHooks } from '@/hooks/useLink'
 
@@ -16,7 +15,6 @@ const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const spaceId = ref('') // 当前空间id
 const bookId = ref('') // 当前知识库id
-const dataSource = ref([])
 const bookTree = ref(null)
 const currentNodeKey = ref(Number(route.query.aid)) // 当前选中的节点
 const isAllExpand = ref(true) // 是否全部展开
@@ -59,7 +57,6 @@ watchEffect(() => {
     nextTick(() => {
       handleArticleList()
     })
-    console.log(`output->111`, 111)
     refreshStroe.setRefreshArticleList(false)
   }
   nextTick(async () => {
@@ -67,7 +64,6 @@ watchEffect(() => {
     group_name.value = route.query.gname as string
     bookId.value = route.query.lid as string
     if (bookId.value) {
-      console.log(`output->2222`, 2222)
       handleArticleList()
     }
   })
@@ -114,7 +110,7 @@ function handleAddArticle(title: string, data?) {
 async function handleArticleList() {
   const { articleList, currentNodeKey: node, getArticleList } = useArticle()
   await getArticleList(Number(bookId.value))
-  dataSource.value = articleList.value
+  infoStore.currentArticleTreeInfo = articleList.value
   currentNodeKey.value = node.value
 }
 
@@ -168,7 +164,6 @@ const toLink = (type?: string) => {
         break
     }
   } else if (type === 'index') {
-    console.log(`output->111`, 111)
     currentNodeKey.value = null
     if (infoStore.currentSpaceType === '个人') {
       router.push({
@@ -223,7 +218,17 @@ const toRename = (val) => {
 }
 
 const handleRename = () => {
-  useArticle().handleEditArticle(reNameId.value, reName.value)
+  if (!reName.value) return
+  if (route.path.includes('/directory/index') || reNameId.value !== Number(route.query.aid)) {
+    useArticle().handleEditArticle(reNameId.value, reName.value, () => {
+      useArticle().getArticleList(Number(bookId.value), (val: any) => {
+        infoStore.currentArticleTreeInfo = val
+        route.path.includes('/directory/index') ? (currentNodeKey.value = null) : (currentNodeKey.value = Number(route.query.aid))
+      })
+    })
+  } else {
+    useArticle().handleEditArticle(reNameId.value, reName.value)
+  }
   reNameId.value = null
 }
 
@@ -284,7 +289,7 @@ const toAddLink = (data) => {
 async function deleteArticle(id: Number) {
   const { articleList, currentNodeKey: node, handleDeleteArticle } = useArticle()
   await handleDeleteArticle(id)
-  dataSource.value = articleList.value
+  infoStore.currentArticleTreeInfo = articleList.value
   currentNodeKey.value = node.value
 }
 
@@ -418,7 +423,7 @@ const customIcon = () => {
         </div>
       </div>
     </div>
-    <div class="empty" v-if="!dataSource.length">
+    <div class="empty" v-if="!infoStore.currentArticleTreeInfo">
       <img src="@/assets/img/empty.png" alt="" />
       <div>知识库为空，你可以<span @click="handleAddArticle('文档', null)">新建文档</span></div>
     </div>
@@ -427,7 +432,7 @@ const customIcon = () => {
         v-loading="isLoading"
         element-loading-text="文章加载中..."
         ref="bookTree"
-        :data="dataSource"
+        :data="infoStore.currentArticleTreeInfo"
         node-key="id"
         :current-node-key="currentNodeKey"
         :props="defaultProps"
@@ -440,7 +445,17 @@ const customIcon = () => {
         <template #default="{ data }">
           <span class="list-node">
             <div class="title">
-              <input class="editTitle" ref="inputName" id="inputName" v-if="reNameId === data.id" v-model="reName" type="text" @blur="handleRename" />
+              <input
+                @click.stop
+                class="editTitle"
+                ref="inputName"
+                id="inputName"
+                v-if="reNameId === data.id"
+                v-model="reName"
+                type="text"
+                @blur.stop="handleRename"
+                @keyup.enter.stop="handleRename"
+              />
               <span v-else>{{ data.title }}</span>
               <img class="articleIcon" v-if="data.type === 'links' || data.type === 'file'" :src="data.type === 'links' ? linkTypeIcon : fileTypeIcon" alt="" />
             </div>
