@@ -2,6 +2,7 @@
 import cover from '@/assets/img/cover.png'
 import { editLibraryApi } from '@/api/library'
 import { FormInstance, FormRules } from 'element-plus'
+import { imgToBase64 } from '@/utils/imgToBase64'
 
 interface BookForm {
   name: string
@@ -11,6 +12,7 @@ interface BookForm {
   space: string
   group: string
   stacks: string
+  cover: string
 }
 
 const route = useRoute()
@@ -24,7 +26,8 @@ const bookForm = reactive<BookForm>({
   description: '',
   space: route.query.sid as string,
   group: route.query.gid as string,
-  stacks: ''
+  stacks: '',
+  cover: ''
 })
 const rules = reactive<FormRules<BookForm>>({
   name: [
@@ -73,12 +76,23 @@ const getBooksDetail = async (id) => {
       bookForm.icon = (res as any).icon
       bookForm.group = (res as any).group
       bookForm.stacks = (res as any).stacks
+      bookForm.cover = (res as any).cover
     }
   })
 }
 
-const uploadImg = () => {
-  ElMessage.warning('该功能暂未开放，敬请期待')
+const toChangeCover = (item) => {
+  bookForm.cover = `/src/assets/img/cover/${item}.png`
+  imgToBase64(bookForm.cover)
+    .then((res) => {
+      if (res) {
+        bookForm.cover = res as string
+      }
+      console.log(`output->bookForm.cover`, bookForm.cover)
+    })
+    .catch((err) => {
+      console.log('生成base64错误！', err)
+    })
 }
 
 const changeIcon = (icon) => {
@@ -107,9 +121,28 @@ onMounted(() => {
           <el-input v-model="bookForm.description" type="textarea" rows="7" placeholder="如：产品设计与研发" />
         </el-form-item>
         <el-form-item label="封面">
-          <div class="cover">
-            <el-image :src="cover" fit="contain" />
-            <el-button @click="uploadImg"> 重新上传 </el-button>
+          <div class="cover" flex h-310px pt-14px pb-14px mt-10px border="1px solid #dedfe3" rounded-6px w-827px>
+            <!-- <el-image :src="cover" fit="contain" />
+            <el-button @click="uploadImg"> 重新上传 </el-button> -->
+            <div relative w-207px h-full ml-14px pt-35px pb-35px pr-22px pl-22px box-sizing>
+              <img absolute top-0px left-0px w-full h-full rounded-6px :src="bookForm.cover || cover" alt="" />
+              <h3 relative font-600 text-23px text="#1f2329" line-height-33px tracking-1.5px>{{ bookForm.name }}</h3>
+              <p relative text-15px line-height-25px mt-4px tracking-1.5px line-clamp-3 overflow-hidden text-ellipsis break-words>{{ bookForm.description }}</p>
+            </div>
+            <div relative ml-10px flex flex-col flex-1>
+              <div pl-4px>
+                <ul>
+                  <li w-40px font-700 list-none whitespace-nowrap p-2px px-8px mr-8px rounded-6px bg="#336DF433" text="center 12px #RRGGBB" line-height-20px cursor-pointer>
+                    全部
+                  </li>
+                </ul>
+              </div>
+              <div flex mt-8px flex-wrap pl-4px pr-3px overflow-auto class="list">
+                <div class="coverImg" mt-1px mr-12px mb-12px w-72px h-98px v-for="(item, index) in 24" :key="'coverList' + index">
+                  <img w-full h-full rounded-6px cursor-pointer :src="`/src/assets/img/cover/${item}.png`" alt="" @click="toChangeCover(item)" />
+                </div>
+              </div>
+            </div>
           </div>
         </el-form-item>
         <el-form-item>
@@ -170,12 +203,41 @@ onMounted(() => {
         }
       }
       .cover {
-        display: flex;
-        align-items: flex-end;
-        .el-image {
-          width: 280px;
-          height: 140px;
-          margin-right: 16px;
+        .list {
+          max-height: 248px;
+
+          &::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+          }
+          &::-webkit-scrollbar-track {
+            background: rgb(239, 239, 239);
+            border-radius: 2px;
+          }
+          &::-webkit-scrollbar-thumb {
+            background: #bfbfbf;
+            border-radius: 10px;
+            cursor: pointer;
+          }
+        }
+        .coverImg {
+          position: relative;
+          display: flex;
+          align-items: center;
+          &:hover {
+            &:before {
+              content: '';
+              position: absolute;
+              box-shadow: 0 0 0 1px rgb(20, 86, 240);
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              pointer-events: none;
+              border-radius: 6px;
+              box-sizing: content-box;
+            }
+          }
         }
       }
       .submit {

@@ -1,10 +1,14 @@
 <script lang="ts" setup>
-import publicIcon from '@/assets/icons/publicIcon.svg'
-import privateIcon from '@/assets/icons/privateIcon.svg'
-import moreIcon1_after from '@/assets/icons/moreIcon1_after.svg'
+import setIcon from '@/assets/icons/set2.svg'
+import pinOutIcon from '@/assets/icons/pinOutIcon.svg'
+import commonUseIcon from '@/assets/icons/commonUseIcon.svg'
+// import publicIcon from '@/assets/icons/publicIcon.svg'
+// import privateIcon from '@/assets/icons/privateIcon.svg'
+// import moreIcon1_after from '@/assets/icons/moreIcon1_after.svg'
 import addIcon from '@/assets/icons/addIcon.svg'
+import coverImg from '@/assets/img/cover/21.png'
 import { addQuickLinksApi, deleteQuickLinksApi } from '@/api/quickLinks'
-import { commonLibraryData, notCommonLibraryData } from '@/data/data'
+// import { commonLibraryData, notCommonLibraryData } from '@/data/data'
 import { LibraryCard } from '@/type/card'
 
 const props = defineProps({
@@ -20,7 +24,6 @@ const props = defineProps({
 
 const route = useRoute()
 const routeInfo = { route, router }
-const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const isShowsLibraryDialog = ref(false)
@@ -34,10 +37,10 @@ const deleteInfo = ref<{
   stack?: string
 }>({})
 
-const toDeleteLibrary = (val) => {
-  isShowsDeleteDialog.value = true
-  deleteInfo.value = val
-}
+// const toDeleteLibrary = (val) => {
+//   isShowsDeleteDialog.value = true
+//   deleteInfo.value = val
+// }
 
 // 移除常用
 const removeCommon = (val) => {
@@ -81,62 +84,62 @@ const addQuickLinks = async (params) => {
   }
 }
 
-const toLink = (item) => {
-  if (infoStore.currentSidebar === 'Sidebar') {
-    router.push({
-      path: `/directory/index`,
-      query: {
-        sid: item.space,
-        sname: route.query.sname,
-        lid: item.id,
-        lname: item.name
-      }
-    })
-  } else {
-    if (item.target_typ === 'group') {
-      router.push({
-        path: `/${infoStore.currentSpaceInfo.spacekey}/team/book`,
-        query: {
-          sid: item.space,
-          sname: route.query.sname,
-          gid: item.target_id,
-          gname: item.title
-        }
-      })
-    } else {
-      router.push({
-        path: `/${infoStore.currentSpaceInfo.spacekey}/directory/index`,
-        query: {
-          sid: item.space,
-          sname: route.query.sname,
-          lid: item.id,
-          lname: item.title || item.name,
-          gid: route.query.gid,
-          gname: item.group_name
-        }
-      })
-    }
-  }
-}
+// const toLink = (item) => {
+//   if (infoStore.currentSidebar === 'Sidebar') {
+//     router.push({
+//       path: `/directory/index`,
+//       query: {
+//         sid: item.space,
+//         sname: route.query.sname,
+//         lid: item.id,
+//         lname: item.name
+//       }
+//     })
+//   } else {
+//     if (item.target_typ === 'group') {
+//       router.push({
+//         path: `/${infoStore.currentSpaceInfo.spacekey}/team/book`,
+//         query: {
+//           sid: item.space,
+//           sname: route.query.sname,
+//           gid: item.target_id,
+//           gname: item.title
+//         }
+//       })
+//     } else {
+//       router.push({
+//         path: `/${infoStore.currentSpaceInfo.spacekey}/directory/index`,
+//         query: {
+//           sid: item.space,
+//           sname: route.query.sname,
+//           lid: item.id,
+//           lname: item.title || item.name,
+//           gid: route.query.gid,
+//           gname: item.group_name
+//         }
+//       })
+//     }
+//   }
+// }
 
-const toRename = (val) => {
-  console.log(`output->val`, val)
-  ElMessage.warning('功能暂未开放，敬请期待')
-}
+// const toRename = (val) => {
+//   console.log(`output->val`, val)
+//   ElMessage.warning('功能暂未开放，敬请期待')
+// }
 
 const toMoreSetting = (val) => {
   useLink(routeInfo, 'bookSet', val)
 }
 
-const toPermission = (val) => {
-  useLink(routeInfo, 'bookPermission', val)
-}
+// const toPermission = (val) => {
+//   useLink(routeInfo, 'bookPermission', val)
+// }
 </script>
 
 <template>
   <template v-if="props.cardList.length">
     <div class="LibraryCard-wrap" v-for="(card, cardIndex) in props.cardList" :key="cardIndex">
-      <div class="card-content">
+      <!-- <div class="card-content">
         <div class="header">
           <div class="header-left">
             <img :src="card.icon" alt="" class="bookIcon" />
@@ -178,6 +181,47 @@ const toPermission = (val) => {
         <div class="empty" v-else>
           <p>知识库暂无内容</p>
         </div>
+      </div> -->
+      <div class="card" relative w-155px h-210px mt-12px ml-24px mr-48px mb-24px p-16px cursor-pointer box-sizing>
+        <div class="bg" absolute top-0 left-0 w-full h-full rounded-8px outline-none shadow-1xl bg-white>
+          <img w-full h-full rounded-8px :src="card.cover || coverImg" alt="" />
+        </div>
+        <el-tooltip effect="dark" content="移除常用" placement="top" :show-arrow="false" :hide-after="0" :teleported="false">
+          <span v-if="card.is_common_id" class="common" @click="removeCommon(card)" w-24px h-24px cursor-pointer absolute items-center justify-center top-5px right-6px>
+            <img w-16px h-16px :src="commonUseIcon" alt="" />
+          </span>
+        </el-tooltip>
+        <el-tooltip effect="dark" content="添加常用" placement="top" :show-arrow="false" :hide-after="0" :teleported="false">
+          <span v-if="!card.is_common_id" class="common" @click="addCommon(card)" w-24px h-24px cursor-pointer absolute items-center justify-center top-5px right-6px>
+            <img w-16px h-16px :src="pinOutIcon" alt="" />
+          </span>
+        </el-tooltip>
+        <h3 relative font-600 text-16px mt-12px line-height-24px color="#262626">{{ card.name }}</h3>
+        <p relative text-12px line-height-18px font-400 mt-6px mb-6px color="#000" line-clamp-3 overflow-hidden text-ellipsis break-words>{{ card.description }}</p>
+        <button
+          absolute
+          bottom-0
+          left-0
+          items-center
+          justify-center
+          text-12px
+          line-height-20px
+          font-600
+          color="#fff"
+          font-lark-hack-safari
+          font-emoji
+          font-chinese-quote
+          font-sans-serif
+          rounded-bl-8px
+          rounded-br-8px
+          opacity-100
+          w-full
+          h-36px
+          class="setting"
+          @click="toMoreSetting(card)"
+        >
+          <span><img w-12px h-12px mr-4px :src="setIcon" alt="" /></span>知识库设置
+        </button>
       </div>
     </div>
   </template>
@@ -195,15 +239,48 @@ const toPermission = (val) => {
 
 <style lang="scss" scoped>
 .LibraryCard-wrap {
-  cursor: grab;
-  width: calc(33.33333% - 16px);
-  height: 218px;
-  margin-left: 16px;
-  background-color: #fff;
-  border-radius: 6px;
-  margin-bottom: 16px;
-  border: 1px solid #e7e9e8;
-  box-sizing: border-box;
+  // cursor: grab;
+  // width: calc(33.33333% - 16px);
+  // height: 218px;
+  // margin-left: 16px;
+  // background-color: #fff;
+  // border-radius: 6px;
+  // margin-bottom: 16px;
+  // border: 1px solid #e7e9e8;
+  // box-sizing: border-box;
+  .card {
+    .bg {
+      box-shadow: 0 2px 4px rgba(31, 35, 41, 0.12);
+      transition: all 0.3s ease-in-out;
+    }
+    .common {
+      display: none;
+    }
+    .setting {
+      display: none;
+      background-color: rgba(0, 0, 0, 0.55);
+    }
+    &:hover {
+      .setting {
+        display: flex;
+      }
+      .common {
+        display: flex;
+      }
+      &:before {
+        content: '';
+        position: absolute;
+        box-shadow: 0 0 0 1px rgb(20, 86, 240);
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        border-radius: 8px;
+      }
+    }
+  }
+
   .card-content {
     position: relative;
     padding: 0 16px 0 16px;
