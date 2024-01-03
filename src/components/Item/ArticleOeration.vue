@@ -1,0 +1,201 @@
+<script lang="ts" setup>
+import { articleOperationData, linkOperationData, titleOperationData, fileOperationData } from '@/data/data'
+import { useLinkHooks } from '@/hooks/useLink'
+
+interface ArticleData {
+  id?: Number
+  title: String
+  type: String
+  [key: string]: any
+}
+
+const props = defineProps({
+  data: {
+    type: Object as PropType<ArticleData>,
+    default: () => ({})
+  }
+})
+const emit = defineEmits(['toRename'])
+
+const route = useRoute()
+const infoStore = useInfoStore()
+const isShowExportFileDialog = ref<boolean>(false)
+const isShowLinkDialog = ref<boolean>(false)
+const showHandleArticleDialog = ref<boolean>(false)
+const handleArticleDialogTitle = ref<string>('')
+const handleArticleDialogDesc = ref<string>('')
+const handleData = ref<ArticleData>(null) // 复制 || 移动的数据
+const exportId = ref<number>(null) // 导出文档的id
+const exportType = ref<string>('') // 导出文档的类型
+const linkType = ref<string>('') // 编辑链接 | 新增链接
+const linkDialogId = ref<number>(null) // 编辑链接的id
+const parentId = ref<number>(null) // 编辑链接的父级id
+
+async function deleteArticle(id: Number) {
+  const { articleList, currentNodeKey: node, handleDeleteArticle } = useArticle()
+  await handleDeleteArticle(id)
+  infoStore.currentArticleTreeInfo = articleList.value
+  // currentNodeKey.value = node.value
+}
+
+// 复制链接
+const toCopyLink = (val) => {
+  const linkUrl = ref('')
+  const spaceName = route.path.split('/')[1]
+  if (val.type === 'links') {
+    linkUrl.value = val.description
+  } else {
+    if (infoStore.currentSpaceType === '个人') {
+      linkUrl.value = `${window.location.origin}/#/directory/${val.type}?lid=${val.book}&lname=${route.query.lname}&aid=${val.id}&aname=${val.title}`
+    } else {
+      linkUrl.value = `${window.location.origin}/#/${spaceName}/directory/${val.type}?sid=${route.query.sid}&sname=${route.query.sname}&gid=${route.query.gid}&gname=${route.query.gname}&lid=${val.book}&lname=${route.query.lname}&aid=${val.id}&aname=${val.title}`
+    }
+  }
+  useCopy(linkUrl.value)
+}
+
+// 复制 || 移动
+const toHandleArticle = (type, val) => {
+  console.log(`output->121`, 121)
+  handleData.value = val
+  showHandleArticleDialog.value = true
+  if (type === 'move') {
+    handleArticleDialogTitle.value = '移动到...'
+    handleArticleDialogDesc.value = '可移动到有创建文档权限的知识库'
+  } else {
+    handleArticleDialogTitle.value = '复制到...'
+    handleArticleDialogDesc.value = '可复制到有创建文档权限的知识库'
+  }
+}
+
+// 编辑链接弹窗
+const toEditLink = (val) => {
+  parentId.value = val.parent
+  linkType.value = 'edit'
+  linkDialogId.value = val.id
+  isShowLinkDialog.value = true
+}
+
+// 关闭链接弹窗
+const closeLinkDialog = () => {
+  isShowLinkDialog.value = false
+  linkType.value = 'add'
+}
+
+// 导出
+const toExport = (val) => {
+  exportId.value = val.id
+  exportType.value = val.type
+  isShowExportFileDialog.value = true
+}
+
+// 删除
+const toDeleteArticle = (val) => {
+  const confirmMessage = val.children ? `同时删除【${val.title}】下的所有文档` : `确认删除【${val.title}】吗？`
+  const confirmTitle = val.children ? `确认删除【${val.title}】吗？` : ''
+  ElMessageBox.confirm(confirmMessage, confirmTitle, {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    confirmButtonClass: 'submitBtn',
+    cancelButtonClass: 'cancelBtn',
+    customClass: 'deleteArticleDialog',
+    type: 'warning',
+    showClose: false
+  })
+    .then(() => {
+      deleteArticle(val.id)
+    })
+    .catch(() => {
+      ElMessage.info('取消操作')
+    })
+}
+
+const toTodo = (val) => {
+  console.log(`output->val`, val)
+  ElMessage.warning('功能暂未开放，敬请期待')
+}
+</script>
+
+<template>
+  <LibraryOperationPopver
+    :menuItems="articleOperationData"
+    :height="32"
+    :width="150"
+    @toRename="emit('toRename', props.data)"
+    @toEditArticle="
+      () => {
+        useLinkHooks().handleArticleTypeLink(props.data, true)
+      }
+    "
+    @toCopyLink="toCopyLink(props.data)"
+    @toNewTab="
+      () => {
+        useLinkHooks().handleArticleTypeLink(props.data, false, true)
+      }
+    "
+    @toCopyArticle="toHandleArticle('copy', props.data)"
+    @toMoveArticle="toHandleArticle('move', props.data)"
+    @toExport="toExport(props.data)"
+    @toDeleteArticle="toDeleteArticle(props.data)"
+  >
+    <span rotate-90 mr-8px inline-flex h-full v-if="props.data.type !== 'links' && props.data.type !== 'title' && props.data.type !== 'file'" @click.stop>
+      <slot> <img src="/src/assets/icons/moreIcon1_after.svg" alt="" /> </slot>
+    </span>
+  </LibraryOperationPopver>
+  <LibraryOperationPopver
+    :menuItems="linkOperationData"
+    :height="32"
+    :width="150"
+    @toEditLink="toEditLink(props.data)"
+    @toCopyLink="toCopyLink(props.data)"
+    @toCopyArticle="toHandleArticle('copy', props.data)"
+    @toMoveArticle="toHandleArticle('move', props.data)"
+    @toTodo="toTodo(props.data)"
+    @toDeleteArticle="toDeleteArticle(props.data)"
+  >
+    <span rotate-90 mr-8px inline-flex h-full v-if="props.data.type === 'links'" @click.stop>
+      <slot> <img src="/src/assets/icons/moreIcon1_after.svg" alt="" /> </slot>
+    </span>
+  </LibraryOperationPopver>
+  <LibraryOperationPopver
+    :menuItems="titleOperationData"
+    :height="32"
+    :width="150"
+    @toRename="emit('toRename', props.data)"
+    @toCopyArticle="toHandleArticle('copy', props.data)"
+    @toMoveArticle="toHandleArticle('move', props.data)"
+    @toTodo="toTodo(props.data)"
+    @toDeleteArticle="toDeleteArticle(props.data)"
+  >
+    <span rotate-90 mr-8px inline-flex h-full v-if="props.data.type === 'title'" @click.stop>
+      <slot> <img src="/src/assets/icons/moreIcon1_after.svg" alt="" /> </slot>
+    </span>
+  </LibraryOperationPopver>
+  <LibraryOperationPopver
+    :menuItems="fileOperationData"
+    :height="32"
+    :width="150"
+    @toRename="emit('toRename', props.data)"
+    @toExport="toExport(props.data)"
+    @toCopyArticle="toHandleArticle('copy', props.data)"
+    @toMoveArticle="toHandleArticle('move', props.data)"
+    @toTodo="toTodo(props.data)"
+    @toDeleteArticle="toDeleteArticle(props.data)"
+  >
+    <span rotate-90 mr-8px inline-flex h-full v-if="props.data.type === 'file'" @click.stop>
+      <slot> <img src="/src/assets/icons/moreIcon1_after.svg" alt="" /> </slot>
+    </span>
+  </LibraryOperationPopver>
+
+  <HandleArticleDialog
+    :show="showHandleArticleDialog"
+    :title="handleArticleDialogTitle"
+    :desc="handleArticleDialogDesc"
+    :data="handleData"
+    @closeDialog="showHandleArticleDialog = false"
+  />
+  <LinkDialog :isShow="isShowLinkDialog" :parent="parentId" :type="linkType" :id="linkDialogId" @closeDialog="closeLinkDialog" />
+  <ExportFileDialog :isShow="isShowExportFileDialog" @closeDialog="isShowExportFileDialog = false" :type="exportType" :id="exportId" />
+</template>
+
+<style lang="scss" scoped></style>

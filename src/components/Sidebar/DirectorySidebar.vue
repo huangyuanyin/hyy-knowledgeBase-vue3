@@ -3,7 +3,7 @@ import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
 import miniDropDownIcon from '@/assets/icons/miniDropDownIcon.svg'
 import linkTypeIcon from '@/assets/icons/linkType.svg'
 import fileTypeIcon from '@/assets/icons/fileType.svg'
-import { sidebarSearchMenuItemsData, articleOperationData, linkOperationData, titleOperationData, fileOperationData, directorySidebarOperationData } from '@/data/data'
+import { sidebarSearchMenuItemsData, directorySidebarOperationData } from '@/data/data'
 import { useLinkHooks } from '@/hooks/useLink'
 
 const route = useRoute()
@@ -20,17 +20,9 @@ const currentNodeKey = ref(Number(route.query.aid)) // 当前选中的节点
 const isAllExpand = ref(true) // 是否全部展开
 const group_name = ref<string>('')
 const nickName = ref<string>(infoStore.currentSpaceInfo.spacekey || route.fullPath.split('/')[1])
-const showHandleArticleDialog = ref(false)
 const isShowLinkDialog = ref(false)
-const isShowExportFileDialog = ref(false)
 const isLoading = ref(false)
-const exportId = ref(null)
-const exportType = ref('')
-const handleArticleDialogTitle = ref('')
-const handleArticleDialogDesc = ref('')
-const handleData = ref(null) // 复制 || 移动的数据
 const linkType = ref('add') // 链接弹窗类型： add edit
-const linkDialogId = ref(null) // 链接弹窗id
 const parentId = ref(null) // 父级节点id
 const reName = ref('')
 const reNameId = ref(null)
@@ -198,8 +190,6 @@ const toArticleDetail = (val) => {
     case 'links':
       val.open_windows === '1' ? window.open(val.description) : (window.location.href = val.description)
       break
-    case 'title':
-      break
     default:
       useLinkHooks().handleArticleTypeLink(val, false)
       break
@@ -232,85 +222,9 @@ const handleRename = () => {
   reNameId.value = null
 }
 
-// 复制链接
-const toCopyLink = (val) => {
-  const linkUrl = ref('')
-  const spaceName = route.path.split('/')[1]
-  if (val.type === 'links') {
-    linkUrl.value = val.description
-  } else {
-    if (infoStore.currentSpaceType === '个人') {
-      linkUrl.value = `${window.location.origin}/#/directory/${val.type}?lid=${val.book}&lname=${route.query.lname}&aid=${val.id}&aname=${val.title}`
-    } else {
-      linkUrl.value = `${window.location.origin}/#/${spaceName}/directory/${val.type}?sid=${route.query.sid}&sname=${route.query.sname}&gid=${route.query.gid}&gname=${route.query.gname}&lid=${val.book}&lname=${route.query.lname}&aid=${val.id}&aname=${val.title}`
-    }
-  }
-  useCopy(linkUrl.value)
-}
-
-// 复制 || 移动
-const toHandleArticle = (type, val) => {
-  handleData.value = val
-  showHandleArticleDialog.value = true
-  if (type === 'move') {
-    handleArticleDialogTitle.value = '移动到...'
-    handleArticleDialogDesc.value = '可移动到有创建文档权限的知识库'
-  } else {
-    handleArticleDialogTitle.value = '复制到...'
-    handleArticleDialogDesc.value = '可复制到有创建文档权限的知识库'
-  }
-}
-
-// 导出
-const toExport = (val) => {
-  exportId.value = val.id
-  exportType.value = val.type
-  isShowExportFileDialog.value = true
-}
-
-const toTodo = (val) => {
-  console.log(`output->val`, val)
-  ElMessage.warning('功能暂未开放，敬请期待')
-}
-
-// 编辑链接弹窗
-const toEditLink = (val) => {
-  parentId.value = val.parent
-  linkType.value = 'edit'
-  linkDialogId.value = val.id
-  isShowLinkDialog.value = true
-}
-
 const toAddLink = (data) => {
   parentId.value = data.id
   isShowLinkDialog.value = true
-}
-
-async function deleteArticle(id: Number) {
-  const { articleList, currentNodeKey: node, handleDeleteArticle } = useArticle()
-  await handleDeleteArticle(id)
-  infoStore.currentArticleTreeInfo = articleList.value
-  currentNodeKey.value = node.value
-}
-
-const toDeleteArticle = (val) => {
-  const confirmMessage = val.children ? `同时删除【${val.title}】下的所有文档` : `确认删除【${val.title}】吗？`
-  const confirmTitle = val.children ? `确认删除【${val.title}】吗？` : ''
-  ElMessageBox.confirm(confirmMessage, confirmTitle, {
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
-    confirmButtonClass: 'submitBtn',
-    cancelButtonClass: 'cancelBtn',
-    customClass: 'deleteArticleDialog',
-    type: 'warning',
-    showClose: false
-  })
-    .then(() => {
-      deleteArticle(val.id)
-    })
-    .catch(() => {
-      ElMessage.info('取消操作')
-    })
 }
 
 const closeLinkDialog = () => {
@@ -460,76 +374,7 @@ const customIcon = () => {
               <img class="articleIcon" v-if="data.type === 'links' || data.type === 'file'" :src="data.type === 'links' ? linkTypeIcon : fileTypeIcon" alt="" />
             </div>
             <div class="button" v-if="reNameId !== data.id">
-              <LibraryOperationPopver
-                :menuItems="articleOperationData"
-                :height="32"
-                :width="150"
-                @toRename="toRename(data)"
-                @toEditArticle="
-                  () => {
-                    useLinkHooks().handleArticleTypeLink(data, true)
-                  }
-                "
-                @toCopyLink="toCopyLink(data)"
-                @toNewTab="
-                  () => {
-                    useLinkHooks().handleArticleTypeLink(data, false, true)
-                  }
-                "
-                @toCopyArticle="toHandleArticle('copy', data)"
-                @toMoveArticle="toHandleArticle('move', data)"
-                @toTodo="toTodo(data)"
-                @toExport="toExport(data)"
-                @toDeleteArticle="toDeleteArticle(data)"
-              >
-                <span class="moreIcon" v-if="data.type !== 'links' && data.type !== 'title' && data.type !== 'file'" @click.stop>
-                  <img src="/src/assets/icons/moreIcon1_after.svg" alt="" />
-                </span>
-              </LibraryOperationPopver>
-              <LibraryOperationPopver
-                :menuItems="linkOperationData"
-                :height="32"
-                :width="150"
-                @toEditLink="toEditLink(data)"
-                @toCopyLink="toCopyLink(data)"
-                @toCopyArticle="toHandleArticle('copy', data)"
-                @toMoveArticle="toHandleArticle('move', data)"
-                @toTodo="toTodo(data)"
-                @toDeleteArticle="toDeleteArticle(data)"
-              >
-                <span class="moreIcon" v-if="data.type === 'links'" @click.stop>
-                  <img src="/src/assets/icons/moreIcon1_after.svg" alt="" />
-                </span>
-              </LibraryOperationPopver>
-              <LibraryOperationPopver
-                :menuItems="titleOperationData"
-                :height="32"
-                :width="150"
-                @toRename="toRename(data)"
-                @toCopyArticle="toHandleArticle('copy', data)"
-                @toMoveArticle="toHandleArticle('move', data)"
-                @toTodo="toTodo(data)"
-                @toDeleteArticle="toDeleteArticle(data)"
-              >
-                <span class="moreIcon" v-if="data.type === 'title'" @click.stop>
-                  <img src="/src/assets/icons/moreIcon1_after.svg" alt="" />
-                </span>
-              </LibraryOperationPopver>
-              <LibraryOperationPopver
-                :menuItems="fileOperationData"
-                :height="32"
-                :width="150"
-                @toRename="toRename(data)"
-                @toExport="toExport(data)"
-                @toCopyArticle="toHandleArticle('copy', data)"
-                @toMoveArticle="toHandleArticle('move', data)"
-                @toTodo="toTodo(data)"
-                @toDeleteArticle="toDeleteArticle(data)"
-              >
-                <span class="moreIcon" v-if="data.type === 'file'" @click.stop>
-                  <img src="/src/assets/icons/moreIcon1_after.svg" alt="" />
-                </span>
-              </LibraryOperationPopver>
+              <ArticleOeration :data="data" :row="data" @toRename="toRename" />
               <AddOperationPopver
                 :menu-items="sidebarSearchMenuItemsData"
                 trigger="click"
@@ -551,15 +396,7 @@ const customIcon = () => {
       </el-tree>
     </div>
   </div>
-  <HandleArticleDialog
-    :show="showHandleArticleDialog"
-    :title="handleArticleDialogTitle"
-    :desc="handleArticleDialogDesc"
-    :data="handleData"
-    @closeDialog="showHandleArticleDialog = false"
-  />
-  <LinkDialog :isShow="isShowLinkDialog" :parent="parentId" :type="linkType" :id="linkDialogId" @closeDialog="closeLinkDialog" />
-  <ExportFileDialog :isShow="isShowExportFileDialog" @closeDialog="isShowExportFileDialog = false" :type="exportType" :id="exportId" />
+  <LinkDialog :isShow="isShowLinkDialog" :parent="parentId" :type="linkType" :id="null" @closeDialog="closeLinkDialog" />
 </template>
 
 <style lang="scss" scoped>

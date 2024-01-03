@@ -86,7 +86,7 @@ const handleClose = async () => {
 </script>
 
 <template>
-  <el-dialog class="linkDialog" v-model="dialogVisible" title="导出" width="520" :before-close="handleClose">
+  <el-dialog class="linkDialog" v-model="dialogVisible" title="导出" width="520" :before-close="handleClose" :append-to-body="true">
     <div class="list">
       <div class="item" v-for="(item, index) in fileTypeList" :key="'fileTypeList' + index" @click="toHandle(item)">
         <div class="icon">

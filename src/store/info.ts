@@ -1,4 +1,4 @@
-import { ArticleInfo, ArticleTree } from '@/type/article'
+import { ArticleInfo } from '@/type/article'
 interface SpaceInfo {
   id: number
   spacename: string
@@ -34,7 +34,7 @@ export const useInfoStore = defineStore('info', () => {
   const currentTeamInfo = ref(JSON.parse(sessionStorage.getItem('xinAn-teamInfo') || '{}')) // 当前团队信息
   const currentSpaceInfo = ref<SpaceInfo>(JSON.parse(sessionStorage.getItem('xinAn-spaceInfo') || '{}')) // 当前空间信息
   const currentBookInfo = ref<BookInfo>(JSON.parse(sessionStorage.getItem('xinAn-bookInfo') || '{}')) // 当前知识库信息
-  const currentArticleTreeInfo = ref<ArticleTree[]>(null) // 当前知识库目录列表
+  const currentArticleTreeInfo = ref<ArticleInfo[]>(null) // 当前知识库目录列表
   const currentArticleInfo = ref<ArticleInfo | string>() // 当前文章信息
   const isSpaceAdmin = ref<string>(sessionStorage.getItem('xinAn-spaceAdmin')) // 是否是当前空间管理员
   const currentMenu = ref<string>('') // 当前菜单名称
@@ -68,7 +68,7 @@ export const useInfoStore = defineStore('info', () => {
     sessionStorage.setItem('xinAn-bookInfo', JSON.stringify(val))
   }
 
-  const setCurrentArticleTreeInfo = (val: ArticleTree[]) => {
+  const setCurrentArticleTreeInfo = (val: ArticleInfo[]) => {
     currentArticleTreeInfo.value = val
   }
 

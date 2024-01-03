@@ -24,6 +24,7 @@ const props = defineProps({
 
 const route = useRoute()
 const routeInfo = { route, router }
+const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const isShowsLibraryDialog = ref(false)
@@ -84,43 +85,43 @@ const addQuickLinks = async (params) => {
   }
 }
 
-// const toLink = (item) => {
-//   if (infoStore.currentSidebar === 'Sidebar') {
-//     router.push({
-//       path: `/directory/index`,
-//       query: {
-//         sid: item.space,
-//         sname: route.query.sname,
-//         lid: item.id,
-//         lname: item.name
-//       }
-//     })
-//   } else {
-//     if (item.target_typ === 'group') {
-//       router.push({
-//         path: `/${infoStore.currentSpaceInfo.spacekey}/team/book`,
-//         query: {
-//           sid: item.space,
-//           sname: route.query.sname,
-//           gid: item.target_id,
-//           gname: item.title
-//         }
-//       })
-//     } else {
-//       router.push({
-//         path: `/${infoStore.currentSpaceInfo.spacekey}/directory/index`,
-//         query: {
-//           sid: item.space,
-//           sname: route.query.sname,
-//           lid: item.id,
-//           lname: item.title || item.name,
-//           gid: route.query.gid,
-//           gname: item.group_name
-//         }
-//       })
-//     }
-//   }
-// }
+const toLink = (item) => {
+  if (infoStore.currentSidebar === 'Sidebar') {
+    router.push({
+      path: `/directory/index`,
+      query: {
+        sid: item.space,
+        sname: route.query.sname,
+        lid: item.id,
+        lname: item.name
+      }
+    })
+  } else {
+    if (item.target_typ === 'group') {
+      router.push({
+        path: `/${infoStore.currentSpaceInfo.spacekey}/team/book`,
+        query: {
+          sid: item.space,
+          sname: route.query.sname,
+          gid: item.target_id,
+          gname: item.title
+        }
+      })
+    } else {
+      router.push({
+        path: `/${infoStore.currentSpaceInfo.spacekey}/directory/index`,
+        query: {
+          sid: item.space,
+          sname: route.query.sname,
+          lid: item.id,
+          lname: item.title || item.name,
+          gid: route.query.gid,
+          gname: item.group_name
+        }
+      })
+    }
+  }
+}
 
 // const toRename = (val) => {
 //   console.log(`output->val`, val)
@@ -183,7 +184,7 @@ const toMoreSetting = (val) => {
         </div>
       </div> -->
       <div class="card" relative w-155px h-210px mt-12px ml-24px mr-48px mb-24px p-16px cursor-pointer box-sizing>
-        <div class="bg" absolute top-0 left-0 w-full h-full rounded-8px outline-none shadow-1xl bg-white>
+        <div class="bg" absolute top-0 left-0 w-full h-full rounded-8px outline-none shadow-1xl bg-white @click="toLink(card)">
           <img w-full h-full rounded-8px :src="card.cover || coverImg" alt="" />
         </div>
         <el-tooltip effect="dark" content="移除常用" placement="top" :show-arrow="false" :hide-after="0" :teleported="false">

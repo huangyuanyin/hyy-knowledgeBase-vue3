@@ -9,7 +9,7 @@ import moveIcon from '@/assets/icons/drawer/move.svg'
 import deleteIcon from '@/assets/icons/drawer/delete.svg'
 import operationIcon from '@/assets/icons/drawer/operation.svg'
 import infoIcon from '@/assets/icons/drawer/info.svg'
-import { ArticleInfo } from '@/store/info'
+import { ArticleInfo } from '@/type/article'
 
 const props = defineProps({
   drawer: {
@@ -37,14 +37,14 @@ const operationItems = [
   { icon: deleteIcon, text: '删除...', type: 'label' }
 ]
 const infoItems = ref<any>([
-  { icon: '/src/assets/icons/drawer/count.svg', text: '字数', value: `${(infoStore.currentArticleInfo as ArticleInfo).counts} 字`, type: 'label' },
+  { icon: '/src/assets/icons/drawer/count.svg', text: '字数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.counts} 字`, type: 'label' },
   { icon: historyVersion, text: '历史版本', value: '暂未统计', type: 'label' },
-  { text: '创建时间', value: `${(infoStore.currentArticleInfo as ArticleInfo).create_datetime}`, type: 'label' },
-  { text: '更新时间', value: `${(infoStore.currentArticleInfo as ArticleInfo).update_datetime}`, type: 'label' },
-  { icon: '/src/assets/icons/drawer/author.svg', text: '作者', value: (infoStore.currentArticleInfo as ArticleInfo).creator_name, type: 'label' },
+  { text: '创建时间', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.create_datetime}`, type: 'label' },
+  { text: '更新时间', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.update_datetime}`, type: 'label' },
+  { icon: '/src/assets/icons/drawer/author.svg', text: '作者', value: (infoStore.currentArticleInfo as ArticleInfo)?.creator_name, type: 'label' },
   { type: 'hr' },
-  { icon: '/src/assets/icons/drawer/views.svg', text: '阅读数', value: `${(infoStore.currentArticleInfo as ArticleInfo).views} 次`, type: 'label' },
-  { icon: '/src/assets/icons/drawer/comment.svg', text: '评论数', value: `${(infoStore.currentArticleInfo as ArticleInfo).comments_count} 条`, type: 'label' },
+  { icon: '/src/assets/icons/drawer/views.svg', text: '阅读数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.views} 次`, type: 'label' },
+  { icon: '/src/assets/icons/drawer/comment.svg', text: '评论数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.comments_count} 条`, type: 'label' },
   { icon: '/src/assets/icons/drawer/like.svg', text: '点赞数', value: '暂未统计', type: 'label' }
 ])
 const isSaveTemplateDialog = ref(false)

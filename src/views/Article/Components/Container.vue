@@ -4,7 +4,9 @@ import { getCollaborationsApi, getArticleCollaborationsApi } from '@/api/collabo
 // import { getTeamMemberApi } from '@/api/member'
 import CommentDrawer from '@/components/Drawer/CommentDrawer/index.vue'
 import { addMarksApi } from '@/api/marks'
-import { ArticleInfo } from '@/store/info'
+import { ArticleInfo } from '@/type/article'
+import { folderMenuItemsData } from '@/data/data'
+import { uploadArticleApi } from '@/api/article'
 
 const props = defineProps({
   content: {
@@ -25,11 +27,14 @@ const emit = defineEmits(['toPublish'])
 
 const route = useRoute()
 const infoStore = useInfoStore()
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const name = ref('')
 const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
 const isEdit = ref(false)
 const moreFeaturesDrawer = ref(false) // 更多功能抽屉
 const commentDrawer = ref(false) // 评论抽屉
+const isShowLinkDialog = ref(false) // 添加链接弹窗
+const parentId = ref(null) // 添加链接的父级id
 const spaceId = ref('') // 当前空间id
 const publicType = ref('') // 知识库的公开性
 const selectUserList = ref([]) // 可协作人员列表
@@ -57,6 +62,9 @@ const itemList = ref([
   }
 ])
 const buttonList = ref([])
+const headers = ref({
+  Authorization: localStorage.getItem('token')
+})
 
 watchEffect(() => {
   moreFeaturesDrawer.value = false
@@ -104,6 +112,25 @@ function editArticle() {
     body: props.content
   }
   useArticle().handleEditArticle(Number(route.query.aid), params)
+}
+
+function getBookInfo() {
+  return {
+    id: route.query.lid as string,
+    name: route.query.lname as string,
+    group: route.query.gid as string,
+    groupname: route.query.gname as string
+  }
+}
+
+function handleAddArticle(title: string, data?) {
+  const book = getBookInfo()
+  useArticle().handleAddArticle({ book, title }, () => {}, data === null ? null : data)
+}
+
+const toAddLink = (data: number) => {
+  parentId.value = data
+  isShowLinkDialog.value = true
 }
 
 const toHandle = (item: any) => {
@@ -244,6 +271,24 @@ const getArticle = async () => {
 const toCloseDrawer = () => {
   commentDrawer.value = false
 }
+
+const toUpload = async (file) => {
+  const formData = new FormData()
+  formData.append('file', file.file)
+  formData.append('space', spaceId.value)
+  formData.append('book', route.query.lid as string)
+  formData.append('type', 'file')
+  formData.append('title', file.file.name)
+  formData.append('creator', user)
+  formData.append('parent', route.query.aid as string)
+  let res = await uploadArticleApi(formData)
+  if (res.code === 1000) {
+    ElMessage.success('上传成功')
+    useLinkHooks().handleArticleTypeLink(res.data as any, false)
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
 </script>
 
 <template>
@@ -256,12 +301,12 @@ const toCloseDrawer = () => {
             <img src="/src/assets/icons/publicIcon.svg" alt="" />
           </span>
         </div>
-        <div class="header_right">
+        <div class="header_right" v-if="infoStore.currentMenu !== 'title'">
           <div class="item" v-for="(item, index) in itemList" :key="'itemList' + index">
             <StarPopver
               @cancelMark="cancelMark"
-              :startId="(infoStore.currentArticleInfo as ArticleInfo).mark_id"
-              :tag_mark="(infoStore.currentArticleInfo as ArticleInfo ).tag_mark"
+              :startId="(infoStore.currentArticleInfo as ArticleInfo)?.mark_id"
+              :tag_mark="(infoStore.currentArticleInfo as ArticleInfo )?.tag_mark"
               type="article"
             >
               <span v-if="item.label === '收藏' || item.label === '已收藏'" @click="toHandle(item)"> <img :src="item.icon" alt="" /></span>
@@ -286,15 +331,35 @@ const toCloseDrawer = () => {
           <div class="action" v-if="!isEdit">
             <span :class="[commentDrawer ? 'is_active' : 'comment']">
               <img src="/src/assets/icons/article/commentIcon.svg" alt="" @click="openDrawer('comment')" />
-              <em v-if="(infoStore.currentArticleInfo as ArticleInfo).comments_count">{{ (infoStore.currentArticleInfo as ArticleInfo).comments_count }}</em>
+              <em v-if="(infoStore.currentArticleInfo as ArticleInfo)?.comments_count">{{ (infoStore.currentArticleInfo as ArticleInfo)?.comments_count }}</em>
             </span>
             <span :class="[moreFeaturesDrawer ? 'is_active' : '']">
               <img src="/src/assets/icons/article/rightboardIcon.svg" alt="" @click="openDrawer('more')" />
             </span>
           </div>
-          <span class="rightboardIcon" :class="[moreFeaturesDrawer ? 'is_active' : '']" v-else @click="openDrawer('more')">
+          <span class="rightboardIcon" :class="[moreFeaturesDrawer ? 'is_active' : '']" v-if="isEdit" @click="openDrawer('more')">
             <img src="/src/assets/icons/article/rightboardIcon.svg" alt="" />
           </span>
+        </div>
+        <div class="header_right" v-else>
+          <div class="button" flex>
+            <el-upload :http-request="toUpload" :headers="headers" :show-file-list="false" action="">
+              <el-button mr-16px>上传</el-button>
+            </el-upload>
+            <AddOperationPopver
+              :menu-items="folderMenuItemsData"
+              trigger="click"
+              :parent="Number(route.query.aid)"
+              @toAddDoc="handleAddArticle('文档', Number(route.query.aid))"
+              @toAddSheet="handleAddArticle('表格', Number(route.query.aid))"
+              @toAddPPT="handleAddArticle('幻灯片', Number(route.query.aid))"
+              @toAddMindmap="handleAddArticle('脑图', Number(route.query.aid))"
+              @toAddGroup="handleAddArticle('新建分组', Number(route.query.aid))"
+              @toAddLink="toAddLink(Number(route.query.aid))"
+            >
+              <el-button type="success">新建</el-button>
+            </AddOperationPopver>
+          </div>
         </div>
       </el-header>
       <el-main class="body">
@@ -305,6 +370,7 @@ const toCloseDrawer = () => {
     </el-container>
   </div>
   <NoPermission v-if="typeof infoStore.currentArticleInfo === 'string'" type="article" />
+  <LinkDialog :isShow="isShowLinkDialog" :parent="parentId" type="add" :id="null" @closeDialog="isShowLinkDialog = false" />
 </template>
 
 <style lang="scss" scoped>

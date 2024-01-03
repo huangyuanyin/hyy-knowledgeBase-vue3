@@ -118,7 +118,7 @@ const handleClose = async () => {
 </script>
 
 <template>
-  <el-dialog class="linkDialog" v-model="dialogVisible" :title="linkDialogTitle" width="520" :before-close="handleClose">
+  <el-dialog class="linkDialog" v-model="dialogVisible" :title="linkDialogTitle" width="520" :before-close="handleClose" :append-to-body="true">
     <p>通过添加网页链接，可插入非本知识库的内容</p>
     <el-form ref="linkFormRef" :rules="rules" :model="linkForm" label-width="120px" label-position="top">
       <el-form-item label="标题" prop="title">

@@ -1,6 +1,8 @@
 export interface ArticleInfo {
   id: number
   title: string
+  book: number
+  space: number
   body: string
   type: string
   mark_id: number
@@ -12,6 +14,5 @@ export interface ArticleInfo {
   creator_name: string
   create_datetime: string
   update_datetime: string
+  children: ArticleInfo[] | null
 }
-
-export interface ArticleTree {}

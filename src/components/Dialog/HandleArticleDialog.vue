@@ -232,7 +232,7 @@ const getBook = async () => {
 </script>
 
 <template>
-  <el-dialog class="moveDialog" v-model="visible" width="600px" align-center @close="closeDialog">
+  <el-dialog class="moveDialog" v-model="visible" width="600px" align-center @close="closeDialog" :append-to-body="true">
     <template #header="{ titleId, titleClass }">
       <div class="header">
         <h6 :id="titleId" :class="titleClass">{{ props.title }}</h6>

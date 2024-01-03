@@ -82,6 +82,19 @@ export const sidebarSearchMenuItemsData = [
   { type: 'item', icon: uploadFile, label: '上传文件', nick: 'toUpload' }
 ]
 
+export const folderMenuItemsData = [
+  { type: 'item', icon: documentIcon, label: '文档', nick: 'toAddDoc' },
+  { type: 'item', icon: formIcon, label: '表格', nick: 'toAddSheet' },
+  { type: 'item', icon: mindmapIcon, label: '脑图', nick: 'toAddMindmap' },
+  { type: 'item', icon: pptIcon, label: '幻灯片', nick: 'toAddPPT' },
+  { type: 'divider' },
+  { type: 'item', icon: templateIcon, label: '从模板新建', nick: 'toImportTem' },
+  { type: 'item', icon: importIcon, label: '导入...' },
+  { type: 'divider' },
+  { type: 'item', icon: groupIcon, label: '新建分组', nick: 'toAddGroup' },
+  { type: 'item', icon: linkIcon, label: '添加链接', nick: 'toAddLink' }
+]
+
 export const moduleAddMenuData = [
   { type: 'item', icon: documentIcon, label: '新建文档', nick: 'toAddDoc' },
   { type: 'item', icon: formIcon, label: '新建表格', nick: 'toAddSheet' },

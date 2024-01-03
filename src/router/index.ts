@@ -175,6 +175,16 @@ const customRoutes = [
     }
   },
   {
+    path: '/:spaceName?/directory/title',
+    name: 'Space-title',
+    component: pageComps['/src/views/Article/Title/index.vue'] as Component,
+    meta: {
+      title: '文件',
+      menu: 'title',
+      asideComponent: 'DirectorySidebar'
+    }
+  },
+  {
     path: '/:spaceName/organize/dashboard',
     name: 'Organize-Dashboard',
     component: pageComps['/src/views/Organize/Dashboard/index.vue'] as Component,
