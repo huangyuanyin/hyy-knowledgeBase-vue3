@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Base64 } from 'js-base64'
-import NoPermission from '@/views/NoPermission/index.vue'
+import Container from '../Components/Container.vue'
 
 const route = useRoute()
 const infoStore = useInfoStore()
@@ -30,8 +30,17 @@ onMounted(() => {
 </script>
 
 <template>
-  <iframe class="iframe" :src="iframeSrc" frameborder="0" width="100%" height="100%" v-if="typeof infoStore.currentArticleInfo === 'object'"></iframe>
-  <NoPermission v-if="typeof infoStore.currentArticleInfo === 'string'" type="article" />
+  <div class="File_wrap" h-full>
+    <Container :content="''" :isHasPermission="typeof infoStore.currentArticleInfo === 'object'">
+      <iframe class="iframe" :src="iframeSrc" frameborder="0" width="100%" height="100%" v-if="typeof infoStore.currentArticleInfo === 'object'"></iframe>
+    </Container>
+  </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.File_wrap {
+  :deep(.Container_wrap) {
+    height: 100vh !important;
+  }
+}
+</style>

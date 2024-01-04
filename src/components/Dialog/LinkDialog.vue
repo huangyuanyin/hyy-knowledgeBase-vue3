@@ -11,7 +11,6 @@ const props = defineProps({
   },
   id: Number
 })
-
 const emit = defineEmits(['closeDialog'])
 
 const route = useRoute()

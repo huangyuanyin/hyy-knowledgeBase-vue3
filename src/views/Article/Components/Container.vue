@@ -65,6 +65,7 @@ const buttonList = ref([])
 const headers = ref({
   Authorization: localStorage.getItem('token')
 })
+const titleList = ref([])
 
 watchEffect(() => {
   moreFeaturesDrawer.value = false
@@ -83,16 +84,28 @@ watchEffect(() => {
       }
     ]
   } else {
-    buttonList.value = [
-      {
-        label: '分享',
-        type: 'default'
-      },
-      {
-        label: '编辑',
-        type: 'success'
-      }
-    ]
+    buttonList.value =
+      infoStore.currentMenu === 'file'
+        ? [
+            {
+              label: '分享',
+              type: 'default'
+            },
+            {
+              label: '重新上传',
+              type: 'success'
+            }
+          ]
+        : [
+            {
+              label: '分享',
+              type: 'default'
+            },
+            {
+              label: '编辑',
+              type: 'success'
+            }
+          ]
   }
   if (route.query.aname) {
     name.value = route.query.aname as string
@@ -102,6 +115,20 @@ watchEffect(() => {
     moreFeaturesDrawer.value = false
   }
 })
+
+watch(
+  () => route.query.aid,
+  () => {
+    if (infoStore.currentMenu === 'title') getCategoryTree()
+  }
+)
+
+watch(
+  () => route.query.aname,
+  () => {
+    if (infoStore.currentMenu === 'title') getCategoryTree()
+  }
+)
 
 // 发布文章
 function editArticle() {
@@ -289,6 +316,33 @@ const toUpload = async (file) => {
     ElMessage.error(res.msg)
   }
 }
+
+const getCategoryTree = async () => {
+  useArticle().handleCategoryTree(Number(route.query.aid), 'parent', (res: any) => {
+    titleList.value = res
+  })
+}
+
+const toLink = (type, val) => {
+  switch (type) {
+    case 'title':
+      router.push({
+        path: route.path,
+        query: {
+          ...route.query,
+          aid: val.id,
+          aname: val.title
+        }
+      })
+      break
+    default:
+      break
+  }
+}
+
+onMounted(() => {
+  getCategoryTree()
+})
 </script>
 
 <template>
@@ -296,7 +350,14 @@ const toUpload = async (file) => {
     <el-container>
       <el-header class="header">
         <div class="header_left">
-          <label>{{ name }}</label>
+          <label v-if="infoStore.currentMenu !== 'title'">{{ name }}</label>
+          <div v-else flex text-14px text="#262626">
+            <div flex items-center v-for="(item, index) in titleList" :key="'titleList' + index">
+              <h5 line-height-30px cursor-pointer v-if="index !== titleList.length - 1" @click="toLink('title', item)">{{ item.title }}</h5>
+              <h5 line-height-30px text="#6a6a73" v-else>{{ item.title }}</h5>
+              <em flex items-center justify-center w-30px h-30px ml-0px v-if="index !== titleList.length - 1"><i-ep-ArrowRightBold w-14px h-14px /></em>
+            </div>
+          </div>
           <span>
             <img src="/src/assets/icons/publicIcon.svg" alt="" />
           </span>
@@ -322,11 +383,14 @@ const toUpload = async (file) => {
               </span>
             </el-tooltip>
           </div>
-          <div class="button" v-for="(item, index) in buttonList" :key="'buttonList' + index">
+          <div class="button" flex v-for="(item, index) in buttonList" :key="'buttonList' + index">
             <SharePopver :aInfo="infoStore.currentArticleInfo">
               <el-button v-if="item.label === '分享'" :type="item.type" @click="toHandle(item)">{{ item.label }}</el-button>
             </SharePopver>
-            <el-button v-if="item.label !== '分享'" :type="item.type" @click="toHandle(item)">{{ item.label }}</el-button>
+            <el-button v-if="item.label === '编辑' || item.label === '发布'" :type="item.type" @click="toHandle(item)">{{ item.label }}</el-button>
+            <!-- <el-upload :http-request="toUpload" :headers="headers" :show-file-list="false" action="">
+              <el-button type="success" v-if="item.label === '重新上传'"> 重新上传 </el-button>
+            </el-upload> -->
           </div>
           <div class="action" v-if="!isEdit">
             <span :class="[commentDrawer ? 'is_active' : 'comment']">

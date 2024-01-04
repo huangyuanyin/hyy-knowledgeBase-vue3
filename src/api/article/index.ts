@@ -1,4 +1,4 @@
-import { ArticleData, ArticleRes, HandleArticleData, ArticleAttachmentData, ArticleTemData, ArticleVersionData } from './type'
+import { ArticleData, ArticleRes, HandleArticleData, ArticleAttachmentData, ArticleTemData, ArticleVersionData, CategoryParams } from './type'
 
 export function getArticleTreeApi(id: string | Number) {
   return http.get<ArticleRes>(`article_tree/${id}/`, {}, 'base')
@@ -62,4 +62,8 @@ export function addArticleVersionApi(data: ArticleVersionData) {
 
 export function deleteArticleVersionApi(id: Number) {
   return http.delete<ArticleRes>(`/article/versions/${id}`, {}, 'base')
+}
+
+export function getCategoryTreeApi(params: CategoryParams) {
+  return http.get<ArticleRes>(`/category/`, { params }, 'base')
 }

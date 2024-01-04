@@ -1,5 +1,5 @@
 import Vrouter from '@/router'
-import { getArticleTreeApi, getArticleApi, addArticleApi, editArticleApi, deleteArticleApi } from '@/api/article'
+import { getArticleTreeApi, getArticleApi, addArticleApi, editArticleApi, deleteArticleApi, getCategoryTreeApi } from '@/api/article'
 import { sheetData } from '@/components/Excel/data'
 import { useInfoStore } from '@/store/info'
 
@@ -41,6 +41,24 @@ export const useArticle = () => {
   const { space: sid, spaceName: sname } = useData()
   space.value = sid.value
   spaceName.value = sname.value
+
+  function transformTitle(data) {
+    const result = []
+    function recurse(arr) {
+      arr.forEach((item) => {
+        result.push({
+          title: item.title,
+          id: item.id,
+          parent: item.parent
+        })
+        if (item.parent && item.parent.length) {
+          recurse(item.parent)
+        }
+      })
+    }
+    recurse(data)
+    return result.reverse()
+  }
 
   /**
    * 获取知识库目录
@@ -170,14 +188,16 @@ export const useArticle = () => {
     else params = data
     let res = await editArticleApi(id, params)
     if (res.code === 1000) {
-      if (res.data.type === 'title') {
-        await getArticleList(Number(lid), (val: any) => {
-          infoStore.currentArticleTreeInfo = val
-        })
-      } else {
-        if (callback) return callback && (await callback(res.data))
-        useLinkHooks().handleArticleTypeLink(res.data as any, false)
-      }
+      // if (res.data.type === 'title') {
+      //   await getArticleList(Number(lid), (val: any) => {
+      //     infoStore.currentArticleTreeInfo = val
+      //   })
+      // } else {
+      //   if (callback) return callback && (await callback(res.data))
+      //   useLinkHooks().handleArticleTypeLink(res.data as any, false)
+      // }
+      if (callback) return callback && (await callback(res.data))
+      useLinkHooks().handleArticleTypeLink(res.data as any, false)
     } else {
       ElMessage.error(res.msg)
     }
@@ -222,6 +242,26 @@ export const useArticle = () => {
     }
   }
 
+  /**
+   * 获取上层节点
+   * @param {number} id 文章id
+   * @param {string} nodeType 节点类型
+   * @param {Function} callback 回调函数
+   */
+  const handleCategoryTree = async (aid: number, nodeType: string = 'parent', callback?: CallbackFunction) => {
+    const params = {
+      node_id: aid,
+      action: nodeType
+    }
+    let res = await getCategoryTreeApi(params)
+    if (res.code === 1000) {
+      let result = transformTitle(res.data)
+      callback && (await callback(result))
+    } else {
+      ElMessage.error(res.msg)
+    }
+  }
+
   return {
     space: space.value,
     ainfo,
@@ -233,6 +273,7 @@ export const useArticle = () => {
     handleAddArticle,
     handleAddArticleApi,
     handleEditArticle,
-    handleDeleteArticle
+    handleDeleteArticle,
+    handleCategoryTree
   }
 }

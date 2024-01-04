@@ -50,3 +50,8 @@ export interface ArticleRes {
   data: ArticleInfo
   msg?: string
 }
+
+export interface CategoryParams {
+  node_id: number
+  action: string
+}

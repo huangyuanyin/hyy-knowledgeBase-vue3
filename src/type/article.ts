@@ -1,6 +1,7 @@
 export interface ArticleInfo {
   id: number
   title: string
+  description: string
   book: number
   space: number
   body: string

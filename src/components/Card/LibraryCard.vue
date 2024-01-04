@@ -183,17 +183,17 @@ const toMoreSetting = (val) => {
           <p>知识库暂无内容</p>
         </div>
       </div> -->
-      <div class="card" relative w-155px h-210px mt-12px ml-24px mr-48px mb-24px p-16px cursor-pointer box-sizing>
-        <div class="bg" absolute top-0 left-0 w-full h-full rounded-8px outline-none shadow-1xl bg-white @click="toLink(card)">
+      <div class="card" relative w-155px h-210px mt-12px ml-24px mr-48px mb-24px p-16px cursor-pointer box-sizing @click="toLink(card)">
+        <div class="bg" absolute top-0 left-0 w-full h-full rounded-8px outline-none shadow-1xl bg-white>
           <img w-full h-full rounded-8px :src="card.cover || coverImg" alt="" />
         </div>
         <el-tooltip effect="dark" content="移除常用" placement="top" :show-arrow="false" :hide-after="0" :teleported="false">
-          <span v-if="card.is_common_id" class="common" @click="removeCommon(card)" w-24px h-24px cursor-pointer absolute items-center justify-center top-5px right-6px>
+          <span v-if="card.is_common_id" class="common" @click.stop="removeCommon(card)" w-24px h-24px cursor-pointer absolute items-center justify-center top-5px right-6px>
             <img w-16px h-16px :src="commonUseIcon" alt="" />
           </span>
         </el-tooltip>
         <el-tooltip effect="dark" content="添加常用" placement="top" :show-arrow="false" :hide-after="0" :teleported="false">
-          <span v-if="!card.is_common_id" class="common" @click="addCommon(card)" w-24px h-24px cursor-pointer absolute items-center justify-center top-5px right-6px>
+          <span v-if="!card.is_common_id" class="common" @click.stop="addCommon(card)" w-24px h-24px cursor-pointer absolute items-center justify-center top-5px right-6px>
             <img w-16px h-16px :src="pinOutIcon" alt="" />
           </span>
         </el-tooltip>
@@ -219,7 +219,7 @@ const toMoreSetting = (val) => {
           w-full
           h-36px
           class="setting"
-          @click="toMoreSetting(card)"
+          @click.stop="toMoreSetting(card)"
         >
           <span><img w-12px h-12px mr-4px :src="setIcon" alt="" /></span>知识库设置
         </button>
