@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { getBookStacksApi } from '@/api/bookstacks'
 import { getLibraryApi } from '@/api/library'
-import { getQuickLinksApi } from '@/api/quickLinks'
 
 interface BookGroup {
   id: number
@@ -16,9 +15,11 @@ const groupId = ref('') // 当前团队id
 const teamInfo = ref({})
 const bookGroup = ref<BookGroup[]>([])
 const libarayList = ref([])
-const commonList = ref([])
+const cBookList = ref([])
 const isHasPermissionCode = ref(null)
 const teamIcon = ref('')
+
+const { commonBookList, getCommonList } = useCommon()
 
 watchEffect(() => {
   spaceId.value = route.query.sid as string
@@ -32,7 +33,7 @@ watch(
       groupId.value = newVal
       await getBookStacks()
       await getLibrary()
-      await getQuickLinks()
+      await getCommonBookList()
       await getGroupsDetail()
     }
   }
@@ -43,7 +44,7 @@ watch(
   (newVal) => {
     if (newVal) {
       getBookStacks()
-      getQuickLinks()
+      getCommonBookList()
     }
   }
 )
@@ -89,23 +90,17 @@ const getLibrary = async () => {
 }
 
 // 获取该空间下常用知识库列表
-const getQuickLinks = async () => {
-  const params = {
-    target_type: 'book',
-    space: spaceId.value
-  }
-  let res = await getQuickLinksApi(params)
-  if (res.code === 1000) {
-    commonList.value = res.data || ([] as any)
-    libarayList.value.forEach((item) => {
-      item.is_common_id = null
-      commonList.value.forEach((val) => {
-        if (item.id === Number(val.target_id)) {
-          item.is_common_id = val.id
-        }
-      })
+const getCommonBookList = async () => {
+  await getCommonList('book')
+  cBookList.value = commonBookList.value
+  libarayList.value.forEach((item) => {
+    item.is_common_id = null
+    cBookList.value.forEach((val) => {
+      if (item.id === Number(val.target_id)) {
+        item.is_common_id = val.id
+      }
     })
-  }
+  })
 }
 
 // 获取团队详情
@@ -125,7 +120,7 @@ const updateBulletin = () => {
 onMounted(async () => {
   await getBookStacks()
   await getLibrary()
-  await getQuickLinks()
+  await getCommonBookList()
   await getGroupsDetail()
 })
 </script>
@@ -143,7 +138,7 @@ onMounted(async () => {
         <div class="dot" v-if="index !== bookGroup.length - 1"></div>
       </div>
     </div>
-    <LibraryTable title="知识库" :commonList="commonList" :group="bookGroup" @getBookStacks="getBookStacks" />
+    <LibraryTable title="知识库" :commonList="cBookList" :group="bookGroup" @getBookStacks="getBookStacks" />
   </div>
 </template>
 

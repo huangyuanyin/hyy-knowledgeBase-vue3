@@ -90,6 +90,7 @@ declare global {
   const useBookstacksApi: typeof import('./hooks/useBookstacksApi')['useBookstacksApi']
   const useCollaborations: typeof import('./hooks/useCollaborations')['useCollaborations']
   const useCollect: typeof import('./hooks/useCollect')['useCollect']
+  const useCommon: typeof import('./hooks/useCommon')['useCommon']
   const useCopy: typeof import('./hooks/useCopy')['useCopy']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']

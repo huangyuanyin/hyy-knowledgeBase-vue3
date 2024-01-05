@@ -2,7 +2,6 @@
 import publicTagIcon from '@/assets/icons/publicTagIcon.svg'
 import { getBookStacksApi } from '@/api/bookstacks'
 import { getLibraryApi } from '@/api/library'
-import { getQuickLinksApi } from '@/api/quickLinks'
 
 interface BookGroup {
   id: number
@@ -15,13 +14,15 @@ const refreshStroe = useRefreshStore()
 const spaceId = ref('') // 当前空间id
 const groupId = ref('') // 当前公共区id
 const bookGroup = ref([])
-const commonList = ref([])
+const cBookList = ref([])
 const libarayList = ref([])
 const groupInfo = ref({
   groupname: '',
   groupkey: ''
 }) // 公共区团队信息
 const toolbar = ref('')
+
+const { commonBookList, getCommonList } = useCommon()
 
 watchEffect(() => {
   spaceId.value = route.query.sid as string
@@ -43,7 +44,7 @@ watchEffect(() => {
 const initHandle = async () => {
   await getBookStacks()
   await getLibrary()
-  await getQuickLinks()
+  await getCommonBookList()
 }
 
 const updateBulletin = () => {
@@ -63,24 +64,18 @@ const getBookStacks = async () => {
 }
 
 // 获取当前空间下的常用知识库列表
-const getQuickLinks = async () => {
-  const params = {
-    target_type: 'book',
-    space: spaceId.value
-  }
-  let res = await getQuickLinksApi(params)
-  if (res.code === 1000) {
-    commonList.value = res.data || ([] as any)
-    // 遍历知识库列表和常用知识库列表，如果id和target_id相同，就把is_common设置为true,否则设置为false
-    libarayList.value.forEach((item) => {
-      item.is_common_id = null
-      commonList.value.forEach((val) => {
-        if (item.id === Number(val.target_id)) {
-          item.is_common_id = val.id
-        }
-      })
+const getCommonBookList = async () => {
+  await getCommonList('book')
+  cBookList.value = commonBookList.value
+  // 遍历知识库列表和常用知识库列表，如果id和target_id相同，就把is_common设置为true,否则设置为false
+  libarayList.value.forEach((item) => {
+    item.is_common_id = null
+    cBookList.value.forEach((val) => {
+      if (item.id === Number(val.target_id)) {
+        item.is_common_id = val.id
+      }
     })
-  }
+  })
 }
 
 // 获取当前空间下公共区的知识库列表
@@ -114,7 +109,7 @@ onMounted(async () => {
   await getGroupsDetail()
   await getBookStacks()
   await getLibrary()
-  await getQuickLinks()
+  await getCommonBookList()
 })
 </script>
 
@@ -147,7 +142,7 @@ onMounted(async () => {
       <SwitchModuleItem moduleType="operation">
         <template v-slot:left><span class="title">知识库</span></template>
       </SwitchModuleItem>
-      <LibraryTable title="知识库" :commonList="commonList" :group="bookGroup" @getBookStacks="getBookStacks" />
+      <LibraryTable title="知识库" :commonList="cBookList" :group="bookGroup" @getBookStacks="getBookStacks" />
     </div>
   </div>
 </template>

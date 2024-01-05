@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import { getGroupsApi } from '@/api/groups'
-import { getQuickLinksApi } from '@/api/quickLinks'
 
 const refreshStroe = useRefreshStore()
 const dataStore = useDataStore()
 const personalSpaceId = ref('') // 个人空间id
-const user = JSON.parse(localStorage.getItem('userInfo')).username || '' // 当前登录用户
 const menuItems = [
   { index: 'dashboard', icon: 'actionIcon', label: '开始' },
   { index: 'notes', icon: 'noteIcon', label: '小记' },
@@ -23,6 +21,8 @@ const contentItems = ref([
   }
 ])
 
+const { commonBookList, getCommonList } = useCommon()
+
 watchEffect(() => {
   nextTick(() => {
     if (JSON.parse(localStorage.getItem('personalSpaceInfo'))) {
@@ -35,7 +35,7 @@ watch(
   () => refreshStroe.isRefreshQuickBookList,
   (newVal) => {
     if (newVal) {
-      getCommonLibrary()
+      getCommonBookList()
       setTimeout(() => {
         refreshStroe.setRefreshQuickBookList(false)
       }, 0)
@@ -57,24 +57,15 @@ const getGroups = async () => {
 }
 
 // 获取常用知识库列表
-const getCommonLibrary = async () => {
-  const params = {
-    space: personalSpaceId.value,
-    target_type: 'book',
-    user
-  }
-  let res = await getQuickLinksApi(params)
-  if (res.code === 1000) {
-    contentItems.value[0].libraryList = res.data || ([] as any)
-  } else {
-    ElMessage.error(res.msg)
-  }
+const getCommonBookList = async () => {
+  await getCommonList('book')
+  contentItems.value[0].libraryList = commonBookList.value
 }
 
 onMounted(() => {
   nextTick(async () => {
     await getGroups()
-    await getCommonLibrary()
+    await getCommonBookList()
   })
 })
 </script>

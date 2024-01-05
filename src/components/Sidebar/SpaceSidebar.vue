@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import { getGroupsApi } from '@/api/groups'
-import { getQuickLinksApi } from '@/api/quickLinks'
 
 const route = useRoute()
 const refreshStroe = useRefreshStore()
 const dataStore = useDataStore()
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const spaceId = ref('') // 当前公共空间id
 const menuItems = ref([
   { index: 'dashboard', icon: 'actionIcon', label: '开始' },
@@ -39,27 +37,17 @@ const moreMenuItems = [
   { icon: '/src/assets/icons/moreIcon2.svg', label: '更多' }
 ]
 
+const { commonBookList, commonTeamList, getCommonList } = useCommon()
+
 watchEffect(() => {
   spaceId.value = route.query.sid as string
 })
 
 watch(
-  () => refreshStroe.isRefreshQuickTeamList,
-  (newVal) => {
-    if (newVal) {
-      getCommonTeam()
-      setTimeout(() => {
-        refreshStroe.setRefreshQuickTeamList(false)
-      }, 0)
-    }
-  }
-)
-
-watch(
   () => refreshStroe.isRefreshQuickBookList,
   (newVal) => {
     if (newVal) {
-      getCommonLibrary()
+      getCommonBookList()
       // fix 知识库/团队第一次切换后添加移除常用时，常用列表不刷新。
       setTimeout(() => {
         refreshStroe.setRefreshQuickBookList(false)
@@ -68,30 +56,28 @@ watch(
   }
 )
 
+watch(
+  () => refreshStroe.isRefreshQuickTeamList,
+  (newVal) => {
+    if (newVal) {
+      getCommonTeamList()
+      setTimeout(() => {
+        refreshStroe.setRefreshQuickTeamList(false)
+      }, 0)
+    }
+  }
+)
+
 // 获取常用知识库列表
-const getCommonLibrary = async () => {
-  const params = {
-    space: spaceId.value,
-    target_type: 'book',
-    user
-  }
-  let res = await getQuickLinksApi(params)
-  if (res.code === 1000) {
-    contentItems.value[0].libraryList = res.data || ([] as any)
-  }
+const getCommonBookList = async () => {
+  await getCommonList('book')
+  contentItems.value[0].libraryList = commonBookList.value
 }
 
 // 获取常用团队列表
-const getCommonTeam = async () => {
-  const params = {
-    space: spaceId.value,
-    target_type: 'group',
-    user
-  }
-  let res = await getQuickLinksApi(params)
-  if (res.code === 1000) {
-    contentItems.value[1].libraryList = res.data || ([] as any)
-  }
+const getCommonTeamList = async () => {
+  await getCommonList('group')
+  contentItems.value[1].libraryList = commonTeamList.value
 }
 
 // 获取当前空间下的全部团队
@@ -109,8 +95,8 @@ const getGroups = async () => {
 }
 
 onMounted(async () => {
-  await getCommonLibrary()
-  await getCommonTeam()
+  await getCommonBookList()
+  await getCommonTeamList()
   await getGroups()
 })
 </script>
