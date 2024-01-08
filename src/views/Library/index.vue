@@ -2,12 +2,10 @@
 import addIcon from '@/assets/icons/addIcon.svg'
 import addIcon_hover from '@/assets/icons/addIcon_hover.svg'
 import { getBookStacksApi } from '@/api/bookstacks'
-import { getLibraryApi } from '@/api/library'
 
 const route = useRoute()
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const dataStore = useDataStore()
 const spaceId = ref('') // 当前空间id
 const personalGroupId = ref('') // 个人空间下的团队id
 const bookList = ref([]) // 当前空间下的知识库列表
@@ -16,7 +14,8 @@ const bookGroup = ref([]) // 当前空间&&当前团队下的知识库分组
 const libraryInput = ref('')
 const isShowsLibraryDialog = ref(false)
 
-const { commonBookList, getCommonList } = useCommon()
+const { bookList: list, getBookList } = useBook()
+const { commonBookList, getCommonList, findCommonItem } = useCommon()
 
 watch(
   () => refreshStroe.isRefreshQuickBookList,
@@ -58,34 +57,14 @@ watchEffect(() => {
 const getCommonBookList = async () => {
   await getCommonList('book')
   cBookList.value = commonBookList.value
-  // 遍历知识库列表和常用知识库列表，如果id和target_id相同，就把is_common设置为true,否则设置为false
-  bookList.value.forEach((item) => {
-    item.is_common_id = null
-    cBookList.value.forEach((val) => {
-      if (item.id === Number(val.target_id)) {
-        item.is_common_id = val.id
-      }
-    })
-  })
+  findCommonItem('book', bookList.value)
   refreshStroe.setRefreshQuickBookList(false)
-  dataStore.setCommonLibraryList(cBookList.value)
 }
 
 // 获取当前空间下的知识库列表
 const getBook = async () => {
-  let params = {
-    space: spaceId.value
-  }
-  let res = await getLibraryApi(params)
-  if (res.code === 1000) {
-    bookList.value = res.data || ([] as any)
-  } else {
-    ElMessage({
-      message: res.msg,
-      type: 'error',
-      grouping: true
-    })
-  }
+  await getBookList({ space: spaceId.value })
+  bookList.value = list.value
 }
 
 // 获取个人空间知识库团队下的知识库分组

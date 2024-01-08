@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { getGroupsApi } from '@/api/groups'
-
 const route = useRoute()
 const refreshStroe = useRefreshStore()
 const dataStore = useDataStore()
@@ -37,6 +35,7 @@ const moreMenuItems = [
   { icon: '/src/assets/icons/moreIcon2.svg', label: '更多' }
 ]
 
+const { teamList: list, getTeamList } = useTeam()
 const { commonBookList, commonTeamList, getCommonList } = useCommon()
 
 watchEffect(() => {
@@ -82,16 +81,9 @@ const getCommonTeamList = async () => {
 
 // 获取当前空间下的全部团队
 const getGroups = async () => {
-  const params = {
-    space: spaceId.value
-  }
-  let res = await getGroupsApi(params)
-  if (res.code === 1000) {
-    menuItems.value[2].id = res.data.filter((item) => item.is_default === '1')[0].id
-    dataStore.setTeamList(res.data) // 存储当前空间下的全部团队
-  } else {
-    ElMessage.error(res.msg)
-  }
+  await getTeamList()
+  menuItems.value[2].id = list.value.filter((item) => item.is_default === '1')[0].id
+  dataStore.setTeamList(list.value) // 存储当前空间下的全部团队
 }
 
 onMounted(async () => {

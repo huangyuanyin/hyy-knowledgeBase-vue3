@@ -4,7 +4,8 @@ import { useInfoStore } from '@/store/info'
 interface BookParams {
   space?: string
   group?: string
-  permusername: string
+  stacks?: string
+  permusername?: string
 }
 
 interface CallbackFunction {
@@ -15,6 +16,7 @@ export const useBook = () => {
   const infoStore = useInfoStore()
   const user = (JSON.parse(localStorage.getItem('userInfo')) || {}).username || ''
   const bookList = ref<Array<any>>([])
+  const isHasPermission = ref<boolean>(false)
 
   /**
    * 获取知识库详情
@@ -33,8 +35,9 @@ export const useBook = () => {
   /**
    * 获取知识库列表
    * @param {string | BookParams} group 团队id 或者 参数对象
+   * @param {CallbackFunction} callback 回调函数
    */
-  const getBookList = async (group: string | BookParams) => {
+  const getBookList = async (group: string | BookParams, callback?: CallbackFunction) => {
     let params: BookParams
     if (typeof group === 'string') {
       params = {
@@ -45,8 +48,10 @@ export const useBook = () => {
       params = group
     }
     let res = await getLibraryApi(params)
+    isHasPermission.value = res.code === 1003 ? false : true
     if (res.code === 1000) {
       bookList.value = res.data as any
+      callback && (await callback(res))
     } else {
       ElMessage.error(res.msg)
     }
@@ -67,5 +72,11 @@ export const useBook = () => {
     }
   }
 
-  return { bookList, getBookList, editBook, getBookInfo }
+  return {
+    bookList,
+    isHasPermission,
+    getBookList,
+    editBook,
+    getBookInfo
+  }
 }

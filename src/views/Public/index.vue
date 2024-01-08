@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import publicTagIcon from '@/assets/icons/publicTagIcon.svg'
 import { getBookStacksApi } from '@/api/bookstacks'
-import { getLibraryApi } from '@/api/library'
 
 interface BookGroup {
   id: number
@@ -15,14 +14,15 @@ const spaceId = ref('') // 当前空间id
 const groupId = ref('') // 当前公共区id
 const bookGroup = ref([])
 const cBookList = ref([])
-const libarayList = ref([])
+const bookList = ref([])
 const groupInfo = ref({
   groupname: '',
   groupkey: ''
 }) // 公共区团队信息
 const toolbar = ref('')
 
-const { commonBookList, getCommonList } = useCommon()
+const { bookList: list, getBookList } = useBook()
+const { commonBookList, getCommonList, findCommonItem } = useCommon()
 
 watchEffect(() => {
   spaceId.value = route.query.sid as string
@@ -67,34 +67,16 @@ const getBookStacks = async () => {
 const getCommonBookList = async () => {
   await getCommonList('book')
   cBookList.value = commonBookList.value
-  // 遍历知识库列表和常用知识库列表，如果id和target_id相同，就把is_common设置为true,否则设置为false
-  libarayList.value.forEach((item) => {
-    item.is_common_id = null
-    cBookList.value.forEach((val) => {
-      if (item.id === Number(val.target_id)) {
-        item.is_common_id = val.id
-      }
-    })
-  })
+  findCommonItem('book', bookList.value)
 }
 
 // 获取当前空间下公共区的知识库列表
 const getLibrary = async () => {
-  let params = {}
-  params = {
+  await getBookList({
     space: spaceId.value,
     group: groupId.value
-  }
-  let res = await getLibraryApi(params)
-  if (res.code === 1000) {
-    libarayList.value = res.data || ([] as any)
-  } else {
-    ElMessage({
-      message: res.msg,
-      type: 'error',
-      grouping: true
-    })
-  }
+  })
+  bookList.value = list.value
 }
 
 const getGroupsDetail = async () => {

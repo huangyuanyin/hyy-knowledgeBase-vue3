@@ -67,6 +67,9 @@ export const useData = () => {
           setSpaceAndType(route.query.sid as string, '组织')
         }
         break
+      case 'OrganizeSidebar':
+        setSpaceAndType(route.query.sid as string, infoStore.currentSpaceType)
+        break
     }
   }
 

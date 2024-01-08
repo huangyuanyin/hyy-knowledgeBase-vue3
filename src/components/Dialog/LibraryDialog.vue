@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from 'uuid'
 import { FormInstance } from 'element-plus'
 import { getBookStacksApi } from '@/api/bookstacks'
 import { addLibraryApi } from '@/api/library'
-import { getGroupsApi } from '@/api/groups'
 import { icon1 } from '@/data/iconBase64'
 
 interface RuleForm {
@@ -37,7 +36,6 @@ const teamList = ref([]) // 当前空间下的全部团队
 const stacksList = ref([]) // 知识库分组集合
 const publicList = ref([])
 const dialogVisible = ref(false)
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
 const libraryFormRef = ref<FormInstance>()
 const libraryForm = reactive<RuleForm>({
@@ -50,6 +48,8 @@ const libraryForm = reactive<RuleForm>({
   group: '1',
   stacks: ''
 })
+
+const { teamList: list, getTeamList } = useTeam()
 
 watch(
   () => props.isShow,
@@ -70,7 +70,7 @@ watch(
             }
           })
         } else if (route.query.gid && props.from === '') {
-          await getTeams()
+          await getTeam()
           libraryForm.group = String(route.query.gid)
           selectGroupName.value = String(route.query.gname)
           await getBookStacks(route.query.gid)
@@ -211,15 +211,9 @@ const getBookStacks = async (val) => {
 }
 
 // 获取团队列表
-const getTeams = async () => {
-  const params = {
-    space: spaceId.value as string,
-    permusername: user
-  }
-  let res = await getGroupsApi(params)
-  if (res.code === 1000) {
-    teamList.value = res.data || ([] as any)
-  }
+const getTeam = async () => {
+  await getTeamList()
+  teamList.value = list.value
 }
 
 const changeIcon = (val: string) => {

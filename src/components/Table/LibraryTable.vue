@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { WarningFilled } from '@element-plus/icons-vue'
-import { getLibraryApi } from '@/api/library'
 import { addBookStacksApi, deleteBookStacksApi, editBookStacksApi, getBookStacksApi } from '@/api/bookstacks'
 
 type LibraryGroup = {
@@ -83,6 +82,8 @@ const addLibraryOperation = [
   //   icon: ''
   // }
 ]
+
+const { bookList: list, getBookList } = useBook()
 
 watch(
   () => props.group,
@@ -206,22 +207,12 @@ const deleteBookStacks = async (id) => {
 }
 
 const getLibrary = async (id) => {
-  const params = {
+  await getBookList({
     space: spaceId.value,
     group: groupId.value,
     stacks: id
-  }
-  let res = await getLibraryApi(params)
-  if (res.code === 1000) {
-    return res.data
-  } else {
-    ElMessage({
-      message: res.msg,
-      type: 'error',
-      grouping: true
-    })
-  }
-  return []
+  })
+  return list.value
 }
 
 const toAddGroup = () => {

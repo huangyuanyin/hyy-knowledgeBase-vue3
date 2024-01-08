@@ -1,21 +1,18 @@
 <script lang="ts" setup>
 import addIcon from '@/assets/icons/addIcon.svg'
 import addIcon_hover from '@/assets/icons/addIcon_hover.svg'
-import { getGroupsApi } from '@/api/groups'
+import { isDefaultType } from '@/type/type'
 
-const route = useRoute()
 const refreshStroe = useRefreshStore()
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
-const spaceId = ref('') // 当前公共空间id
 const teamInput = ref('')
 const isShowsTeamDialog = ref(false)
-const groupsList = ref([]) // 当前空间下除公共区外全部团队
+const teamList = ref([]) // 当前空间下除公共区外全部团队
 const cTeamList = ref([]) // 当前空间下常用团队列表
 
-const { commonTeamList, getCommonList } = useCommon()
+const { commonTeamList, getCommonList, findCommonItem } = useCommon()
+const { teamList: list, getTeamList } = useTeam()
 
 watchEffect(() => {
-  spaceId.value = route.query.sid as string
   if (refreshStroe.isRefreshQuickTeamList) {
     nextTick(() => {
       getCommonTeamList()
@@ -24,35 +21,23 @@ watchEffect(() => {
 })
 
 // 获取当前空间下的全部团队（除去公共区）
-const getGroups = async () => {
+const getTeam = async () => {
   const params = {
-    space: spaceId.value,
-    is_default: '0',
-    permusername: user
+    is_default: '0' as isDefaultType
   }
-  let res = await getGroupsApi(params)
-  if (res.code === 1000) {
-    groupsList.value = res.data || ([] as any)
-  }
+  await getTeamList(params)
+  teamList.value = list.value
 }
 
 // 获取常用团队列表
 const getCommonTeamList = async () => {
   await getCommonList('group')
   cTeamList.value = commonTeamList.value
-  // 遍历团队列表和常用团队列表，如果id和target_id相同，就把is_common设置为true,否则设置为false
-  groupsList.value.forEach((item) => {
-    item.is_common_id = null
-    cTeamList.value.forEach((val) => {
-      if (item.id === Number(val.target_id)) {
-        item.is_common_id = val.id
-      }
-    })
-  })
+  findCommonItem('group', teamList.value)
 }
 
 onMounted(async () => {
-  await getGroups()
+  await getTeam()
   await getCommonTeamList()
 })
 </script>
@@ -77,7 +62,7 @@ onMounted(async () => {
       </div>
     </div>
     <CommonList :list="cTeamList" type="team" v-if="cTeamList.length" />
-    <TableComp :style="{ 'margin-top': cTeamList.length ? '' : '26px' }" :header="['名称', '简介', '成员', '创建人', '加入时间', '']" type="team" :data="groupsList" />
+    <TableComp :style="{ 'margin-top': cTeamList.length ? '' : '26px' }" :header="['名称', '简介', '成员', '创建人', '加入时间', '']" type="team" :data="teamList" />
     <TeamDialog :isShow="isShowsTeamDialog" @closeDialog="isShowsTeamDialog = false" />
   </div>
 </template>

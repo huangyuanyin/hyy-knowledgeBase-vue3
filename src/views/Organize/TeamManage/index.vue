@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import moreIcon from '@/assets/icons/organize/moreIcon.svg'
-import { getGroupsApi } from '@/api/groups'
+import { isDefaultType } from '@/type/type'
 
 const route = useRoute()
 const router = useRouter()
@@ -13,17 +13,14 @@ const teamSettingData = [
   { type: 'item', icon: '', label: '删除团队', nick: 'toDeleteTeam' }
 ]
 
-const getGroups = async () => {
+const { teamList: list, getTeamList } = useTeam()
+
+const getTeam = async () => {
   const params = {
-    space: route.query.sid as string,
-    is_default: '0' // 1：公共区，0：团队
+    is_default: '0' as isDefaultType
   }
-  const res = await getGroupsApi(params)
-  if (res.code === 1000) {
-    teamData.value = res.data
-  } else {
-    ElMessage.error(res.msg)
-  }
+  await getTeamList(params)
+  teamData.value = list.value
 }
 
 const toTeamSetting = (val) => {
@@ -39,7 +36,7 @@ const toDeleteTeam = (val) => {
 }
 
 onMounted(() => {
-  getGroups()
+  getTeam()
 })
 </script>
 
@@ -70,7 +67,7 @@ onMounted(() => {
       </el-table>
     </div>
   </div>
-  <TeamDialog :isShow="isShowTeamDialog" @closeDialog="isShowTeamDialog = false" @updateTeam="getGroups()" />
+  <TeamDialog :isShow="isShowTeamDialog" @closeDialog="isShowTeamDialog = false" @updateTeam="getTeam" />
 </template>
 
 <style lang="scss" scoped>

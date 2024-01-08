@@ -1,8 +1,14 @@
 import Vrouter from '@/router'
 import { editGroupsApi, getGroupsApi, getGroupsDetailApi } from '@/api/groups'
+import { isDefaultType } from '@/type/type'
 
 interface CallbackFunction {
   (success: boolean): void
+}
+
+interface TeamParams {
+  space?: string
+  is_default?: isDefaultType
 }
 
 export const useTeam = () => {
@@ -18,7 +24,7 @@ export const useTeam = () => {
   spaceName.value = sname.value
 
   /**
-   *
+   * 获取团队详细信息
    * @param {number} id 团队id
    */
   const getTeamInfo = async (id: number, callback?: CallbackFunction) => {
@@ -33,13 +39,13 @@ export const useTeam = () => {
 
   /**
    * 获取团队列表
-   * @param {string} sid 空间id
+   * @param {TeamParams} sparams 参数
    */
-  const getTeamList = async (sid?: string) => {
-    const params = {
-      space: sid || space.value,
-      permusername: user
+  const getTeamList = async (sparams?: TeamParams) => {
+    let params = {
+      space: space.value
     }
+    sparams && (params = { ...params, ...sparams })
     let res = await getGroupsApi(params)
     if (res.code === 1000) {
       teamList.value = res.data as any

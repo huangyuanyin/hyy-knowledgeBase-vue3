@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { getGroupsApi } from '@/api/groups'
-
 const refreshStroe = useRefreshStore()
 const dataStore = useDataStore()
 const personalSpaceId = ref('') // 个人空间id
@@ -21,6 +19,7 @@ const contentItems = ref([
   }
 ])
 
+const { teamList: list, getTeamList } = useTeam()
 const { commonBookList, getCommonList } = useCommon()
 
 watchEffect(() => {
@@ -45,15 +44,10 @@ watch(
 
 // 获取个人空间下的团队列表
 const getGroups = async () => {
-  const params = {
-    space: personalSpaceId.value
-  }
-  let res = await getGroupsApi(params)
-  if (res.code === 1000) {
-    contentItems.value[0].id = res.data[0].id
-    dataStore.setTeamList(res.data)
-    localStorage.setItem('personalGroupId', res.data[0].id)
-  }
+  await getTeamList()
+  contentItems.value[0].id = list.value[0].id
+  dataStore.setTeamList(list.value)
+  localStorage.setItem('personalGroupId', list.value[0].id)
 }
 
 // 获取常用知识库列表

@@ -1,9 +1,19 @@
 export const useListStore = defineStore('list', () => {
-  const refreshQuickListStatus = ref(false)
+  const commonBookList = ref<Array<any>>([]) // 常用知识库列表
+  const commonTeamList = ref<Array<any>>([]) // 常用团队列表
 
-  const setRefreshQuickListStatus = (val: boolean) => {
-    refreshQuickListStatus.value = val
+  const setCommonBookList = (val: any) => {
+    commonBookList.value = val
   }
 
-  return { refreshQuickListStatus, setRefreshQuickListStatus }
+  const setCommonTeamList = (val: any) => {
+    commonTeamList.value = val
+  }
+
+  return {
+    commonBookList,
+    commonTeamList,
+    setCommonBookList,
+    setCommonTeamList
+  }
 })

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { getBookStacksApi } from '@/api/bookstacks'
-import { getLibraryApi } from '@/api/library'
 
 interface BookGroup {
   id: number
@@ -16,10 +15,11 @@ const teamInfo = ref({})
 const bookGroup = ref<BookGroup[]>([])
 const libarayList = ref([])
 const cBookList = ref([])
-const isHasPermissionCode = ref(null)
+const isHasPermission = ref(true)
 const teamIcon = ref('')
 
-const { commonBookList, getCommonList } = useCommon()
+const { isHasPermission: permission, bookList: list, getBookList } = useBook()
+const { commonBookList, getCommonList, findCommonItem } = useCommon()
 
 watchEffect(() => {
   spaceId.value = route.query.sid as string
@@ -50,10 +50,7 @@ watch(
 )
 
 watchEffect(() => {
-  if (isHasPermissionCode.value === 1003) {
-    isHasPermissionCode.value = null
-    router.replace('/no-permission')
-  }
+  !isHasPermission.value && router.replace('/no-permission')
 })
 
 // 获取当前组织空间下当前团队的知识库分组列表
@@ -72,35 +69,19 @@ const getBookStacks = async () => {
 
 // 获取当前团队下的知识库列表
 const getLibrary = async () => {
-  const params = {
+  await getBookList({
     space: spaceId.value,
     group: groupId.value
-  }
-  let res = await getLibraryApi(params)
-  isHasPermissionCode.value = res.code
-  if (res.code === 1000) {
-    libarayList.value = res.data || ([] as any)
-  } else {
-    ElMessage({
-      message: res.msg,
-      type: 'error',
-      grouping: true
-    })
-  }
+  })
+  isHasPermission.value = permission.value
+  libarayList.value = list.value
 }
 
 // 获取该空间下常用知识库列表
 const getCommonBookList = async () => {
   await getCommonList('book')
   cBookList.value = commonBookList.value
-  libarayList.value.forEach((item) => {
-    item.is_common_id = null
-    cBookList.value.forEach((val) => {
-      if (item.id === Number(val.target_id)) {
-        item.is_common_id = val.id
-      }
-    })
-  })
+  findCommonItem('group', libarayList.value)
 }
 
 // 获取团队详情

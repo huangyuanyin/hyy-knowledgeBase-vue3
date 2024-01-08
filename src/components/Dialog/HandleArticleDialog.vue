@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import { copyArticleApi, getArticleTreeApi, moveArticleApi } from '@/api/article'
-import { getGroupsApi } from '@/api/groups'
-import { getLibraryApi } from '@/api/library'
 import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
 
 const props = defineProps({
@@ -27,7 +25,6 @@ const emit = defineEmits(['closeDialog', 'recover'])
 const route = useRoute()
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const spaceId = ref(null) // 当前空间id
 const teamId = ref(null) // 团队id
 const bookId = ref(null) // 知识库id
@@ -45,6 +42,8 @@ const treeProps = {
   disabled: 'disabled'
 } as unknown as TreeOptionProps
 
+const { teamList: list, getTeamList } = useTeam()
+
 watch(
   () => props.show,
   async (newVal: boolean) => {
@@ -53,7 +52,7 @@ watch(
       props.title === '复制到...' ? (with_children.value = false) : (with_children.value = true)
       if (visible.value && props.title !== '恢复文档') {
         await initData()
-        await getTeams()
+        await getTeam()
         await getBook()
       } else {
         teamId.value = infoStore.currentSpaceType === '个人' ? localStorage.getItem('personalGroupId') : Number(route.query.gid) || props.data.group_id
@@ -194,26 +193,15 @@ const getArticle = async () => {
 }
 
 // 获取团队列表
-const getTeams = async () => {
-  const params = {
-    space: spaceId.value as string,
-    permusername: user
-  }
-  let res = await getGroupsApi(params)
-  if (res.code === 1000) {
-    teamList.value = res.data || ([] as any)
-  }
+const getTeam = async () => {
+  await getTeamList()
+  teamList.value = list.value
 }
 
 // 获取知识库列表
 const getBook = async () => {
-  const params = {
-    group: String(teamId.value),
-    permusername: user
-  }
-  let res = await getLibraryApi(params)
-  if (res.code === 1000) {
-    bookList.value = res.data || ([] as any)
+  useBook().getBookList(String(teamId.value), (res: any) => {
+    bookList.value = res.data
     if (teamId.value !== Number(route.query.gid) && infoStore.currentSpaceType === '组织') {
       bookId.value = bookList.value.length > 0 ? bookList.value[0].id : null
     } else {
@@ -221,13 +209,7 @@ const getBook = async () => {
     }
     if (bookId.value === null) return (dataSource.value = [])
     getArticle()
-  } else {
-    ElMessage({
-      message: res.msg,
-      type: 'error',
-      grouping: true
-    })
-  }
+  })
 }
 </script>
 
