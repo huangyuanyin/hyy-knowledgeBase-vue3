@@ -7,6 +7,9 @@ import { addMarksApi } from '@/api/marks'
 import { ArticleInfo } from '@/type/article'
 import { folderMenuItemsData } from '@/data/data'
 import { uploadArticleApi } from '@/api/article'
+import likeIcon from '@/assets/icons/like.svg'
+import likeSelectIcon from '@/assets/icons/like_select.svg'
+import commentIcon from '@/assets/icons/article/commentIcon.svg'
 
 const props = defineProps({
   content: {
@@ -66,6 +69,8 @@ const headers = ref({
   Authorization: localStorage.getItem('token')
 })
 const titleList = ref([])
+
+const { handleLike } = useLike()
 
 watchEffect(() => {
   moreFeaturesDrawer.value = false
@@ -388,14 +393,10 @@ onMounted(() => {
               <el-button v-if="item.label === '分享'" :type="item.type" @click="toHandle(item)">{{ item.label }}</el-button>
             </SharePopver>
             <el-button v-if="item.label === '编辑' || item.label === '发布'" :type="item.type" @click="toHandle(item)">{{ item.label }}</el-button>
-            <!-- <el-upload :http-request="toUpload" :headers="headers" :show-file-list="false" action="">
-              <el-button type="success" v-if="item.label === '重新上传'"> 重新上传 </el-button>
-            </el-upload> -->
           </div>
           <div class="action" v-if="!isEdit">
             <span :class="[commentDrawer ? 'is_active' : 'comment']">
               <img src="/src/assets/icons/article/commentIcon.svg" alt="" @click="openDrawer('comment')" />
-              <em v-if="(infoStore.currentArticleInfo as ArticleInfo)?.comments_count">{{ (infoStore.currentArticleInfo as ArticleInfo)?.comments_count }}</em>
             </span>
             <span :class="[moreFeaturesDrawer ? 'is_active' : '']">
               <img src="/src/assets/icons/article/rightboardIcon.svg" alt="" @click="openDrawer('more')" />
@@ -427,6 +428,18 @@ onMounted(() => {
         </div>
       </el-header>
       <el-main class="body">
+        <div v-if="!moreFeaturesDrawer && !commentDrawer && !isEdit">
+          <div class="pix" flex items-center justify-center rounded="50%" color="#585a5a" cursor-pointer @click="handleLike">
+            <img w-20px h-20px :src="(infoStore.currentArticleInfo as ArticleInfo)?.liked ? likeSelectIcon : likeIcon" alt="" />
+            <div class="counts" v-if="(infoStore.currentArticleInfo as ArticleInfo)?.likes_count">
+              {{ (infoStore.currentArticleInfo as ArticleInfo)?.likes_count }}
+            </div>
+          </div>
+          <div class="pix2" flex items-center justify-center rounded="50%" color="#585a5a" cursor-pointer @click="commentDrawer = true">
+            <img w-20px h-20px :src="commentIcon" alt="" />
+            <div class="counts" v-if="(infoStore.currentArticleInfo as ArticleInfo)?.comments_count">{{ (infoStore.currentArticleInfo as ArticleInfo)?.comments_count }}</div>
+          </div>
+        </div>
         <slot></slot>
         <MoreFeaturesDrawer :drawer="moreFeaturesDrawer" :info="(infoStore.currentArticleInfo as ArticleInfo)" />
         <CommentDrawer :drawer="commentDrawer" @toCloseDrawer="toCloseDrawer" />
@@ -576,6 +589,44 @@ onMounted(() => {
   .body {
     width: 100%;
     flex: 1;
+    .pix,
+    .pix2 {
+      border: 0px;
+      position: fixed;
+      bottom: 140px;
+      z-index: 999999999;
+      width: 42px !important;
+      height: 42px !important;
+      box-shadow: 0 1px 4px -2px rgba(0, 0, 0, 0.13), 0 2px 8px 0 rgba(0, 0, 0, 0.08), 0 8px 16px 4px rgba(0, 0, 0, 0.04);
+      background-color: #fafafa;
+      right: 25px;
+      img {
+        width: 20px;
+        height: 20px;
+      }
+
+      .counts {
+        position: absolute;
+        right: -6px;
+        top: -6px;
+        width: 22px;
+        height: 22px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        font-size: 12px;
+        color: red;
+        background-color: #fff;
+        border: 1px solid #e7e9e8;
+      }
+      &:hover {
+        background-color: #e7e9e8;
+      }
+    }
+    .pix2 {
+      bottom: 80px;
+    }
   }
   .el-main {
     padding: 0;

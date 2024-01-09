@@ -106,6 +106,7 @@ declare global {
   const useInfoStore: typeof import('./store/info')['useInfoStore']
   const useLibrary: typeof import('./hooks/useLibraryApi')['useLibrary']
   const useLibraryApi: typeof import('./hooks/useLibraryApi')['useLibraryApi']
+  const useLike: typeof import('./hooks/useLike')['useLike']
   const useLink: typeof import('./hooks/useLink')['useLink']
   const useLinkHooks: typeof import('./hooks/useLink')['useLinkHooks']
   const useListStore: typeof import('./store/list')['useListStore']

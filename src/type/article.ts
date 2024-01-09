@@ -12,6 +12,9 @@ export interface ArticleInfo {
   counts: number
   views: number
   comments_count: number
+  like_id: number
+  liked: boolean
+  likes_count: number
   creator_name: string
   create_datetime: string
   update_datetime: string

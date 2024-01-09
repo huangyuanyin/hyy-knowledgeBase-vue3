@@ -118,10 +118,10 @@ onMounted(() => {
           <el-input v-model="bookForm.name" placeholder="如：就叫小黄好了" />
         </el-form-item>
         <el-form-item label="简介">
-          <el-input v-model="bookForm.description" type="textarea" rows="7" placeholder="如：产品设计与研发" />
+          <el-input v-model="bookForm.description" type="textarea" rows="4" placeholder="如：产品设计与研发" />
         </el-form-item>
         <el-form-item label="封面">
-          <div class="cover" flex h-310px pt-14px pb-14px mt-10px border="1px solid #dedfe3" rounded-6px w-827px>
+          <div class="cover" flex h-310px pt-14px pb-14px border="1px solid #dedfe3" rounded-6px w-827px>
             <!-- <el-image :src="cover" fit="contain" />
             <el-button @click="uploadImg"> 重新上传 </el-button> -->
             <div relative w-207px h-full ml-14px pt-35px pb-35px pr-22px pl-22px box-sizing>
