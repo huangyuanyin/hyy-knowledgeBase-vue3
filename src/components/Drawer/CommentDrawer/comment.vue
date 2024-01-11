@@ -64,12 +64,14 @@ const toDeleteComment = (data: any) => {
     </div>
     <div class="content">
       <div class="name">
-        <span>{{ props.data.creator }}</span>
+        <span :class="[!props.parent ? 'master' : '']">{{ props.data.creator }}</span>
         <img v-if="props.parent" :src="downIcon" />
         <span v-if="props.parent">{{ props.parent.creator }}</span>
       </div>
       <div class="time">{{ props.data.create_datetime }}</div>
-      <div class="text">{{ props.data.body }}</div>
+      <div class="text">
+        <Tiptap v-model="props.data.body" disabled />
+      </div>
       <div class="operation">
         <span @click="toReply(props.data)"><img :src="commentIcon" /></span>
         <span><img :src="editIcon" /></span>
@@ -89,7 +91,7 @@ const toDeleteComment = (data: any) => {
         </el-popconfirm>
       </div>
       <div class="reply" v-if="replyId === props.data.id">
-        <el-input v-model="replyValue" :rows="5" type="textarea" :placeholder="`回复 ${props.data.creator}`" />
+        <Tiptap v-model="replyValue" :placeholder="`回复 ${props.data.creator}`" />
         <div>
           <el-button class="cancel" @click="toCancelReply">取消</el-button>
           <el-button :class="['submit', replyValue === '' ? 'disabled' : '']" :disabled="replyValue === ''" type="" @click="addComments('reply', props.data.id)">回复</el-button>
@@ -113,6 +115,7 @@ const toDeleteComment = (data: any) => {
     }
   }
   .content {
+    position: relative;
     flex: 1;
     .name {
       display: flex;
@@ -121,6 +124,9 @@ const toDeleteComment = (data: any) => {
       color: #585a5a;
       font-size: 14px;
       line-height: 22px;
+      .master {
+        max-width: max-content !important;
+      }
       span {
         max-width: 70px;
         margin-right: 10px;
@@ -140,7 +146,9 @@ const toDeleteComment = (data: any) => {
       line-height: 22px;
     }
     .text {
-      margin-top: 8px;
+      :deep(.tiptap) {
+        padding: 4px 0px 0px 0px !important;
+      }
     }
   }
   .operation {

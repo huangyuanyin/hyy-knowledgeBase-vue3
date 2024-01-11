@@ -375,7 +375,9 @@ onMounted(() => {
               :tag_mark="(infoStore.currentArticleInfo as ArticleInfo )?.tag_mark"
               type="article"
             >
-              <span v-if="item.label === '收藏' || item.label === '已收藏'" @click="toHandle(item)"> <img :src="item.icon" alt="" /></span>
+              <span v-if="item.label === '收藏' || item.label === '已收藏'" @click="toHandle(item)">
+                <img :src="(infoStore.currentArticleInfo as ArticleInfo ).marked ? '/src/assets/icons/startIcon_select.svg' : '/src/assets/icons/startIcon.svg'" alt="" />
+              </span>
             </StarPopver>
             <el-tooltip effect="dark" :content="item.label" placement="bottom" :show-arrow="false">
               <span v-if="item.label === '协作'" @click="toCooperate">

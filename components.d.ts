@@ -108,6 +108,7 @@ declare module 'vue' {
     TeamHeader: typeof import('./src/components/Header/TeamHeader.vue')['default']
     TeamSidebar: typeof import('./src/components/Sidebar/TeamSidebar.vue')['default']
     TinyMCE: typeof import('./src/components/Doc/TinyMCE.vue')['default']
+    Tiptap: typeof import('./src/components/Tiptap.vue')['default']
     UserPopver: typeof import('./src/components/Popver/UserPopver.vue')['default']
   }
   export interface ComponentCustomProperties {

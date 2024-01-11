@@ -139,7 +139,7 @@ const arrayToTree = (list) => {
     custom-class="CommentDrawer_wrap"
     :title="`评论（${commentTotal}）`"
     :modal="false"
-    size="305px"
+    size="315px"
     @close="handleClose"
   >
     <div class="comment-list">
@@ -188,15 +188,21 @@ const arrayToTree = (list) => {
       <div class="empty" v-else>暂无评论</div>
     </div>
     <div class="submit_wrap">
-      <div class="input_wrap" :style="{ height: !commenting ? '' : '194px' }">
+      <div class="input_wrap" :style="{ height: !commenting ? '' : 'auto' }">
         <div class="input" @click="commenting = true" v-if="!commenting">
           <img :src="inputComment" alt="" />
           <span>输入全文评论</span>
         </div>
         <div class="comment" v-else>
-          <el-input v-model="commentValue" :rows="5" type="textarea" placeholder="" />
+          <Tiptap v-model="commentValue" :disabled="false" />
           <div>
-            <el-button :class="['submit', commentValue === '' ? 'disabled' : '']" :disabled="commentValue === ''" type="" @click="addComments('comment')">评论</el-button>
+            <el-button
+              :class="['submit', commentValue === '' || commentValue === '<p></p>' ? 'disabled' : '']"
+              :disabled="commentValue === '' || commentValue === '<p></p>'"
+              type=""
+              @click="addComments('comment')"
+              >评论</el-button
+            >
             <el-button class="cancel" link @click="commenting = false">取消</el-button>
           </div>
         </div>
@@ -212,7 +218,7 @@ const arrayToTree = (list) => {
   left: 100vh !important;
   height: calc(100vh - 52px) !important;
   max-height: calc(100vh - 52px) !important;
-  max-width: 305px !important;
+  max-width: 315px !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
 }
@@ -222,7 +228,7 @@ const arrayToTree = (list) => {
   right: 0px !important;
   height: calc(100vh - 52px) !important;
   max-height: calc(100vh - 52px) !important;
-  max-width: 305px !important;
+  max-width: 315px !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
   box-sizing: border-box !important;
@@ -242,6 +248,19 @@ const arrayToTree = (list) => {
   }
   .el-drawer__body {
     padding: 0;
+    &::-webkit-scrollbar {
+      width: 4px;
+      height: 8px;
+    }
+    &::-webkit-scrollbar-track {
+      background: rgb(239, 239, 239);
+      border-radius: 2px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #bfbfbf;
+      border-radius: 10px;
+      cursor: pointer;
+    }
   }
   .comment-list {
     min-height: calc(100vh - 104px);
@@ -266,6 +285,9 @@ const arrayToTree = (list) => {
           padding-left: 36px;
           box-sizing: border-box;
           margin-bottom: 20px;
+          &:last-child {
+            margin-bottom: 0px;
+          }
         }
         .three {
           padding-left: 0px !important;

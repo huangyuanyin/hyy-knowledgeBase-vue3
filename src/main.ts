@@ -56,6 +56,9 @@ import zhCN from 'vxe-table/es/locale/lang/zh-CN'
 import 'vxe-table/styles/cssvar.scss'
 import 'vxe-table/lib/style.css'
 
+import UndrawUi from 'undraw-ui'
+import 'undraw-ui/dist/style.css'
+
 // 按需加载的方式默认是不带国际化的，自定义国际化需要自行解析占位符 '{0}'，例如：
 VXETable.setup({
   i18n: (key, args) => XEUtils.toFormatString(XEUtils.get(zhCN, key), args)
@@ -106,7 +109,7 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
 const app = createApp(App)
-app.use(router).use(pinia).use(useTable).use(mavonEditor)
+app.use(router).use(pinia).use(useTable).use(mavonEditor).use(UndrawUi)
 app.component('SvgIcon', SvgIcon)
 app.mount('#app')
 

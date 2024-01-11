@@ -108,8 +108,6 @@ const toArticleDetail = (val) => {
     case 'links':
       val.open_windows === '1' ? window.open(val.description) : (window.location.href = val.description)
       break
-    case 'title':
-      break
     default:
       useLinkHooks().handleArticleTypeLink(val, false)
       break
@@ -199,15 +197,15 @@ onMounted(() => {
         <div class="list" v-if="infoStore.currentArticleTreeInfo">
           <el-tree :data="infoStore.currentArticleTreeInfo" node-key="id" :props="defaultProps" default-expand-all>
             <template #default="{ node, data }">
-              <span class="list-node" @click="toArticleDetail(data)">
+              <span class="list-node">
                 <div class="title">
                   <div :class="['icon', !data.children?.length ? 'no-icon' : '']">
                     <img src="@/assets/icons/miniDropDownIcon.svg" alt="" v-if="data.children?.length && node.expanded" />
                     <img class="foldIcon" src="@/assets/icons/miniDropDownIcon.svg" alt="" v-if="data.children?.length && !node.expanded" />
                   </div>
-                  <span>{{ data.title }}</span>
+                  <span @click="toArticleDetail(data)">{{ data.title }}</span>
                 </div>
-                <span class="line" v-if="data.type !== 'title'"></span>
+                <span class="line" v-if="data.type !== 'title'" @click="toArticleDetail(data)"></span>
                 <span class="time" v-if="data.type !== 'title'">{{ data.update_datetime }}</span>
               </span>
             </template>
