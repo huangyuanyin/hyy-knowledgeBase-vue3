@@ -406,13 +406,13 @@ const toMoreSetting = (val) => {
 .addCard {
   cursor: pointer;
   display: flex;
-  width: calc(33.33333% - 16px);
+  width: 155px;
   color: #8a8f8d;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  height: 214px;
-  margin-left: 16px;
+  height: 210px;
+  margin-left: 24px;
   margin-bottom: 16px;
   border-radius: 6px;
   border: 1px dashed #e7e9e8;

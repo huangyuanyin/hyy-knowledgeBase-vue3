@@ -4,15 +4,40 @@ const props = defineProps({
   navigation: {
     type: Boolean,
     default: true
+  },
+  scrollTop: Number
+})
+const emit = defineEmits(['scroll'])
+
+const editor = ref<any>(null)
+
+watch(
+  () => props.scrollTop,
+  (val) => {
+    if (val === 0) {
+      editor.value.$refs.vShowContent.scrollTop = 0
+    }
+  }
+)
+
+onMounted(() => {
+  if (editor.value) {
+    const el = editor.value.$refs.vShowContent
+    el.addEventListener('scroll', handleScroll)
   }
 })
 
-onMounted(() => {})
+const handleScroll = () => {
+  // 获取editor.value.$refs.vShowContent下的第一个div
+  const el = editor.value.$refs.vShowContent
+  emit('scroll', el.scrollTop > 1500 ? true : false)
+}
 </script>
 
 <template>
   <div class="MavonEditor_wrap">
     <mavon-editor
+      ref="editor"
       v-model="props.html"
       defaultOpen="preview"
       :subfield="false"
@@ -21,6 +46,7 @@ onMounted(() => {})
       scrollStyle
       :navigation="props.navigation"
       previewBackground="#fff"
+      @scroll="handleScroll"
     />
   </div>
 </template>

@@ -205,7 +205,12 @@ const toDelete = () => {
       }
     }
     :deep(.markdown-body) {
+      max-height: 1500px;
       border: none;
+      .v-note-show {
+        color: #333;
+        font-size: 13px;
+      }
       &:hover {
         .v-show-content {
           background-color: #fafafa !important;

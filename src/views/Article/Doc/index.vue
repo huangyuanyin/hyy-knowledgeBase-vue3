@@ -7,6 +7,7 @@ const isUpdate = ref(false)
 const aid = ref(route.query.aid as string)
 const modelValue = ref('')
 const isPreview = ref(true)
+const isShowScroll = ref(false)
 
 watch(
   () => route.query.aid,
@@ -44,6 +45,10 @@ const getArticle = async () => {
   })
 }
 
+const scroll = (isScroll: boolean) => {
+  isShowScroll.value = isScroll
+}
+
 onMounted(() => {
   getArticle()
 })
@@ -55,9 +60,9 @@ onBeforeMount(() => {
 
 <template>
   <div class="Doc_wrap">
-    <Container :content="modelValue" :isHasPermission="typeof infoStore.currentArticleInfo === 'object'">
+    <Container :content="modelValue" :isHasPermission="typeof infoStore.currentArticleInfo === 'object'" :isShowScroll="isShowScroll" @scrollTo="isShowScroll = false">
       <TinyMCE v-if="isUpdate && !isPreview" v-model="modelValue" :readonly="isPreview" />
-      <MavonEditor v-if="isPreview" :html="modelValue" />
+      <MavonEditor v-if="isPreview" :html="modelValue" @scroll="scroll" :scrollTop="isShowScroll ? null : 0" />
     </Container>
   </div>
 </template>

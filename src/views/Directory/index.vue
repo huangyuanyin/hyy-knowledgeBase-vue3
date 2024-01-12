@@ -194,7 +194,7 @@ onMounted(() => {
         <div mt-60px border="1px solid #e7e9e8" rounded-4px v-if="isEdit">
           <TinyMCE v-model="bookBulletin" :resize="true" height="500px" :toolbar="toolbar" body-style="body { margin: 1rem 2% 1rem 2% }" />
         </div>
-        <div class="list" v-if="infoStore.currentArticleTreeInfo">
+        <div class="list" v-if="infoStore.currentArticleTreeInfo.length">
           <el-tree :data="infoStore.currentArticleTreeInfo" node-key="id" :props="defaultProps" default-expand-all>
             <template #default="{ node, data }">
               <span class="list-node">

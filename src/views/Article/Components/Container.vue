@@ -9,6 +9,7 @@ import { folderMenuItemsData } from '@/data/data'
 import { uploadArticleApi } from '@/api/article'
 import likeIcon from '@/assets/icons/like.svg'
 import likeSelectIcon from '@/assets/icons/like_select.svg'
+import topIcon from '@/assets/icons/top.svg'
 import commentIcon from '@/assets/icons/article/commentIcon.svg'
 
 const props = defineProps({
@@ -24,9 +25,13 @@ const props = defineProps({
   isPublish: {
     type: Boolean,
     default: false
+  },
+  isShowScroll: {
+    type: Boolean,
+    default: false
   }
 })
-const emit = defineEmits(['toPublish'])
+const emit = defineEmits(['toPublish', 'scrollTo'])
 
 const route = useRoute()
 const infoStore = useInfoStore()
@@ -69,6 +74,7 @@ const headers = ref({
   Authorization: localStorage.getItem('token')
 })
 const titleList = ref([])
+const showScroll = ref(false)
 
 const { handleLike } = useLike()
 
@@ -132,6 +138,13 @@ watch(
   () => route.query.aname,
   () => {
     if (infoStore.currentMenu === 'title') getCategoryTree()
+  }
+)
+
+watch(
+  () => props.isShowScroll,
+  (newVal) => {
+    showScroll.value = newVal
   }
 )
 
@@ -431,6 +444,11 @@ onMounted(() => {
       </el-header>
       <el-main class="body">
         <div v-if="!moreFeaturesDrawer && !commentDrawer && !isEdit">
+          <el-tooltip effect="dark" content="回到顶部" placement="left" :show-arrow="false" :hide-after="0">
+            <div class="pix3" flex items-center justify-center rounded="50%" color="#585a5a" cursor-pointer v-if="showScroll" @click="emit('scrollTo', 0)">
+              <img w-20px h-20px :src="topIcon" alt="" />
+            </div>
+          </el-tooltip>
           <div class="pix" flex items-center justify-center rounded="50%" color="#585a5a" cursor-pointer @click="handleLike">
             <img w-20px h-20px :src="(infoStore.currentArticleInfo as ArticleInfo)?.liked ? likeSelectIcon : likeIcon" alt="" />
             <div class="counts" v-if="(infoStore.currentArticleInfo as ArticleInfo)?.likes_count">
@@ -591,8 +609,12 @@ onMounted(() => {
   .body {
     width: 100%;
     flex: 1;
+    .pix3 {
+      bottom: 200px !important;
+    }
     .pix,
-    .pix2 {
+    .pix2,
+    .pix3 {
       border: 0px;
       position: fixed;
       bottom: 140px;
