@@ -1,41 +1,99 @@
-import Vrouter from '@/router'
-import { addMarksApi } from '@/api/marks'
+import { Callback } from '@/type/type'
+import { addMarksApi, deleteMarksApi, editMarksApi, getMarksApi } from '@/api/marks'
 
 interface CollectInfo {
-  target_type: string
+  target_type?: string
   target_id: string
-  space: string
-}
-
-interface CallbackFunction {
-  (success: object): void
+  tags_id?: string
+  space?: string
 }
 
 export const useCollect = () => {
-  const route = Vrouter.currentRoute.value
   const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
   const space = ref<string>('')
   const spaceName = ref<string>('')
-  const teamList = ref<Array<any>>([])
+  const collectList = ref<Array<any>>([])
 
   const { space: sid, spaceName: sname } = useData()
   space.value = sid.value
   spaceName.value = sname.value
 
   /**
-   * 添加收藏
-   * @param {CollectInfo} params 收藏信息
-   * @param {function} callback 回调函数
+   * 获取收藏列表
+   * @param {number} id 标签id
+   * @param {Callback} callback 回调函数
    */
-  const addCollect = async (params: CollectInfo, callback: CallbackFunction) => {
-    let res = await addMarksApi(params)
+  const getCollectList = async (id?: number, callback?: Callback) => {
+    const params = {
+      id,
+      space: space.value,
+      creator: user
+    }
+    !id && delete params.id
+    let res = await getMarksApi(params)
     if (res.code === 1000) {
-      ElMessage.success('收藏成功')
-      await callback(res.data)
+      collectList.value = res.data
+      callback && callback(res.data)
     } else {
       ElMessage.error(res.msg)
     }
   }
 
-  return { teamList, addCollect }
+  /**
+   * 添加收藏
+   * @param {string} tid 标签ID
+   * @param {string} type 收藏类型
+   * @param {Callback} callback 回调函数
+   */
+  const addCollect = async (tid: string, callback?: Callback, type: string = 'book') => {
+    const params = {
+      target_type: type,
+      target_id: tid,
+      space: space.value
+    }
+    let res = await addMarksApi(params)
+    if (res.code === 1000) {
+      ElMessage.success('收藏成功')
+      callback && callback(res.data)
+    } else {
+      ElMessage.error(res.msg)
+    }
+  }
+
+  /**
+   * 编辑收藏
+   * @param {number} id 收藏id
+   * @param {CollectInfo} collectInfo 收藏信息
+   * @param {Callback} callback 回调函数
+   */
+  const editCollect = async (id: number, collectInfo: CollectInfo, callback: Callback) => {
+    const params = {
+      space: space.value,
+      tags_id: collectInfo.tags_id,
+      target_id: collectInfo.target_id
+    }
+    let res = await editMarksApi(id, params)
+    if (res.code === 1000) {
+      callback && callback(res.data)
+    } else {
+      ElMessage.error(res.msg)
+    }
+  }
+
+  /**
+   * 取消收藏
+   * @param {number} id 收藏id
+   * @param {Callback} callback 回调函数
+   */
+  const deleteCollect = async (id: number, callback: Callback) => {
+    let res = await deleteMarksApi(id)
+    if (res.code === 1000) {
+      ElMessage.success('取消收藏')
+      callback && callback(res.data)
+    } else {
+      ElMessage.error(res.msg)
+    }
+  }
+
+  return { collectList, getCollectList, addCollect, editCollect, deleteCollect }
 }

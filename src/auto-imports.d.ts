@@ -119,6 +119,7 @@ declare global {
   const useSlots: typeof import('vue')['useSlots']
   const useSpace: typeof import('./hooks/useSpace')['useSpace']
   const useSpacesApi: typeof import('./hooks/useSpace')['useSpacesApi']
+  const useTag: typeof import('./hooks/useTag')['useTag']
   const useTeam: typeof import('./hooks/useTeam')['useTeam']
   const useTeamPermission: typeof import('./hooks/usePermission')['useTeamPermission']
   const useTreeDisable: typeof import('./hooks/useTreeDisable')['useTreeDisable']

@@ -63,7 +63,7 @@ const deleteQuickLinks = async (id, params) => {
 }
 
 // 添加常用
-const addCommon = (val) => {
+const addCommon = async (val) => {
   const params = {
     title: val.name,
     target_id: String(val.id),
@@ -72,10 +72,6 @@ const addCommon = (val) => {
     space: val.space,
     user
   }
-  addQuickLinks(params)
-}
-
-const addQuickLinks = async (params) => {
   let res = await addQuickLinksApi(params)
   if (res.code === 1000) {
     ElMessage.success('添加成功')

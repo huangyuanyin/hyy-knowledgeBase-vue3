@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { deleteMarksApi, editMarksApi } from '@/api/marks'
-import { addTagApi, getTagApi } from '@/api/tag'
 import { OperationPopoverProps } from '@/type/operationPopoverType'
 
 const props = withDefaults(defineProps<OperationPopoverProps>(), {
@@ -18,78 +16,52 @@ const emit = defineEmits(['cancelMark'])
 
 const route = useRoute()
 const refreshStroe = useRefreshStore()
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const starPopverRef = ref(null)
 const tagList = ref([])
 const tagValue = ref('')
 const isShowsGroupDialog = ref(false)
 
+const { tagList: tList, getTagList, addTag } = useTag()
+const { editCollect, deleteCollect } = useCollect()
+
 watchEffect(() => {
   tagValue.value = props.tag_mark
 })
 
-const changeTag = async () => {
-  const params = {
-    space: route.query.sid as string,
-    tags_id: tagValue.value,
-    target_id: props.type === 'book' ? (route.query.lid as string) : props.type === 'star' ? props.target_id : (route.query.aid as string)
-  }
-  let res = await editMarksApi(Number(props.startId), params)
-  if (res.code === 1000) {
-    ElMessage.success('操作成功')
-    props.type === 'star' ? refreshStroe.setRefreshMark(true) : ''
-  } else {
-    ElMessage.error(res.msg)
-  }
+const toChangeTag = async () => {
+  editCollect(
+    Number(props.startId),
+    {
+      tags_id: tagValue.value,
+      target_id: props.type === 'book' ? (route.query.lid as string) : props.type === 'star' ? props.target_id : (route.query.aid as string)
+    },
+    () => {
+      props.type === 'star' ? refreshStroe.setRefreshMark(true) : ''
+    }
+  )
 }
 
 const toAddTag = (name: string) => {
-  addTags(name)
-}
-
-const addTags = async (name: string) => {
-  const params = {
-    space: route.query.sid as string,
-    name,
-    action_type: 'mark'
-  }
-  let res = await addTagApi(params)
-  if (res.code === 1000) {
+  addTag(name, () => {
     isShowsGroupDialog.value = false
-    getTags()
-    ElMessage.success('新建分组成功')
-  } else {
-    ElMessage.error(res.msg)
-  }
+    toGetTagList()
+  })
 }
 
-const getTags = async () => {
-  const params = {
-    space: route.query.sid as string,
-    creator: user,
-    action_type: 'mark'
-  }
-  let res = await getTagApi(params)
-  if (res.code === 1000) {
-    tagList.value = res.data as any
-  } else {
-    ElMessage.error(res.msg)
-  }
+const toGetTagList = async () => {
+  await getTagList()
+  tagList.value = tList.value
 }
 
-const deleteMarks = async () => {
-  let res = await deleteMarksApi(Number(props.startId))
-  if (res.code === 1000) {
+const toDeleteCollect = async () => {
+  deleteCollect(Number(props.startId), () => {
     starPopverRef.value && starPopverRef.value.hide()
-    ElMessage.success('取消收藏')
     emit('cancelMark')
-  } else {
-    ElMessage.error(res.msg)
-  }
+  })
 }
 
 onMounted(() => {
-  getTags()
+  toGetTagList()
 })
 </script>
 
@@ -109,13 +81,13 @@ onMounted(() => {
     <div class="box">
       <div class="header">
         <span>选择分组</span>
-        <p>你可以选择分组或直接<el-button type="primary" link @click="deleteMarks">取消收藏</el-button></p>
+        <p>你可以选择分组或直接<el-button type="primary" link @click="toDeleteCollect">取消收藏</el-button></p>
       </div>
       <div class="empty" v-if="!tagList.length">
         <span>暂无分组</span>
       </div>
       <div class="tag">
-        <el-radio-group v-model="tagValue" @change="changeTag">
+        <el-radio-group v-model="tagValue" @change="toChangeTag">
           <el-radio :label="String(item.id)" v-for="(item, index) in tagList" :key="'tagList' + index">{{ item.name }}</el-radio>
         </el-radio-group>
       </div>

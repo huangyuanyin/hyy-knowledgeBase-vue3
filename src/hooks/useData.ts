@@ -41,6 +41,7 @@ export const useData = () => {
    * @param type 空间类型
    */
   function setSpaceAndType(value: string, type: string) {
+    console.log(`output->space.value`, value)
     space.value = value
     spaceName.value = infoStore.currentSpaceType === '个人' ? '' : route.path.split('/')[1]
     spaceIcon.value =
@@ -61,6 +62,7 @@ export const useData = () => {
         setSpaceAndType(personalSpaceInfo.id, '个人')
         break
       case 'DirectorySidebar':
+        console.log(`output->`, route.path.split('/'))
         if (route.path.split('/')[1] === 'directory') {
           setSpaceAndType(personalSpaceInfo.id, '个人')
         } else {

@@ -13,6 +13,6 @@ export interface MarksData {
 
 export interface MarksRes {
   code: number
-  data: MarksData
+  data: MarksData[]
   msg?: string
 }

@@ -12,6 +12,6 @@ export interface TagData {
 
 export interface TagRes {
   code: number
-  data: TagData
+  data: TagData[]
   msg?: string
 }

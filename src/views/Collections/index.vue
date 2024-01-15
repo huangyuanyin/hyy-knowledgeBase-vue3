@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import emptyImg from '@/assets/img/empty.png'
-import { getMarksApi } from '@/api/marks'
-import { addTagApi, deleteTagApi, editTagApi, getTagApi } from '@/api/tag'
 
 const route = useRoute()
 const refreshStroe = useRefreshStore()
@@ -9,7 +7,7 @@ const isShowsGroupDialog = ref(false)
 const groupTitle = ref('新建分组')
 const groupName = ref('')
 const groupId = ref(null)
-const groupActive = ref(0)
+const tagActive = ref(0)
 const groups = ref([
   {
     id: 0,
@@ -21,140 +19,84 @@ const groupMenuItems = [
   { type: 'item', icon: '', label: '编辑', nick: 'editTag' },
   { type: 'item', icon: '', label: '删除', nick: 'deleteTag' }
 ]
-const starList = ref([])
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
+const collectList = ref([])
+
+const { tagList, getTagList, addTag, editTag, deleteTag } = useTag()
+const { collectList: clist, getCollectList } = useCollect()
 
 watchEffect(() => {
   if (refreshStroe.isRefreshMark) {
-    getMarks(groupActive.value === 0 ? '' : groupActive.value)
+    toGetCollectList(tagActive.value === 0 ? '' : tagActive.value)
     refreshStroe.setRefreshMark(false)
+  }
+  if (route.meta.menu === 'collections') {
+    nextTick(async () => {
+      await toGetTagList()
+      await toGetCollectList()
+    })
   }
 })
 
-watch(
-  () => route.path,
-  async () => {
-    if (route.path.includes('collections')) {
-      await getTags()
-      await getMarks()
-    }
-  }
-)
-
-const toDo = () => {
-  ElMessage.warning('功能暂未开放，敬请期待')
+const toSelectGroup = (val: any) => {
+  tagActive.value = val.id
+  toGetCollectList(val.name === '全部收藏' ? '' : val.id)
 }
 
-const toSelectGroup = (val: any) => {
-  groupActive.value = val.id
-  getMarks(val.name === '全部收藏' ? '' : groupActive.value)
+const toGetTagList = async () => {
+  await getTagList()
+  groups.value = groups.value.slice(0, 1).concat(tagList.value)
 }
 
 const toAddTag = (name: string) => {
-  addTags(name)
+  addTag(name, () => {
+    isShowsGroupDialog.value = false
+    toGetTagList()
+  })
 }
 
 const toEditTag = (name: string) => {
-  handleEditTagApi(name)
+  editTag(groupId.value, name, () => {
+    toGetTagList()
+  })
 }
 
-const showTag = () => {
-  isShowsGroupDialog.value = true
-  groupTitle.value = '新建分组'
-  groupName.value = ''
-}
-
-const editTag = (group: any) => {
-  isShowsGroupDialog.value = true
-  groupTitle.value = '编辑分组'
-  groupName.value = group.name
-  groupId.value = group.id
-}
-
-const deleteTag = async (group: any) => {
-  let res = await deleteTagApi(group.id)
-  if (res.code === 1000) {
-    getTags()
-    ElMessage.success('操作成功')
-    if (group.id === groupActive.value) {
+const toDeleteTag = async (tagId: number) => {
+  deleteTag(tagId, () => {
+    toGetTagList()
+    if (tagId === tagActive.value) {
       toSelectGroup({
         id: 0,
         name: '全部收藏',
         marks_count: ''
       })
     }
+  })
+}
+
+const toShowTagDialog = (type: string, group?: any) => {
+  isShowsGroupDialog.value = true
+  if (type === 'add') {
+    groupTitle.value = '新建分组'
+    groupName.value = ''
   } else {
-    ElMessage.error(res.msg)
+    groupTitle.value = '编辑分组'
+    groupName.value = group.name
+    groupId.value = group.id
   }
 }
 
-const handleEditTagApi = async (name) => {
-  const params = {
-    name,
-    space: route.query.sid as string,
-    creator: user
-  }
-  let res = await editTagApi(groupId.value, params)
-  if (res.code === 1000) {
-    getTags()
-    ElMessage.success('操作成功')
-  } else {
-    ElMessage.error(res.msg)
-  }
-}
-
-const getTags = async () => {
-  const params = {
-    space: route.query.sid as string,
-    creator: user,
-    action_type: 'mark'
-  }
-  let res = await getTagApi(params)
-  if (res.code === 1000) {
-    groups.value = groups.value.slice(0, 1)
-    groups.value = groups.value.concat(res.data as any)
-  } else {
-    ElMessage.error(res.msg)
-  }
-}
-
-const addTags = async (name: string) => {
-  const params = {
-    space: route.query.sid as string,
-    name,
-    action_type: 'mark'
-  }
-  let res = await addTagApi(params)
-  if (res.code === 1000) {
-    isShowsGroupDialog.value = false
-    getTags()
-    ElMessage.success('新建分组成功')
-  } else {
-    ElMessage.error(res.msg)
-  }
-}
-
-const getMarks = async (id?) => {
-  const params = {
-    space: route.query.sid as string,
-    creator: user
-  } as any
-  id && (params.tags_id = id)
-  let res = await getMarksApi(params)
-  if (res.code === 1000) {
-    starList.value = res.data as any
-    if (groupActive.value === 0) {
-      groups.value[0].marks_count = res.data.length
+const toGetCollectList = async (id?) => {
+  await getCollectList(id, (res) => {
+    if (tagActive.value === 0) {
+      groups.value[0].marks_count = res.length
     }
-  } else {
-    ElMessage.error(res.msg)
-  }
+  })
+  collectList.value = clist.value
 }
 
-onMounted(async () => {
-  await getTags()
-  await getMarks()
-})
+const toDo = () => {
+  ElMessage.warning('功能暂未开放，敬请期待')
+}
 </script>
 
 <template>
@@ -168,14 +110,14 @@ onMounted(async () => {
     </div>
     <div class="content">
       <div class="left">
-        <div :class="['group', groupActive === group.id ? 'groupActive' : '']" v-for="(group, index) in groups" :key="index" @click="toSelectGroup(group)">
+        <div :class="['group', tagActive === group.id ? 'tagActive' : '']" v-for="(group, index) in groups" :key="index" @click="toSelectGroup(group)">
           <div class="group-header">
             <span>{{ group.name }}</span>
             <span class="collectionGroupIcon">
               <el-tooltip effect="dark" content="新建分组" placement="top">
-                <img v-if="group.name === '全部收藏'" src="/src/assets/icons/collectionGroupIcon.svg" alt="" @click.stop="showTag" />
+                <img v-if="group.name === '全部收藏'" src="/src/assets/icons/collectionGroupIcon.svg" alt="" @click.stop="toShowTagDialog('add')" />
               </el-tooltip>
-              <LibraryOperationPopver :width="110" trigger="hover" :menuItems="groupMenuItems" @editTag="editTag(group)" @deleteTag="deleteTag(group)">
+              <LibraryOperationPopver :width="110" trigger="hover" :menuItems="groupMenuItems" @editTag="toShowTagDialog('edit', group)" @deleteTag="toDeleteTag(group.id)">
                 <img v-if="group.name !== '全部收藏'" src="/src/assets/icons/moreIcon1.svg" alt="" @click.stop />
               </LibraryOperationPopver>
             </span>
@@ -184,8 +126,8 @@ onMounted(async () => {
         </div>
       </div>
       <div class="right">
-        <TableComp :header="['名称', '归属', '收藏时间', '']" type="star" :data="(starList as any)" />
-        <div v-if="!starList.length" class="empty">
+        <TableComp :header="['名称', '归属', '收藏时间', '']" type="star" :data="(collectList as any)" />
+        <div v-if="!collectList.length" class="empty">
           <img :src="emptyImg" alt="" />
           <span>暂无内容</span>
           <span>快去收藏吧</span>
@@ -280,7 +222,7 @@ onMounted(async () => {
           color: #8a8f8d;
         }
       }
-      .groupActive {
+      .tagActive {
         background-color: #eff0f0;
       }
     }

@@ -337,7 +337,7 @@ const customIcon = () => {
         </div>
       </div>
     </div>
-    <div class="empty" v-if="!infoStore.currentArticleTreeInfo.length">
+    <div class="empty" v-if="!infoStore.currentArticleTreeInfo?.length">
       <img src="@/assets/img/empty.png" alt="" />
       <div>知识库为空，你可以<span @click="handleAddArticle('文档', null)">新建文档</span></div>
     </div>

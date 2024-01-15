@@ -3,7 +3,6 @@ import NoPermission from '@/views/NoPermission/index.vue'
 import { getCollaborationsApi, getArticleCollaborationsApi } from '@/api/collaborations'
 // import { getTeamMemberApi } from '@/api/member'
 import CommentDrawer from '@/components/Drawer/CommentDrawer/index.vue'
-import { addMarksApi } from '@/api/marks'
 import { ArticleInfo } from '@/type/article'
 import { folderMenuItemsData } from '@/data/data'
 import { uploadArticleApi } from '@/api/article'
@@ -78,6 +77,7 @@ const headers = ref({
 const titleList = ref([])
 const showScroll = ref(false)
 
+const { addCollect } = useCollect()
 const { handleLike } = useLike()
 
 watchEffect(() => {
@@ -217,18 +217,13 @@ const toHandle = (item: any) => {
 }
 
 const addMarks = async () => {
-  const params = {
-    target_type: (infoStore.currentArticleInfo as ArticleInfo).type,
-    target_id: route.query.aid as string,
-    space: route.query.sid as string
-  }
-  let res = await addMarksApi(params)
-  if (res.code === 1000) {
-    ElMessage.success('收藏成功')
-    getArticle()
-  } else {
-    ElMessage.error(res.msg)
-  }
+  addCollect(
+    String(route.query.aid),
+    () => {
+      getArticle()
+    },
+    (infoStore.currentArticleInfo as ArticleInfo).type
+  )
 }
 
 const cancelMark = () => {

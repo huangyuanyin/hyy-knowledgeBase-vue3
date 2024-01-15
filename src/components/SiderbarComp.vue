@@ -152,8 +152,8 @@ const handleClickLibrary = (val: any) => {
     const query = {
       lid: val.target_id,
       lname: val.name || val.title,
-      sid: route.query.sid,
-      sname: route.query.sname
+      sid: infoStore.currentSpaceInfo.id,
+      sname: infoStore.currentSpaceInfo.spacename
     }
     switch (infoStore.currentSidebar) {
       case 'Sidebar':

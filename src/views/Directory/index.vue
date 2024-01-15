@@ -24,6 +24,8 @@ const defaultProps = {
   class: 'forumList'
 } as unknown as TreeOptionProps
 
+const { addCollect } = useCollect()
+
 watchEffect(async () => {
   if (route.query.lid && infoStore.currentMenu === 'directory') {
     await initData()
@@ -42,12 +44,7 @@ const toDo = () => {
 
 const toMark = () => {
   if (!infoStore.currentBookInfo.marked) {
-    const params = {
-      target_type: 'book',
-      target_id: bookId.value as string,
-      space: route.query.sid as string
-    }
-    useCollect().addCollect(params, (res: any) => {
+    addCollect(bookId.value, (res: any) => {
       if (Reflect.ownKeys(res).length) {
         useBook().getBookInfo(res.target_id, (val: any) => {
           if (Reflect.ownKeys(val).length) {

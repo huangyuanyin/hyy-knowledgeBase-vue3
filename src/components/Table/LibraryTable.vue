@@ -14,14 +14,6 @@ const props = defineProps({
     type: String,
     default: '我的知识库'
   },
-  showDelete: {
-    type: Boolean,
-    default: true
-  },
-  showMove: {
-    type: Boolean,
-    default: true
-  },
   group: {
     type: Array as PropType<LibraryGroup[]>,
     default: () => []
@@ -88,7 +80,6 @@ const { bookList: list, getBookList } = useBook()
 watch(
   () => props.group,
   async (newVal) => {
-    console.log(`output->props.group33333`, props.group)
     if (newVal.length) {
       await Promise.all(
         props.group.map(async (item) => {
@@ -305,13 +296,13 @@ const toExistLibrary = () => {
             <span class="item"><img src="/src/assets/icons/addIcon.svg" alt="" class="moreIcon" /></span>
           </LibraryOperationPopver>
           <el-tooltip effect="dark" :content="processedGroup.length === 1 ? '分组唯一，无法移动' : '向上移动'" placement="top" :show-arrow="false">
-            <span :class="['item', 'upIcon', processedGroup.length === 1 ? 'is_disabled' : '']" v-if="props.showDelete" @click="toMoveGroup(item)">
+            <span :class="['item', 'upIcon', processedGroup.length === 1 ? 'is_disabled' : '']" @click="toMoveGroup(item)">
               <img v-if="processedGroup.length === 1" src="/src/assets/icons/downIcon_disabled.svg" alt="" />
               <img v-else src="/src/assets/icons/downIcon.svg" alt="" />
             </span>
           </el-tooltip>
           <el-tooltip effect="dark" :content="processedGroup.length === 1 ? '分组唯一，无法移动' : '向下移动'" placement="top" :show-arrow="false">
-            <span :class="['item', processedGroup.length === 1 ? 'is_disabled' : '']" v-if="props.showDelete" @click="toMoveGroup(item)">
+            <span :class="['item', processedGroup.length === 1 ? 'is_disabled' : '']" @click="toMoveGroup(item)">
               <img v-if="processedGroup.length === 1" src="/src/assets/icons/downIcon_disabled.svg" alt="" />
               <img v-else src="/src/assets/icons/downIcon.svg" alt="" />
             </span>
@@ -329,7 +320,7 @@ const toExistLibrary = () => {
             <template #reference>
               <div>
                 <el-tooltip effect="dark" content="删除分组" placement="top" :show-arrow="false">
-                  <span class="item" v-if="props.showMove && item.is_default !== '1'">
+                  <span class="item" v-if="item.is_default !== '1'">
                     <img src="/src/assets/icons/deleteIcon.svg" alt="" />
                   </span>
                 </el-tooltip>
@@ -337,7 +328,7 @@ const toExistLibrary = () => {
             </template>
           </el-popconfirm>
           <el-tooltip effect="dark" content="默认分组，无法删除" placement="top" :show-arrow="false">
-            <span :class="['item', 'is_disabled']" v-if="props.showMove && item.is_default === '1'">
+            <span :class="['item', 'is_disabled']" v-if="item.is_default === '1'">
               <img src="/src/assets/icons/deleteIcon_disabled.svg" alt="" />
             </span>
           </el-tooltip>
