@@ -27,7 +27,7 @@ const headers = ref({
 })
 
 watchEffect(() => {
-  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
+  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo'))?.id : (route.query.sid as string)
   bookId.value = route.query.lid as string
 })
 

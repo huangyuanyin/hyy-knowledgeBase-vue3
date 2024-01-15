@@ -246,98 +246,82 @@ export const documentsData = [
   {
     id: 1,
     icon: documentIcon,
-    title: '无标题文档',
+    title: '有bug请找',
     username: '黄原寅',
-    library: '假数据',
+    library: '平台组',
     time: '08-18 16:43'
   },
   {
     id: 2,
     icon: documentIcon,
-    title: '无标题文档',
+    title: '有bug请找',
     username: '黄原寅',
-    library: '假数据',
+    library: '平台组',
     time: '08-18 16:43'
   },
   {
     id: 3,
     icon: documentIcon,
-    title: '无标题文档',
+    title: '有bug请找',
     username: '黄原寅',
-    library: '假数据',
+    library: '平台组',
     time: '08-18 16:43'
   },
 
   {
     id: 4,
     icon: documentIcon,
-    title: '无标题文档',
+    title: '有bug请找',
     username: '黄原寅',
-    library: '假数据',
+    library: '平台组',
     time: '08-18 16:43'
   },
   {
     id: 5,
     icon: documentIcon,
-    title: '无标题文档',
+    title: '有bug请找',
     username: '黄原寅',
-    library: '假数据',
+    library: '平台组',
     time: '08-18 16:43'
   },
   {
     id: 6,
     icon: documentIcon,
-    title: '无标题文档',
+    title: '有bug请找',
     username: '黄原寅',
-    library: '假数据',
+    library: '平台组',
     time: '08-18 16:43'
   },
   {
     id: 7,
     icon: documentIcon,
-    title: '无标题文档',
+    title: '有bug请找',
     username: '黄原寅',
-    library: '假数据',
+    library: '平台组',
     time: '08-18 16:43'
   },
   {
     id: 8,
     icon: documentIcon,
-    title: '无标题文档',
+    title: '有bug请找',
     username: '黄原寅',
-    library: '假数据',
+    library: '平台组',
     time: '08-18 16:43'
   },
   {
     id: 9,
     icon: documentIcon,
-    title: '无标题文档',
+    title: '有bug请找',
     username: '黄原寅',
-    library: '假数据',
+    library: '平台组',
     time: '08-18 16:43'
   },
   {
     id: 10,
     icon: documentIcon,
-    title: '无标题文档',
+    title: '有bug请找',
     username: '黄原寅',
-    library: '假数据',
-    time: '08-18 16:43'
-  },
-  {
-    id: 11,
-    icon: documentIcon,
-    title: '无标题文档',
-    username: '黄原寅',
-    library: '假数据',
-    time: '08-18 16:43'
-  },
-  {
-    id: 12,
-    icon: documentIcon,
-    title: '无标题文档',
-    username: '黄原寅',
-    library: '假数据',
+    library: '平台组',
     time: '08-18 16:43'
   }
 ]

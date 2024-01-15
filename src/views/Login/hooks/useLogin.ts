@@ -9,6 +9,7 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
   })
 
   const router = useRouter()
+  const infoStore = useInfoStore()
   const userStore = useUserStore()
   const nickname = ref('')
 
@@ -33,6 +34,7 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
       nickname.value = res.data.name
       ElMessage.success('登录成功')
       await getSpaces()
+      infoStore.setCurrentSpaceType('个人')
       router.push({ path: '/' })
     } else {
       showError(res.msg)

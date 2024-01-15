@@ -11,6 +11,8 @@ import likeIcon from '@/assets/icons/like.svg'
 import likeSelectIcon from '@/assets/icons/like_select.svg'
 import topIcon from '@/assets/icons/top.svg'
 import commentIcon from '@/assets/icons/article/commentIcon.svg'
+import startIconSelect from '@/assets/icons/startIcon_select.svg'
+import startIcon from '@/assets/icons/startIcon.svg'
 
 const props = defineProps({
   content: {
@@ -389,7 +391,7 @@ onMounted(() => {
               type="article"
             >
               <span v-if="item.label === '收藏' || item.label === '已收藏'" @click="toHandle(item)">
-                <img :src="(infoStore.currentArticleInfo as ArticleInfo ).marked ? '/src/assets/icons/startIcon_select.svg' : '/src/assets/icons/startIcon.svg'" alt="" />
+                <img :src="(infoStore.currentArticleInfo as ArticleInfo ).marked ? startIconSelect : startIcon" alt="" />
               </span>
             </StarPopver>
             <el-tooltip effect="dark" :content="item.label" placement="bottom" :show-arrow="false">

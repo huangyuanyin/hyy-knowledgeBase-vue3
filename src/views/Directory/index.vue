@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import startIconSelect from '@/assets/icons/startIcon_select.svg'
+import startIcon from '@/assets/icons/startIcon.svg'
 import { directoryIndexOperationData } from '@/data/data'
 import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
 
@@ -134,7 +136,7 @@ onMounted(() => {
             <div class="button-wrap" v-if="!isEdit">
               <StarPopver @cancelMark="cancelMark" :startId="infoStore.currentBookInfo.mark_id" :tag_mark="infoStore.currentBookInfo.tag_mark" type="book">
                 <div class="button" @click="toMark">
-                  <img :src="infoStore.currentBookInfo.marked ? '/src/assets/icons/startIcon_select.svg' : '/src/assets/icons/startIcon.svg'" alt="" />
+                  <img :src="infoStore.currentBookInfo.marked ? startIconSelect : startIcon" alt="" />
                   <span>{{ infoStore.currentBookInfo.marked ? '已收藏' : '收藏' }}</span>
                 </div>
               </StarPopver>
@@ -194,7 +196,7 @@ onMounted(() => {
         <div mt-60px border="1px solid #e7e9e8" rounded-4px v-if="isEdit">
           <TinyMCE v-model="bookBulletin" :resize="true" height="500px" :toolbar="toolbar" body-style="body { margin: 1rem 2% 1rem 2% }" />
         </div>
-        <div class="list" v-if="infoStore.currentArticleTreeInfo.length">
+        <div class="list" v-if="infoStore.currentArticleTreeInfo?.length">
           <el-tree :data="infoStore.currentArticleTreeInfo" node-key="id" :props="defaultProps" default-expand-all>
             <template #default="{ node, data }">
               <span class="list-node">

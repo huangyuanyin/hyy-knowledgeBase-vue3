@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { coverImages } from '@/data/coverData'
 import cover from '@/assets/img/cover.png'
 import { editLibraryApi } from '@/api/library'
 import { FormInstance, FormRules } from 'element-plus'
@@ -82,13 +83,12 @@ const getBooksDetail = async (id) => {
 }
 
 const toChangeCover = (item) => {
-  bookForm.cover = `/src/assets/img/cover/${item}.png`
+  bookForm.cover = item
   imgToBase64(bookForm.cover)
     .then((res) => {
       if (res) {
         bookForm.cover = res as string
       }
-      console.log(`output->bookForm.cover`, bookForm.cover)
     })
     .catch((err) => {
       console.log('生成base64错误！', err)
@@ -138,8 +138,8 @@ onMounted(() => {
                 </ul>
               </div>
               <div flex mt-8px flex-wrap pl-4px pr-3px overflow-auto class="list">
-                <div class="coverImg" mt-1px mr-12px mb-12px w-72px h-98px v-for="(item, index) in 24" :key="'coverList' + index">
-                  <img w-full h-full rounded-6px cursor-pointer :src="`/src/assets/img/cover/${item}.png`" alt="" @click="toChangeCover(item)" />
+                <div class="coverImg" mt-1px mr-12px mb-12px w-72px h-98px v-for="(item, index) in coverImages" :key="'coverList' + index">
+                  <img w-full h-full rounded-6px cursor-pointer :src="item" alt="" @click="toChangeCover(item)" />
                 </div>
               </div>
             </div>

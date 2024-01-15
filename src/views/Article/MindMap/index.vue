@@ -9,7 +9,7 @@ const isLoading = ref(false)
 const modelValue = ref('')
 const isPublish = ref(false)
 const isPreview = ref(false)
-const iframeSrc = ref('http://192.168.94.221:8080?time' + Date.now()) // 8080：思维导图
+const iframeSrc = ref(`${import.meta.env.VITE_BASE_MINDMAP_URL}?time' + Date.now()`) // 8080：思维导图
 
 watch(
   () => route.query.aid,
@@ -47,7 +47,7 @@ watchEffect(() => {
     modelValue.value = sessionStorage.getItem('recoverVersion')
     isLoading.value = false
     iframeSrc.value = null
-    iframeSrc.value = 'http://192.168.94.221:8080?time' + Date.now()
+    iframeSrc.value = `${import.meta.env.VITE_BASE_MINDMAP_URL}?time' + Date.now()`
     myIframe.value.contentWindow.postMessage({ type: 'getOldData', data: modelValue.value, isPreview: false }, '*')
     sessionStorage.removeItem('recoverVersion')
   }

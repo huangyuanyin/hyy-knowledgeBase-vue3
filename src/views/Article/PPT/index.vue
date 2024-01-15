@@ -8,7 +8,7 @@ const pptIframe = ref(null)
 const isPreview = ref(false)
 const isLoading = ref(false)
 const isPublish = ref(false)
-const iframeSrc = ref('http://192.168.94.221:8081') // 8081：幻灯片
+const iframeSrc = ref(import.meta.env.VITE_BASE_PPT_URL)
 
 watch(
   () => route.fullPath,

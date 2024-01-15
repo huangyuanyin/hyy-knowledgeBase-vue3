@@ -173,10 +173,10 @@ onMounted(async () => {
             <span>{{ group.name }}</span>
             <span class="collectionGroupIcon">
               <el-tooltip effect="dark" content="新建分组" placement="top">
-                <img v-if="group.name === '全部收藏'" src="/src/assets/icons/collectionGroupIcon.svg" alt="" @click="showTag" />
+                <img v-if="group.name === '全部收藏'" src="/src/assets/icons/collectionGroupIcon.svg" alt="" @click.stop="showTag" />
               </el-tooltip>
               <LibraryOperationPopver :width="110" trigger="hover" :menuItems="groupMenuItems" @editTag="editTag(group)" @deleteTag="deleteTag(group)">
-                <img v-if="group.name !== '全部收藏'" src="/src/assets/icons/moreIcon1.svg" alt="" @click="" />
+                <img v-if="group.name !== '全部收藏'" src="/src/assets/icons/moreIcon1.svg" alt="" @click.stop />
               </LibraryOperationPopver>
             </span>
           </div>
