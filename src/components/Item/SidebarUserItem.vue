@@ -1,3 +1,22 @@
+<script lang="ts" setup>
+const props = defineProps({
+  icon: {
+    type: String,
+    default: ''
+  }
+})
+
+const route = useRoute()
+const infoStore = useInfoStore()
+const currentSider = ref('')
+const currentSiderName = ref('')
+
+watchEffect(() => {
+  currentSider.value = route.meta.asideComponent as string
+  currentSiderName.value = infoStore.currentQuery?.sname as string
+})
+</script>
+
 <template>
   <div class="sidebarUserItem-wrap">
     <div class="left">
@@ -18,24 +37,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts" setup>
-const props = defineProps({
-  icon: {
-    type: String,
-    default: ''
-  }
-})
-
-const route = useRoute()
-const currentSider = ref('')
-const currentSiderName = ref('')
-
-watchEffect(() => {
-  currentSider.value = route.meta.asideComponent as string
-  currentSiderName.value = route.query?.sname as string
-})
-</script>
 
 <style lang="scss" scoped>
 .sidebarUserItem-wrap {

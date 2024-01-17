@@ -23,6 +23,7 @@ const props = defineProps({
 })
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const state = reactive({
   defaultMenu: 'dashboard'
 })
@@ -51,10 +52,9 @@ const getIconPath = (iconName, isActive = false) => {
 
 const toLink = (menuItem: MenuItem) => {
   const queryParams = {
-    sid: route.query.sid,
-    sname: route.query.sname
+    sid: infoStore.currentQuery?.sid,
+    sname: infoStore.currentQuery?.sname
   }
-
   switch (route.meta.asideComponent) {
     case 'SpaceSidebar':
       if (menuItem.index === 'public') {

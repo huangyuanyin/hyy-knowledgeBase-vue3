@@ -18,12 +18,15 @@ declare global {
   const createPinia: typeof import('pinia')['createPinia']
   const customRef: typeof import('vue')['customRef']
   const debounce: typeof import('./utils/tool')['debounce']
+  const decrypt: typeof import('./utils/crypto')['decrypt']
   const defineAsyncComponent: typeof import('vue')['defineAsyncComponent']
   const defineComponent: typeof import('vue')['defineComponent']
   const defineStore: typeof import('pinia')['defineStore']
   const downloadFile: typeof import('./utils/file')['downloadFile']
   const effectScope: typeof import('vue')['effectScope']
   const encryp: typeof import('./utils/crypto')['encryp']
+  const encrypt: typeof import('./utils/crypto')['encrypt']
+  const generateKey: typeof import('./utils/crypto')['generateKey']
   const getActivePinia: typeof import('pinia')['getActivePinia']
   const getBase64Image: typeof import('./utils/tool')['getBase64Image']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
@@ -38,6 +41,7 @@ declare global {
   const isReactive: typeof import('vue')['isReactive']
   const isReadonly: typeof import('vue')['isReadonly']
   const isRef: typeof import('vue')['isRef']
+  const key: typeof import('./utils/crypto')['key']
   const mapActions: typeof import('pinia')['mapActions']
   const mapGetters: typeof import('pinia')['mapGetters']
   const mapState: typeof import('pinia')['mapState']
@@ -133,5 +137,6 @@ declare global {
 // for type re-export
 declare global {
   // @ts-ignore
-  export type { Component, ComponentPublicInstance, ComputedRef, InjectionKey, PropType, Ref, VNode } from 'vue'
+  export type { Component, ComponentPublicInstance, ComputedRef, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, VNode, WritableComputedRef } from 'vue'
+  import('vue')
 }

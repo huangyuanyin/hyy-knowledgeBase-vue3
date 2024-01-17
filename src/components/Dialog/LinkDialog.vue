@@ -13,7 +13,6 @@ const props = defineProps({
 })
 const emit = defineEmits(['closeDialog'])
 
-const route = useRoute()
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const linkDialogTitle = ref('添加链接')
@@ -45,8 +44,8 @@ watch(
     } else {
       linkDialogTitle.value = '添加链接'
     }
-    linkForm.space = infoStore.currentSpaceType === '个人' ? (localStorage.getItem('personalSpaceId') as string) : (route.query.sid as string)
-    linkForm.book = route.query.lid as string
+    linkForm.space = infoStore.currentSpaceType === '个人' ? (localStorage.getItem('personalSpaceId') as string) : infoStore.currentQuery?.sid
+    linkForm.book = infoStore.currentQuery?.lid as string
     linkForm.parent = props.parent
   }
 )
@@ -223,6 +222,9 @@ const handleClose = async () => {
     margin-bottom: 28px;
     color: #8a8f8d;
     font-size: 14px;
+  }
+  .el-dialog__header {
+    border-bottom: none;
   }
   .el-dialog__title {
     font-size: 16px;

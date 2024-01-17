@@ -11,8 +11,8 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
   aInfo: {}
 })
 
-const route = useRoute()
-const aId = route.query.aid
+const infoStore = useInfoStore()
+const aId = infoStore.currentQuery?.aid
 const sharePopverRef = ref(null)
 const publicType = ref('0')
 const currentPage = ref('0')

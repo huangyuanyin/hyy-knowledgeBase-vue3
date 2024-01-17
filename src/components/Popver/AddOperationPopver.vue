@@ -14,7 +14,6 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
 
 const emit = defineEmits()
 
-const route = useRoute()
 const infoStore = useInfoStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const spaceId = ref('')
@@ -27,8 +26,8 @@ const headers = ref({
 })
 
 watchEffect(() => {
-  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo'))?.id : (route.query.sid as string)
-  bookId.value = route.query.lid as string
+  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo'))?.id : infoStore.currentQuery?.sid
+  bookId.value = infoStore.currentQuery?.lid
 })
 
 const toHandle = (val) => {

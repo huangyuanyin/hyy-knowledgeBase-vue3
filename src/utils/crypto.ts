@@ -11,7 +11,6 @@ export function encryp(key, iv, data: any) {
   }
   // 统一将传入的字符串转成UTF8编码
   const dataHex = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(data)) // 需要加密的数据
-  console.log(`output->dataHex`, dataHex)
   const keyHex = CryptoJS.enc.Utf8.parse(key) // 秘钥
   const ivHex = CryptoJS.enc.Utf8.parse(iv) // 偏移量
   const encrypted = CryptoJS.AES.encrypt(dataHex, keyHex, {

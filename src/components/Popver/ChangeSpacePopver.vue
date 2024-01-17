@@ -17,7 +17,6 @@ const infoStore = useInfoStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const icon = ref('')
 const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
-const spaceId = ref('') // 当前空间id
 const isShowsSpaceDialog = ref(false)
 const changeSpacePopverRef = ref<any>(null)
 const spacesList = ref([])
@@ -47,7 +46,6 @@ const spaceReverse = ref([
 ])
 
 const initData = () => {
-  spaceId.value = route.query.sid as string
   if (infoStore.currentSidebar === 'SpaceSidebar') {
     icon.value = infoStore.currentSpaceInfo.icon || '/src/assets/icons/spaceIcon.svg'
   }
@@ -221,7 +219,7 @@ const toLink = (type, val?) => {
                     <p class="member" v-else>{{ space.member_count + 1 || 1 }}成员</p>
                   </div>
                 </div>
-                <div class="right" v-if="spaceId == space.id">
+                <div class="right" v-if="infoStore.currentQuery?.sid == space.id">
                   <img src="@/assets/icons/selectIcon.svg" alt="" />
                 </div>
               </div>

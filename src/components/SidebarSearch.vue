@@ -11,18 +11,13 @@ const props = defineProps({
 
 const route = useRoute()
 const infoStore = useInfoStore()
-const spaceId = ref('') // 当前空间id
-const bookId = ref('') // 当前知识库id
 const isShowLinkDialog = ref(false)
 const isShowSelectTemDialog = ref(false)
 const isBookListDialog = ref(false)
 const isSearchDialog = ref(false)
 const bookListDialogTitle = ref('')
 
-watchEffect(() => {
-  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
-  bookId.value = route.query.lid as string
-})
+const { gid = '', gname = '', lid = '', lname = '' } = infoStore.currentQuery || {}
 
 const toAddArticle = (val) => {
   if (['SpaceSidebar', 'Sidebar'].includes(route.meta.asideComponent as string)) {
@@ -30,10 +25,10 @@ const toAddArticle = (val) => {
     bookListDialogTitle.value = val.label
   } else {
     const book = {
-      id: bookId.value,
-      name: route.query.lname as string,
-      group: route.query.gid as string,
-      groupname: route.query.gname as string
+      id: lid,
+      name: lname,
+      group: gid,
+      groupname: gname
     }
     useArticle().handleAddArticle({ book, title: val.label }, () => {})
   }

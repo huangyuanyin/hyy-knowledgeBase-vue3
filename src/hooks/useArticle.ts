@@ -1,4 +1,3 @@
-import Vrouter from '@/router'
 import { getArticleTreeApi, getArticleApi, addArticleApi, editArticleApi, deleteArticleApi, getCategoryTreeApi } from '@/api/article'
 import { sheetData } from '@/components/Excel/data'
 import { useInfoStore } from '@/store/info'
@@ -18,15 +17,12 @@ interface ArticleInfo {
 }
 
 export const useArticle = () => {
-  const route = Vrouter.currentRoute.value
   const infoStore = useInfoStore()
   const dataStore = useDataStore()
   const refreshStroe = useRefreshStore()
   const space = ref<string>('')
   const spaceName = ref<string>('')
-  const aid = Number(route.query.aid) // 当前文章id
   const ainfo = ref<ArticleInfo>({} as ArticleInfo) // 当前文章详情
-  const lid = Number(route.query.lid) // 当前知识库id
   const isHasPermission = ref<boolean>(true) // 是否有权限
   const currentNodeKey = ref<number>(0) // 当前选中的文章id
   const articleList = ref<any[]>([])
@@ -38,9 +34,10 @@ export const useArticle = () => {
     新建分组: { type: 'title', title: '新建分组', body: '' }
   }
 
-  const { space: sid, spaceName: sname } = useData()
-  space.value = sid.value
-  spaceName.value = sname.value
+  const { sid = '', sname = '', gid = '', gname = '', lid = '', lname = '', aid = '' } = infoStore.currentQuery || {}
+
+  space.value = sid
+  spaceName.value = sname
 
   function transformTitle(data) {
     const result = []
@@ -143,14 +140,14 @@ export const useArticle = () => {
         refreshStroe.setRefreshBookList(true)
       } else {
         const query = {
+          sid,
+          sname,
           lid: book.id,
           lname: book.name,
           aid: res.data.id,
           aname: res.data.title
         }
         const spaceQuery = {
-          sid: route.query.sid,
-          sname: route.query.sname,
           gid: book.group,
           gname: book.groupname
         }
@@ -209,12 +206,12 @@ export const useArticle = () => {
    */
   const handleDeleteArticle = async (id: Number) => {
     const query = {
-      sid: route.query.sid,
-      sname: route.query.sname,
-      gid: route.query.gid,
-      gname: route.query.gname,
-      lid: route.query.lid,
-      lname: route.query.lname
+      sid: sid,
+      sname: sname,
+      gid: gid,
+      gname: gname,
+      lid,
+      lname: lname
     }
     let res = await deleteArticleApi(id)
     if (res.code === 1000) {

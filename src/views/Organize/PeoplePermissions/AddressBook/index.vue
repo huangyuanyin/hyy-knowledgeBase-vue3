@@ -2,9 +2,9 @@
 import { deleteSpacepermissionsApi, getSpacepermissionsApi } from '@/api/spacepermissions'
 import { getUserApi } from '@/api/user'
 
-const route = useRoute()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
+const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const searchInput = ref('')
 const memberData = ref([])
@@ -22,7 +22,7 @@ watchEffect(async () => {
 
 const getSpacepermissions = async () => {
   const params = {
-    space: route.query.sid as string
+    space: infoStore.currentQuery?.sid
   }
   loadTable.value = true
   const res = await getSpacepermissionsApi(params)

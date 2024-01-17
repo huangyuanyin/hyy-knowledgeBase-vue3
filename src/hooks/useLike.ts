@@ -7,15 +7,13 @@ export const useLike = () => {
   const infoStore = useInfoStore()
   const target_type = route.path.split('/').slice(-2)[0] // 获取文章类型
 
-  const { space } = useData()
-
   /**
    * 处理点赞与取消点赞
    */
   const handleLike = async () => {
     const liked: boolean = (infoStore.currentArticleInfo as ArticleInfo)?.liked // 是否已经点赞
     const like_id: number = (infoStore.currentArticleInfo as ArticleInfo)?.like_id // 点赞id
-    const aid = ref<number>(route.query.aid as string) // 文章id
+    const aid = ref<string>(infoStore.currentQuery?.aid) // 文章id
 
     if (liked) {
       let res = await deleteLikeApi(like_id)
@@ -26,7 +24,7 @@ export const useLike = () => {
       }
     } else {
       const params = {
-        space: space.value,
+        space: infoStore.currentQuery?.sid,
         target_id: aid.value,
         target_type
       }

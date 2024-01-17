@@ -7,6 +7,7 @@ import publicIcon from '@/assets/icons/library/publicIcon.svg'
 import { useBook } from '@/hooks/useBook'
 import { useTeam } from '@/hooks/useTeam'
 import { useData } from '@/hooks/useData'
+import SparkMD5 from 'spark-md5'
 
 const props = defineProps({
   show: {
@@ -57,10 +58,10 @@ watch(
   (newVal: boolean) => {
     visible.value = newVal
     if (newVal) {
-      const { space, spaceIcon } = useData()
+      const { spaceIcon } = useData()
       if (route.path.includes('/search')) {
-        value.value = route.query.q ? (route.query.q as string) : ''
-        selectId.value = `${route.query.scope_id}${route.query.scope_name}`
+        value.value = infoStore.currentQuery.q ? (infoStore.currentQuery.q as string) : ''
+        selectId.value = `${infoStore.currentQuery.scope_id}${infoStore.currentQuery.scope_name}`
       } else {
         selectId.value = String(infoStore.currentSpaceInfo.id || JSON.parse(localStorage.getItem('personalSpaceInfo')).id) + list.value[0].children[0].name
       }
@@ -68,7 +69,7 @@ watch(
       if (infoStore.currentSpaceType === '组织') {
         handleTeamList()
       } else {
-        list.value[0].children[0].id = space.value
+        list.value[0].children[0].id = infoStore.currentQuery?.sid
         list.value[0].children[0].icon = spaceIcon.value
       }
     }
@@ -77,8 +78,8 @@ watch(
 
 async function handleBookList() {
   const { bookList, getBookList } = useBook()
-  const { user, space } = await useData()
-  await getBookList({ space: space.value, permusername: user.value })
+  const { user } = await useData()
+  await getBookList({ space: infoStore.currentQuery?.sid, permusername: user.value })
   list.value[1].children = bookList.value
 }
 
@@ -128,22 +129,30 @@ function handleKeyPress(event) {
 }
 
 function navigateToSearch(type, val) {
-  const { spaceName } = useData()
-  router.push({
-    path: `${infoStore.currentSpaceType === '个人' ? '' : `/${spaceName.value}`}/search`,
-    query: {
-      sid: route.query.sid,
-      sname: route.query.sname,
+  if (infoStore.currentSidebar === 'DirectorySidebar') {
+    const query = {
+      sid: infoStore.currentQuery?.sid,
+      sname: infoStore.currentQuery?.sname,
       scope: type,
       scope_id: val.id,
       scope_name: val.name,
       q: value.value
     }
-  })
-  if (route.path.includes('directory')) {
-    setTimeout(() => {
-      window.location.reload()
-    }, 100)
+    console.log(`output->query`, query)
+    const hash = SparkMD5.hash(JSON.stringify(query))
+    window.open(`${window.location.origin}${infoStore.currentSpaceType === '个人' ? '' : `/#/${infoStore.currentSpaceInfo.spacekey}`}/search?query=${hash}`)
+  } else {
+    router.push({
+      path: `${infoStore.currentSpaceType === '个人' ? '' : `/${infoStore.currentSpaceInfo.spacekey}`}/search`,
+      query: {
+        sid: infoStore.currentQuery.sid,
+        sname: infoStore.currentQuery.sname,
+        scope: type,
+        scope_id: val.id,
+        scope_name: val.name,
+        q: value.value
+      }
+    })
   }
 }
 
@@ -241,7 +250,7 @@ onBeforeMount(() => {
   padding: 0px;
   box-sizing: border-box;
   .el-dialog__body {
-    padding: 0px;
+    padding: 0px !important;
   }
   .el-dialog__header {
     padding: 0px;

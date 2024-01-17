@@ -51,9 +51,9 @@ const sexList = [
 
 watchEffect(() => {
   spaceName.value = route.path.split('/')[1]
-  infoStore.currentSpaceType === '个人' ? (spaceId.value = JSON.parse(localStorage.getItem('personalSpaceInfo')).id) : (spaceId.value = route.query.sid as string)
-  groupId.value = route.query.gid as string
-  bookId.value = route.query.lid as string
+  infoStore.currentSpaceType === '个人' ? (spaceId.value = JSON.parse(localStorage.getItem('personalSpaceInfo')).id) : (spaceId.value = infoStore.currentQuery?.sid)
+  groupId.value = infoStore.currentQuery?.gid
+  bookId.value = infoStore.currentQuery?.lid
 })
 
 const toCloseDialog = () => {
@@ -67,7 +67,7 @@ const toLink = (label) => {
       path: `/${spaceName.value}/organize/addressBook`,
       query: {
         sid: spaceId.value,
-        sname: route.query.sname as string
+        sname: infoStore.currentQuery?.sname
       }
     })
   } else if (label === 'teamAdmin') {
@@ -75,9 +75,9 @@ const toLink = (label) => {
       path: `/${spaceName.value}/team/member`,
       query: {
         sid: spaceId.value,
-        sname: route.query.sname as string,
+        sname: infoStore.currentQuery?.sname,
         gid: groupId.value,
-        gname: route.query.gname as string
+        gname: infoStore.currentQuery?.gname
       }
     })
   }

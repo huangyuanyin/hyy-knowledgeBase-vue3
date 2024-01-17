@@ -14,7 +14,6 @@ import { folderMenuItemsData } from '@/data/data'
 import { ArticleInfo } from '@/type/article'
 import { uploadArticleApi } from '@/api/article'
 
-const route = useRoute()
 const infoStore = useInfoStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const aid = ref<number>(null)
@@ -37,7 +36,7 @@ const headers = ref({
 })
 
 watchEffect(() => {
-  aid.value = Number(route.query.aid)
+  aid.value = Number(infoStore.currentQuery?.aid)
   list.value = infoStore.currentArticleTreeInfo && getList(aid.value, infoStore.currentArticleTreeInfo)
   if (infoStore.currentMenu === 'title') {
     useArticle().getArticleDetail(aid.value)
@@ -59,10 +58,10 @@ function getList(id: number, data: ArticleInfo[], children: ArticleInfo[] = []) 
 
 function getBookInfo() {
   return {
-    id: route.query.lid as string,
-    name: route.query.lname as string,
-    group: route.query.gid as string,
-    groupname: route.query.gname as string
+    id: infoStore.currentQuery?.lid as string,
+    name: infoStore.currentQuery?.lname as string,
+    group: infoStore.currentQuery?.gid as string,
+    groupname: infoStore.currentQuery?.gname as string
   }
 }
 
@@ -79,8 +78,8 @@ const toAddLink = (data: number) => {
 const toUpload = async (file) => {
   const formData = new FormData()
   formData.append('file', file.file)
-  formData.append('space', String(route.query.sid))
-  formData.append('book', String(route.query.lid))
+  formData.append('space', infoStore.currentQuery?.sid)
+  formData.append('book', infoStore.currentQuery?.lid)
   formData.append('type', 'file')
   formData.append('title', file.file.name)
   formData.append('creator', user)

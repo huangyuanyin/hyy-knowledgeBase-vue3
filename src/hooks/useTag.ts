@@ -3,14 +3,9 @@ import { addTagApi, deleteTagApi, editTagApi, getTagApi } from '@/api/tag'
 
 export const useTag = () => {
   const listStroe = useListStore()
+  const infoStore = useInfoStore()
   const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
-  const space = ref<string>('')
-  const spaceName = ref<string>('')
   const tagList = ref<Array<any>>([])
-
-  const { space: sid, spaceName: sname } = useData()
-  space.value = sid.value
-  spaceName.value = sname.value
 
   /**
    * 获取标签列表
@@ -18,7 +13,7 @@ export const useTag = () => {
    */
   const getTagList = async (callback?: Callback) => {
     const params = {
-      space: space.value,
+      space: infoStore.currentQuery?.sid,
       action_type: 'mark',
       creator: user
     }
@@ -40,7 +35,7 @@ export const useTag = () => {
   const addTag = async (name: string, callback?: Callback) => {
     const params = {
       name,
-      space: space.value,
+      space: infoStore.currentQuery?.sid,
       action_type: 'mark'
     }
     let res = await addTagApi(params)
@@ -60,7 +55,7 @@ export const useTag = () => {
   const editTag = async (tagId: number, name: string, callback?: Callback) => {
     const params = {
       name,
-      space: space.value,
+      space: infoStore.currentQuery?.sid,
       action_type: 'mark'
     }
     let res = await editTagApi(tagId, params)

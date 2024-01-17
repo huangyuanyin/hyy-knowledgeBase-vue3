@@ -151,9 +151,10 @@ const toLink = (val, type) => {
       path: `/${infoStore.currentSpaceInfo.spacekey}/directory/index`,
       query: {
         sid: val.space,
-        sname: route.query.sname,
+        sname: infoStore.currentQuery?.sname,
         lid: val.id,
         lname: val.name,
+        gid: val.group,
         gname: val.group_name
       }
     })

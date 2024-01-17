@@ -1,6 +1,45 @@
 import { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 
+let encryptString
+
+const base64UrlEncode = (data) => {
+  const encoded = btoa(unescape(encodeURIComponent(data)))
+  return encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+}
+
+const base64UrlDecode = (encodedData) => {
+  encodedData = encodedData.replace(/-/g, '+').replace(/_/g, '/')
+  while (encodedData.length % 4) {
+    encodedData += '='
+  }
+  return decodeURIComponent(escape(atob(encodedData)))
+}
+
 export async function setupRouterInterceptor(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
+  const infoStore = useInfoStore()
+
+  if (to.meta.menu !== 'login' && Reflect.ownKeys(to.query).length > 0 && !to.query.query) {
+    if (to.query.query === infoStore.currentQuery) return
+    encryptString = base64UrlEncode(JSON.stringify(to.query))
+    infoStore.setCurrentQuery(to.query)
+    console.log(`output->当前参数`, to.query, encryptString)
+    to.query = {
+      query: encryptString
+    }
+    to.meta = {
+      ...to.meta,
+      encrypt: encryptString
+    }
+    router.replace({
+      path: to.path,
+      query: {
+        query: encryptString
+      }
+    })
+  }
+
+  const { lid = '' } = infoStore.currentQuery || {}
+
   if (to.path === '/login') {
     next()
   } else {
@@ -18,11 +57,9 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
   }
 
   if (to.path.includes('/search') || to.path.includes('/recycles')) {
-    to.meta.asideComponent = sessionStorage.getItem('xinAn-sidebar')
+    to.meta.asideComponent = infoStore.currentSpaceType === '个人' ? 'Sidebar' : 'SpaceSidebar'
     next()
   }
-
-  const infoStore = useInfoStore()
 
   infoStore.setCurrentSidebar(to.meta.asideComponent as string)
   infoStore.setCurrentSpaceType(judegeSpaceType(to))
@@ -33,25 +70,34 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
   else {
     if (
       !sessionStorage.getItem('xinAn-spaceInfo') ||
-      (sessionStorage.getItem('xinAn-spaceInfo') && JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).id !== Number(to.query.sid))
+      (sessionStorage.getItem('xinAn-spaceInfo') && JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).id !== Number(infoStore.currentQuery?.sid))
     )
-      await useSpace().getSpaceInfo(Number(to.query.sid))
+      await useSpace().getSpaceInfo(Number(infoStore.currentQuery?.sid))
   }
 
   // 如果是团队设置页面，则判断是否需要重新获取团队信息
   if (to.meta.asideComponent === 'TeamSidebar') {
     if (
       !sessionStorage.getItem('xinAn-teamInfo') ||
-      (sessionStorage.getItem('xinAn-teamInfo') && JSON.parse(sessionStorage.getItem('xinAn-teamInfo')).id !== Number(to.query.gid))
+      (sessionStorage.getItem('xinAn-teamInfo') && JSON.parse(sessionStorage.getItem('xinAn-teamInfo')).id !== Number(infoStore.currentQuery?.gid))
     ) {
-      await useTeam().getTeamInfo(Number(to.query.gid))
+      await useTeam().getTeamInfo(Number(infoStore.currentQuery?.gid))
     }
   }
 
   // 如果是知识库目录页面，则判断是否需要重新获取知识库信息
   if (infoStore.currentSidebar === 'DirectorySidebar') {
-    if (!sessionStorage.getItem('xinAn-bookInfo') || (sessionStorage.getItem('xinAn-bookInfo') && JSON.parse(sessionStorage.getItem('xinAn-bookInfo')).id !== Number(to.query.lid)))
-      await useBook().getBookInfo(Number(to.query.lid))
+    if (!sessionStorage.getItem('xinAn-bookInfo') || (sessionStorage.getItem('xinAn-bookInfo') && JSON.parse(sessionStorage.getItem('xinAn-bookInfo')).id !== Number(lid)))
+      await useBook().getBookInfo(Number(lid))
+  }
+}
+
+export async function setupRouterResponder(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
+  const infoStore = useInfoStore()
+  console.log(`output->1111`, 1111)
+  if (to.meta.menu !== 'login' && to.query.query) {
+    const decrypted = base64UrlDecode(to.query.query)
+    infoStore.setCurrentQuery(JSON.parse(decrypted))
   }
 }
 

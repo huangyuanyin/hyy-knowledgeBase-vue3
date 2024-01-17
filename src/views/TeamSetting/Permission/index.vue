@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { getGroupPermissionsApi, updateGroupPermissionsApi } from '@/api/grouppermissions'
 
-const route = useRoute()
+const infoStore = useInfoStore()
 const publicType = ref('1')
-const group = ref('')
 const groupSettingId = ref(null)
 const teamOptions = ref([
   {
@@ -88,14 +87,10 @@ const libraryOptions = ref([
   }
 ])
 
-watchEffect(() => {
-  group.value = route.query.gid as string
-})
-
 const toChangeStatus = (type, item) => {
   if (type === 'book') return ElMessage.warning('暂不支持自定义')
   const params = {
-    group: group.value
+    group: infoStore.currentQuery?.gid
   }
   item.label === '允许成员新建知识库' ? (params['create_book'] = item.value ? '1' : '0') : (params['create_mumber'] = item.value ? '1' : '0')
   updateGroupPermissions(params)
@@ -103,7 +98,7 @@ const toChangeStatus = (type, item) => {
 
 const getGroupPermissions = async () => {
   const params = {
-    group: group.value
+    group: infoStore.currentQuery?.gid
   }
   const res = await getGroupPermissionsApi(params)
   if (res.code === 1000) {

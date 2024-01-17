@@ -21,7 +21,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['closeDialog'])
 
-const route = useRoute()
+const infoStore = useInfoStore()
 const dialogVisible = ref(false)
 const templateTypeIcon = ref(home2Icon)
 const saveTemFormRef = ref<FormInstance>()
@@ -108,7 +108,7 @@ const toChangeType = (val) => {
       temForm.target_id = props.info.book
       break
     case '2':
-      temForm.target_id = route.query.gid as string
+      temForm.target_id = infoStore.currentQuery?.gid
       break
     case '3':
       temForm.target_id = props.info.space

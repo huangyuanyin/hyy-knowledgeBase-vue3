@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 const route = useRoute()
 const router = useRouter()
+const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const isComment = ref(true)
 const isAutoPush = ref(false)
 const isShowsDeleteDialog = ref(false)
 const docSet = ref('1')
-const bookId = ref(Number(route.query.lid) || null)
 const deleteInfo = ref<{
   id?: string
   name?: string
@@ -21,8 +21,8 @@ watchEffect(() => {
     router.push({
       path: `/${route.path.split('/')[1]}/dashboard`,
       query: {
-        sname: route.query.sname,
-        sid: route.query.sid
+        sname: infoStore.currentQuery?.sname,
+        sid: infoStore.currentQuery?.sid
       }
     })
   }
@@ -53,7 +53,7 @@ const getBooksDetail = async (id) => {
 }
 
 onMounted(() => {
-  getBooksDetail(bookId.value)
+  getBooksDetail(Number(infoStore.currentQuery?.lid))
 })
 </script>
 

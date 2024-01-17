@@ -88,7 +88,7 @@ const toLink = (item) => {
       path: `/directory/index`,
       query: {
         sid: item.space,
-        sname: route.query.sname,
+        sname: infoStore.currentQuery?.sname,
         lid: item.target_id,
         lname: item.title
       }
@@ -101,7 +101,7 @@ const toLink = (item) => {
         path: `/${infoStore.currentSpaceInfo.spacekey}/directory/index`,
         query: {
           sid: item.space,
-          sname: route.query.sname,
+          sname: infoStore.currentQuery?.sname,
           lid: item.target_id,
           lname: item.title,
           gid: item.group_id,
@@ -121,8 +121,8 @@ const getTeamMember = async (val) => {
     router.push({
       path: `/${infoStore.currentSpaceInfo.spacekey}/team/book`,
       query: {
-        sid: route.query.sid,
-        sname: route.query.sname,
+        sid: infoStore.currentQuery?.sid,
+        sname: infoStore.currentQuery?.sname,
         gid: val.target_id,
         gname: val.title
       }

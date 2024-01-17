@@ -35,8 +35,8 @@ export const useTeamPermission = (route, router, data) => {
     router.push({
       path: `/${spaceName.value}/team/book`,
       query: {
-        sid: route.query.sid,
-        sname: route.query.sname,
+        sid: infoStore.currentQuery?.sid,
+        sname: infoStore.currentQuery?.sname,
         gid: data.id,
         gname: data.groupname
       }

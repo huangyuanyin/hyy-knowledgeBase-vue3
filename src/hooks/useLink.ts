@@ -1,5 +1,5 @@
-import Vrouter from '@/router'
 import qs from 'qs'
+import SparkMD5 from 'spark-md5'
 
 const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
@@ -8,13 +8,14 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
   const { route, router } = routerInfo
   const infoStore = useInfoStore()
   const spaceName = route.path.split('/')[1]
+
   switch (type) {
     case 'teamSet':
       router.push({
         path: `/${spaceName}/teamSetting/basic`,
         query: {
           sid: data.space,
-          sname: route.query.sname,
+          sname: infoStore.currentQuery?.sname,
           gid: data.id,
           gname: data.groupname
         }
@@ -25,7 +26,7 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
         path: `/${spaceName}/teamSetting/basic`,
         query: {
           sid: data.space,
-          sname: route.query.sname,
+          sname: infoStore.currentQuery?.sname,
           gid: data.target_id,
           gname: data.title
         }
@@ -41,10 +42,10 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
       router.push({
         path: route.path.split('/')[1] === 'library' ? `/bookSetting/basic` : `/${spaceName}/bookSetting/basic`,
         query: {
-          sid: route.query.sid,
-          sname: route.query.sname,
-          gid: route.query.gid || data.group,
-          gname: route.query.gname || data.group_name,
+          sid: infoStore.currentQuery?.sid,
+          sname: infoStore.currentQuery?.sname,
+          gid: infoStore.currentQuery?.gid || data.group,
+          gname: infoStore.currentQuery?.gname || data.group_name,
           lid: data.id,
           lname: data.name
         }
@@ -54,8 +55,8 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
       router.push({
         path: route.path.split('/').length === 2 ? `/bookSetting/basic` : `/${spaceName}/bookSetting/basic`,
         query: {
-          sid: route.query.sid,
-          sname: route.query.sname,
+          sid: infoStore.currentQuery?.sid,
+          sname: infoStore.currentQuery?.sname,
           gid: data.group_id,
           gname: data.group_name,
           lid: data.target_id,
@@ -67,10 +68,10 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
       router.push({
         path: route.path.split('/').length === 2 ? `/bookSetting/collaborators` : `/${spaceName}/bookSetting/collaborators`,
         query: {
-          sid: route.query.sid,
-          sname: route.query.sname,
-          gid: route.query.gid || data.group,
-          gname: route.query.gname || data.group_name,
+          sid: infoStore.currentQuery?.sid,
+          sname: infoStore.currentQuery?.sname,
+          gid: infoStore.currentQuery?.gid || data.group,
+          gname: infoStore.currentQuery?.gname || data.group_name,
           lid: data.id,
           lname: data.name
         }
@@ -80,8 +81,8 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
       router.push({
         path: route.path.split('/').length === 2 ? `/bookSetting/collaborators` : `/${spaceName}/bookSetting/collaborators`,
         query: {
-          sid: route.query.sid,
-          sname: route.query.sname,
+          sid: infoStore.currentQuery?.sid,
+          sname: infoStore.currentQuery?.sname,
           gid: data.group_id,
           gname: data.group_name,
           lid: data.target_id,
@@ -94,12 +95,12 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
       router.push({
         path: route.path.split('/')[1] === 'directory' ? `/bookSetting/basic` : `/${spaceName}/bookSetting/basic`,
         query: {
-          sid: route.query.sid,
-          sname: route.query.sname,
-          gid: route.query.gid,
-          gname: route.query.gname,
-          lid: route.query.lid,
-          lname: route.query.lname
+          sid: infoStore.currentQuery?.sid,
+          sname: infoStore.currentQuery?.sname,
+          gid: infoStore.currentQuery?.gid,
+          gname: infoStore.currentQuery?.gname,
+          lid: infoStore.currentQuery?.lid,
+          lname: infoStore.currentQuery?.lname
         }
       })
       break
@@ -108,12 +109,12 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
       router.push({
         path: route.path.split('/')[1] === 'directory' ? `/bookSetting/toc` : `/${spaceName}/bookSetting/toc`,
         query: {
-          sid: route.query.sid,
-          sname: route.query.sname,
-          gid: route.query.gid,
-          gname: route.query.gname,
-          lid: route.query.lid,
-          lname: route.query.lname
+          sid: infoStore.currentQuery?.sid,
+          sname: infoStore.currentQuery?.sname,
+          gid: infoStore.currentQuery?.gid,
+          gname: infoStore.currentQuery?.gname,
+          lid: infoStore.currentQuery?.lid,
+          lname: infoStore.currentQuery?.lname
         }
       })
       break
@@ -122,12 +123,12 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
       router.push({
         path: route.path.split('/')[1] === 'directory' ? `/bookSetting/collaborators` : `/${spaceName}/bookSetting/collaborators`,
         query: {
-          sid: route.query.sid,
-          sname: route.query.sname,
-          gid: route.query.gid,
-          gname: route.query.gname,
-          lid: route.query.lid,
-          lname: route.query.lname
+          sid: infoStore.currentQuery?.sid,
+          sname: infoStore.currentQuery?.sname,
+          gid: infoStore.currentQuery?.gid,
+          gname: infoStore.currentQuery?.gname,
+          lid: infoStore.currentQuery?.lid,
+          lname: infoStore.currentQuery?.lname
         }
       })
       break
@@ -135,8 +136,8 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
     case 'fromSpaceSetToTeamBasic':
       window.open(
         `/${route.path.split('/')[1]}/teamSetting/basic?${qs.stringify({
-          sid: route.query.sid,
-          sname: route.query.sname,
+          sid: infoStore.currentQuery?.sid,
+          sname: infoStore.currentQuery?.sname,
           gid: data.id,
           gname: data.groupname
         })}`
@@ -146,8 +147,8 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
     case 'fromSpaceSetToTeamIndex':
       window.open(
         `/${route.path.split('/')[1]}/team/book?${qs.stringify({
-          sid: route.query.sid,
-          sname: route.query.sname,
+          sid: infoStore.currentQuery?.sid,
+          sname: infoStore.currentQuery?.sname,
           gid: data.id,
           gname: data.groupname
         })}`
@@ -157,8 +158,8 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
     case 'fromSpaceSetToTeamSettings':
       window.open(
         `/${route.path.split('/')[1]}/teamSetting/settings?${qs.stringify({
-          sid: route.query.sid,
-          sname: route.query.sname,
+          sid: infoStore.currentQuery?.sid,
+          sname: infoStore.currentQuery?.sname,
           gid: data.id,
           gname: data.groupname
         })}`
@@ -176,7 +177,7 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
               }
             : {
                 sid: data.space,
-                sname: route.query.sname,
+                sname: infoStore.currentQuery?.sname,
                 gid: data.group,
                 gname: data.group_name,
                 lid: data.id,
@@ -196,8 +197,9 @@ interface ArticleData {
 }
 
 export const useLinkHooks = () => {
-  const route = Vrouter.currentRoute.value
   const infoStore = useInfoStore()
+
+  const { sid = '', sname = '', gid = '', gname = '', lid = '', lname = '' } = infoStore.currentQuery || {}
 
   const { spaceName } = useData()
   const basePath = infoStore.currentSpaceType === '个人' ? '' : `/${spaceName.value}`
@@ -210,17 +212,17 @@ export const useLinkHooks = () => {
    * @param {Boolean} refresh 是否重新获取文章目录
    */
   function handleArticleTypeLink(data: ArticleData, isEdit: Boolean, newTab: Boolean = false, refresh: Boolean = false) {
-    const query = {
-      lid: route.query.lid,
-      lname: route.query.lname,
+    let query = {
+      sid: sid,
+      sname: sname,
+      lid: lid,
+      lname: lname,
       aid: data.id,
       aname: data.title
     }
     const spaceQuery = {
-      sid: route.query.sid,
-      sname: route.query.sname,
-      gid: route.query.gid,
-      gname: route.query.gname
+      gid: gid,
+      gname: gname
     }
     if (!newTab) {
       router.push({
@@ -231,12 +233,9 @@ export const useLinkHooks = () => {
         } as any
       })
     } else {
-      window.open(
-        `${infoStore.currentSpaceType === '个人' ? '' : `/#/${spaceName.value}`}/directory/${data.type}/?${qs.stringify({
-          ...(infoStore.currentSpaceType === '个人' ? {} : spaceQuery),
-          ...query
-        })}`
-      )
+      query = { ...(infoStore.currentSpaceType === '个人' ? {} : spaceQuery), ...query }
+      const hash = SparkMD5.hash(JSON.stringify(query))
+      window.open(`/#${infoStore.currentSpaceType === '个人' ? '' : `/${spaceName.value}`}/directory/${data.type}/?query=${hash}`)
     }
   }
 

@@ -15,6 +15,7 @@ export interface ArticleInfo {
   like_id: number
   liked: boolean
   likes_count: number
+  versions_count: number
   creator_name: string
   create_datetime: string
   update_datetime: string

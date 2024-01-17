@@ -13,9 +13,6 @@ interface BookInfo {
 const route = useRoute()
 const routeInfo = { route, router }
 const infoStore = useInfoStore()
-const sid = ref<string>(String(route.query.sid))
-const bookId = ref<string>(String(route.query.lid))
-const bookName = ref<string>(String(route.query.lname))
 const isShowsDeleteDialog = ref<boolean>(false)
 const bookBulletin = ref<string>('')
 const toolbar = 'blocks fontsize bold  align bullist numlist  lineheight  link  hr  tableofcontents tableofcontentsupdate | emoticons image fullscreen  preview autolink  '
@@ -24,19 +21,9 @@ const defaultProps = {
   class: 'forumList'
 } as unknown as TreeOptionProps
 
+const { lid = '', lname = '' } = infoStore.currentQuery || {}
+
 const { addCollect } = useCollect()
-
-watchEffect(async () => {
-  if (route.query.lid && infoStore.currentMenu === 'directory') {
-    await initData()
-  }
-})
-
-function initData() {
-  sid.value = String(route.query.sid)
-  bookId.value = String(route.query.lid)
-  bookName.value = String(route.query.lname)
-}
 
 const toDo = () => {
   ElMessage.warning('功能暂未开放，敬请期待')
@@ -44,7 +31,7 @@ const toDo = () => {
 
 const toMark = () => {
   if (!infoStore.currentBookInfo.marked) {
-    addCollect(bookId.value, (res: any) => {
+    addCollect(lid, (res: any) => {
       if (Reflect.ownKeys(res).length) {
         useBook().getBookInfo(res.target_id, (val: any) => {
           if (Reflect.ownKeys(val).length) {
@@ -57,7 +44,7 @@ const toMark = () => {
 }
 
 const cancelMark = () => {
-  useBook().getBookInfo(Number(route.query.lid), (res: any) => {
+  useBook().getBookInfo(Number(lid), (res: any) => {
     if (Reflect.ownKeys(res).length) {
       getBookDetail()
     }
@@ -84,7 +71,7 @@ const toUpdateBulletin = () => {
     name,
     public: p
   }
-  useBook().editBook(Number(bookId.value), params, (res: BookInfo) => {
+  useBook().editBook(Number(lid), params, (res: BookInfo) => {
     if (Reflect.ownKeys(res).length) {
       ElMessage.success('更新成功')
       isEdit.value = false
@@ -127,7 +114,7 @@ onMounted(() => {
             <div class="bookIcon">
               <img :src="infoStore.currentBookInfo.icon" alt="" class="bookIcon" />
             </div>
-            <span>{{ bookName }}</span>
+            <span>{{ lname }}</span>
           </div>
           <div class="header-right">
             <div class="button-wrap" v-if="!isEdit">

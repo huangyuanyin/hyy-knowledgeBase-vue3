@@ -5,11 +5,10 @@ import goIcon from '@/assets/icons/goIcon.svg'
 import searchImg from '@/assets/img/search.png'
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const isTip = ref(false)
 const value = ref('')
-const list = ref([
-  // { name: '会议记录' }, { name: '会议记录' }, { name: '会议记录' }
-])
+const list = ref([])
 const spaceRange = ref([
   { name: '全部空间', value: '0', type: 'organization' },
   { name: '当前空间', value: '', type: 'organization' }
@@ -73,18 +72,18 @@ onMounted(() => {
 })
 
 function initData() {
-  value.value = (route.query.q as string) || ''
+  console.log(`output->inf`, infoStore.currentQuery)
+  value.value = (infoStore.currentQuery?.q as string) || ''
   time_horizon.value = ''
-  scope.value = (route.query.scope as string) || ''
-  scope_id.value = (route.query.scope_id as string) || ''
+  scope.value = (infoStore.currentQuery?.scope as string) || ''
+  scope_id.value = (infoStore.currentQuery?.scope_id as string) || ''
   sub_type.value = "['all']"
-  const { space } = useData()
-  if (space.value) spaceRange.value[1].value = space.value
-  if (route.query.scope !== 'organization')
+  spaceRange.value[1].value = infoStore.currentQuery?.sid
+  if (infoStore.currentQuery?.scope !== 'organization')
     spaceRange.value.push({
-      name: (route.query.scope_name as string) || '',
-      value: route.query.scope_id as string,
-      type: route.query.scope as string
+      name: infoStore.currentQuery?.scope_name,
+      value: infoStore.currentQuery?.scope_id,
+      type: infoStore.currentQuery?.scope
     })
   getSearch()
 }

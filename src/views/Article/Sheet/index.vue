@@ -9,14 +9,16 @@ const infoStore = useInfoStore()
 const isPreview = ref(true) // 默认预览模式
 const body = ref() // 文章内容
 
+const { aid = '' } = infoStore.currentQuery || {}
+
 watchEffect(() => {
   route.path.split('/').slice(-1)[0] === 'edit' ? (isPreview.value = false) : (isPreview.value = true)
 })
 
 watch(
-  () => route.query.aid,
+  () => aid,
   async () => {
-    if (route.query.aid && route.path.includes('sheet')) {
+    if (aid && route.path.includes('sheet')) {
       await getArticleTree()
     }
   }
@@ -28,7 +30,7 @@ onMounted(async () => {
 
 const getArticleTree = async () => {
   body.value = ''
-  await useArticle().getArticleDetail(Number(route.query.aid), (res: any) => {
+  await useArticle().getArticleDetail(Number(aid), (res: any) => {
     if (typeof res === 'string') return
     if (Reflect.ownKeys(res).length) {
       body.value = JSON.parse(res.body)

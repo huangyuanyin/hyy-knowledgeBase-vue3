@@ -16,7 +16,7 @@ type recoverData = {
   node_id: number
 }
 
-const route = useRoute()
+const infoStore = useInfoStore()
 const showHandleArticleDialog = ref(false)
 const handleData = ref(null) // 恢复的数据
 const recycleData: Ref<RecycleData[]> = ref([])
@@ -58,7 +58,7 @@ const deleteBookRecycles = async (id) => {
 
 const getBookRecycles = async () => {
   const params = {
-    book: route.query.lid as string
+    book: infoStore.currentQuery?.lid
   }
   let res = await getBookRecyclesApi(params)
   if (res.code === 1000) {

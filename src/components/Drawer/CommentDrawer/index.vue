@@ -11,7 +11,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['toCloseDrawer'])
 
-const route = useRoute()
+const infoStore = useInfoStore()
 const aid = ref('')
 const commenting = ref(false)
 const commentValue = ref('')
@@ -24,7 +24,7 @@ watch(
   () => props.drawer,
   (val) => {
     if (val) {
-      aid.value = route.query.aid as string
+      aid.value = infoStore.currentQuery?.aid
       getComments()
     }
   }

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { articleOperationData, linkOperationData, titleOperationData, fileOperationData } from '@/data/data'
 import { useLinkHooks } from '@/hooks/useLink'
+import SparkMD5 from 'spark-md5'
 
 interface ArticleData {
   id?: Number
@@ -45,10 +46,35 @@ const toCopyLink = (val) => {
   if (val.type === 'links') {
     linkUrl.value = val.description
   } else {
-    if (infoStore.currentSpaceType === '个人') {
-      linkUrl.value = `${window.location.origin}/#/directory/${val.type}?lid=${val.book}&lname=${route.query.lname}&aid=${val.id}&aname=${val.title}`
+    if (val.id == Number(infoStore.currentQuery?.aid)) {
+      linkUrl.value = window.location.href
     } else {
-      linkUrl.value = `${window.location.origin}/#/${spaceName}/directory/${val.type}?sid=${route.query.sid}&sname=${route.query.sname}&gid=${route.query.gid}&gname=${route.query.gname}&lid=${val.book}&lname=${route.query.lname}&aid=${val.id}&aname=${val.title}`
+      if (infoStore.currentSpaceType === '个人') {
+        const query = {
+          sid: infoStore.currentQuery?.sid,
+          sname: '',
+          lid: infoStore.currentQuery?.lid,
+          lname: infoStore.currentQuery?.lname,
+          aid: val.id,
+          aname: val.title
+        }
+        console.log(`output->query`, JSON.stringify(query))
+        const hash = SparkMD5.hash(JSON.stringify(query))
+        linkUrl.value = `${window.location.origin}/#/directory/${val.type}?query=${hash}`
+      } else {
+        const query = {
+          sid: infoStore.currentQuery?.sid,
+          sname: '',
+          gid: infoStore.currentQuery?.gid,
+          gname: infoStore.currentQuery?.gname,
+          lid: infoStore.currentQuery?.lid,
+          lname: infoStore.currentQuery?.lname,
+          aid: val.id,
+          aname: val.title
+        }
+        const hash = SparkMD5.hash(JSON.stringify(query))
+        linkUrl.value = `${window.location.origin}/#/${spaceName}/directory/${val.type}?query=${hash}`
+      }
     }
   }
   useCopy(linkUrl.value)

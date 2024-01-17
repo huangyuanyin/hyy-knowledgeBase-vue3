@@ -50,10 +50,10 @@ const toTeamSetting = () => {
   router.push({
     path: `/${infoStore.currentSpaceInfo.spacekey}/teamSetting/basic`,
     query: {
-      gid: route.query.gid,
-      gname: route.query.gname,
-      sid: route.query.sid,
-      sname: route.query.sname
+      gid: infoStore.currentQuery?.gid,
+      gname: infoStore.currentQuery?.gname,
+      sid: infoStore.currentQuery?.sid,
+      sname: infoStore.currentQuery?.sname
     }
   })
 }
@@ -63,7 +63,7 @@ const toTeamSetting = () => {
   <div class="TeamHeader_wrap">
     <div class="left">
       <span class="teamIcon"><img :src="props.icon" alt="" /></span>
-      <h3>{{ $route.query.gname }}</h3>
+      <h3>{{ infoStore.currentQuery?.gname }}</h3>
       <el-tooltip effect="dark" content="仅团队成员可访问" placement="bottom">
         <span class="privateIcon"><img :src="privateIcon" alt="" /></span>
       </el-tooltip>

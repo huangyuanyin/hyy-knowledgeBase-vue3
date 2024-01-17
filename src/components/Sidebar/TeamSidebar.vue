@@ -27,10 +27,10 @@ const toBack = () => {
   router.push({
     path: `/${route.path.split('/')[1]}/team/book`,
     query: {
-      gname: route.query.gname,
-      gid: route.query.gid,
-      sid: route.query.sid,
-      sname: route.query.sname
+      sid: infoStore.currentQuery?.sid,
+      sname: infoStore.currentQuery?.sname,
+      gid: infoStore.currentQuery?.gid,
+      gname: infoStore.currentQuery?.gname
     }
   })
 }
@@ -40,10 +40,10 @@ const toLink = (item: any) => {
   router.push({
     path: '/' + route.path.split('/')[1] + item.path,
     query: {
-      gname: route.query.gname,
-      gid: route.query.gid,
-      sid: route.query.sid,
-      sname: route.query.sname
+      sid: infoStore.currentQuery?.sid,
+      sname: infoStore.currentQuery?.sname,
+      gid: infoStore.currentQuery?.gid,
+      gname: infoStore.currentQuery?.gname
     }
   })
 }

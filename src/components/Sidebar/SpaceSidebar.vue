@@ -1,8 +1,6 @@
 <script lang="ts" setup>
-const route = useRoute()
 const refreshStroe = useRefreshStore()
 const dataStore = useDataStore()
-const spaceId = ref('') // 当前公共空间id
 const menuItems = ref([
   { index: 'dashboard', icon: 'actionIcon', label: '开始' },
   { index: 'collections', icon: 'startIcon', label: '收藏' },
@@ -37,10 +35,6 @@ const moreMenuItems = [
 
 const { teamList: list, getTeamList } = useTeam()
 const { commonBookList, commonTeamList, getCommonList } = useCommon()
-
-watchEffect(() => {
-  spaceId.value = route.query.sid as string
-})
 
 watch(
   () => refreshStroe.isRefreshQuickBookList,
@@ -83,6 +77,7 @@ const getCommonTeamList = async () => {
 const getGroups = async () => {
   await getTeamList()
   menuItems.value[2].id = list.value.filter((item) => item.is_default === '1')[0].id
+  console.log(`output->`, menuItems.value, list.value)
   dataStore.setTeamList(list.value) // 存储当前空间下的全部团队
 }
 

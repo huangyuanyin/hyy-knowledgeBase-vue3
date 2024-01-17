@@ -12,12 +12,12 @@ const isPreview = ref(false)
 const iframeSrc = ref(`${import.meta.env.VITE_BASE_MINDMAP_URL}?time' + Date.now()`) // 8080：思维导图
 
 watch(
-  () => route.query.aid,
+  () => infoStore.currentQuery?.aid,
   () => {
     sessionStorage.removeItem('recoverVersion')
-    if (route.query.aid && route.path.includes('mind') && !sessionStorage.getItem('recoverVersion')) {
+    if (infoStore.currentQuery?.aid && route.path.includes('mind') && !sessionStorage.getItem('recoverVersion')) {
       nextTick(() => {
-        getArticle(route.query.aid)
+        getArticle(infoStore.currentQuery?.aid)
       })
     }
   },
@@ -33,7 +33,7 @@ watch(
     isPublish.value = false
     if (route.path.split('/').slice(-1)[0] === 'edit' && !refreshStore.isRefreshMind && route.path.includes('mind') && !sessionStorage.getItem('recoverVersion')) {
       nextTick(() => {
-        getArticle(route.query.aid)
+        getArticle(infoStore.currentQuery?.aid)
       })
       refreshStore.setRefreshMind(false)
     }

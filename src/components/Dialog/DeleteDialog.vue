@@ -22,7 +22,7 @@ const emit = defineEmits(['closeDialog'])
 const route = useRoute()
 const router = useRouter()
 const infoStore = useInfoStore()
-const refreshStroe = useRefreshStore()
+// const refreshStroe = useRefreshStore()
 const visible = ref(false)
 const inputName = ref('')
 
@@ -48,19 +48,21 @@ const toDelete = async (val) => {
     if (res.code === 1000) {
       closeDialog()
       ElMessage.success('删除成功')
-      if (infoStore.currentSidebar === '"DirectorySidebar"') {
+      if (infoStore.currentSidebar === 'DirectorySidebar' || infoStore.currentSidebar === 'BookSidebar') {
         const query = {
-          sid: route.query.sid,
-          sname: route.query.sname
+          sid: infoStore.currentQuery?.sid,
+          sname: infoStore.currentQuery?.sname
         }
-        router.push({
-          path: `/${route.path.split('/')[1]}/dashboard`,
-          query: infoStore.currentSpaceType === '组织' ? query : {}
-        })
+        setTimeout(() => {
+          router.push({
+            path: `/${route.path.split('/')[1]}/dashboard`,
+            query: infoStore.currentSpaceType === '组织' ? query : {}
+          })
+        }, 1500)
       }
-      refreshStroe.setRefreshQuickBookList(true)
-      refreshStroe.setRefreshBookStacks(true)
-      refreshStroe.setRefreshBookList(true)
+      // refreshStroe.setRefreshQuickBookList(true)
+      // refreshStroe.setRefreshBookStacks(true)
+      // refreshStroe.setRefreshBookList(true)
     } else {
       ElMessage.error(res.msg)
     }
@@ -70,10 +72,10 @@ const toDelete = async (val) => {
       closeDialog()
       // 两秒后给出删除成功提示，1s后跳转到首页
       setTimeout(() => {
-        ElMessage.success('删除成功，即将跳转到首页...')
+        ElMessage.success('删除成功，即将跳转到个人空间...')
       }, 1000)
       setTimeout(() => {
-        router.push({ path: '/home' })
+        router.push({ path: '/dashboard' })
       }, 2000)
     } else {
       ElMessage.error(res.msg)
@@ -90,8 +92,8 @@ const toDelete = async (val) => {
         router.push({
           path: `/${route.path.split('/')[1]}/dashboard`,
           query: {
-            sid: route.query.sid,
-            sname: route.query.sname
+            sid: infoStore.currentQuery?.sid,
+            sname: infoStore.currentQuery?.sname
           }
         })
       }, 2500)

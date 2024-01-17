@@ -21,19 +21,17 @@ const props = defineProps({
 })
 const emit = defineEmits(['closeDialog'])
 
-const route = useRoute()
+const infoStore = useInfoStore()
 const dialogVisible = ref(false)
 const loading = ref(false)
 const inputValue = ref('')
 const list = ref([])
 const memberOptions = ref([])
-const spaceId = ref('')
 
 watch(
   () => props.isShow,
   async (newVal: boolean) => {
     if (newVal) {
-      spaceId.value = route.query.sid as string
       dialogVisible.value = newVal
       inputValue.value = ''
       getSpacepermissions()
@@ -63,7 +61,7 @@ const remoteMethod = (query: string) => {
 
 const getSpacepermissions = async () => {
   const params = {
-    space: spaceId.value,
+    space: infoStore.currentQuery?.sid,
     permtype: '1' // 0：管理员  1：成员
   }
   let res = await getSpacepermissionsApi(params)
@@ -80,7 +78,7 @@ const toAddAdmin = (val) => {
 
 const editSpacepermissions = async (id, permusername) => {
   const params = {
-    space: spaceId.value,
+    space: infoStore.currentQuery?.sid,
     permusername,
     permtype: '0'
   }

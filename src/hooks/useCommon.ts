@@ -8,8 +8,6 @@ export const useCommon = () => {
   const commonBookList = ref<quickLinksData[]>([]) // 常用列表 - 知识库
   const commonTeamList = ref<quickLinksData[]>([]) // 常用列表 - 团队
 
-  const { space: sid } = useData()
-
   /**
    * 获取常用列表 - 知识库、团队
    * @param {TargetType} target_type 目标类型
@@ -17,7 +15,7 @@ export const useCommon = () => {
    */
   const getCommonList = async (target_type: TargetType, callback?: Callback) => {
     const params = {
-      space: sid.value,
+      space: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).id,
       target_type
     }
     let res = await getQuickLinksApi(params)

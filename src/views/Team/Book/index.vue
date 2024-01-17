@@ -7,10 +7,8 @@ interface BookGroup {
   is_default: string
 }
 
-const route = useRoute()
+const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const spaceId = ref('') // 当前组织空间id
-const groupId = ref('') // 当前团队id
 const teamInfo = ref({})
 const bookGroup = ref<BookGroup[]>([])
 const libarayList = ref([])
@@ -21,16 +19,10 @@ const teamIcon = ref('')
 const { isHasPermission: permission, bookList: list, getBookList } = useBook()
 const { commonBookList, getCommonList, findCommonItem } = useCommon()
 
-watchEffect(() => {
-  spaceId.value = route.query.sid as string
-  groupId.value = route.query.gid as string
-})
-
 watch(
-  () => groupId.value,
+  () => infoStore.currentQuery?.gid,
   async (newVal) => {
     if (newVal) {
-      groupId.value = newVal
       await getBookStacks()
       await getLibrary()
       await getCommonBookList()
@@ -56,8 +48,8 @@ watchEffect(() => {
 // 获取当前组织空间下当前团队的知识库分组列表
 const getBookStacks = async () => {
   const params = {
-    space: spaceId.value,
-    group: groupId.value
+    space: infoStore.currentQuery?.sid,
+    group: infoStore.currentQuery?.gid
   }
   let res = await getBookStacksApi(params)
   if (res.code === 1000) {
@@ -70,8 +62,8 @@ const getBookStacks = async () => {
 // 获取当前团队下的知识库列表
 const getLibrary = async () => {
   await getBookList({
-    space: spaceId.value,
-    group: groupId.value
+    space: infoStore.currentQuery?.sid,
+    group: infoStore.currentQuery?.gid
   })
   isHasPermission.value = permission.value
   libarayList.value = list.value
@@ -86,7 +78,7 @@ const getCommonBookList = async () => {
 
 // 获取团队详情
 const getGroupsDetail = async () => {
-  useTeam().getTeamInfo(Number(groupId.value), (res: any) => {
+  useTeam().getTeamInfo(Number(infoStore.currentQuery?.gid), (res: any) => {
     if (Reflect.ownKeys(res).length) {
       teamIcon.value = res.icon
       teamInfo.value = res

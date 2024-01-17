@@ -19,7 +19,7 @@ const props = defineProps({
 
 const emit = defineEmits(['closeDialog'])
 
-const route = useRoute()
+const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const avatarUrl = import.meta.env.VITE_BASE_LOGIN_URL
@@ -78,7 +78,7 @@ const handleSelectionChange = (val) => {
 const addSpacepermissions = async () => {
   const params = {
     permusername: [],
-    space: route.query.sid as string,
+    space: infoStore.currentQuery?.sid,
     permtype: '1'
   }
   selectMemberList.value.forEach((item) => {
@@ -145,7 +145,7 @@ const arrayToTree = (list: DeptList[], id: string) => {
 
 <template>
   <el-dialog class="memberDialog" v-model="dialogVisible" title="添加成员" width="900" :before-close="handleClose">
-    <p>仅展示非【{{ route.query.sname }}】空间的公司所有成员</p>
+    <p>仅展示非【{{ infoStore.currentQuery?.sname }}】空间的公司所有成员</p>
     <div class="container">
       <div class="container-left">
         <el-tree :data="deptList" :props="defaultProps" node-key="id" highlight-current :current-node-key="deptId" @node-click="toChangeDeptId" />

@@ -37,7 +37,6 @@ const emit = defineEmits(['toPublish', 'scrollTo'])
 const route = useRoute()
 const infoStore = useInfoStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
-const name = ref('')
 const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
 const isEdit = ref(false)
 const moreFeaturesDrawer = ref(false) // 更多功能抽屉
@@ -83,7 +82,7 @@ const { handleLike } = useLike()
 watchEffect(() => {
   moreFeaturesDrawer.value = false
   commentDrawer.value = false
-  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
+  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : infoStore.currentQuery?.sid
   route.path.split('/').slice(-1)[0] === 'edit' ? (isEdit.value = true) : (isEdit.value = false)
   if (isEdit.value) {
     buttonList.value = [
@@ -120,9 +119,6 @@ watchEffect(() => {
             }
           ]
   }
-  if (route.query.aname) {
-    name.value = route.query.aname as string
-  }
   if (props.isPublish) {
     editArticle()
     moreFeaturesDrawer.value = false
@@ -130,14 +126,14 @@ watchEffect(() => {
 })
 
 watch(
-  () => route.query.aid,
+  () => infoStore.currentQuery?.aid,
   () => {
     if (infoStore.currentMenu === 'title') getCategoryTree()
   }
 )
 
 watch(
-  () => route.query.aname,
+  () => infoStore.currentQuery?.aname,
   () => {
     if (infoStore.currentMenu === 'title') getCategoryTree()
   }
@@ -153,20 +149,20 @@ watch(
 // 发布文章
 function editArticle() {
   const params = {
-    title: name.value,
-    book: route.query.lid as string,
+    title: infoStore.currentQuery?.aname,
+    book: infoStore.currentQuery?.lid,
     space: spaceId.value,
     body: props.content
   }
-  useArticle().handleEditArticle(Number(route.query.aid), params)
+  useArticle().handleEditArticle(Number(infoStore.currentQuery?.aid), params)
 }
 
 function getBookInfo() {
   return {
-    id: route.query.lid as string,
-    name: route.query.lname as string,
-    group: route.query.gid as string,
-    groupname: route.query.gname as string
+    id: infoStore.currentQuery?.lid,
+    name: infoStore.currentQuery?.lname,
+    group: infoStore.currentQuery?.gid,
+    groupname: infoStore.currentQuery?.gname
   }
 }
 
@@ -198,8 +194,8 @@ const toHandle = (item: any) => {
     case '编辑':
       moreFeaturesDrawer.value = false
       const data = {
-        id: Number(route.query.aid),
-        title: route.query.aname as String,
+        id: Number(infoStore.currentQuery?.aid),
+        title: infoStore.currentQuery?.aname,
         type: route.path.split('/').slice(-2)[0]
       }
       useLinkHooks().handleArticleTypeLink(data, true)
@@ -218,7 +214,7 @@ const toHandle = (item: any) => {
 
 const addMarks = async () => {
   addCollect(
-    String(route.query.aid),
+    infoStore.currentQuery?.aid,
     () => {
       getArticle()
     },
@@ -266,7 +262,7 @@ const updateArticleCollaborations = (val) => {
 
 const getCollaborations = async () => {
   const params = {
-    book: route.query.lid as string
+    book: infoStore.currentQuery?.lid
   }
   const res = await getCollaborationsApi(params)
   if (res.code === 1000) {
@@ -278,7 +274,7 @@ const getCollaborations = async () => {
 
 const getArticleCollaborations = async () => {
   const params = {
-    content: route.query.aid as string
+    content: infoStore.currentQuery?.aid
   }
   const res = await getArticleCollaborationsApi(params)
   if (res.code === 1000) {
@@ -289,7 +285,7 @@ const getArticleCollaborations = async () => {
 }
 
 const getLibraryDetail = async () => {
-  useBook().getBookInfo(Number(route.query.lid), (res: any) => {
+  useBook().getBookInfo(Number(infoStore.currentQuery?.lid), (res: any) => {
     if (Reflect.ownKeys(res).length) {
       publicType.value = res.public
     }
@@ -307,7 +303,7 @@ const openDrawer = (val) => {
 }
 
 const getArticle = async () => {
-  useArticle().getArticleDetail(Number(route.query.aid))
+  useArticle().getArticleDetail(Number(infoStore.currentQuery?.aid))
 }
 
 const toCloseDrawer = () => {
@@ -318,11 +314,11 @@ const toUpload = async (file) => {
   const formData = new FormData()
   formData.append('file', file.file)
   formData.append('space', spaceId.value)
-  formData.append('book', route.query.lid as string)
+  formData.append('book', infoStore.currentQuery?.lid)
   formData.append('type', 'file')
   formData.append('title', file.file.name)
   formData.append('creator', user)
-  formData.append('parent', route.query.aid as string)
+  formData.append('parent', infoStore.currentQuery?.aid)
   let res = await uploadArticleApi(formData)
   if (res.code === 1000) {
     ElMessage.success('上传成功')
@@ -333,7 +329,7 @@ const toUpload = async (file) => {
 }
 
 const getCategoryTree = async () => {
-  useArticle().handleCategoryTree(Number(route.query.aid), 'parent', (res: any) => {
+  useArticle().handleCategoryTree(Number(infoStore.currentQuery?.aid), 'parent', (res: any) => {
     titleList.value = res
   })
 }
@@ -344,7 +340,12 @@ const toLink = (type, val) => {
       router.push({
         path: route.path,
         query: {
-          ...route.query,
+          sid: infoStore.currentQuery?.sid,
+          sname: infoStore.currentQuery?.sname,
+          gid: infoStore.currentQuery?.gid,
+          gname: infoStore.currentQuery?.gname,
+          lid: infoStore.currentQuery?.lid,
+          lname: infoStore.currentQuery?.lname,
           aid: val.id,
           aname: val.title
         }
@@ -365,7 +366,7 @@ onMounted(() => {
     <el-container>
       <el-header class="header">
         <div class="header_left">
-          <label v-if="infoStore.currentMenu !== 'title'">{{ name }}</label>
+          <label v-if="infoStore.currentMenu !== 'title'">{{ infoStore.currentQuery?.aname }}</label>
           <div v-else flex text-14px text="#262626">
             <div flex items-center v-for="(item, index) in titleList" :key="'titleList' + index">
               <h5 line-height-30px cursor-pointer v-if="index !== titleList.length - 1" @click="toLink('title', item)">{{ item.title }}</h5>
@@ -426,13 +427,13 @@ onMounted(() => {
             <AddOperationPopver
               :menu-items="folderMenuItemsData"
               trigger="click"
-              :parent="Number(route.query.aid)"
-              @toAddDoc="handleAddArticle('文档', Number(route.query.aid))"
-              @toAddSheet="handleAddArticle('表格', Number(route.query.aid))"
-              @toAddPPT="handleAddArticle('幻灯片', Number(route.query.aid))"
-              @toAddMindmap="handleAddArticle('脑图', Number(route.query.aid))"
-              @toAddGroup="handleAddArticle('新建分组', Number(route.query.aid))"
-              @toAddLink="toAddLink(Number(route.query.aid))"
+              :parent="Number(infoStore.currentQuery?.aid)"
+              @toAddDoc="handleAddArticle('文档', Number(infoStore.currentQuery?.aid))"
+              @toAddSheet="handleAddArticle('表格', Number(infoStore.currentQuery?.aid))"
+              @toAddPPT="handleAddArticle('幻灯片', Number(infoStore.currentQuery?.aid))"
+              @toAddMindmap="handleAddArticle('脑图', Number(infoStore.currentQuery?.aid))"
+              @toAddGroup="handleAddArticle('新建分组', Number(infoStore.currentQuery?.aid))"
+              @toAddLink="toAddLink(Number(infoStore.currentQuery?.aid))"
             >
               <el-button type="success">新建</el-button>
             </AddOperationPopver>
@@ -446,7 +447,7 @@ onMounted(() => {
               <img w-20px h-20px :src="topIcon" alt="" />
             </div>
           </el-tooltip>
-          <div class="pix" flex items-center justify-center rounded="50%" color="#585a5a" cursor-pointer @click="handleLike">
+          <div class="pix" flex items-center justify-center rounded="50%" color="#585a5a" cursor-pointer v-if="infoStore.currentMenu !== 'title'" @click="handleLike">
             <img w-20px h-20px :src="(infoStore.currentArticleInfo as ArticleInfo)?.liked ? likeSelectIcon : likeIcon" alt="" />
             <div class="counts" v-if="(infoStore.currentArticleInfo as ArticleInfo)?.likes_count">
               {{ (infoStore.currentArticleInfo as ArticleInfo)?.likes_count }}

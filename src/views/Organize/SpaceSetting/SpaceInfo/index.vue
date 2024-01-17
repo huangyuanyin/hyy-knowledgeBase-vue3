@@ -18,7 +18,6 @@ const router = useRouter()
 const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
 const icon = ref('')
-const spaceId = ref(Number(route.query.sid) || null)
 const spaceFormRef = ref<FormInstance>()
 const spaceForm = reactive<SpaceForm>({
   spacename: '',
@@ -58,7 +57,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     if (valid) {
       const params = JSON.parse(JSON.stringify(spaceForm))
       params.spacekey = route.path.split('/')[1]
-      editSpaces(params, spaceId.value)
+      editSpaces(params, infoStore.currentQuery?.sid)
     }
   })
 }
@@ -71,7 +70,7 @@ const editSpaces = async (params, id) => {
       path: `/${route.path.split('/')[1]}/organize/settings`,
       query: {
         sname: spaceForm.spacename,
-        sid: spaceId.value
+        sid: infoStore.currentQuery?.sid
       }
     })
     infoStore.setCurrentSpaceInfo(res.data)

@@ -50,12 +50,12 @@ const toLink = (item: any) => {
   router.push({
     path: route.path.split('/').length === 3 ? `${item.path}` : '/' + route.path.split('/')[1] + item.path,
     query: {
-      lid: route.query.lid,
-      lname: route.query.lname,
-      gid: route.query.gid,
-      gname: route.query.gname,
-      sid: route.query.sid,
-      sname: route.query.sname
+      sid: infoStore.currentQuery?.sid,
+      sname: infoStore.currentQuery?.sname,
+      gid: infoStore.currentQuery?.gid,
+      gname: infoStore.currentQuery?.gname,
+      lid: infoStore.currentQuery?.lid,
+      lname: infoStore.currentQuery?.lname
     }
   })
 }

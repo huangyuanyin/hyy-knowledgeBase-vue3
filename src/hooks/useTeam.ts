@@ -1,4 +1,3 @@
-import Vrouter from '@/router'
 import { editGroupsApi, getGroupsApi, getGroupsDetailApi } from '@/api/groups'
 import { isDefaultType } from '@/type/type'
 
@@ -12,16 +11,8 @@ interface TeamParams {
 }
 
 export const useTeam = () => {
-  const route = Vrouter.currentRoute.value
   const infoStore = useInfoStore()
-  const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
-  const space = ref<string>('')
-  const spaceName = ref<string>('')
   const teamList = ref<Array<any>>([])
-
-  const { space: sid, spaceName: sname } = useData()
-  space.value = sid.value
-  spaceName.value = sname.value
 
   /**
    * 获取团队详细信息
@@ -43,7 +34,7 @@ export const useTeam = () => {
    */
   const getTeamList = async (sparams?: TeamParams) => {
     let params = {
-      space: space.value
+      space: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).id
     }
     sparams && (params = { ...params, ...sparams })
     let res = await getGroupsApi(params)

@@ -13,7 +13,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['closeDialog'])
 
-const route = useRoute()
+const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
 const selectTotal = ref(0)
 const dialogVisible = ref(false)
@@ -30,7 +30,7 @@ watch(
     dialogVisible.value = newVal
     if (dialogVisible.value) {
       memberList.value = []
-      teamName.value = route.query.gname as string
+      teamName.value = infoStore.currentQuery?.gname as string
       getTeamMember()
     }
   }
@@ -55,7 +55,7 @@ const addBookMember = async () => {
   const params = {
     permusername: [],
     permtype: permtype.value,
-    book: route.query.lid as string
+    book: infoStore.currentQuery?.lid
   }
   selectMemberList.value.forEach((item) => {
     params.permusername.push(item.username)
@@ -72,7 +72,7 @@ const addBookMember = async () => {
 
 const getTeamMember = async () => {
   const params = {
-    group: route.query.gid as string
+    group: infoStore.currentQuery?.gid
   }
   loadTable.value = true
   const res = await getTeamMemberApi(params)

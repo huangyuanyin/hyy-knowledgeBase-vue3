@@ -59,7 +59,7 @@ watch(
       await handleNewData()
       if (infoStore.currentSidebar === 'SpaceSidebar') {
         teamList.value = dataStore.teamList
-        if ((!route.query.gid && libraryForm.stacks === '') || libraryForm.stacks === 'undefined' || props.from === 'null') {
+        if ((!infoStore.currentQuery?.gid && libraryForm.stacks === '') || libraryForm.stacks === 'undefined' || props.from === 'null') {
           teamList.value.map(async (it) => {
             if (it.is_default === '1') {
               libraryForm.group = String(it.id)
@@ -69,12 +69,12 @@ watch(
               libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || ''
             }
           })
-        } else if (route.query.gid && props.from === '') {
+        } else if (infoStore.currentQuery?.gid && props.from === '') {
           await getTeam()
-          libraryForm.group = String(route.query.gid)
-          selectGroupName.value = String(route.query.gname)
-          await getBookStacks(route.query.gid)
-          selectGroupIcon.value = teamList.value.filter((item) => item.id == route.query.gid)[0].icon
+          libraryForm.group = String(infoStore.currentQuery?.gid)
+          selectGroupName.value = String(infoStore.currentQuery?.gname)
+          await getBookStacks(infoStore.currentQuery?.gid)
+          selectGroupIcon.value = teamList.value.filter((item) => item.id == infoStore.currentQuery?.gid)[0].icon
           libraryForm.stacks !== '' || (libraryForm.stacks !== 'undefined' && props.stackId)
             ? ''
             : (libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || '')
@@ -100,14 +100,14 @@ watch(
 )
 
 const handleID = () => {
-  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
+  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (infoStore.currentQuery?.sid as string)
 }
 
 watchEffect(() => {
   if (props.isShow) {
     handleID()
   }
-  if (selectGroupName.value === '公共区' || route.query.gname === '公共区') {
+  if (selectGroupName.value === '公共区' || infoStore.currentQuery?.gname === '公共区') {
     publicList.value = [
       {
         id: '2',
@@ -137,7 +137,7 @@ watchEffect(() => {
 const handleNewData = () => {
   libraryForm.stacks = props.stackId || ''
   libraryForm.slug = uuidv4().replace(/-/g, '')
-  libraryForm.group = String(route.query.gid) || ''
+  libraryForm.group = String(infoStore.currentQuery?.gid) || ''
   libraryForm.space = spaceId.value
 }
 

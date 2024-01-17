@@ -9,7 +9,7 @@ type RecycleData = {
   create_datetime: string
 }
 
-const route = useRoute()
+const infoStore = useInfoStore()
 const recycleData: Ref<RecycleData[]> = ref([])
 
 const toRecover = (row: RecycleData) => {
@@ -42,7 +42,7 @@ const deleteSpaceRecycles = async (id) => {
 
 const getSpaceRecycles = async () => {
   const params = {
-    space: route.query.sid as string
+    space: infoStore.currentQuery?.sid
   }
   let res = await getSpaceRecyclesApi(params)
   if (res.code === 1000) {

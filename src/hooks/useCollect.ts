@@ -10,13 +10,7 @@ interface CollectInfo {
 
 export const useCollect = () => {
   const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
-  const space = ref<string>('')
-  const spaceName = ref<string>('')
   const collectList = ref<Array<any>>([])
-
-  const { space: sid, spaceName: sname } = useData()
-  space.value = sid.value
-  spaceName.value = sname.value
 
   /**
    * 获取收藏列表
@@ -25,11 +19,11 @@ export const useCollect = () => {
    */
   const getCollectList = async (id?: number, callback?: Callback) => {
     const params = {
-      id,
-      space: space.value,
+      tags_id: id,
+      space: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).id,
       creator: user
     }
-    !id && delete params.id
+    !id && delete params.tags_id
     let res = await getMarksApi(params)
     if (res.code === 1000) {
       collectList.value = res.data
@@ -49,7 +43,7 @@ export const useCollect = () => {
     const params = {
       target_type: type,
       target_id: tid,
-      space: space.value
+      space: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).id
     }
     let res = await addMarksApi(params)
     if (res.code === 1000) {
@@ -68,9 +62,10 @@ export const useCollect = () => {
    */
   const editCollect = async (id: number, collectInfo: CollectInfo, callback: Callback) => {
     const params = {
-      space: space.value,
+      space: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).id,
       tags_id: collectInfo.tags_id,
-      target_id: collectInfo.target_id
+      target_id: collectInfo.target_id,
+      creator: user
     }
     let res = await editMarksApi(id, params)
     if (res.code === 1000) {

@@ -3,7 +3,6 @@ import addIcon from '@/assets/icons/addIcon.svg'
 import addIcon_hover from '@/assets/icons/addIcon_hover.svg'
 import { getBookStacksApi } from '@/api/bookstacks'
 
-const route = useRoute()
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const spaceId = ref('') // 当前空间id
@@ -48,7 +47,7 @@ watchEffect(() => {
   if (infoStore.currentSidebar === 'Sidebar') {
     spaceId.value = JSON.parse(localStorage.getItem('personalSpaceInfo')).id
   } else {
-    spaceId.value = route.query.sid as string
+    spaceId.value = infoStore.currentQuery?.sid
   }
   personalGroupId.value = localStorage.getItem('personalGroupId')
 })

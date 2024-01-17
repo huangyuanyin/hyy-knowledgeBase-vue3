@@ -13,10 +13,8 @@ const routeInfo = {
 }
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const spaceId = ref('') // 当前空间id
-const bookId = ref('') // 当前知识库id
 const bookTree = ref(null)
-const currentNodeKey = ref(Number(route.query.aid)) // 当前选中的节点
+const currentNodeKey = ref(null) // 当前选中的节点
 const isAllExpand = ref(true) // 是否全部展开
 const group_name = ref<string>('')
 const nickName = ref<string>(infoStore.currentSpaceInfo.spacekey || route.fullPath.split('/')[1])
@@ -33,8 +31,10 @@ const defaultProps = {
 } as unknown as TreeOptionProps
 const inputName = ref(null)
 
+const { sid = '', sname = '', gid = '', gname = '', lid = '', lname = '' } = infoStore.currentQuery || {}
+
 watchEffect(() => {
-  bookId.value = route.query.lid as string
+  currentNodeKey.value = Number(infoStore.currentQuery?.aid)
   if (isHasPermissionCode.value === 1003) {
     isHasPermissionCode.value = null
     router.replace('/no-permission')
@@ -52,20 +52,18 @@ watchEffect(() => {
     refreshStroe.setRefreshArticleList(false)
   }
   nextTick(async () => {
-    spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
-    group_name.value = route.query.gname as string
-    bookId.value = route.query.lid as string
-    if (bookId.value) {
+    group_name.value = gname
+    if (lid && infoStore.currentSidebar === 'DirectorySidebar') {
       handleArticleList()
     }
   })
 })
 
 watch(
-  () => route.query.lid,
+  () => infoStore.currentQuery?.lid,
   (newVal) => {
     if (newVal) {
-      currentNodeKey.value = Number(route.query.aid)
+      currentNodeKey.value = Number(infoStore.currentQuery?.aid)
     }
   },
   {
@@ -87,10 +85,10 @@ watch(
 
 function getBookInfo() {
   return {
-    id: route.query.lid as string,
-    name: route.query.lname as string,
-    group: route.query.gid as string,
-    groupname: route.query.gname as string
+    id: lid,
+    name: lname,
+    group: gid,
+    groupname: gname
   }
 }
 
@@ -101,7 +99,7 @@ function handleAddArticle(title: string, data?) {
 
 async function handleArticleList() {
   const { articleList, currentNodeKey: node, getArticleList } = useArticle()
-  await getArticleList(Number(bookId.value))
+  await getArticleList(Number(lid))
   infoStore.currentArticleTreeInfo = articleList.value
   currentNodeKey.value = node.value
 }
@@ -117,20 +115,20 @@ const toLink = (type?: string) => {
           router.push({
             path: `/${nickName.value}/public`,
             query: {
-              sid: route.query.sid,
-              sname: route.query.sname,
-              gid: route.query.gid,
-              gname: route.query.gname
+              sid: sid,
+              sname: sname,
+              gid: gid,
+              gname: gname
             }
           })
         } else {
           router.push({
             path: `/${nickName.value}/team/book`,
             query: {
-              sid: route.query.sid,
-              sname: route.query.sname,
-              gid: route.query.gid,
-              gname: route.query.gname
+              sid: sid,
+              sname: sname,
+              gid: gid,
+              gname: gname
             }
           })
         }
@@ -147,8 +145,8 @@ const toLink = (type?: string) => {
         router.push({
           path: `/${nickName.value}/dashboard`,
           query: {
-            sid: route.query.sid,
-            sname: route.query.sname
+            sid: sid,
+            sname: sname
           }
         })
         break
@@ -161,22 +159,22 @@ const toLink = (type?: string) => {
       router.push({
         path: `/directory/index`,
         query: {
-          sid: route.query.sid,
-          sname: route.query.sname,
-          lid: route.query.lid,
-          lname: route.query.lname
+          sid: sid,
+          sname: sname,
+          lid: lid,
+          lname: lname
         }
       })
     } else {
       router.push({
         path: `/${nickName.value}/directory/index`,
         query: {
-          sid: route.query.sid,
-          sname: route.query.sname,
-          lid: route.query.lid,
-          lname: route.query.lname,
-          gid: route.query.gid,
-          gname: route.query.gname
+          sid: sid,
+          sname: sname,
+          lid: lid,
+          lname: lname,
+          gid: gid,
+          gname: gname
         }
       })
     }
@@ -184,8 +182,9 @@ const toLink = (type?: string) => {
 }
 
 const toArticleDetail = (val) => {
-  if (val.id == route.query.aid) return
-  val.type === 'links' || val.type === 'title' ? bookTree.value.setCurrentKey(Number(route.query.aid)) : (currentNodeKey.value = val.id)
+  console.log(`output->val`, infoStore.currentQuery, val)
+  if (val.id == infoStore.currentQuery?.aid) return
+  val.type === 'links' || val.type === 'title' ? bookTree.value.setCurrentKey(Number(infoStore.currentQuery?.aid)) : (currentNodeKey.value = val.id)
   switch (val.type) {
     case 'links':
       val.open_windows === '1' ? window.open(val.description) : (window.location.href = val.description)
@@ -209,11 +208,11 @@ const toRename = (val) => {
 
 const handleRename = () => {
   if (!reName.value) return
-  if (route.path.includes('/directory/index') || reNameId.value !== Number(route.query.aid)) {
+  if (route.path.includes('/directory/index') || reNameId.value !== Number(infoStore.currentQuery?.aid)) {
     useArticle().handleEditArticle(reNameId.value, reName.value, () => {
-      useArticle().getArticleList(Number(bookId.value), (val: any) => {
+      useArticle().getArticleList(Number(lid), (val: any) => {
         infoStore.currentArticleTreeInfo = val
-        route.path.includes('/directory/index') ? (currentNodeKey.value = null) : (currentNodeKey.value = Number(route.query.aid))
+        route.path.includes('/directory/index') ? (currentNodeKey.value = null) : (currentNodeKey.value = Number(infoStore.currentQuery?.aid))
       })
     })
   } else {
@@ -233,20 +232,6 @@ const closeLinkDialog = () => {
 }
 
 const toScroll = () => {
-  // const nodes = bookTree.value.store.nodesMap
-  // console.log(`output->bookTree.value.store.nodesMap`, bookTree.value.store.nodesMap, currentNodeKey.value)
-  // for (var i in nodes) {
-  //   if (nodes[i].data.id === Number(currentNodeKey.value)) {
-  //     if (nodes[i].data.parent !== null) {
-  //       console.log(`output->nodes[i]`, nodes[i])
-  //       nodes[i].expanded = true
-  //       for (var j in nodes[i].parent.childNodes) {
-  //         nodes[i].parent.childNodes[j].expanded = true
-  //       }
-  //     }
-  //   }
-  // }
-  // console.log(`output->`, bookTree.value.store.nodesMap)
   ElMessage.warning('功能暂未开放，敬请期待')
 }
 
@@ -280,13 +265,8 @@ const customIcon = () => {
     <div class="header-box">
       <div class="header">
         <img v-if="infoStore.currentSpaceType === '个人'" class="favicon" src="/src/assets/favicon.ico" @click="toLink('back')" />
-        <img
-          v-else-if="infoStore.currentSpaceType !== '个人' && route.query.gname !== '公共区'"
-          class="favicon"
-          :src="infoStore.currentBookInfo.group_icon"
-          @click="toLink('back')"
-        />
-        <img v-else-if="infoStore.currentSpaceType !== '个人' && route.query.gname === '公共区'" class="favicon" src="/src/assets/icons/spaceIcon.svg" alt="" />
+        <img v-else-if="infoStore.currentSpaceType !== '个人' && gname !== '公共区'" class="favicon" :src="infoStore.currentBookInfo.group_icon" @click="toLink('back')" />
+        <img v-else-if="infoStore.currentSpaceType !== '个人' && gname === '公共区'" class="favicon" src="/src/assets/icons/spaceIcon.svg" alt="" />
         <img class="rightArrowIcon" src="/src/assets/icons/rightArrowIcon.svg" alt="" />
         <span @click="toLink('link')">{{ infoStore.currentSpaceType === '个人' ? '个人知识库' : `${group_name}` }}</span>
       </div>
@@ -294,7 +274,7 @@ const customIcon = () => {
         <div class="left">
           <img class="bookIcon" :src="infoStore.currentBookInfo.icon" alt="" />
           <div class="name">
-            <span>{{ $route.query.lname }}</span>
+            <span>{{ lname }}</span>
             <img class="privateIcon" src="/src/assets/icons/privateIcon.svg" alt="" />
           </div>
         </div>

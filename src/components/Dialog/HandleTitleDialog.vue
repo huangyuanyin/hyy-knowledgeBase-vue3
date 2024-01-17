@@ -44,7 +44,13 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
         router.push({
           path: route.path,
           query: {
-            ...route.query,
+            sid: infoStore.currentQuery.sid,
+            sname: infoStore.currentQuery.sname,
+            gid: infoStore.currentQuery.gid,
+            gname: infoStore.currentQuery.gname,
+            lid: infoStore.currentQuery.lid,
+            lname: infoStore.currentQuery.lname,
+            aid: infoStore.currentQuery?.aid,
             aname: titleForm.title
           }
         })

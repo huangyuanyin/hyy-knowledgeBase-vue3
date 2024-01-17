@@ -25,7 +25,6 @@ const props = defineProps({
 })
 const emit = defineEmits(['getBookStacks'])
 
-const route = useRoute()
 const refreshStroe = useRefreshStore()
 const infoStore = useInfoStore()
 const spaceId = ref('') // 当前空间id
@@ -128,8 +127,8 @@ watch(
 )
 
 const handleID = () => {
-  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
-  groupId.value = infoStore.currentSpaceType === '个人' ? localStorage.getItem('personalGroupId') : (route.query.gid as string)
+  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : infoStore.currentQuery?.sid
+  groupId.value = infoStore.currentSpaceType === '个人' ? localStorage.getItem('personalGroupId') : infoStore.currentQuery?.gid
 }
 
 watchEffect(async () => {

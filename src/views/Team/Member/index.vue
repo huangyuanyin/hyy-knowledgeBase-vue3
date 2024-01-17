@@ -111,8 +111,8 @@ const toChangeRole = (data, row) => {
   console.log(`output->data`, row)
   const params = {
     role: data.value,
-    space: String(route.query.sid),
-    group: String(route.query.gid),
+    space: infoStore.currentQuery?.sid,
+    group: infoStore.currentQuery?.gid,
     username: row.username
   }
   editTeamMember(row.id, params)
@@ -145,7 +145,7 @@ const deleteTeamMember = async (id) => {
 
 const getTeamMember = async () => {
   const params = {
-    group: String(route.query.gid)
+    group: infoStore.currentQuery?.gid
   }
   loadTable.value = true
   let res = await getTeamMemberApi(params)

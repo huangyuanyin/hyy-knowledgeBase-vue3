@@ -87,7 +87,7 @@ const toLink = (item) => {
       path: `/directory/index`,
       query: {
         sid: item.space,
-        sname: route.query.sname,
+        sname: infoStore.currentQuery?.sname,
         lid: item.id,
         lname: item.name
       }
@@ -98,7 +98,7 @@ const toLink = (item) => {
         path: `/${infoStore.currentSpaceInfo.spacekey}/team/book`,
         query: {
           sid: item.space,
-          sname: route.query.sname,
+          sname: infoStore.currentQuery?.sname,
           gid: item.target_id,
           gname: item.title
         }
@@ -108,10 +108,10 @@ const toLink = (item) => {
         path: `/${infoStore.currentSpaceInfo.spacekey}/directory/index`,
         query: {
           sid: item.space,
-          sname: route.query.sname,
+          sname: infoStore.currentQuery?.sname,
           lid: item.id,
           lname: item.title || item.name,
-          gid: route.query.gid,
+          gid: infoStore.currentQuery?.gid,
           gname: item.group_name
         }
       })

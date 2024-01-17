@@ -4,17 +4,17 @@ import Container from '../Components/Container.vue'
 const route = useRoute()
 const infoStore = useInfoStore()
 const isUpdate = ref(false)
-const aid = ref(route.query.aid as string)
 const modelValue = ref('')
 const isPreview = ref(true)
 const isShowScroll = ref(false)
 
+const { aid = '' } = infoStore.currentQuery || {}
+
 watch(
-  () => route.query.aid,
-  (newVal) => {
+  () => aid,
+  () => {
     isUpdate.value = false
-    if (route.query.aid && route.path.includes('doc')) {
-      aid.value = newVal as string
+    if (aid && route.path.includes('doc')) {
       getArticle()
     }
   }
@@ -33,7 +33,7 @@ watchEffect(() => {
 })
 
 const getArticle = async () => {
-  useArticle().getArticleDetail(Number(route.query.aid), (res: any) => {
+  useArticle().getArticleDetail(Number(aid), (res: any) => {
     isUpdate.value = false
     if (typeof res === 'string') return
     if (Reflect.ownKeys(res).length) {

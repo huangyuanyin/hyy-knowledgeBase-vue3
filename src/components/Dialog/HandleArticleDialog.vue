@@ -55,7 +55,7 @@ watch(
         await getTeam()
         await getBook()
       } else {
-        teamId.value = infoStore.currentSpaceType === '个人' ? localStorage.getItem('personalGroupId') : Number(route.query.gid) || props.data.group_id
+        teamId.value = infoStore.currentSpaceType === '个人' ? localStorage.getItem('personalGroupId') : Number(infoStore.currentQuery?.gid) || props.data.group_id
         getBook()
       }
     }
@@ -67,7 +67,7 @@ const initData = () => {
   if (route.path.split('/')[1] === 'directory') {
     teamId.value = JSON.parse(localStorage.getItem('personalSpaceInfo')).default_group
   } else {
-    teamId.value = Number(route.query.gid)
+    teamId.value = Number(infoStore.currentQuery?.gid)
   }
   bookId.value = props.data.book
   articleId.value = null
@@ -202,7 +202,7 @@ const getTeam = async () => {
 const getBook = async () => {
   useBook().getBookList(String(teamId.value), (res: any) => {
     bookList.value = res.data
-    if (teamId.value !== Number(route.query.gid) && infoStore.currentSpaceType === '组织') {
+    if (teamId.value !== Number(infoStore.currentQuery?.gid) && infoStore.currentSpaceType === '组织') {
       bookId.value = bookList.value.length > 0 ? bookList.value[0].id : null
     } else {
       bookId.value = props.data.book

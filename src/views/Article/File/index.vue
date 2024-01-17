@@ -4,15 +4,13 @@ import Container from '../Components/Container.vue'
 
 const route = useRoute()
 const infoStore = useInfoStore()
-const aid = ref(route.query.aid)
 const iframeSrc = ref('')
 
 watch(
-  () => route.query.aid,
+  () => infoStore.currentQuery?.aid,
   (newVal) => {
-    if (route.query.aid && route.path.includes('file')) {
-      aid.value = newVal as string
-      getArticle(aid.value)
+    if (infoStore.currentQuery?.aid && route.path.includes('file')) {
+      getArticle(newVal)
     }
   }
 )
@@ -25,7 +23,7 @@ const getArticle = async (aid) => {
 }
 
 onMounted(() => {
-  getArticle(aid.value)
+  getArticle(infoStore.currentQuery?.aid)
 })
 </script>
 

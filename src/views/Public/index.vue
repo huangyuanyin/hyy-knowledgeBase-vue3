@@ -8,10 +8,8 @@ interface BookGroup {
   is_default: string
 }
 
-const route = useRoute()
+const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const spaceId = ref('') // 当前空间id
-const groupId = ref('') // 当前公共区id
 const bookGroup = ref([])
 const cBookList = ref([])
 const bookList = ref([])
@@ -25,8 +23,6 @@ const { bookList: list, getBookList } = useBook()
 const { commonBookList, getCommonList, findCommonItem } = useCommon()
 
 watchEffect(() => {
-  spaceId.value = route.query.sid as string
-  groupId.value = route.query.gid as string
   toolbar.value = 'blocks fontsize bold  align bullist numlist  lineheight  link  hr  tableofcontents tableofcontentsupdate | emoticons image fullscreen  preview autolink  '
   if (refreshStroe.isRefreshQuickBookList) {
     nextTick(async () => {
@@ -54,8 +50,8 @@ const updateBulletin = () => {
 // 获取当前空间下公共区的知识库分组列表
 const getBookStacks = async () => {
   const params = {
-    space: spaceId.value,
-    group: groupId.value
+    space: infoStore.currentQuery?.sid,
+    group: infoStore.currentQuery?.gid
   }
   let res = await getBookStacksApi(params)
   if (res.code === 1000) {
@@ -73,14 +69,14 @@ const getCommonBookList = async () => {
 // 获取当前空间下公共区的知识库列表
 const getLibrary = async () => {
   await getBookList({
-    space: spaceId.value,
-    group: groupId.value
+    space: infoStore.currentQuery?.sid,
+    group: infoStore.currentQuery?.gid
   })
   bookList.value = list.value
 }
 
 const getGroupsDetail = async () => {
-  useTeam().getTeamInfo(Number(groupId.value), (res: any) => {
+  useTeam().getTeamInfo(Number(infoStore.currentQuery?.gid), (res: any) => {
     if (Reflect.ownKeys(res).length) {
       groupInfo.value = res
     }

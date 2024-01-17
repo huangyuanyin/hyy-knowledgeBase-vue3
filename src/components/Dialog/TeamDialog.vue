@@ -3,7 +3,7 @@ import imgIcon from '@/assets/img/img.jpg'
 import { v4 as uuidv4 } from 'uuid'
 import { FormInstance } from 'element-plus'
 import { addGroupsApi } from '@/api/groups'
-import { getSpacepermissionsApi } from '@/api/spacepermissions'
+// import { getSpacepermissionsApi } from '@/api/spacepermissions'
 import { icon11 } from '@/data/iconBase64'
 
 interface ListItem {
@@ -19,6 +19,7 @@ const props = defineProps({
 const emit = defineEmits(['closeDialog', 'updateTeam'])
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
 const dialogVisible = ref(false)
 const loadingMember = ref(false)
@@ -31,7 +32,7 @@ const teamForm = reactive({
   icon: icon11,
   groupname: '',
   groupkey: '',
-  space: String(route.query.sid),
+  space: infoStore.currentQuery?.sid,
   members: [],
   description: ''
 })
@@ -40,7 +41,7 @@ watch(
   () => props.isShow,
   (newVal: boolean) => {
     dialogVisible.value = newVal
-    getSpacepermissions()
+    // getSpacepermissions()
   }
 )
 
@@ -97,8 +98,8 @@ const addGroups = async () => {
       router.push({
         path: `/${route.path.split('/')[1]}/team/book`,
         query: {
-          sid: route.query.sid,
-          sname: route.query.sname,
+          sid: infoStore.currentQuery?.sid,
+          sname: infoStore.currentQuery?.sname,
           gid: res.data.id,
           gname: res.data.groupname
         }
@@ -109,17 +110,17 @@ const addGroups = async () => {
   }
 }
 
-const getSpacepermissions = async () => {
-  const params = {
-    space: route.query.sid as string
-  }
-  const res = await getSpacepermissionsApi(params)
-  if (res.code === 1000) {
-    list.value = res.data || ([] as any)
-  } else {
-    ElMessage.error(res.msg)
-  }
-}
+// const getSpacepermissions = async () => {
+//   const params = {
+//     space: infoStore.currentQuery?.sid
+//   }
+//   const res = await getSpacepermissionsApi(params)
+//   if (res.code === 1000) {
+//     list.value = res.data || ([] as any)
+//   } else {
+//     ElMessage.error(res.msg)
+//   }
+// }
 
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
@@ -291,6 +292,9 @@ const changeIcon = (icon: string) => {
     margin-bottom: 28px;
     color: #8a8f8d;
     font-size: 14px;
+  }
+  .el-dialog__header {
+    border-bottom: none;
   }
   .el-dialog__title {
     font-size: 16px;

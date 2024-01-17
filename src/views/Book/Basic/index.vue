@@ -17,16 +17,16 @@ interface BookForm {
 }
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
-const bookId = ref(Number(route.query.lid) || null)
 const bookFormRef = ref<FormInstance>()
 const bookForm = reactive<BookForm>({
   name: '',
   slug: '',
   icon: '',
   description: '',
-  space: route.query.sid as string,
-  group: route.query.gid as string,
+  space: infoStore.currentQuery?.sid,
+  group: infoStore.currentQuery?.gid,
   stacks: '',
   cover: ''
 })
@@ -42,7 +42,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   await formEl.validate((valid) => {
     if (valid) {
       const params = JSON.parse(JSON.stringify(bookForm))
-      editLibrary(params, bookId.value)
+      editLibrary(params, infoStore.currentQuery?.lid)
     }
   })
 }
@@ -54,10 +54,10 @@ const editLibrary = async (params, id) => {
     router.push({
       path: `/${route.path.split('/')[1]}/bookSetting/basic`,
       query: {
-        sname: route.query.sname,
-        sid: route.query.sid,
-        gid: route.query.gid,
-        gname: route.query.gname,
+        sname: infoStore.currentQuery?.sname,
+        sid: infoStore.currentQuery?.sid,
+        gid: infoStore.currentQuery?.gid,
+        gname: infoStore.currentQuery?.gname,
         lname: (res.data as any).name,
         lid: (res.data as any).id
       }
@@ -100,7 +100,7 @@ const changeIcon = (icon) => {
 }
 
 onMounted(() => {
-  getBooksDetail(bookId.value)
+  getBooksDetail(infoStore.currentQuery?.lid)
 })
 </script>
 

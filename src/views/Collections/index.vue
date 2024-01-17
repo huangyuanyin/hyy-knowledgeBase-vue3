@@ -26,15 +26,22 @@ const { collectList: clist, getCollectList } = useCollect()
 
 watchEffect(() => {
   if (refreshStroe.isRefreshMark) {
+    toGetTagList()
     toGetCollectList(tagActive.value === 0 ? '' : tagActive.value)
     refreshStroe.setRefreshMark(false)
   }
-  if (route.meta.menu === 'collections') {
-    nextTick(async () => {
-      await toGetTagList()
-      await toGetCollectList()
-    })
-  }
+  // if (route.meta.menu === 'collections') {
+  //   console.log(`output->232`, 232)
+  //   nextTick(async () => {
+  //     await toGetTagList()
+  //     await toGetCollectList()
+  //   })
+  // }
+})
+
+onMounted(async () => {
+  await toGetTagList()
+  await toGetCollectList()
 })
 
 const toSelectGroup = (val: any) => {
@@ -171,7 +178,7 @@ const toDo = () => {
   .content {
     display: flex;
     flex: 1;
-    margin-top: 20px;
+    margin-top: 17px;
     margin-bottom: -26px;
     .left {
       height: calc(100vh - 44px - 26px);

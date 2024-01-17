@@ -73,12 +73,12 @@ watchEffect(() => {
 })
 
 watch(
-  () => route.query.gid,
+  () => infoStore.currentQuery?.gid,
   () => {
-    if (route.query.gname === '公共区') {
+    if (infoStore.currentQuery?.gname === '公共区') {
       state.currentGroup = null
     } else {
-      state.currentGroup = route.query.gid
+      state.currentGroup = infoStore.currentQuery?.gid
     }
   }
 )
@@ -96,7 +96,7 @@ watch(
         case 'team':
           if (route.path.split('/').length >= 4 && route.path.split('/')[2] === 'team') {
             state.headerActive = null
-            state.currentGroup = route.query.gid
+            state.currentGroup = infoStore.currentQuery?.gid
           } else {
             state.headerActive = 1
           }
@@ -118,8 +118,8 @@ watch(
 
 const toLink = (type) => {
   const query = {
-    sid: route.query.sid,
-    sname: route.query.sname
+    sid: infoStore.currentQuery?.sid,
+    sname: infoStore.currentQuery?.sname
   }
   switch (infoStore.currentSidebar) {
     case 'Sidebar':
@@ -179,8 +179,8 @@ const toBook = (val) => {
   router.push({
     path: `/${infoStore.currentSpaceInfo.spacekey}/team/book`,
     query: {
-      sid: route.query.sid,
-      sname: route.query.sname,
+      sid: infoStore.currentQuery?.sid,
+      sname: infoStore.currentQuery?.sname,
       gname: val.title,
       gid: val.target_id
     }
@@ -191,8 +191,8 @@ const toTopic = (val) => {
   router.push({
     path: `/${infoStore.currentSpaceInfo.spacekey}/team/topic`,
     query: {
-      sid: route.query.sid,
-      sname: route.query.sname,
+      sid: infoStore.currentQuery?.sid,
+      sname: infoStore.currentQuery?.sname,
       gname: val.title,
       gid: val.target_id
     }
@@ -203,8 +203,8 @@ const getTeamMember = async (val) => {
   router.push({
     path: `/${infoStore.currentSpaceInfo.spacekey}/team/book`,
     query: {
-      sid: route.query.sid,
-      sname: route.query.sname,
+      sid: infoStore.currentQuery?.sid,
+      sname: infoStore.currentQuery?.sname,
       gid: val.target_id,
       gname: val.title
     }
@@ -220,8 +220,8 @@ const toSpaceManager = () => {
   router.push({
     path: `/${infoStore.currentSpaceInfo.spacekey}/organize/dashboard`,
     query: {
-      sid: route.query.sid,
-      sname: route.query.sname
+      sid: infoStore.currentQuery?.sid,
+      sname: infoStore.currentQuery?.sname
     }
   })
 }
@@ -269,7 +269,7 @@ const toPermission = (val) => {
 }
 
 const getSpacesDeatil = async () => {
-  useSpace().getSpaceInfo(Number(route.query.sid), (res: any) => {
+  useSpace().getSpaceInfo(Number(infoStore.currentQuery?.sid), (res: any) => {
     if (Reflect.ownKeys(res).length === 0) return
     icon.value = res.icon
   })

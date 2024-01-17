@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
 })
 const emit = defineEmits(['cancelMark'])
 
-const route = useRoute()
+const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const starPopverRef = ref(null)
 const tagList = ref([])
@@ -33,7 +33,7 @@ const toChangeTag = async () => {
     Number(props.startId),
     {
       tags_id: tagValue.value,
-      target_id: props.type === 'book' ? (route.query.lid as string) : props.type === 'star' ? props.target_id : (route.query.aid as string)
+      target_id: props.type === 'book' ? infoStore.currentQuery?.lid : props.type === 'star' ? props.target_id : infoStore.currentQuery?.aid
     },
     () => {
       props.type === 'star' ? refreshStroe.setRefreshMark(true) : ''

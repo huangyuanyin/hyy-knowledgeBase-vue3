@@ -18,7 +18,7 @@ const refreshStore = useRefreshStore()
 const groupId = ref<number>(null)
 const teamFormRef = ref<FormInstance>()
 const teamForm = reactive<TeamForm>({
-  space: route.query.sid as string,
+  space: infoStore.currentQuery.sid,
   groupname: '',
   groupkey: '',
   description: '',
@@ -48,10 +48,10 @@ const editGroups = async (params, id) => {
     router.push({
       path: `/${route.path.split('/')[1]}/teamSetting/basic`,
       query: {
-        sname: route.query.sname,
+        sname: infoStore.currentQuery?.sname,
         sid: res.data.space,
         gname: res.data.groupname,
-        gid: route.query.gid
+        gid: infoStore.currentQuery?.gid
       }
     })
     infoStore.setCurrentTeamInfo(res.data)
@@ -66,7 +66,7 @@ const changeIcon = (icon: string) => {
 }
 
 function initData() {
-  groupId.value = Number(route.query.gid)
+  groupId.value = Number(infoStore.currentQuery?.gid)
   const { groupname, groupkey, description, icon } = infoStore.currentTeamInfo
   teamForm.groupname = groupname
   teamForm.groupkey = groupkey
