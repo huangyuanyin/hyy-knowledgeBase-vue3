@@ -9,6 +9,8 @@ import moveIcon from '@/assets/icons/drawer/move.svg'
 import deleteIcon from '@/assets/icons/drawer/delete.svg'
 import operationIcon from '@/assets/icons/drawer/operation.svg'
 import infoIcon from '@/assets/icons/drawer/info.svg'
+import statisticIcon from '@/assets/icons/article/statistic.svg'
+import arrowIcon from '@/assets/icons/drawer/arrow.svg'
 import { ArticleInfo } from '@/type/article'
 
 const props = defineProps({
@@ -123,6 +125,14 @@ const toHandle = (data) => {
             </div>
             <div v-if="item.type === 'hr'" class="hr"></div>
           </template>
+          <div class="hover:bg-#eff0f0" mt-20px flex justify-between items-center rounded-8px cursor-pointer bg="#fafafa" pt-16px pl-12px pr-12px pb-12px>
+            <span w-24px h-28px><img w-24px h-24px :src="statisticIcon" alt="" /></span>
+            <div mr-24px ml-12px flex-1 flex flex-col>
+              <span text="#262626" text-14px>统计详情</span>
+              <span text="#8a8f8d" text-12px>查看访问人员明细和更多分析</span>
+            </div>
+            <img w-24px h-28px :src="arrowIcon" alt="" />
+          </div>
         </div>
       </el-tab-pane>
     </el-tabs>

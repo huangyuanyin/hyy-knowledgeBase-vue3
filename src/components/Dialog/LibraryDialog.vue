@@ -29,7 +29,6 @@ const routeInfo = { route, router }
 const infoStore = useInfoStore()
 const dataStore = useDataStore()
 const refreshStroe = useRefreshStore()
-const spaceId = ref('') // 当前空间id
 const selectGroupName = ref('')
 const selectGroupIcon = ref('')
 const teamList = ref([]) // 当前空间下的全部团队
@@ -99,14 +98,7 @@ watch(
   }
 )
 
-const handleID = () => {
-  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (infoStore.currentQuery?.sid as string)
-}
-
 watchEffect(() => {
-  if (props.isShow) {
-    handleID()
-  }
   if (selectGroupName.value === '公共区' || infoStore.currentQuery?.gname === '公共区') {
     publicList.value = [
       {
@@ -138,7 +130,7 @@ const handleNewData = () => {
   libraryForm.stacks = props.stackId || ''
   libraryForm.slug = uuidv4().replace(/-/g, '')
   libraryForm.group = String(infoStore.currentQuery?.gid) || ''
-  libraryForm.space = spaceId.value
+  libraryForm.space = infoStore.currentSpaceInfo.id
 }
 
 const toSubmit = async () => {
@@ -167,7 +159,8 @@ const handleStackId = (val) => {
     if (props.stackId === 'undefined') {
       return (libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0]?.id) || '')
     }
-    libraryForm.stacks = props.stackId ? props.stackId : String(stacksList.value.filter((item) => item.is_default === '1')[0].id)
+    // libraryForm.stacks = props.stackId ? props.stackId : String(stacksList.value.filter((item) => item.is_default === '1')[0].id)
+    libraryForm.stacks = String(stacksList.value.filter((item) => item.is_default === '1')[0].id)
   } else {
     libraryForm.stacks = stacksList.value.filter((item) => item.is_default === '1')[0]?.id || ''
   }
@@ -199,7 +192,7 @@ const addLibrary = async () => {
 // 获取知识库分组列表
 const getBookStacks = async (val) => {
   const params = {
-    space: spaceId.value,
+    space: infoStore.currentSpaceInfo.id,
     group: val
   }
   let res = await getBookStacksApi(params)

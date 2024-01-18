@@ -10,14 +10,12 @@ const isLoading = ref(false)
 const isPublish = ref(false)
 const iframeSrc = ref(import.meta.env.VITE_BASE_PPT_URL)
 
-const { aid = '' } = infoStore.currentQuery || {}
-
 watch(
   () => route.fullPath,
   () => {
     nextTick(() => {
       if (route.path.includes('/ppt')) {
-        getArticle(aid)
+        getArticle(infoStore.currentQuery.aid)
       }
       route.path.split('/').slice(-1)[0] === 'edit' ? (isPreview.value = false) : (isPreview.value = true)
     })

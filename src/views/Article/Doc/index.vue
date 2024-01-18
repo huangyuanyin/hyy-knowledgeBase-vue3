@@ -8,13 +8,11 @@ const modelValue = ref('')
 const isPreview = ref(true)
 const isShowScroll = ref(false)
 
-const { aid = '' } = infoStore.currentQuery || {}
-
 watch(
-  () => aid,
+  () => infoStore.currentQuery.aid,
   () => {
     isUpdate.value = false
-    if (aid && route.path.includes('doc')) {
+    if (infoStore.currentQuery.aid && route.path.includes('doc')) {
       getArticle()
     }
   }
@@ -33,7 +31,7 @@ watchEffect(() => {
 })
 
 const getArticle = async () => {
-  useArticle().getArticleDetail(Number(aid), (res: any) => {
+  useArticle().getArticleDetail(Number(infoStore.currentQuery.aid), (res: any) => {
     isUpdate.value = false
     if (typeof res === 'string') return
     if (Reflect.ownKeys(res).length) {
