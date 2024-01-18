@@ -60,7 +60,7 @@ const toBack = () => {
     </div>
     <div class="title">
       <img :src="icon" alt="" />
-      <span>{{ $route.query.sname || '未知' }}</span>
+      <span>{{ infoStore.currentSpaceInfo.spacename || '未知' }}</span>
     </div>
     <div class="menu">
       <el-tree
@@ -146,6 +146,7 @@ const toBack = () => {
       background-color: #fafafa;
     }
     :deep(.el-tree-node__content) {
+      height: 32px;
       padding: 5px 0 5px 26px;
       border-radius: 6px;
       &:hover {

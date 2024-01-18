@@ -21,7 +21,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['closeDialog', 'submitMember'])
 
-const route = useRoute()
+const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
 const selectTotal = ref(0)
 const dialogVisible = ref(false)
@@ -38,7 +38,7 @@ watch(
     dialogVisible.value = newVal
     if (dialogVisible.value) {
       memberList.value = []
-      spaceName.value = route.query.sname as string
+      spaceName.value = infoStore.currentSpaceInfo?.spacename
       getSpacepermissions()
     }
   }
@@ -72,8 +72,8 @@ const toAddMember = () => {
 const addTeamMember = async () => {
   const params = {
     username: [],
-    group: route.query.gid as string,
-    space: route.query.sid as string,
+    group: infoStore.currentQuery?.gid,
+    space: infoStore.currentQuery?.sid,
     role: role.value //2：成员；1：只读成员
   }
   selectMemberList.value.forEach((item) => {
@@ -91,7 +91,7 @@ const addTeamMember = async () => {
 
 const getSpacepermissions = async () => {
   const params = {
-    space: route.query.sid as string
+    space: infoStore.currentQuery.sid
   }
   loadTable.value = true
   const res = await getSpacepermissionsApi(params)

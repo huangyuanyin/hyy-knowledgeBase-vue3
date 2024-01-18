@@ -145,7 +145,7 @@ const arrayToTree = (list: DeptList[], id: string) => {
 
 <template>
   <el-dialog class="memberDialog" v-model="dialogVisible" title="添加成员" width="900" :before-close="handleClose">
-    <p>仅展示非【{{ infoStore.currentQuery?.sname }}】空间的公司所有成员</p>
+    <p>仅展示<bold text-color="#f56c6c">非</bold>【{{ infoStore.currentQuery?.sname }}】空间的公司所有成员</p>
     <div class="container">
       <div class="container-left">
         <el-tree :data="deptList" :props="defaultProps" node-key="id" highlight-current :current-node-key="deptId" @node-click="toChangeDeptId" />
@@ -274,6 +274,9 @@ const arrayToTree = (list: DeptList[], id: string) => {
     margin-bottom: 28px;
     color: #8a8f8d;
     font-size: 14px;
+  }
+  .el-dialog__header {
+    border-bottom: none;
   }
   .el-table {
     .cell {

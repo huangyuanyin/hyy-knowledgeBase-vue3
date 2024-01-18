@@ -318,6 +318,9 @@ const changeIcon = (icon: string) => {
     height: 40px;
     border-radius: 6px;
   }
+  .el-select__wrapper {
+    height: 40px;
+  }
   .form-description {
     margin-bottom: 24px;
   }

@@ -4,6 +4,7 @@ import { getUserApi } from '@/api/user'
 
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
+const avatar = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || ''
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const searchInput = ref('')
@@ -132,10 +133,16 @@ onMounted(async () => {
         <el-table-column type="selection" width="55" />
         <el-table-column label="姓名" width="180">
           <template #default="{ row }">
-            <span>
-              {{ row.permname }}
-              <span v-if="nickname === row.permname" class="my_tag">你自己</span>
-            </span>
+            <div flex items-center>
+              <span h-40px flex items-center justify-center mr-8px>
+                <img v-if="nickname === row.permname" w-24px h-24px :src="avatar" alt="" />
+                <img v-else w-24px h-24px :src="row.avatar" alt="" />
+              </span>
+              <span>
+                {{ row.permname }}
+                <span v-if="nickname === row.permname" class="my_tag">你自己</span>
+              </span>
+            </div>
           </template>
         </el-table-column>
         <el-table-column prop="dept" label="所在部门" width="180" />

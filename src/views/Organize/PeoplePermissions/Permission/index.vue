@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { getSpaceSettingApi, updateSpaceSettingApi } from '@/api/spaceSetting'
 
-const route = useRoute()
+const infoStore = useInfoStore()
 const spaceId = ref('')
 const spaceSettingId = ref('')
 const memberOptions = ref([
@@ -32,7 +32,7 @@ const memberOptions = ref([
 ])
 
 watchEffect(() => {
-  spaceId.value = route.query.sid as string
+  spaceId.value = infoStore.currentQuery.sid as string
 })
 
 const toChangeStatus = (item) => {
@@ -58,7 +58,7 @@ const getSpaceSetting = async () => {
 }
 
 const updateSpaceSetting = async (params) => {
-  const res = await updateSpaceSettingApi(spaceSettingId.value, params)
+  const res = await updateSpaceSettingApi(Number(spaceSettingId.value), params)
   if (res.code === 1000) {
     ElMessage.success('更新成功')
   } else {

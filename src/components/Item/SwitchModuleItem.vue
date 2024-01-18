@@ -15,7 +15,6 @@ const props = defineProps<{
 }>()
 const emit = defineEmits(['getBookStacks'])
 
-const route = useRoute()
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const spaceId = ref('') // 当前空间id
@@ -42,8 +41,8 @@ const addOperation = [
 ]
 
 watchEffect(() => {
-  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : (route.query.sid as string)
-  groupId.value = infoStore.currentSpaceType === '个人' ? localStorage.getItem('personalGroupId') : (route.query.gid as string)
+  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : infoStore.currentQuery.sid
+  groupId.value = infoStore.currentSpaceType === '个人' ? localStorage.getItem('personalGroupId') : infoStore.currentQuery.gid
 })
 
 const changeType = (type: string) => {
@@ -73,7 +72,7 @@ const addBookStacks = async () => {
   if (res.code === 1000) {
     emit('getBookStacks')
     // fix 公共区下新建分组不刷新
-    route.query.gname && route.query.gname === '公共区' && refreshStroe.setRefreshPublicBookStacks(true)
+    infoStore.currentQuery.gname && infoStore.currentQuery.gname === '公共区' && refreshStroe.setRefreshPublicBookStacks(true)
     ElMessage.success('新建分组成功')
   } else {
     ElMessage.error(res.msg)

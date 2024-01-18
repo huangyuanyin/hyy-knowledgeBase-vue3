@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
 })
 const emit = defineEmits(['updateArticleCollaborations'])
 
-const route = useRoute()
+const infoStore = useInfoStore()
 const cooperatePopverRef = ref(null)
 const searchValue = ref('')
 // const link = ref(cooperateLink)
@@ -80,7 +80,7 @@ const addArticleCollaborations = async (username) => {
   const params = {
     role: '1', // 0: 可阅读，1: 可编辑
     username: [username],
-    content: route.query.aid as string
+    content: infoStore.currentQuery.aid as string
   }
   const res = await addArticleCollaborationsApi(params)
   if (res.code === 1000) {

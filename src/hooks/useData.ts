@@ -56,7 +56,7 @@ export const useData = () => {
   function handleData(setSpaceAndType: (value: string | object, type: string) => void, personalSpaceInfo: any) {
     switch (route.meta.asideComponent) {
       case 'SpaceSidebar':
-        setSpaceAndType(route.query.sid as string, '组织')
+        setSpaceAndType(infoStore.currentQuery.sid as string, '组织')
         break
       case 'Sidebar':
         setSpaceAndType(personalSpaceInfo.id, '个人')
@@ -66,11 +66,11 @@ export const useData = () => {
         if (route.path.split('/')[1] === 'directory') {
           setSpaceAndType(personalSpaceInfo.id, '个人')
         } else {
-          setSpaceAndType(route.query.sid as string, '组织')
+          setSpaceAndType(infoStore.currentQuery.sid, '组织')
         }
         break
       case 'OrganizeSidebar':
-        setSpaceAndType(route.query.sid as string, infoStore.currentSpaceType)
+        setSpaceAndType(infoStore.currentQuery.sid, infoStore.currentSpaceType)
         break
     }
   }

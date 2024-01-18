@@ -2,7 +2,7 @@
 import { editSpacepermissionsApi, getSpacepermissionsApi } from '@/api/spacepermissions'
 import { getUserApi } from '@/api/user'
 
-const route = useRoute()
+const infoStore = useInfoStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const isShowAddAdminDialog = ref(false)
 const adminData = ref([])
@@ -10,7 +10,7 @@ const myData = ref([])
 
 const getSpacepermissions = async () => {
   const params = {
-    space: route.query.sid as string,
+    space: infoStore.currentQuery.sid as string,
     permtype: '0' // 0：管理员  1：成员
   }
   const res = await getSpacepermissionsApi(params)
@@ -49,7 +49,7 @@ const toDeleteAdmin = (item) => {
 const deleteSpacepermissions = async (id: number, permusername) => {
   const params = {
     permusername,
-    space: route.query.sid as string,
+    space: infoStore.currentQuery.sid as string,
     permtype: '1'
   }
   const res = await editSpacepermissionsApi(id, params)

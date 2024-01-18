@@ -361,6 +361,9 @@ const toExistLibrary = () => {
         background-color: #d1ecf9;
         color: #262626;
       }
+      :deep(.el-input__inner) {
+        height: 32px;
+      }
     }
     span {
       font-size: 14px;

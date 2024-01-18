@@ -28,6 +28,10 @@ watchEffect(() => {
   tagValue.value = props.tag_mark
 })
 
+const toShow = () => {
+  toGetTagList()
+}
+
 const toChangeTag = async () => {
   editCollect(
     Number(props.startId),
@@ -45,6 +49,7 @@ const toAddTag = (name: string) => {
   addTag(name, () => {
     isShowsGroupDialog.value = false
     toGetTagList()
+    refreshStroe.setRefreshMark(true)
   })
 }
 
@@ -59,10 +64,6 @@ const toDeleteCollect = async () => {
     emit('cancelMark')
   })
 }
-
-onMounted(() => {
-  toGetTagList()
-})
 </script>
 
 <template>
@@ -74,6 +75,7 @@ onMounted(() => {
     :trigger="props.trigger"
     :hide-after="props.hideAfter"
     :show-arrow="props.showArrow"
+    @show="toShow"
   >
     <template #reference>
       <slot></slot>
@@ -86,7 +88,7 @@ onMounted(() => {
       <div class="empty" v-if="!tagList.length">
         <span>暂无分组</span>
       </div>
-      <div class="tag">
+      <div class="tag" v-else>
         <el-radio-group v-model="tagValue" @change="toChangeTag">
           <el-radio :label="String(item.id)" v-for="(item, index) in tagList" :key="'tagList' + index">{{ item.name }}</el-radio>
         </el-radio-group>

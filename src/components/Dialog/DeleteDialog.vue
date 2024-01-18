@@ -22,7 +22,7 @@ const emit = defineEmits(['closeDialog'])
 const route = useRoute()
 const router = useRouter()
 const infoStore = useInfoStore()
-// const refreshStroe = useRefreshStore()
+const refreshStroe = useRefreshStore()
 const visible = ref(false)
 const inputName = ref('')
 
@@ -55,14 +55,15 @@ const toDelete = async (val) => {
         }
         setTimeout(() => {
           router.push({
-            path: `/${route.path.split('/')[1]}/dashboard`,
+            path: `${infoStore.currentSpaceType === '组织' ? `/${route.path.split('/')[1]}` : ''}/dashboard`,
             query: infoStore.currentSpaceType === '组织' ? query : {}
           })
         }, 1500)
+      } else {
+        refreshStroe.setRefreshQuickBookList(true)
+        refreshStroe.setRefreshBookStacks(true)
+        refreshStroe.setRefreshBookList(true)
       }
-      // refreshStroe.setRefreshQuickBookList(true)
-      // refreshStroe.setRefreshBookStacks(true)
-      // refreshStroe.setRefreshBookList(true)
     } else {
       ElMessage.error(res.msg)
     }

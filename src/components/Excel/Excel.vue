@@ -26,6 +26,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 const route = useRoute()
+const infoStore = useInfoStore()
 const luckysheetId = ref(String.fromCharCode(65 + Math.floor(Math.random() * 26)))
 const excelBody = ref(props.body)
 const previewConfig = ref({
@@ -77,7 +78,7 @@ watch(
 watch(
   () => props.isreload,
   async () => {
-    if (route.query.aid && route.path.includes('sheet')) {
+    if (infoStore.currentQuery?.aid && route.path.includes('sheet')) {
       window.location.reload()
       handleCreateSheet(true)
     }
