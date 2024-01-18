@@ -308,6 +308,7 @@ const getArticle = async () => {
 
 const toCloseDrawer = () => {
   commentDrawer.value = false
+  useArticle().getArticleDetail(Number(infoStore.currentQuery?.aid))
 }
 
 const toUpload = async (file) => {

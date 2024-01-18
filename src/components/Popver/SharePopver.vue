@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+import shareIcon1 from '@/assets/icons/sharePopver/1.svg'
+import shareIcon2 from '@/assets/icons/sharePopver/2.svg'
+import shareIcon3 from '@/assets/icons/sharePopver/3.svg'
+import shareIcon4 from '@/assets/icons/sharePopver/4.svg'
 import { editArticleApi } from '@/api/article'
 import { OperationPopoverProps } from '@/type/operationPopoverType'
 
@@ -11,8 +15,8 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
   aInfo: {}
 })
 
+const route = useRoute()
 const infoStore = useInfoStore()
-const aId = infoStore.currentQuery?.aid
 const sharePopverRef = ref(null)
 const publicType = ref('0')
 const currentPage = ref('0')
@@ -22,22 +26,22 @@ const operaList = ref([
   {
     label: '分享范围',
     value: '空间所有成员可访问',
-    icon: '/src/assets/icons/sharePopver/1.svg'
+    icon: shareIcon1
   },
   {
     label: '密码访问',
     value: '无密码',
-    icon: '/src/assets/icons/sharePopver/2.svg'
+    icon: shareIcon2
   },
   {
     label: '允许空间内搜索',
     value: '关闭',
-    icon: '/src/assets/icons/sharePopver/3.svg'
+    icon: shareIcon3
   },
   {
     label: '关闭空间分享',
     value: '',
-    icon: '/src/assets/icons/sharePopver/4.svg'
+    icon: shareIcon4
   }
 ])
 const publicTypeList = [
@@ -54,8 +58,17 @@ const publicTypeList = [
 watchEffect(() => {
   currentPage.value = '0'
   publicType.value = props.aInfo.public
-  copyLink.value = window.location.href
 })
+
+watch(
+  () => route.query.query,
+  () => {
+    copyLink.value = window.location.href
+  },
+  {
+    immediate: true
+  }
+)
 
 watch(
   () => props.aInfo,
@@ -116,7 +129,7 @@ const changeLevel = async () => {
     space: props.aInfo.space,
     indexed_level: indexed_level.value ? '1' : '0'
   }
-  const res = await editArticleApi(Number(aId), params)
+  const res = await editArticleApi(Number(infoStore.currentQuery?.aid), params)
   if (res.code === 1000) {
     ElMessage.success('更新成功')
     publicType.value = res.data.public
@@ -133,7 +146,7 @@ const editArticle = async (val) => {
     space: props.aInfo.space,
     public: val
   }
-  const res = await editArticleApi(Number(aId), params)
+  const res = await editArticleApi(Number(infoStore.currentQuery?.aid), params)
   if (res.code === 1000) {
     ElMessage.success('更新成功')
     publicType.value = res.data.public

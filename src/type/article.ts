@@ -6,6 +6,7 @@ export interface ArticleInfo {
   space: number
   body: string
   type: string
+  public: string
   mark_id: number
   tag_mark: string
   marked: boolean

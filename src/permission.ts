@@ -94,7 +94,6 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
 
 export async function setupRouterResponder(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
   const infoStore = useInfoStore()
-  console.log(`output->1111`, 1111)
   if (to.meta.menu !== 'login' && to.query.query) {
     const decrypted = base64UrlDecode(to.query.query)
     infoStore.setCurrentQuery(JSON.parse(decrypted))
