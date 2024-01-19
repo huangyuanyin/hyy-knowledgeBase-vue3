@@ -305,6 +305,16 @@ const customRoutes = [
     }
   },
   {
+    path: '/:spaceName/teamSetting/statistics',
+    name: 'Team-Statistics',
+    component: pageComps['/src/views/TeamSetting/Statistics/index.vue'] as Component,
+    meta: {
+      title: '团队管理·统计',
+      menu: 'statistics',
+      asideComponent: 'TeamSidebar'
+    }
+  },
+  {
     path: '/:spaceName/teamSetting/trash',
     name: 'Team-Trash',
     component: pageComps['/src/views/TeamSetting/Trash/index.vue'] as Component,
@@ -341,6 +351,16 @@ const customRoutes = [
     meta: {
       title: '知识库管理·更多设置',
       menu: 'settings',
+      asideComponent: 'BookSidebar'
+    }
+  },
+  {
+    path: '/:spaceName/bookSetting/statistics',
+    name: 'Book-Statistics',
+    component: pageComps['/src/views/Book/Statistics/index.vue'] as Component,
+    meta: {
+      title: '知识库管理·统计',
+      menu: 'statistics',
       asideComponent: 'BookSidebar'
     }
   },

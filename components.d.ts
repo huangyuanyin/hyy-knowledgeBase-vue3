@@ -101,6 +101,8 @@ declare module 'vue' {
     SpaceDialog: typeof import('./src/components/Dialog/SpaceDialog.vue')['default']
     SpaceSidebar: typeof import('./src/components/Sidebar/SpaceSidebar.vue')['default']
     StarPopver: typeof import('./src/components/Popver/StarPopver.vue')['default']
+    StatisticsCard: typeof import('./src/components/Card/StatisticsCard.vue')['default']
+    StatisticsTable: typeof import('./src/components/Table/StatisticsTable.vue')['default']
     SvgIcon: typeof import('./src/components/SvgIcon/SvgIcon.vue')['default']
     SwitchModuleItem: typeof import('./src/components/Item/SwitchModuleItem.vue')['default']
     TableComp: typeof import('./src/components/Table/TableComp.vue')['default']

@@ -2,6 +2,7 @@
 import teamInfoIcon from '@/assets/icons/teamSetting/teamInfo.svg'
 import permissionsIcon from '@/assets/icons/teamSetting/permissions.svg'
 import setIcon from '@/assets/icons/teamSetting/set.svg'
+import statisticsIcon from '@/assets/icons/statistics.svg'
 import trashIcon from '@/assets/icons/teamSetting/trash.svg'
 import arrowRightIcon from '@/assets/icons/arrowRightIcon.svg'
 
@@ -18,8 +19,11 @@ const menuList = [
     ]
   },
   {
-    label: '高级设置',
-    children: [{ label: '回收站', nickName: 'trash', icon: trashIcon, path: '/teamSetting/trash' }]
+    label: '高级功能',
+    children: [
+      { label: '统计', nickName: 'statistics', icon: statisticsIcon, path: '/teamSetting/statistics' },
+      { label: '回收站', nickName: 'trash', icon: trashIcon, path: '/teamSetting/trash' }
+    ]
   }
 ]
 

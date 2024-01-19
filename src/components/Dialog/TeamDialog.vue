@@ -3,7 +3,7 @@ import imgIcon from '@/assets/img/img.jpg'
 import { v4 as uuidv4 } from 'uuid'
 import { FormInstance } from 'element-plus'
 import { addGroupsApi } from '@/api/groups'
-// import { getSpacepermissionsApi } from '@/api/spacepermissions'
+import { getSpacepermissionsApi } from '@/api/spacepermissions'
 import { icon11 } from '@/data/iconBase64'
 
 interface ListItem {
@@ -41,7 +41,10 @@ watch(
   () => props.isShow,
   (newVal: boolean) => {
     dialogVisible.value = newVal
-    // getSpacepermissions()
+    if (newVal) {
+      teamForm.members = []
+      getSpacepermissions()
+    }
   }
 )
 
@@ -110,17 +113,17 @@ const addGroups = async () => {
   }
 }
 
-// const getSpacepermissions = async () => {
-//   const params = {
-//     space: infoStore.currentQuery?.sid
-//   }
-//   const res = await getSpacepermissionsApi(params)
-//   if (res.code === 1000) {
-//     list.value = res.data || ([] as any)
-//   } else {
-//     ElMessage.error(res.msg)
-//   }
-// }
+const getSpacepermissions = async () => {
+  const params = {
+    space: infoStore.currentQuery?.sid
+  }
+  const res = await getSpacepermissionsApi(params)
+  if (res.code === 1000) {
+    list.value = res.data || ([] as any)
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
 
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
@@ -172,10 +175,12 @@ const changeIcon = (icon: string) => {
           collapse-tags
           collapse-tags-tooltip
           placeholder="输入空间成员名字搜索添加"
+          no-data-text="暂无数据"
           :remote-method="remoteMethod"
           :loading="loadingMember"
-          :teleported="false"
           :max-collapse-tags="3"
+          default-first-option
+          popper-class="member-popver"
         >
           <el-option v-for="(item, index) in options" :key="'options' + index" :label="item.permname" :value="item.permusername">
             <div class="item">
@@ -321,6 +326,9 @@ const changeIcon = (icon: string) => {
   .el-select__wrapper {
     height: 40px;
   }
+  .el-select__input {
+    margin-left: 0px;
+  }
   .form-description {
     margin-bottom: 24px;
   }
@@ -378,6 +386,17 @@ const changeIcon = (icon: string) => {
     .submit-disabled {
       cursor: not-allowed !important;
       background-color: #b2eab2 !important;
+    }
+  }
+}
+.member-popver {
+  li {
+    height: 62px;
+  }
+  .is-selected {
+    ::after {
+      width: 20px !important;
+      height: 20px !important;
     }
   }
 }

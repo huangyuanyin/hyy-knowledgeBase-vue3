@@ -6,6 +6,7 @@ import trashIcon from '@/assets/icons/teamSetting/trash.svg'
 import teamInfoIcon from '@/assets/icons/teamSetting/teamInfo.svg'
 import permissionsIcon from '@/assets/icons/teamSetting/permissions.svg'
 import setIcon from '@/assets/icons/teamSetting/set.svg'
+import statisticsIcon from '@/assets/icons/statistics.svg'
 
 const menuList = [
   {
@@ -17,8 +18,9 @@ const menuList = [
     ]
   },
   {
-    label: '高级设置',
+    label: '高级功能',
     children: [
+      { label: '统计', nickName: 'statistics', icon: statisticsIcon, path: '/bookSetting/statistics' },
       { label: '目录管理', nickName: 'toc', icon: tocIcon, path: '/bookSetting/toc' },
       { label: '文档管理', nickName: 'docs', icon: docsIcon, path: '/bookSetting/docs' },
       { label: '消息推送', nickName: 'webhooks', icon: webhooksIcon, path: '/bookSetting/webhooks' },
