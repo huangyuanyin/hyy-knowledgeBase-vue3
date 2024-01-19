@@ -26,6 +26,7 @@ const props = defineProps({
 const emit = defineEmits(['toReply', 'toCancelReply', 'addComments', 'toDeleteComment'])
 
 const replyValue = ref(props.replyValue)
+const avatar = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo') || '{}').avatar
 
 watch(
   () => props.replyValue,
@@ -60,7 +61,7 @@ const toDeleteComment = (data: any) => {
 <template>
   <div class="comment_wrap" :style="{ 'margin-bottom': props.data.children.length ? '20px' : ' 0px' }">
     <div class="avatar">
-      <img :src="props.data.avatar || '/src/assets/img/img.jpg'" alt="" />
+      <img :src="props.data.avatar || avatar" alt="" />
     </div>
     <div class="content">
       <div class="name">

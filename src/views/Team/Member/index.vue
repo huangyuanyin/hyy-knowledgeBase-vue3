@@ -32,8 +32,8 @@ const teamInfo = ref({
 })
 const sexList = [
   { label: '管理员', value: '0', desc: '拥有所有权限' },
-  { label: '只读成员', value: '1', desc: '拥有知识库管理权限' },
-  { label: '成员', value: '2', desc: '仅有阅读权限' }
+  { label: '成员', value: '1', desc: '拥有知识库管理权限' },
+  { label: '只读成员', value: '2', desc: '仅有阅读权限' }
 ]
 const statusList = [
   { label: '正常', value: '1' },

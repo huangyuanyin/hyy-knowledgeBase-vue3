@@ -1,17 +1,3 @@
-<template>
-  <el-dialog class="addAdminDialog" v-model="dialogVisible" title="添加管理员" width="520" :before-close="handleClose">
-    <el-select v-model="inputValue" filterable remote placeholder="输入姓名、昵称 进行搜索" :remote-method="remoteMethod" :loading="loading" no-data-text="未搜索到结果">
-      <el-option v-for="item in memberOptions" :key="item.permusername" :label="item.permusername" :value="item.permusername">
-        <div class="options" @click="toAddAdmin(item)">
-          <img class="icon" :src="item.avatar || '/src/assets/img/img.jpg'" alt="" />
-          <span class="name">{{ item.permname }}</span>
-          <span class="dept">（{{ item.dept }}）</span>
-        </div>
-      </el-option>
-    </el-select>
-  </el-dialog>
-</template>
-
 <script lang="ts" setup>
 import { editSpacepermissionsApi, getSpacepermissionsApi } from '@/api/spacepermissions'
 
@@ -22,6 +8,7 @@ const props = defineProps({
 const emit = defineEmits(['closeDialog'])
 
 const infoStore = useInfoStore()
+const avatar = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo') || '{}').avatar
 const dialogVisible = ref(false)
 const loading = ref(false)
 const inputValue = ref('')
@@ -92,6 +79,20 @@ const editSpacepermissions = async (id, permusername) => {
   }
 }
 </script>
+
+<template>
+  <el-dialog class="addAdminDialog" v-model="dialogVisible" title="添加管理员" width="520" :before-close="handleClose">
+    <el-select v-model="inputValue" filterable remote placeholder="输入姓名、昵称 进行搜索" :remote-method="remoteMethod" :loading="loading" no-data-text="未搜索到结果">
+      <el-option v-for="item in memberOptions" :key="item.permusername" :label="item.permusername" :value="item.permusername">
+        <div class="options" @click="toAddAdmin(item)">
+          <img class="icon" :src="item.avatar || avatar" alt="" />
+          <span class="name">{{ item.permname }}</span>
+          <span class="dept">（{{ item.dept }}）</span>
+        </div>
+      </el-option>
+    </el-select>
+  </el-dialog>
+</template>
 
 <style lang="scss" scoped>
 .el-select {

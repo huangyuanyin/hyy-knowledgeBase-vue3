@@ -23,6 +23,7 @@ const emit = defineEmits(['closeDialog', 'submitMember'])
 
 const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
+const avatar = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo') || '{}').avatar
 const selectTotal = ref(0)
 const dialogVisible = ref(false)
 const loadTable = ref(false)
@@ -125,7 +126,7 @@ const getSpacepermissions = async () => {
       <el-table-column property="permusername" label="全选">
         <template #default="{ row }">
           <div class="cell">
-            <img :src="row.avatar || '/src/assets/img/img.jpg'" alt="" />
+            <img :src="row.avatar || avatar" alt="" />
             <span class="name">{{ row.permname }}</span>
             <span class="nick">（{{ row.permusername }}）</span>
           </div>

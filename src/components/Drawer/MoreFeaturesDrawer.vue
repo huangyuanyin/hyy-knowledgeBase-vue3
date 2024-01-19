@@ -11,6 +11,12 @@ import operationIcon from '@/assets/icons/drawer/operation.svg'
 import infoIcon from '@/assets/icons/drawer/info.svg'
 import statisticIcon from '@/assets/icons/article/statistic.svg'
 import arrowIcon from '@/assets/icons/drawer/arrow.svg'
+import countIcon from '@/assets/icons/drawer/count.svg'
+import viewsIcon from '@/assets/icons/drawer/views.svg'
+import commentIcon from '@/assets/icons/drawer/comment.svg'
+import likeIcon from '@/assets/icons/drawer/like.svg'
+import authorIcon from '@/assets/icons/drawer/author.svg'
+
 import { ArticleInfo } from '@/type/article'
 
 const props = defineProps({
@@ -39,15 +45,15 @@ const operationItems = [
   { icon: deleteIcon, text: '删除...', type: 'label' }
 ]
 const infoItems = ref<any>([
-  { icon: '/src/assets/icons/drawer/count.svg', text: '字数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.counts} 字`, type: 'label' },
+  { icon: countIcon, text: '字数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.counts} 字`, type: 'label' },
   { icon: historyVersion, text: '历史版本', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.versions_count} `, type: 'label' },
   { text: '创建时间', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.create_datetime}`, type: 'label' },
   { text: '更新时间', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.update_datetime}`, type: 'label' },
-  { icon: '/src/assets/icons/drawer/author.svg', text: '作者', value: (infoStore.currentArticleInfo as ArticleInfo)?.creator_name, type: 'label' },
+  { icon: authorIcon, text: '作者', value: (infoStore.currentArticleInfo as ArticleInfo)?.creator_name, type: 'label' },
   { type: 'hr' },
-  { icon: '/src/assets/icons/drawer/views.svg', text: '阅读数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.views} 次`, type: 'label' },
-  { icon: '/src/assets/icons/drawer/comment.svg', text: '评论数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.comments_count} 条`, type: 'label' },
-  { icon: '/src/assets/icons/drawer/like.svg', text: '点赞数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.likes_count} 次`, type: 'label' }
+  { icon: viewsIcon, text: '阅读数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.views} 次`, type: 'label' },
+  { icon: commentIcon, text: '评论数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.comments_count} 条`, type: 'label' },
+  { icon: likeIcon, text: '点赞数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.likes_count} 次`, type: 'label' }
 ])
 const isSaveTemplateDialog = ref(false)
 const isSaveHistoryVersionDialog = ref(false)
@@ -56,15 +62,15 @@ const isHistoryVersionDialog = ref(false)
 watchEffect(() => {
   props.drawer && (drawerTab.value = 'operation')
   infoItems.value = [
-    { icon: '/src/assets/icons/drawer/count.svg', text: '字数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.counts} 字`, type: 'label' },
+    { icon: countIcon, text: '字数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.counts} 字`, type: 'label' },
     { icon: historyVersion, text: '历史版本', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.versions_count} `, type: 'label' },
     { text: '创建时间', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.create_datetime}`, type: 'label' },
     { text: '更新时间', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.update_datetime}`, type: 'label' },
-    { icon: '/src/assets/icons/drawer/author.svg', text: '作者', value: (infoStore.currentArticleInfo as ArticleInfo)?.creator_name, type: 'label' },
+    { icon: authorIcon, text: '作者', value: (infoStore.currentArticleInfo as ArticleInfo)?.creator_name, type: 'label' },
     { type: 'hr' },
-    { icon: '/src/assets/icons/drawer/views.svg', text: '阅读数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.views} 次`, type: 'label' },
-    { icon: '/src/assets/icons/drawer/comment.svg', text: '评论数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.comments_count} 条`, type: 'label' },
-    { icon: '/src/assets/icons/drawer/like.svg', text: '点赞数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.likes_count} 次`, type: 'label' }
+    { icon: viewsIcon, text: '阅读数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.views} 次`, type: 'label' },
+    { icon: commentIcon, text: '评论数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.comments_count} 条`, type: 'label' },
+    { icon: likeIcon, text: '点赞数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.likes_count} 次`, type: 'label' }
   ]
 })
 
