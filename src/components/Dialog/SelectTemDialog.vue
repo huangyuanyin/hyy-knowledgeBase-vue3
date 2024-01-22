@@ -45,9 +45,9 @@ watch(
   () => selectTem.value,
   (newVal) => {
     if (newVal.content_type === 'ppt') {
-      iframeSrc.value = 'http://192.168.94.221:8081?timestamp=' + Date.now()
+      iframeSrc.value = `${import.meta.env.VITE_BASE_PPT_URL}?timestamp=` + Date.now()
     } else if (newVal.content_type === 'mind') {
-      iframeSrc.value = 'http://192.168.94.221:8080?timestamp=' + Date.now()
+      iframeSrc.value = `${import.meta.env.VITE_BASE_MINDMAP_URL}?timestamp=` + Date.now()
     }
     nextTick(() => {
       sendMessageToIframe(selectTem.value.body)
@@ -357,7 +357,7 @@ const handleClose = async () => {
   border-radius: 8px;
   height: 680px;
   .el-dialog__body {
-    padding: 0px;
+    padding: 0px !important;
   }
   .el-dialog__header {
     display: none;

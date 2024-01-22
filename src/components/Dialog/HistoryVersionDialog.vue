@@ -45,9 +45,9 @@ watch(
   () => selectVersion.value,
   () => {
     if (selectVersion.value.type === 'ppt') {
-      iframeSrc.value = 'http://192.168.94.221:8081?timestamp=' + Date.now()
+      iframeSrc.value = `${import.meta.env.VITE_BASE_PPT_URL}?timestamp=` + Date.now()
     } else if (selectVersion.value.type === 'mind') {
-      iframeSrc.value = 'http://192.168.94.221:8080?timestamp=' + Date.now()
+      iframeSrc.value = `${import.meta.env.VITE_BASE_MINDMAP_URL}?timestamp=` + Date.now()
     }
     nextTick(() => {
       sendMessageToIframe(selectVersion.value.body)
@@ -335,7 +335,7 @@ const handleClose = async () => {
   .el-dialog__body,
   .el-dialog__header {
     margin-right: 0px;
-    padding: 0px;
+    padding: 0px !important;
   }
   .el-form-item {
     margin-bottom: 24px;

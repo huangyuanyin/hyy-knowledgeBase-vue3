@@ -58,6 +58,14 @@ const infoItems = ref<any>([
 const isSaveTemplateDialog = ref(false)
 const isSaveHistoryVersionDialog = ref(false)
 const isHistoryVersionDialog = ref(false)
+const isBookStatisticDialog = ref(false)
+const isShowExportFileDialog = ref<boolean>(false)
+const exportId = ref<number>(null) // 导出文档的id
+const exportType = ref<string>('') // 导出文档的类型
+const showHandleArticleDialog = ref<boolean>(false)
+const handleArticleDialogTitle = ref<string>('')
+const handleArticleDialogDesc = ref<string>('')
+const handleData = ref<ArticleInfo>(null) // 复制 || 移动的数据
 
 watchEffect(() => {
   props.drawer && (drawerTab.value = 'operation')
@@ -89,9 +97,42 @@ const toHandle = (data) => {
     case '查看已存版本':
       isHistoryVersionDialog.value = true
       break
+    case '导出...':
+      toExport(infoStore.currentArticleInfo)
+      break
+    case '复制...':
+      toHandleArticle('copy', infoStore.currentArticleInfo)
+      break
+    case '移动...':
+      toHandleArticle('move', infoStore.currentArticleInfo)
+      break
+    case '删除...':
+      useArticle().toDeleteArticle(infoStore.currentArticleInfo)
+      break
     default:
       ElMessage.warning('功能暂未开放，敬请期待')
       break
+  }
+}
+
+// 导出
+const toExport = (val) => {
+  exportId.value = val.id
+  exportType.value = val.type
+  isShowExportFileDialog.value = true
+}
+
+// 复制 || 移动
+const toHandleArticle = (type, val) => {
+  console.log(`output->121`, 121)
+  handleData.value = val
+  showHandleArticleDialog.value = true
+  if (type === 'move') {
+    handleArticleDialogTitle.value = '移动到...'
+    handleArticleDialogDesc.value = '可移动到有创建文档权限的知识库'
+  } else {
+    handleArticleDialogTitle.value = '复制到...'
+    handleArticleDialogDesc.value = '可复制到有创建文档权限的知识库'
   }
 }
 </script>
@@ -131,7 +172,21 @@ const toHandle = (data) => {
             </div>
             <div v-if="item.type === 'hr'" class="hr"></div>
           </template>
-          <div class="hover:bg-#eff0f0" mt-20px flex justify-between items-center rounded-8px cursor-pointer bg="#fafafa" pt-16px pl-12px pr-12px pb-12px>
+          <div
+            class="hover:bg-#eff0f0"
+            mt-20px
+            flex
+            justify-between
+            items-center
+            rounded-8px
+            cursor-pointer
+            bg="#fafafa"
+            pt-16px
+            pl-12px
+            pr-12px
+            pb-12px
+            @click="isBookStatisticDialog = true"
+          >
             <span w-24px h-28px><img w-24px h-24px :src="statisticIcon" alt="" /></span>
             <div mr-24px ml-12px flex-1 flex flex-col>
               <span text="#262626" text-14px>统计详情</span>
@@ -146,6 +201,15 @@ const toHandle = (data) => {
   <SaveTemplateDialog :isShow="isSaveTemplateDialog" :parent="null" @closeDialog="isSaveTemplateDialog = false" :info="props.info" />
   <SaveHistoryVersionDialog :isShow="isSaveHistoryVersionDialog" @closeDialog="isSaveHistoryVersionDialog = false" :info="props.info" />
   <HistoryVersionDialog :isShow="isHistoryVersionDialog" @closeDialog="isHistoryVersionDialog = false" :info="props.info" />
+  <BookStatisticDialog :isShow="isBookStatisticDialog" @closeDialog="isBookStatisticDialog = false" :info="props.info" />
+  <ExportFileDialog :isShow="isShowExportFileDialog" @closeDialog="isShowExportFileDialog = false" :type="exportType" :id="exportId" />
+  <HandleArticleDialog
+    :show="showHandleArticleDialog"
+    :title="handleArticleDialogTitle"
+    :desc="handleArticleDialogDesc"
+    :data="handleData"
+    @closeDialog="showHandleArticleDialog = false"
+  />
 </template>
 
 <style lang="scss">

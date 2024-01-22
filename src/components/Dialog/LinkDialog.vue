@@ -52,11 +52,11 @@ watch(
 
 // 获取链接详情
 async function handleArticleDetail(id: number) {
-  const { ainfo, getArticleDetail } = useArticle()
+  const { articleInfo, getArticleDetail } = useArticle()
   await getArticleDetail(id)
-  linkForm.title = ainfo.value.title
-  linkForm.description = ainfo.value.description
-  linkForm.open_windows = ainfo.value.open_windows === '1' ? true : false
+  linkForm.title = articleInfo.value.title
+  linkForm.description = articleInfo.value.description
+  linkForm.open_windows = articleInfo.value.open_windows === '1' ? true : false
 }
 
 const handleSubmit = async (formEl: FormInstance | undefined) => {

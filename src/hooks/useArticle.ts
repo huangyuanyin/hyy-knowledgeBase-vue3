@@ -1,20 +1,9 @@
 import { getArticleTreeApi, getArticleApi, addArticleApi, editArticleApi, deleteArticleApi, getCategoryTreeApi } from '@/api/article'
 import { sheetData } from '@/components/Excel/data'
 import { useInfoStore } from '@/store/info'
-
-interface ArticleType {
-  [key: string]: { type: string; title: string; body: string }
-}
-
-interface CallbackFunction {
-  (success: object | boolean | string): void
-}
-
-interface ArticleInfo {
-  title: string
-  description: string
-  open_windows: string
-}
+import { ArticleType, Callback } from '@/type/type'
+import { ArticleInfo } from '@/type/article'
+import { ArticleRes } from '@/api/article/type'
 
 export const useArticle = () => {
   const infoStore = useInfoStore()
@@ -22,10 +11,10 @@ export const useArticle = () => {
   const refreshStroe = useRefreshStore()
   const space = ref<string>('')
   const spaceName = ref<string>('')
-  const ainfo = ref<ArticleInfo>({} as ArticleInfo) // 当前文章详情
+  const articleInfo = ref<ArticleInfo>({} as ArticleInfo) // 当前文章详情
   const isHasPermission = ref<boolean>(true) // 是否有权限
   const currentNodeKey = ref<number>(0) // 当前选中的文章id
-  const articleList = ref<any[]>([])
+  const articleList = ref<ArticleInfo[]>([]) // 目录列表
   const articleType: ArticleType = {
     文档: { type: 'doc', title: '无标题文档', body: '' },
     表格: { type: 'sheet', title: '无标题表格', body: '' },
@@ -35,7 +24,6 @@ export const useArticle = () => {
   }
 
   const { sid = '', sname = '', gid = '', gname = '', lid = '', lname = '', aid = '' } = infoStore.currentQuery || {}
-
   space.value = sid
   spaceName.value = sname
 
@@ -61,11 +49,12 @@ export const useArticle = () => {
    * 获取知识库目录
    * @param {Number} bookId   当前知识库id
    */
-  const getArticleList = async (bookId: Number, callback?: CallbackFunction) => {
+  const getArticleList = async (bookId: Number, callback?: Callback) => {
     let res = await getArticleTreeApi(bookId)
     isHasPermission.value = res.code === 1003 ? false : true
     if (res.code === 1000) {
-      articleList.value = res.data || ([] as any)
+      articleList.value = res.data as ArticleInfo[]
+      infoStore.currentArticleTreeInfo = articleList.value
       currentNodeKey.value = Number(aid)
       callback && (await callback(res.data))
     } else {
@@ -76,13 +65,13 @@ export const useArticle = () => {
   /**
    * 获取文章详情
    * @param {number} articleId   当前文章id
-   * @param {CallbackFunction} callback 回调函数
+   * @param {Callback} callback 回调函数
    */
-  const getArticleDetail = async (articleId: number, callback?: CallbackFunction) => {
+  const getArticleDetail = async (articleId: number, callback?: Callback) => {
     let res = await getArticleApi(articleId)
     if (res.code === 1000) {
-      await infoStore.setCurrentArticleInfo(res.data)
-      await (ainfo.value = res.data as any)
+      await infoStore.setCurrentArticleInfo(res.data as ArticleInfo)
+      await (articleInfo.value = res.data as ArticleInfo)
       callback && (await callback(res.data))
     } else {
       await infoStore.setCurrentArticleInfo('无权限')
@@ -97,7 +86,7 @@ export const useArticle = () => {
    * @param {Function} callback 回调函数
    * @param {Number} parent   当前文章父级
    */
-  function handleAddArticle(params, callback: CallbackFunction, parent: number | null = null) {
+  function handleAddArticle(params, callback: Callback, parent: number | null = null) {
     const { book, title } = params
     switch (title) {
       case '脑图':
@@ -122,7 +111,7 @@ export const useArticle = () => {
    * @param {Number} parent   当前文章父级
    * @param {Function} callback 回调函数
    */
-  const handleAddArticleApi = async (book, article, parent: number | null, callback: CallbackFunction) => {
+  const handleAddArticleApi = async (book, article, parent: number | null, callback: Callback) => {
     const params = {
       title: article.title,
       type: article.type,
@@ -133,7 +122,7 @@ export const useArticle = () => {
       public: '1' // 知识库所有成员都可以访问
     }
     article.type === 'title' && delete params.body
-    let res = await addArticleApi(params)
+    let res = (await addArticleApi(params)) as ArticleRes<ArticleInfo>
     if (res.code === 1000) {
       if (res.data.type === 'title') {
         ElMessage.success('分组新建成功')
@@ -173,7 +162,7 @@ export const useArticle = () => {
    * @param {Number} id 文章id
    * @param {String | Object} data 文章标题 | 文章信息
    */
-  const handleEditArticle = async (id: Number, data: String | Object, callback?: CallbackFunction) => {
+  const handleEditArticle = async (id: Number, data: String | Object, callback?: Callback) => {
     if (!id) return
     let params
     if (typeof data === 'string')
@@ -198,6 +187,30 @@ export const useArticle = () => {
     } else {
       ElMessage.error(res.msg)
     }
+  }
+
+  /**
+   * 删除文章提示弹窗
+   * @param article 文章信息
+   */
+  const toDeleteArticle = (article: any) => {
+    const confirmMessage = article.children ? `同时删除【${article.title}】下的所有文档` : `确认删除【${article.title}】吗？`
+    const confirmTitle = article.children ? `确认删除【${article.title}】吗？` : ''
+    ElMessageBox.confirm(confirmMessage, confirmTitle, {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      confirmButtonClass: 'submitBtn',
+      cancelButtonClass: 'cancelBtn',
+      customClass: 'deleteArticleDialog',
+      type: 'warning',
+      showClose: false
+    })
+      .then(() => {
+        handleDeleteArticle(article.id)
+      })
+      .catch(() => {
+        ElMessage.info('取消操作')
+      })
   }
 
   /**
@@ -245,7 +258,7 @@ export const useArticle = () => {
    * @param {string} nodeType 节点类型
    * @param {Function} callback 回调函数
    */
-  const handleCategoryTree = async (aid: number, nodeType: string = 'parent', callback?: CallbackFunction) => {
+  const handleCategoryTree = async (aid: number, nodeType: string = 'parent', callback?: Callback) => {
     const params = {
       node_id: aid,
       action: nodeType
@@ -261,10 +274,11 @@ export const useArticle = () => {
 
   return {
     space: space.value,
-    ainfo,
+    articleInfo,
     articleType,
     articleList,
     currentNodeKey,
+    toDeleteArticle,
     getArticleList,
     getArticleDetail,
     handleAddArticle,

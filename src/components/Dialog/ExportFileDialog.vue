@@ -49,8 +49,7 @@ watch(
   () => props.isShow,
   (newVal: boolean) => {
     dialogVisible.value = newVal
-    if (!dialogVisible.value) return
-    initData()
+    dialogVisible.value && initData()
   }
 )
 

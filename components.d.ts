@@ -15,6 +15,7 @@ declare module 'vue' {
     ArticleOeration: typeof import('./src/components/Item/ArticleOeration.vue')['default']
     BookListDialog: typeof import('./src/components/Dialog/BookListDialog.vue')['default']
     BookSidebar: typeof import('./src/components/Sidebar/BookSidebar.vue')['default']
+    BookStatisticDialog: typeof import('./src/components/Dialog/BookStatisticDialog.vue')['default']
     ChangeSpacePopver: typeof import('./src/components/Popver/ChangeSpacePopver.vue')['default']
     Comment: typeof import('./src/components/Drawer/CommentDrawer/comment.vue')['default']
     CommentDrawer: typeof import('./src/components/Drawer/CommentDrawer/index.vue')['default']

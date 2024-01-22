@@ -32,12 +32,12 @@ const linkType = ref<string>('') // 编辑链接 | 新增链接
 const linkDialogId = ref<number>(null) // 编辑链接的id
 const parentId = ref<number>(null) // 编辑链接的父级id
 
-async function deleteArticle(id: Number) {
-  const { articleList, currentNodeKey: node, handleDeleteArticle } = useArticle()
-  await handleDeleteArticle(id)
-  infoStore.currentArticleTreeInfo = articleList.value
-  // currentNodeKey.value = node.value
-}
+// async function deleteArticle(id: Number) {
+//   const { articleList, currentNodeKey: node, handleDeleteArticle } = useArticle()
+//   await handleDeleteArticle(id)
+//   infoStore.currentArticleTreeInfo = articleList.value
+//   // currentNodeKey.value = node.value
+// }
 
 // 复制链接
 const toCopyLink = (val) => {
@@ -117,23 +117,7 @@ const toExport = (val) => {
 
 // 删除
 const toDeleteArticle = (val) => {
-  const confirmMessage = val.children ? `同时删除【${val.title}】下的所有文档` : `确认删除【${val.title}】吗？`
-  const confirmTitle = val.children ? `确认删除【${val.title}】吗？` : ''
-  ElMessageBox.confirm(confirmMessage, confirmTitle, {
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
-    confirmButtonClass: 'submitBtn',
-    cancelButtonClass: 'cancelBtn',
-    customClass: 'deleteArticleDialog',
-    type: 'warning',
-    showClose: false
-  })
-    .then(() => {
-      deleteArticle(val.id)
-    })
-    .catch(() => {
-      ElMessage.info('取消操作')
-    })
+  useArticle().toDeleteArticle(val)
 }
 
 const toTodo = (val) => {

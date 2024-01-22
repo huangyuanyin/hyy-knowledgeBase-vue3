@@ -33,7 +33,6 @@ export interface ArticleTemData {
   template_type?: string
   target_type?: string
   target_id?: number
-
   content_type?: string
 }
 
@@ -45,9 +44,9 @@ export interface ArticleVersionData {
   type: String
 }
 
-export interface ArticleRes {
+export interface ArticleRes<T = ArticleInfo | ArticleInfo[]> {
   code: number
-  data: ArticleInfo
+  data: T
   msg?: string
 }
 
