@@ -93,7 +93,7 @@ onMounted(async () => {
   <div class="Statistics_wrap" max-w-1080px m-auto>
     <div class="header" mb-28px>
       <span font-700 text-20px text="rgba(0, 0, 0, 0.85)">统计</span>
-      <p text-14px mt-6px text="#8a8f8d">01-18,2024（实时更新当日数据，“--”表示暂无数据）</p>
+      <p text-14px mt-6px text="#8a8f8d">{{ new Date().toLocaleDateString() }}（实时更新当日数据，“--”表示暂无数据）</p>
     </div>
     <StatisticsCard :info="teamStatistic" />
     <div mb-12px p-16px rounded-8px border="1px solid #0000000A" bg="#fafafa" flex h-122px>

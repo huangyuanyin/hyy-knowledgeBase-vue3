@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { coverImages } from '@/data/coverData'
-import cover from '@/assets/img/cover.png'
+import cover from '@/assets/img/cover/21.png'
 import { editLibraryApi } from '@/api/library'
 import { FormInstance, FormRules } from 'element-plus'
 import { imgToBase64 } from '@/utils/imgToBase64'

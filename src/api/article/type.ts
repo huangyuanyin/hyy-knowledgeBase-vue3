@@ -1,5 +1,11 @@
 import { ArticleInfo } from '@/type/article'
 
+export interface ArticleParams {
+  space?: string
+  book?: string
+  is_selective?: string
+}
+
 export interface ArticleData {
   title: string
   book: string

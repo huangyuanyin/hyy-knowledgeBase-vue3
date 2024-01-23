@@ -35,14 +35,13 @@ watchEffect(() => {
     tab.value = [{ label: '文档明细', value: 'docCol' }]
     tabColumns.value = {
       docCol: [
-        { prop: 'name', label: '文档名称', width: 200 },
-        { prop: 'address', label: '创建者' },
-        { prop: 'address', label: '创建时间' },
-        { prop: 'address', label: '更新时间' },
-        { prop: 'address', label: '字数' },
-        { prop: 'address', label: '阅读量' },
-        { prop: 'address', label: '评论量' },
-        { prop: 'address', label: '点赞量' }
+        { prop: 'title', label: '文档名称', width: 200 },
+        { prop: 'creator_name', label: '创建者' },
+        { prop: 'create_datetime', label: '创建时间', width: 200 },
+        { prop: 'update_datetime', label: '更新时间', width: 200 },
+        { prop: 'views', label: '阅读量' },
+        { prop: 'comments_count', label: '评论量' },
+        { prop: 'likes_count', label: '点赞量' }
       ]
     }
     currentTab.value = 'docCol'
@@ -73,12 +72,12 @@ watchEffect(() => {
       docCol: [
         { prop: 'title', label: '文档名称', width: 200 },
         { prop: 'creator', label: '创建者', width: 120 },
-        { prop: 'create_datetime', label: '创建时间', width: 200 },
-        { prop: 'update_datetime', label: '更新时间', width: 200 },
-        { prop: 'word_count', label: '字数' },
-        { prop: 'read_count', label: '阅读量' },
-        { prop: 'comments_count', label: '评论量' },
-        { prop: 'likes_count', label: '点赞量' }
+        { prop: 'create_datetime', label: '创建时间' },
+        { prop: 'update_datetime', label: '更新时间' },
+        { prop: 'word_count', label: '字数', width: 70 },
+        { prop: 'read_count', label: '阅读量', width: 70 },
+        { prop: 'comments_count', label: '评论量', width: 70 },
+        { prop: 'likes_count', label: '点赞量', width: 70 }
       ]
     }
     currentTab.value = 'memberCol'
@@ -122,11 +121,15 @@ const toChangeTab = (val) => {
     <el-table :data="props.tableData" stripe empty-text="暂无数据" mt-40px w-full>
       <el-table-column v-for="(column, index) in currentTable" :key="'tabColumn' + index" :prop="column.prop" :label="column.label" :width="column.width as number || undefined">
         <template #default="{ row }">
-          <div flex v-if="column.prop === 'title'">
+          <div flex items-center h-56px v-if="column.prop === 'title'">
             <img w-20px h-20px mr-4px :src="contentType[row.type]" alt="" class="icon" />
             <span>{{ row.title }}</span>
           </div>
-          <span v-else>{{ row[column.prop] }}</span>
+          <div flex items-center h-56px v-else-if="column.prop === 'name'">
+            <img w-24px h-24px mr-8px :src="row.icon" alt="" class="icon" />
+            <span>{{ row.name }}</span>
+          </div>
+          <span flex items-center v-else line-height-56px h-56px>{{ row[column.prop] }}</span>
         </template>
       </el-table-column>
     </el-table>

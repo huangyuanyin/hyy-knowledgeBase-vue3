@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import emptyImg from '@/assets/img/empty.png'
 
-const route = useRoute()
 const refreshStroe = useRefreshStore()
 const isShowsGroupDialog = ref(false)
 const groupTitle = ref('新建分组')

@@ -4,6 +4,7 @@ import { useInfoStore } from '@/store/info'
 import { ArticleType, Callback } from '@/type/type'
 import { ArticleInfo } from '@/type/article'
 import { ArticleRes } from '@/api/article/type'
+import { ArticleParams } from '@/api/article/type'
 
 export const useArticle = () => {
   const infoStore = useInfoStore()
@@ -64,10 +65,10 @@ export const useArticle = () => {
 
   /**
    * 获取文档列表
-   * @param {number} bookId   当前知识库id
+   * @param {ArticleParams} params 参数
    */
-  const getDocList = async (bookId: number, callback?: Callback) => {
-    let res = await getDocListApi(bookId)
+  const getDocList = async (params: ArticleParams, callback?: Callback) => {
+    let res = await getDocListApi(params)
     if (res.code === 1000) {
       articleList.value = res.data as ArticleInfo[]
       callback && (await callback(res.data))

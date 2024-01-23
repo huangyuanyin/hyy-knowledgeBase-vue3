@@ -86,6 +86,7 @@ const handleMouseEnter = (documentId: number): void => {
     hoveredDocument.value = documentId
   }
 }
+
 const handleMouseLeave = (documentId: number): void => {
   if (hoveredDocument.value === documentId) {
     hoveredDocument.value = null
@@ -156,6 +157,20 @@ const toLink = (val, type) => {
         lname: val.name,
         gid: val.group,
         gname: val.group_name
+      }
+    })
+  } else if (type === 'star') {
+    router.push({
+      path: `/${infoStore.currentSpaceInfo.spacekey}/directory/${val.target_type}`,
+      query: {
+        sid: val.space,
+        sname: infoStore.currentQuery?.sname,
+        lid: val.owner_ship.book_id,
+        lname: val.owner_ship.book_name,
+        gid: val.owner_ship.group_id,
+        gname: val.owner_ship.group_name,
+        aid: val.target_id,
+        aname: val.target_name
       }
     })
   }
@@ -240,7 +255,7 @@ const cancelMark = () => {
           <td class="item-title">
             <div>
               <img :src="document.target_type === 'book' ? document.owner_ship.book_icon : articleIcon" alt="" />
-              <div class="item-title-right">
+              <div class="item-title-right" @click="toLink(document, 'star')">
                 <el-tooltip effect="light" :content="document.target_name" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
                   <span>{{ document.target_name }}</span>
                 </el-tooltip>
