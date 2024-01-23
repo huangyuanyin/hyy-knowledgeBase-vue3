@@ -1,11 +1,34 @@
 <script lang="ts" setup>
+import documentIcon from '@/assets/icons/documentIcon.svg'
+import formIcon from '@/assets/icons/formIcon.svg'
+import mindmapIcon from '@/assets/icons/mindmapIcon.svg'
+import pptIcon from '@/assets/icons/pptIcon.svg'
+
+const props = defineProps({
+  tableData: {
+    type: Array,
+    default: () => []
+  }
+})
+const emit = defineEmits(['changeTab'])
+
 const route = useRoute()
 const tab = ref([])
 const tabColumns = ref()
 const currentTable = ref([])
 const currentTab = ref('')
 const search = ref('')
-const tableData = ref([])
+const searchPlcae = ref({
+  memberCol: '搜索成员',
+  bookCol: '搜索知识库',
+  docCol: '搜索文档'
+})
+const contentType = ref({
+  doc: documentIcon,
+  sheet: formIcon,
+  mind: mindmapIcon,
+  ppt: pptIcon
+})
 
 watchEffect(() => {
   if (route.meta.asideComponent === 'BookSidebar') {
@@ -32,30 +55,30 @@ watchEffect(() => {
     ]
     tabColumns.value = {
       memberCol: [
-        { prop: 'name', label: '成员名称', width: 200 },
-        { prop: 'name', label: '编辑文档数' },
-        { prop: 'address', label: '编辑次数' },
-        { prop: 'address', label: '获阅读量' },
-        { prop: 'address', label: '获赞数' }
+        { prop: 'creator', label: '成员名称', width: 200 },
+        { prop: 'content_count', label: '文档数' },
+        { prop: 'read_count', label: '阅读数' },
+        { prop: 'comment_count', label: '评论数' },
+        { prop: 'like_count', label: '点赞数' },
+        { prop: 'mark_count', label: '收藏数' }
       ],
       bookCol: [
         { prop: 'name', label: '知识库名称', width: 200 },
-        { prop: 'address', label: '最近更新' },
-        { prop: 'address', label: '字数' },
-        { prop: 'address', label: '文档数' },
-        { prop: 'address', label: '阅读量' },
-        { prop: 'address', label: '点赞量' },
-        { prop: 'address', label: '评论量' }
+        { prop: 'word_count', label: '字数' },
+        { prop: 'content_count', label: '文档数' },
+        { prop: 'read_count', label: '阅读量' },
+        { prop: 'like_count', label: '点赞量' },
+        { prop: 'comment_count', label: '评论量' }
       ],
       docCol: [
-        { prop: 'name', label: '文档名称', width: 200 },
-        { prop: 'address', label: '创建者' },
-        { prop: 'address', label: '创建时间' },
-        { prop: 'address', label: '更新时间' },
-        { prop: 'address', label: '字数' },
-        { prop: 'address', label: '阅读量' },
-        { prop: 'address', label: '评论量' },
-        { prop: 'address', label: '点赞量' }
+        { prop: 'title', label: '文档名称', width: 200 },
+        { prop: 'creator', label: '创建者', width: 120 },
+        { prop: 'create_datetime', label: '创建时间', width: 200 },
+        { prop: 'update_datetime', label: '更新时间', width: 200 },
+        { prop: 'word_count', label: '字数' },
+        { prop: 'read_count', label: '阅读量' },
+        { prop: 'comments_count', label: '评论量' },
+        { prop: 'likes_count', label: '点赞量' }
       ]
     }
     currentTab.value = 'memberCol'
@@ -66,6 +89,7 @@ watchEffect(() => {
 const toChangeTab = (val) => {
   currentTab.value = val
   currentTable.value = tabColumns.value[val]
+  emit('changeTab', val)
 }
 </script>
 
@@ -87,7 +111,7 @@ const toChangeTab = (val) => {
         </span>
       </div>
       <div flex items-center>
-        <el-input class="search" v-model="search" placeholder="搜索成员" clearable>
+        <el-input class="search" v-model="search" :placeholder="searchPlcae[currentTab]" clearable>
           <template #prefix>
             <i-ep-Search />
           </template>
@@ -95,8 +119,16 @@ const toChangeTab = (val) => {
         <el-button class="button" w-60px h-32px rounded-6px cursor-pointer>导出</el-button>
       </div>
     </div>
-    <el-table :data="tableData" stripe empty-text="暂无数据" mt-40px w-full>
-      <el-table-column v-for="(column, index) in currentTable" :key="'tabColumn' + index" :prop="column.prop" :label="column.label" :width="column.width as number || undefined" />
+    <el-table :data="props.tableData" stripe empty-text="暂无数据" mt-40px w-full>
+      <el-table-column v-for="(column, index) in currentTable" :key="'tabColumn' + index" :prop="column.prop" :label="column.label" :width="column.width as number || undefined">
+        <template #default="{ row }">
+          <div flex v-if="column.prop === 'title'">
+            <img w-20px h-20px mr-4px :src="contentType[row.type]" alt="" class="icon" />
+            <span>{{ row.title }}</span>
+          </div>
+          <span v-else>{{ row[column.prop] }}</span>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>

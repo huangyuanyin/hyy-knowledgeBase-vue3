@@ -1,4 +1,13 @@
 <script lang="ts" setup>
+import { BookStatisticsInfo, TeamStatisticsInfo } from '@/type/info'
+
+const props = defineProps({
+  info: {
+    type: Object as PropType<BookStatisticsInfo | TeamStatisticsInfo>,
+    default: () => ({})
+  }
+})
+
 const statisticsList = ref([
   {
     title: '知识财富',
@@ -23,6 +32,27 @@ const statisticsList = ref([
     ]
   }
 ])
+
+watch(
+  () => props.info,
+  (val) => {
+    if (val) {
+      statisticsList.value[0].counts = val.content_count
+      statisticsList.value[0].children[0].value = val.doc_count
+      statisticsList.value[0].children[1].value = val.sheet_count
+      statisticsList.value[0].children[2].value = val.mind_count
+      statisticsList.value[0].children[3].value = val.ppt_count
+      statisticsList.value[0].children[4].value = val.file_count
+      statisticsList.value[1].counts = val.knowledge_cooperate_count || 0
+      statisticsList.value[1].children[0].value = val.write_count
+      statisticsList.value[1].children[1].value = val.read_count
+      statisticsList.value[1].children[2].value = val.comment_count
+      statisticsList.value[1].children[3].value = val.like_count
+      statisticsList.value[1].children[4].value = val.collect_count || 0
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <template>

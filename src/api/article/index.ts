@@ -67,3 +67,7 @@ export function deleteArticleVersionApi(id: Number) {
 export function getCategoryTreeApi(params: CategoryParams) {
   return http.get<ArticleRes>(`/category/`, { params }, 'base')
 }
+
+export function getDocListApi(id: number) {
+  return http.get<ArticleRes>(`articles/${id}/`, {}, 'base')
+}

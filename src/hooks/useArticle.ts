@@ -1,4 +1,4 @@
-import { getArticleTreeApi, getArticleApi, addArticleApi, editArticleApi, deleteArticleApi, getCategoryTreeApi } from '@/api/article'
+import { getArticleTreeApi, getArticleApi, addArticleApi, editArticleApi, deleteArticleApi, getCategoryTreeApi, getDocListApi } from '@/api/article'
 import { sheetData } from '@/components/Excel/data'
 import { useInfoStore } from '@/store/info'
 import { ArticleType, Callback } from '@/type/type'
@@ -56,6 +56,20 @@ export const useArticle = () => {
       articleList.value = res.data as ArticleInfo[]
       infoStore.currentArticleTreeInfo = articleList.value
       currentNodeKey.value = Number(aid)
+      callback && (await callback(res.data))
+    } else {
+      ElMessage.error(res.msg)
+    }
+  }
+
+  /**
+   * 获取文档列表
+   * @param {number} bookId   当前知识库id
+   */
+  const getDocList = async (bookId: number, callback?: Callback) => {
+    let res = await getDocListApi(bookId)
+    if (res.code === 1000) {
+      articleList.value = res.data as ArticleInfo[]
       callback && (await callback(res.data))
     } else {
       ElMessage.error(res.msg)
@@ -280,6 +294,7 @@ export const useArticle = () => {
     currentNodeKey,
     toDeleteArticle,
     getArticleList,
+    getDocList,
     getArticleDetail,
     handleAddArticle,
     handleAddArticleApi,
