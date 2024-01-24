@@ -451,3 +451,10 @@ export const spaceStartBox = [
     url: '/preference'
   }
 ]
+
+export const contentType = ref({
+  doc: documentIcon,
+  sheet: formIcon,
+  mind: mindmapIcon,
+  ppt: pptIcon
+})

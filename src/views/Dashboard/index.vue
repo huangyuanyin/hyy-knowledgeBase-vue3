@@ -3,6 +3,7 @@ import { moduleData, documentsData, moduleAddMenuData } from '@/data/data'
 
 const isShowsLibraryDialog = ref(false)
 const isBookListDialog = ref(false)
+const isShowSelectTemDialog = ref(false)
 const bookListDialogTitle = ref('')
 
 const handleModule = (id: number): void => {
@@ -11,7 +12,7 @@ const handleModule = (id: number): void => {
       isShowsLibraryDialog.value = true
       break
     case 3:
-      ElMessage.warning('功能暂未开放，敬请期待')
+      isShowSelectTemDialog.value = true
       break
     default:
       break
@@ -63,6 +64,7 @@ const toAddArticle = (val: any): void => {
 
   <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
   <BookListDialog :show="isBookListDialog" @closeDialog="isBookListDialog = false" :title="bookListDialogTitle" />
+  <SelectTemDialog :isShow="isShowSelectTemDialog" @closeDialog="isShowSelectTemDialog = false" />
 </template>
 
 <style lang="scss" scoped>

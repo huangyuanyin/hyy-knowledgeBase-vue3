@@ -15,6 +15,8 @@ const libarayList = ref([])
 const cBookList = ref([])
 const isHasPermission = ref(true)
 const teamIcon = ref('')
+const loading = ref(false)
+const isShowPermission = ref(false)
 
 const { isHasPermission: permission, bookList: list, getBookList } = useBook()
 const { commonBookList, getCommonList, findCommonItem } = useCommon()
@@ -23,10 +25,10 @@ watch(
   () => infoStore.currentQuery?.gid,
   async (newVal) => {
     if (newVal) {
+      await getGroupsDetail()
       await getBookStacks()
       await getLibrary()
       await getCommonBookList()
-      await getGroupsDetail()
     }
   }
 )
@@ -42,17 +44,23 @@ watch(
 )
 
 watchEffect(() => {
-  !isHasPermission.value && router.replace('/no-permission')
+  if (!isHasPermission.value) {
+    isShowPermission.value = true
+  } else {
+    isShowPermission.value = false
+  }
 })
 
 // 获取当前组织空间下当前团队的知识库分组列表
 const getBookStacks = async () => {
+  loading.value = true
   const params = {
     space: infoStore.currentQuery?.sid,
     group: infoStore.currentQuery?.gid
   }
   let res = await getBookStacksApi(params)
   if (res.code === 1000) {
+    loading.value = false
     bookGroup.value = res.data as unknown as BookGroup[]
   } else {
     ElMessage.error(res.msg)
@@ -91,15 +99,15 @@ const updateBulletin = () => {
 }
 
 onMounted(async () => {
+  await getGroupsDetail()
   await getBookStacks()
   await getLibrary()
   await getCommonBookList()
-  await getGroupsDetail()
 })
 </script>
 
 <template>
-  <div class="Book_wrap">
+  <div class="Book_wrap" v-if="!isShowPermission">
     <TeamHeader :icon="teamIcon" />
     <Announcement :info="teamInfo" @update="updateBulletin" type="team" />
     <SwitchModuleItem moduleType="operation" @getBookStacks="getBookStacks">
@@ -113,6 +121,7 @@ onMounted(async () => {
     </div>
     <LibraryTable title="知识库" :commonList="cBookList" :group="bookGroup" @getBookStacks="getBookStacks" />
   </div>
+  <NoPermission v-else type="team" />
 </template>
 
 <style lang="scss" scoped>

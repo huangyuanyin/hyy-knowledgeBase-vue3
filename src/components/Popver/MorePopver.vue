@@ -23,8 +23,8 @@ const toHandle = (item) => {
   morePopverRef.value && morePopverRef.value.hide()
   if (item.nick === 'toRecycle') {
     const query = {
-      sid: infoStore.currentQuery.sid,
-      sname: infoStore.currentQuery.sname
+      sid: infoStore.currentQuery?.sid,
+      sname: infoStore.currentQuery?.sname
     }
     router.push({
       path: infoStore.currentSpaceType === '个人' ? '/recycles' : `/${spaceName.value}/recycles`,

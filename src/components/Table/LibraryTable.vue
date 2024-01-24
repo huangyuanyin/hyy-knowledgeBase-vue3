@@ -80,23 +80,25 @@ watch(
   () => props.group,
   async (newVal) => {
     if (newVal.length) {
-      await Promise.all(
-        props.group.map(async (item) => {
-          const library = await getLibrary(item.id)
-          item.library = library
-          item.library.map((it) => {
-            it.is_common_id = null
-            props.commonList.map((val: any) => {
-              if (it.id === Number(val.target_id)) {
-                it.is_common_id = val.id
-              }
+      nextTick(async () => {
+        await Promise.all(
+          props.group.map(async (item) => {
+            const library = await getLibrary(item.id)
+            item.library = library
+            item.library.map((it) => {
+              it.is_common_id = null
+              props.commonList.map((val: any) => {
+                if (it.id === Number(val.target_id)) {
+                  it.is_common_id = val.id
+                }
+              })
             })
           })
+        )
+        processedGroup.value = props.group
+        processedGroup.value.map((item) => {
+          item.is_editing = false
         })
-      )
-      processedGroup.value = props.group
-      processedGroup.value.map((item) => {
-        item.is_editing = false
       })
     }
   },

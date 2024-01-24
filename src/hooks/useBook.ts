@@ -53,7 +53,7 @@ export const useBook = () => {
       bookList.value = res.data as any
       callback && (await callback(res))
     } else {
-      ElMessage.error(res.msg)
+      res.code !== 1003 && ElMessage.error(res.msg)
     }
   }
 

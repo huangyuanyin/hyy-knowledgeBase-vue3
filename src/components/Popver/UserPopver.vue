@@ -7,6 +7,8 @@ const toExit = () => {
   localStorage.removeItem('token')
   localStorage.removeItem('personalSpaceInfo')
   localStorage.removeItem('personalGroupId')
+  localStorage.removeItem('tinymce-autosavetime')
+  localStorage.removeItem('tinymce-autosavedraft')
   localStorage.setItem('isAuth', 'false')
   sessionStorage.clear()
   router.push('/login')

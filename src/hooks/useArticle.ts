@@ -59,7 +59,7 @@ export const useArticle = () => {
       currentNodeKey.value = Number(aid)
       callback && (await callback(res.data))
     } else {
-      ElMessage.error(res.msg)
+      res.code !== 1003 && ElMessage.error(res.msg)
     }
   }
 
@@ -116,6 +116,7 @@ export const useArticle = () => {
       default:
         break
     }
+    console.log(`output->book`, book, title, articleType[title])
     handleAddArticleApi(book, articleType[title], parent, callback)
   }
 
@@ -127,6 +128,7 @@ export const useArticle = () => {
    * @param {Function} callback 回调函数
    */
   const handleAddArticleApi = async (book, article, parent: number | null, callback: Callback) => {
+    console.log(`output->`, article)
     const params = {
       title: article.title,
       type: article.type,
@@ -293,6 +295,7 @@ export const useArticle = () => {
     articleType,
     articleList,
     currentNodeKey,
+    isHasPermission,
     toDeleteArticle,
     getArticleList,
     getDocList,

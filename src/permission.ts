@@ -30,7 +30,7 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
       ...to.meta,
       encrypt: encryptString
     }
-    router.replace({
+    router.push({
       path: to.path,
       query: {
         query: encryptString

@@ -30,7 +30,7 @@ const list = ref<any[]>([
     label: '搜索范围：空间',
     children: [
       {
-        id: infoStore.currentSpaceInfo.id || JSON.parse(localStorage.getItem('personalSpaceInfo')).id,
+        id: null,
         name: '当前空间',
         type: 'organization',
         icon: infoStore.currentSpaceInfo.icon || 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('personalSpaceInfo')).icon
@@ -58,6 +58,7 @@ watch(
   (newVal: boolean) => {
     visible.value = newVal
     if (newVal) {
+      list.value[0].children[0].id = infoStore.currentSpaceInfo.id || JSON.parse(localStorage.getItem('personalSpaceInfo')).id
       const { spaceIcon } = useData()
       if (route.path.includes('/search')) {
         value.value = infoStore.currentQuery.q ? (infoStore.currentQuery.q as string) : ''

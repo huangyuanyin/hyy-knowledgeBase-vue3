@@ -25,7 +25,7 @@ const parentId = ref(null) // 父级节点id
 const reName = ref('')
 const reNameId = ref(null)
 const reNameParent = ref(null)
-const isHasPermissionCode = ref(null)
+const hasPermission = ref(true)
 const defaultProps = {
   class: 'forumList'
 } as unknown as TreeOptionProps
@@ -35,10 +35,6 @@ const { sid = '', sname = '', gid = '', gname = '', lid = '', lname = '' } = inf
 
 watchEffect(() => {
   currentNodeKey.value = Number(infoStore.currentQuery?.aid)
-  if (isHasPermissionCode.value === 1003) {
-    isHasPermissionCode.value = null
-    router.replace('/no-permission')
-  }
   if (refreshStroe.isRefreshBookList) {
     nextTick(() => {
       handleArticleList()
@@ -83,6 +79,19 @@ watch(
   }
 )
 
+watch(
+  () => hasPermission.value,
+  (newVal) => {
+    if (!newVal) {
+      hasPermission.value = true
+      router.replace('/no-permission')
+    }
+  },
+  {
+    immediate: true
+  }
+)
+
 function getBookInfo() {
   return {
     id: lid,
@@ -98,8 +107,9 @@ function handleAddArticle(title: string, data?) {
 }
 
 async function handleArticleList() {
-  const { articleList, currentNodeKey: node, getArticleList } = useArticle()
+  const { articleList, currentNodeKey: node, isHasPermission, getArticleList } = useArticle()
   await getArticleList(Number(lid))
+  hasPermission.value = isHasPermission.value
   infoStore.currentArticleTreeInfo = articleList.value
   currentNodeKey.value = node.value
 }

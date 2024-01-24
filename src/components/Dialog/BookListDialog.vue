@@ -9,9 +9,13 @@ const props = defineProps({
   title: {
     type: String,
     default: ''
+  },
+  type: {
+    type: String,
+    default: ''
   }
 })
-const emit = defineEmits(['closeDialog'])
+const emit = defineEmits(['closeDialog', 'toAddArticle'])
 
 const visible = ref(false)
 const bookList = ref([])
@@ -36,17 +40,21 @@ const getMineBook = async () => {
 }
 
 const toAddArticle = async (val) => {
-  const params = {
-    book: val,
-    title: props.title
-  }
-  useArticle().handleAddArticle(params, () => {
-    ElMessage.success({
-      message: '新建成功，正在跳转...',
-      duration: 1000
+  if (props.type === 'template') {
+    return emit('toAddArticle', val)
+  } else {
+    const params = {
+      book: val,
+      title: props.title
+    }
+    useArticle().handleAddArticle(params, () => {
+      ElMessage.success({
+        message: '新建成功，正在跳转...',
+        duration: 1000
+      })
+      closeDialog()
     })
-    closeDialog()
-  })
+  }
 }
 
 const closeDialog = () => {
@@ -59,7 +67,7 @@ const closeDialog = () => {
   <el-dialog class="BookListDialog" v-model="visible" width="520px" @close="closeDialog">
     <template #header="{ titleId, titleClass }">
       <div class="header">
-        <h4 class="text-16px line-24px text-#000" :id="titleId" :class="titleClass">新建{{ props.title }}</h4>
+        <h4 class="text-16px line-24px text-#000" :id="titleId" :class="titleClass">{{ props.title === '从模板新建' ? '' : '新建' }}{{ props.title }}</h4>
       </div>
     </template>
     <p class="mb-8px font-normal text-#8a8f8d text-14px">选择一个知识库</p>
@@ -95,8 +103,11 @@ const closeDialog = () => {
   border-radius: 8px;
   padding: 24px;
   box-sizing: border-box;
+  .el-dialog__header {
+    border-bottom: none;
+  }
   .el-dialog__body {
-    padding: 0px;
+    padding: 0px !important;
   }
   .el-dialog__header {
     padding: 0px;

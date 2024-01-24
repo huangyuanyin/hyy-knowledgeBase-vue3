@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import commonUseIcon from '@/assets/icons/commonUseIcon.svg'
+import settingIcon from '@/assets/icons/team/settingIcon.svg'
+import editIcon from '@/assets/icons/team/editIcon.svg'
 import { commonLibraryData } from '@/data/data'
 import { deleteQuickLinksApi } from '@/api/quickLinks'
 import { getTeamMemberApi } from '@/api/member'
@@ -36,10 +39,10 @@ const deleteInfo = ref<{
   stack?: string
 }>({})
 const commonTeamData = [
-  { type: 'item', icon: '/src/assets/icons/commonUseIcon.svg', label: '移除常用', nick: 'removeCommon' },
+  { type: 'item', icon: commonUseIcon, label: '移除常用', nick: 'removeCommon' },
   { type: 'divider' },
-  { type: 'item', icon: '/src/assets/icons/team/settingIcon.svg', label: '团队设置', nick: 'toTeamSetting' },
-  { type: 'item', icon: '/src/assets/icons/team/editIcon.svg', label: '退出团队', nick: 'toQuitTeam' }
+  { type: 'item', icon: settingIcon, label: '团队设置', nick: 'toTeamSetting' },
+  { type: 'item', icon: editIcon, label: '退出团队', nick: 'toQuitTeam' }
 ]
 
 // 删除知识库

@@ -44,6 +44,7 @@ const spaceReverse = ref([
     list: []
   }
 ])
+const loading = ref(false)
 
 const initData = () => {
   if (infoStore.currentSidebar === 'SpaceSidebar') {
@@ -58,10 +59,12 @@ const toShow = async () => {
 
 // 获取当前用户下所能访问的空间
 const getSpaces = async () => {
+  loading.value = true
   const params = {
     permusername: user
   }
   let res = await getSpacesApi(params)
+  loading.value = false
   if (res.code === 1000) {
     spacesList.value = res.data as any
     spaces.value[0].list = res.data.filter((item) => item.spacetype === 'personal')
@@ -125,37 +128,41 @@ const toLink = (type, val?) => {
     </template>
     <div class="changeSpac_Wrap">
       <template v-if="props.currentSider === 'Sidebar'">
-        <div v-for="(item, index) in spaces" :key="'spaces' + index">
-          <div class="space_wrap">
-            <h4>{{ item.type === 'personal' ? '个人' : '空间' }}</h4>
-            <div class="menuItem_wrap">
-              <div class="menuItem" v-for="space in item.list" :key="space.id" @click="toLink(item.type, item.type === 'personal' ? null : space)">
-                <div class="left">
-                  <div class="img">
-                    <img v-if="item.type === 'personal'" :src="avatar" />
-                    <img class="spaceIcon" v-else :src="space.icon || '/src/assets/icons/spaceIcon.svg'" alt="" />
+        <template v-if="!loading">
+          <div v-for="(item, index) in spaces" :key="'spaces' + index">
+            <div class="space_wrap">
+              <h4>{{ item.type === 'personal' ? '个人' : '空间' }}</h4>
+              <div class="menuItem_wrap">
+                <div class="menuItem" v-for="space in item.list" :key="space.id" @click="toLink(item.type, item.type === 'personal' ? null : space)">
+                  <div class="left">
+                    <div class="img">
+                      <img v-if="item.type === 'personal'" :src="avatar" />
+                      <img class="spaceIcon" v-else :src="space.icon || '/src/assets/icons/spaceIcon.svg'" alt="" />
+                    </div>
+                    <div class="content">
+                      <p>{{ space.spacename }}</p>
+                      <p class="tag" v-if="item.type === 'personal'">我自己</p>
+                      <p class="member" v-else>{{ space.member_count + 1 || 1 }}成员</p>
+                    </div>
                   </div>
-                  <div class="content">
-                    <p>{{ space.spacename }}</p>
-                    <p class="tag" v-if="item.type === 'personal'">我自己</p>
-                    <p class="member" v-else>{{ space.member_count + 1 || 1 }}成员</p>
+                  <div class="right" v-if="item.type === 'personal'">
+                    <img src="@/assets/icons/selectIcon.svg" alt="" />
                   </div>
-                </div>
-                <div class="right" v-if="item.type === 'personal'">
-                  <img src="@/assets/icons/selectIcon.svg" alt="" />
                 </div>
               </div>
-            </div>
-            <div class="menuItem" @click="isShowsSpaceDialog = true" v-if="item.type === 'organize'">
-              <div class="left">
-                <img class="addIcon" src="@/assets/icons/addIcon2.svg" alt="" />
-                <div class="content">
-                  <span>创建空间</span>
+              <div class="menuItem" @click="isShowsSpaceDialog = true" v-if="item.type === 'organize'">
+                <div class="left">
+                  <img class="addIcon" src="@/assets/icons/addIcon2.svg" alt="" />
+                  <div class="content">
+                    <span>创建空间</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </template>
+
+        <Loading v-else />
       </template>
       <template v-if="props.currentSider === 'SpaceSidebar'">
         <div class="card">
@@ -203,37 +210,40 @@ const toLink = (type, val?) => {
             <div class="divider"></div>
           </div>
         </div>
-        <div v-for="(item, index) in spaceReverse" :key="'spaces' + index">
-          <div class="space_wrap">
-            <h4>{{ item.type === 'personal' ? '个人' : '空间' }}</h4>
-            <div class="menuItem_wrap" :style="{ 'max-height': infoStore.isSpaceAdmin == 'true' ? '312px' : '364px' }">
-              <div class="menuItem" v-for="space in item.list" :key="space.id" @click="toLink(item.type, item.type === 'personal' ? null : space)">
-                <div class="left">
-                  <div class="img">
-                    <img v-if="item.type === 'personal'" :src="avatar" />
-                    <img class="spaceIcon" v-else :src="space.icon || '/src/assets/icons/spaceIcon.svg'" alt="" />
+        <template v-if="!loading">
+          <div v-for="(item, index) in spaceReverse" :key="'spaces' + index">
+            <div class="space_wrap">
+              <h4>{{ item.type === 'personal' ? '个人' : '空间' }}</h4>
+              <div class="menuItem_wrap" :style="{ 'max-height': infoStore.isSpaceAdmin == 'true' ? '312px' : '364px' }">
+                <div class="menuItem" v-for="space in item.list" :key="space.id" @click="toLink(item.type, item.type === 'personal' ? null : space)">
+                  <div class="left">
+                    <div class="img">
+                      <img v-if="item.type === 'personal'" :src="avatar" />
+                      <img class="spaceIcon" v-else :src="space.icon || '/src/assets/icons/spaceIcon.svg'" alt="" />
+                    </div>
+                    <div class="content">
+                      <p>{{ space.spacename }}</p>
+                      <p class="tag" v-if="item.type === 'personal'">我自己</p>
+                      <p class="member" v-else>{{ space.member_count + 1 || 1 }}成员</p>
+                    </div>
                   </div>
-                  <div class="content">
-                    <p>{{ space.spacename }}</p>
-                    <p class="tag" v-if="item.type === 'personal'">我自己</p>
-                    <p class="member" v-else>{{ space.member_count + 1 || 1 }}成员</p>
+                  <div class="right" v-if="infoStore.currentQuery?.sid == space.id">
+                    <img src="@/assets/icons/selectIcon.svg" alt="" />
                   </div>
-                </div>
-                <div class="right" v-if="infoStore.currentQuery?.sid == space.id">
-                  <img src="@/assets/icons/selectIcon.svg" alt="" />
                 </div>
               </div>
-            </div>
-            <div class="menuItem" @click="isShowsSpaceDialog = true" v-if="item.type === 'organize'">
-              <div class="left">
-                <img class="addIcon" src="@/assets/icons/addIcon2.svg" alt="" />
-                <div class="content">
-                  <span>创建空间</span>
+              <div class="menuItem" @click="isShowsSpaceDialog = true" v-if="item.type === 'organize'">
+                <div class="left">
+                  <img class="addIcon" src="@/assets/icons/addIcon2.svg" alt="" />
+                  <div class="content">
+                    <span>创建空间</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </template>
+        <Loading v-else />
       </template>
     </div>
   </el-popover>
