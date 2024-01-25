@@ -458,3 +458,6 @@ export const contentType = ref({
   mind: mindmapIcon,
   ppt: pptIcon
 })
+
+export const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
+export const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''

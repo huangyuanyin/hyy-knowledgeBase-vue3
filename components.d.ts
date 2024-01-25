@@ -88,6 +88,7 @@ declare module 'vue' {
     MorePopver: typeof import('./src/components/Popver/MorePopver.vue')['default']
     NoPermission: typeof import('./src/components/NoPermission.vue')['default']
     OrganizeSidebar: typeof import('./src/components/Sidebar/OrganizeSidebar.vue')['default']
+    PasswordDialog: typeof import('./src/components/Dialog/PasswordDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SaveHistoryVersionDialog: typeof import('./src/components/Dialog/SaveHistoryVersionDialog.vue')['default']
@@ -115,6 +116,7 @@ declare module 'vue' {
     TinyMCE: typeof import('./src/components/Doc/TinyMCE.vue')['default']
     Tiptap: typeof import('./src/components/Tiptap.vue')['default']
     UserPopver: typeof import('./src/components/Popver/UserPopver.vue')['default']
+    UserSidebar: typeof import('./src/components/Sidebar/UserSidebar.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

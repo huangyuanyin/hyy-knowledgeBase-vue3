@@ -1,4 +1,5 @@
 import { ArticleInfo } from '@/type/article'
+import { UserInfo } from '@/type/user'
 interface SpaceInfo {
   id: number
   spacename: string
@@ -28,7 +29,7 @@ interface BookInfo {
 }
 
 export const useInfoStore = defineStore('info', () => {
-  const personalSpaceId = ref(JSON.parse(localStorage.getItem('personalSpaceId')) || null)
+  const personalSpaceId = ref(JSON.parse(localStorage.getItem('personalSpaceId')) || null) // 个人空间id
   const currentSidebar = ref<string>(sessionStorage.getItem('xinAn-sidebar') || '') // 当前侧边栏类型
   const currentSpaceType = ref<string>('') // 当前空间类型
   const currentTeamInfo = ref(JSON.parse(sessionStorage.getItem('xinAn-teamInfo') || '{}')) // 当前团队信息
@@ -39,6 +40,7 @@ export const useInfoStore = defineStore('info', () => {
   const isSpaceAdmin = ref<string>(sessionStorage.getItem('xinAn-spaceAdmin')) // 是否是当前空间管理员
   const currentMenu = ref<string>('') // 当前菜单名称
   const currentQuery = ref<any>(JSON.parse(sessionStorage.getItem('xinAn-currentQuery'))) // 当前路由参数
+  const userInfo = ref<UserInfo>({}) // 用户信息
 
   const setPersonalSpaceId = (val: number) => {
     personalSpaceId.value = val
@@ -91,6 +93,10 @@ export const useInfoStore = defineStore('info', () => {
     sessionStorage.setItem('xinAn-currentQuery', JSON.stringify(val))
   }
 
+  const setUserInfo = (val: UserInfo) => {
+    userInfo.value = val
+  }
+
   return {
     personalSpaceId,
     setPersonalSpaceId,
@@ -123,6 +129,9 @@ export const useInfoStore = defineStore('info', () => {
     setIsSpaceAdmin,
 
     currentQuery,
-    setCurrentQuery
+    setCurrentQuery,
+
+    userInfo,
+    setUserInfo
   }
 })

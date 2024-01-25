@@ -423,6 +423,56 @@ const customRoutes = [
       menu: 'search',
       asideComponent: 'SpaceSidebar'
     }
+  },
+  {
+    path: '/:spaceName?/user/profile',
+    name: 'Profile',
+    component: pageComps['/src/views/User/Profile/index.vue'] as Component,
+    meta: {
+      title: '个人中心·个人信息',
+      menu: 'profile',
+      asideComponent: 'UserSidebar'
+    }
+  },
+  {
+    path: '/:spaceName?/user/safety',
+    name: 'Safety',
+    component: pageComps['/src/views/User/Safety/index.vue'] as Component,
+    meta: {
+      title: '个人中心·安全日志',
+      menu: 'safety',
+      asideComponent: 'UserSidebar'
+    }
+  },
+  {
+    path: '/:spaceName?/user/account',
+    name: 'Account',
+    component: pageComps['/src/views/User/Account/index.vue'] as Component,
+    meta: {
+      title: '个人中心·账户管理',
+      menu: 'account',
+      asideComponent: 'UserSidebar'
+    }
+  },
+  {
+    path: '/:spaceName?/user/stats',
+    name: 'Stats',
+    component: pageComps['/src/views/User/Stats/index.vue'] as Component,
+    meta: {
+      title: '个人中心·数据统计',
+      menu: 'stats',
+      asideComponent: 'UserSidebar'
+    }
+  },
+  {
+    path: '/:spaceName?/user/grains',
+    name: 'Grains',
+    component: pageComps['/src/views/User/Grains/index.vue'] as Component,
+    meta: {
+      title: '个人中心·安币',
+      menu: 'grains',
+      asideComponent: 'UserSidebar'
+    }
   }
 ]
 

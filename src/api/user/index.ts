@@ -1,4 +1,5 @@
 import { LoginParams, LoginRes } from './type'
+import { PasswordInfo, UserInfo } from '@/type/user'
 
 export function loginApi(data: LoginParams) {
   return http.post<LoginRes>('oauth/login/', data, 'login')
@@ -17,5 +18,13 @@ export function selectUserInfoApi(data) {
 }
 
 export function getUserApi(params?: any) {
-  return http.get('http://10.4.150.56:8032/oauth/user/', { params }, 'user')
+  return http.get('oauth/user/', { params }, 'login')
+}
+
+export function editUserApi(id: number, data: UserInfo) {
+  return http.put(`oauth/user_info/${id}/`, data, 'login')
+}
+
+export function editPasswordApi(id: number, data: PasswordInfo) {
+  return http.put(`oauth/change_password/${id}/`, data, 'login')
 }

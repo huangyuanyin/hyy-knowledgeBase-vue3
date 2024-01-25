@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
-const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
+import { avatar, nickname } from '@/data/data'
+
+const infoStore = useInfoStore()
 
 const toExit = () => {
   localStorage.removeItem('userInfo')
@@ -14,12 +15,20 @@ const toExit = () => {
   router.push('/login')
 }
 
-const toSetting = () => {
-  ElMessage.warning('功能暂未开放，敬请期待')
-}
-
-const toUserInfo = () => {
-  ElMessage.warning('功能暂未开放，敬请期待')
+const toLink = (type: string) => {
+  const basePath = infoStore.currentSpaceType === '个人' ? '' : `/${infoStore.currentSpaceInfo.spacekey}`
+  const stype = infoStore.currentSpaceType === '个人' ? 'personal' : 'organize'
+  const query = {
+    sid: infoStore.currentSpaceInfo.id,
+    sname: infoStore.currentSpaceInfo.spacename,
+    stype
+  }
+  router.push({
+    path: `${basePath}/user/${type}`,
+    query: {
+      ...query
+    }
+  })
 }
 </script>
 
@@ -42,13 +51,13 @@ const toUserInfo = () => {
             </div>
           </li>
           <li class="sidebar-top-right-userPopver-content-list-line"></li>
-          <li class="sidebar-top-right-userPopver-content-list-item" @click="toUserInfo">
+          <li class="sidebar-top-right-userPopver-content-list-item" @click="toLink('profile')">
             <div class="sidebar-top-right-userPopver-content-list-item-li">
               <svg-icon iconName="icon-gerenzhongxin" className="gerenzhongxin_svg"></svg-icon>
               <span>个人中心</span>
             </div>
           </li>
-          <li class="sidebar-top-right-userPopver-content-list-item" @click="toSetting">
+          <li class="sidebar-top-right-userPopver-content-list-item" @click="toLink('account')">
             <div class="sidebar-top-right-userPopver-content-list-item-li">
               <svg-icon iconName="icon-shezhi" className="shezhi_svg"></svg-icon>
               <span>账户设置</span>

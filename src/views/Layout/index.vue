@@ -65,6 +65,10 @@ const asideComponentWidth = {
   BookSidebar: {
     with: '256px',
     padding: '48px 52px !important'
+  },
+  UserSidebar: {
+    with: '256px',
+    padding: '48px 52px !important'
   }
 }
 const sidebarWidth = ref('')
