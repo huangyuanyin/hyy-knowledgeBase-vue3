@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { copyArticleApi, getArticleTreeApi, moveArticleApi } from '@/api/article'
 import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
+import publicIcon from '@/assets/icons/library/publicIcon.svg'
 
 const props = defineProps({
   show: {
@@ -225,12 +226,13 @@ const getBook = async () => {
       <div class="select" v-if="props.title !== '恢复文档'">
         <el-select v-model="teamId" placement="bottom-start" popper-class="selectList" @change="toChange('team')">
           <template #prefix>
-            <img v-if="selectTeamName === '公共区'" class="prefix-icon" src="/src/assets/icons/library/publicIcon.svg" />
+            <img v-if="selectTeamName === '公共区'" class="prefix-icon" :src="publicIcon" />
             <img v-else class="prefix-icon" src="/src/assets/icons/teamIcon.svg" />
           </template>
           <el-option v-for="(item, index) in teamList" :key="'teamList' + index" :label="item.groupname" :value="item.id">
             <div style="display: flex; align-items: center">
-              <img class="icon" :src="item.icon || item.is_default === '1' ? '/src/assets/icons/library/publicIcon.svg' : '/src/assets/icons/teamIcon.svg'" alt="" />
+              <img class="icon" :src="publicIcon" alt="" v-if="item.is_default === '1'" />
+              <img class="icon" :src="item.icon" alt="" v-else />
               <span>{{ item.groupname }}</span>
             </div>
             <img v-if="item.id === teamId" class="selectIcon" src="@/assets/icons/selectIcon.svg" />

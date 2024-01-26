@@ -82,7 +82,6 @@ const toCopyLink = (val) => {
 
 // 复制 || 移动
 const toHandleArticle = (type, val) => {
-  console.log(`output->121`, 121)
   handleData.value = val
   showHandleArticleDialog.value = true
   if (type === 'move') {

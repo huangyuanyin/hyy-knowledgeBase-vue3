@@ -35,7 +35,7 @@ const operaList = ref([
   },
   {
     label: '允许空间内搜索',
-    value: '关闭',
+    value: '开启',
     icon: shareIcon3
   },
   {
