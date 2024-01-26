@@ -41,8 +41,8 @@ const addOperation = [
 ]
 
 watchEffect(() => {
-  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : infoStore.currentQuery.sid
-  groupId.value = infoStore.currentSpaceType === '个人' ? localStorage.getItem('personalGroupId') : infoStore.currentQuery.gid
+  spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : infoStore.currentQuery?.sid
+  groupId.value = infoStore.currentSpaceType === '个人' ? localStorage.getItem('personalGroupId') : infoStore.currentQuery?.gid
 })
 
 const changeType = (type: string) => {

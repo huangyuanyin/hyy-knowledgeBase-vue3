@@ -13,6 +13,10 @@ export function getDepartUserApi(params?: any) {
   return http.get('system/dept_user/', { params }, 'login')
 }
 
+export function getPostApi(params?: any) {
+  return http.get('system/post/', { params }, 'login')
+}
+
 export function selectUserInfoApi(data) {
   return http.post('user/select_UserInfo/', data, 'user')
 }

@@ -12,8 +12,7 @@ const userForm = reactive<UserInfo>({
   username: '',
   description: '',
   dept: userInfo.dept,
-  post: userInfo.post,
-  role: userInfo.role
+  post: userInfo.post
 })
 const rules = reactive<FormRules<UserInfo>>({
   nickname: [
@@ -21,28 +20,51 @@ const rules = reactive<FormRules<UserInfo>>({
     { min: 2, max: 10, message: '请输入昵称，长度在 2-10 之间', trigger: 'blur' }
   ]
 })
+const deptList = ref([])
+const postList = ref([])
+
+const { deptList: dlist, postList: plist, getDepartments, getPost } = useUser()
 
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid) => {
     if (valid) {
-      delete userForm.dept && delete userForm.post && delete userForm.avatar
-      useUser().editUserInfo(userInfo.userId, userForm)
+      delete userForm.avatar
+      const params = {
+        name: userForm.name,
+        nickname: userForm.nickname,
+        username: userForm.username,
+        post: userForm.post,
+        dept: userForm.dept
+      }
+      useUser().editUserInfo(userInfo.userId, params)
     }
   })
 }
 
-onMounted(() => {
-  useUser().getUserInfo(userInfo.username, (res: UserInfo) => {
+const handleChange = (val: any, type) => {
+  if (type === 'dept') {
+    userForm.dept = val[val.length - 1]
+  } else {
+    userForm.post = val[val.length - 1]
+  }
+}
+
+onMounted(async () => {
+  await useUser().getUserInfo(userInfo.username, (res: UserInfo) => {
     if (Reflect.ownKeys(res).length) {
       userForm.avatar = 'http://10.4.150.56:8032/' + res.avatar
       userForm.name = res.name
       userForm.nickname = res.nickname
       userForm.username = res.username
-      // userForm.dept = res.dept
-      // userForm.post = res.post[0]
+      userForm.dept = res.dept
+      userForm.post = res.post[0]
     }
   })
+  await getDepartments()
+  await getPost()
+  deptList.value = dlist.value
+  postList.value = plist.value
 })
 </script>
 
@@ -64,10 +86,36 @@ onMounted(() => {
         </el-form-item>
         <div flex w-full justify-between>
           <el-form-item label="部门" flex-1 mr-20px>
-            <el-input disabled v-model="userForm.dept" placeholder="必填" />
+            <el-cascader
+              v-model="userForm.dept"
+              :options="deptList"
+              :props="{
+                value: 'id',
+                label: 'name'
+              }"
+              @change="handleChange($event, 'dept')"
+              placeholder="请选择部门"
+            >
+              <template #default="{ data }">
+                <span>{{ data.name }}</span>
+              </template>
+            </el-cascader>
           </el-form-item>
           <el-form-item label="职位" flex-1 ml-20px>
-            <el-input disabled v-model="userForm.post" placeholder="必填" />
+            <el-cascader
+              v-model="userForm.post"
+              :options="postList"
+              :props="{
+                value: 'id',
+                label: 'name'
+              }"
+              @change="handleChange($event, 'post')"
+              placeholder="请选择职位"
+            >
+              <template #default="{ data }">
+                <span>{{ data.name }}</span>
+              </template>
+            </el-cascader>
           </el-form-item>
         </div>
         <el-form-item>

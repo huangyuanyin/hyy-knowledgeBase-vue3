@@ -13,7 +13,7 @@ const account = ref([
   {
     type: 'email',
     text: '邮箱',
-    value: '已设置'
+    value: `已绑定`
   },
   {
     type: 'password',

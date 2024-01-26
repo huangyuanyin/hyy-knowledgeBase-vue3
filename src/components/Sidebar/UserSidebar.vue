@@ -9,8 +9,9 @@ import favicon from '@/assets/favicon.ico'
 
 const route = useRoute()
 const infoStore = useInfoStore()
-const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
-const avatar = 'http://10.4.150.56:8032/' + userInfo.avatar
+const refreshStroe = useRefreshStore()
+const userInfo = ref(JSON.parse(localStorage.getItem('userInfo')) || {})
+const avatar = 'http://10.4.150.56:8032/' + userInfo.value.avatar
 const icon = ref(favicon)
 const menuList = [
   {
@@ -35,6 +36,11 @@ watchEffect(() => {
     icon.value = JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).icon
   } else {
     icon.value = favicon
+  }
+  if (refreshStroe.isRefreshUserInfo) {
+    userInfo.value = JSON.parse(localStorage.getItem('userInfo') || '{}')
+    console.log(`output->`, userInfo.value)
+    refreshStroe.setRefreshUserInfo(false)
   }
 })
 

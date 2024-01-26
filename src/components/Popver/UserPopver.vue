@@ -1,7 +1,15 @@
 <script lang="ts" setup>
-import { avatar, nickname } from '@/data/data'
-
 const infoStore = useInfoStore()
+const UserPopverRef = ref(null)
+const avatar = ref('')
+const nickname = ref('')
+
+watchEffect(() => {
+  if (UserPopverRef.value) {
+    nickname.value = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
+    avatar.value = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg'
+  }
+})
 
 const toExit = () => {
   localStorage.removeItem('userInfo')
@@ -12,10 +20,12 @@ const toExit = () => {
   localStorage.removeItem('tinymce-autosavedraft')
   localStorage.setItem('isAuth', 'false')
   sessionStorage.clear()
+  UserPopverRef.value && UserPopverRef.value.hide()
   router.push('/login')
 }
 
 const toLink = (type: string) => {
+  UserPopverRef.value && UserPopverRef.value.hide()
   const basePath = infoStore.currentSpaceType === '个人' ? '' : `/${infoStore.currentSpaceInfo.spacekey}`
   const stype = infoStore.currentSpaceType === '个人' ? 'personal' : 'organize'
   const query = {
@@ -33,7 +43,7 @@ const toLink = (type: string) => {
 </script>
 
 <template>
-  <el-popover popper-class="userPopver" placement="bottom-start" :width="305" :hide-after="100" :show-arrow="false" trigger="hover">
+  <el-popover ref="UserPopverRef" popper-class="userPopver" placement="bottom-start" :width="305" :hide-after="100" :show-arrow="false" trigger="hover">
     <template #reference>
       <slot>
         <span class="sidebar-top-right-headimg">
