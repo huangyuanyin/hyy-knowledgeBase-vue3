@@ -100,7 +100,8 @@ const getSpacepermissions = async () => {
   if (res.code === 1000) {
     memberList.value = res.data.filter((item) => {
       return !props.selectMember.some((item2: any) => {
-        return item2.username === item.permusername || item2 === item.permusername
+        console.log(`output->prtop`, props.selectMember)
+        return item2.username === item.permusername
       })
     })
   } else {
@@ -196,7 +197,7 @@ const getSpacepermissions = async () => {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      max-width: 100px;
+      max-width: 150px;
       font-size: 12px;
       color: #8a8f8d;
     }

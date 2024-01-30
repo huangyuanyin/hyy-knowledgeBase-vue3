@@ -3,6 +3,7 @@ import spaceIcon2 from '@/assets/icons/spaceIcon.svg'
 import type { FormInstance, FormRules } from 'element-plus'
 import { addSpaceApi } from '@/api/spaces'
 import { spaceIcon } from '@/data/iconBase64'
+import { alphanumericRegex } from '@/data/data'
 
 interface SpaceForm {
   icon: string
@@ -35,7 +36,8 @@ const spaceFormRef = ref<FormInstance>()
 const spaceFormRules = reactive<FormRules<SpaceForm>>({
   spacekey: [
     { required: true, message: '请输入空间别名', trigger: 'blur' },
-    { min: 4, max: 20, message: '空间别名长度在 4-20 之间', trigger: 'blur' }
+    { min: 4, max: 20, message: '空间别名长度在 4-20 之间', trigger: 'blur' },
+    { pattern: alphanumericRegex, message: '只能输入数字和英文字母', trigger: 'blur' }
   ]
 })
 

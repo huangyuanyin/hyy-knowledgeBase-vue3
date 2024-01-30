@@ -26,7 +26,7 @@ export const useUser = () => {
         // avatar: res.data.avatar,
         nickname: res.data[0].nickname,
         dept: res.data[0].dept_name,
-        post: res.data[0].post[0]
+        post: res.data[0].post_name
       }
       userStore.setUserInfo(userInfo)
       infoStore.setUserInfo(res.data[0])

@@ -228,7 +228,7 @@ const changeIcon = (val: string) => {
         </div>
       </el-form-item>
       <el-form-item label="" class="form-description" prop="description">
-        <el-input v-model="libraryForm.description" type="textarea" :autosize="{ minRows: 4 }" placeholder="知识库简介（选填）" />
+        <el-input v-model="libraryForm.description" type="textarea" maxlength="150" show-word-limit :autosize="{ minRows: 4 }" placeholder="知识库简介（选填）" />
       </el-form-item>
       <el-form-item label="新建至" v-if="infoStore.currentSidebar === 'Sidebar'">
         <el-select v-model="libraryForm.group" prop="public">

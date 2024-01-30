@@ -31,10 +31,7 @@ const rules = reactive<FormRules<SpaceForm>>({
     { required: true, message: '请输入空间名称，长度在 2-50 之间', trigger: 'blur' },
     { min: 2, max: 50, message: '请输入空间名称，长度在 2-50 之间', trigger: 'blur' }
   ],
-  spacekey: [
-    { required: true, message: '请填写域名', trigger: 'blur' },
-    { min: 2, max: 50, message: '请输入4-20个数字或字母', trigger: 'blur' }
-  ]
+  spacekey: [{ required: true, message: '请填写域名', trigger: 'blur' }]
 })
 
 watchEffect(() => {

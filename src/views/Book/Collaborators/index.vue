@@ -21,6 +21,7 @@ const name = ref('')
 const isShowAddBookMemberDialog = ref(false)
 const loadTable = ref(false)
 const publicType = ref('2')
+const isAdmin = ref(false)
 const memberList = ref([])
 const memberData = ref([])
 const bookAdmin = ref([
@@ -107,6 +108,15 @@ const getCollaborations = async () => {
   if (res.code === 1000) {
     memberList.value = res.data
     memberData.value = [...teamInfo.value, ...bookAdmin.value, ...memberList.value]
+    console.log(`output->`, memberData.value)
+    if (bookAdmin.value[0].name === nickname) {
+      isAdmin.value = true
+    }
+    memberList.value.forEach((item) => {
+      if (item.permusername === user && item.permtype === '0') {
+        isAdmin.value = true
+      }
+    })
   } else {
     ElMessage.error(res.msg)
   }
@@ -231,13 +241,17 @@ onMounted(() => {
           <el-table-column prop="permtype" label="权限">
             <template #default="{ row, rowIndex }">
               <span v-if="['teamAdmin', 'spaceAdmin', 'bookAdmin'].includes(row.label)">可管理</span>
+              <span v-if="rowIndex !== 0 && row.permusername === user && ['1', '2', '0'].includes(row.permtype)">{{ sexList.find((it) => it.value === row.permtype).label }}</span>
+              <span v-if="!isAdmin && rowIndex !== 0 && row.permusername !== user && ['1', '2', '0'].includes(row.permtype)">
+                {{ sexList.find((it) => it.value === row.permtype).label }}
+              </span>
               <DropdownPopver :menuItems="sexList" :selectId="getSelected(row)" @toChange="toChangeRole($event, row)">
                 <span
                   flex
                   items-center
                   line-32px
                   cursor-pointer
-                  v-if="rowIndex !== 0 && row.permusername !== user && !['teamAdmin', 'spaceAdmin', 'bookAdmin'].includes(row.label)"
+                  v-if="isAdmin && rowIndex !== 0 && row.permusername !== user && !['teamAdmin', 'spaceAdmin', 'bookAdmin'].includes(row.label)"
                 >
                   <span mr-4px> {{ sexList.find((it) => it.value === row.permtype).label }}</span>
                   <i-ep-ArrowDown />

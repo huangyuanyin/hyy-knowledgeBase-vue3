@@ -84,7 +84,14 @@ watch(
   (newVal) => {
     if (!newVal) {
       hasPermission.value = true
-      router.replace('/no-permission')
+      router.replace({
+        path: '/no-permission',
+        query: {
+          sid: infoStore.currentQuery.sid,
+          sname: infoStore.currentQuery.sname,
+          type: 'book'
+        }
+      })
     }
   },
   {

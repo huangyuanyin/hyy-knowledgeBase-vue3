@@ -461,3 +461,5 @@ export const contentType = ref({
 
 export const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
 export const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
+
+export const alphanumericRegex = /^[0-9a-zA-Z]+$/

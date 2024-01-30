@@ -3,13 +3,14 @@ import { deleteTeamMemberApi, editTeamMemberApi, getTeamMemberApi } from '@/api/
 import { VxeTableInstance, VxeColumnPropTypes } from 'vxe-table'
 import departMemberIcon from '@/assets/icons/departMemberIcon.svg'
 import img from '@/assets/img/img.jpg'
-import editIcon from '@/assets/icons/team/editIcon.svg'
+import editIcon from '@/assets/icons/exit_black.svg'
 import deleteIcon from '@/assets/icons/organize/deleteIcon.svg'
 
 interface MemberItem {
   id: number
   avatar: string
   name: string
+  username: string
   role: string
   group: number
   dept: string
@@ -30,11 +31,13 @@ const loadTable = ref(false)
 const teamInfo = ref({
   icon: ''
 })
+// 0：管理员 1：只读成员 2：成员
 const sexList = [
   { label: '管理员', value: '0', desc: '拥有所有权限' },
-  { label: '成员', value: '1', desc: '拥有知识库管理权限' },
-  { label: '只读成员', value: '2', desc: '仅有阅读权限' }
+  { label: '只读成员', value: '1', desc: '仅有阅读权限' },
+  { label: '成员', value: '2', desc: '拥有知识库管理权限' }
 ]
+
 const statusList = [
   { label: '正常', value: '1' },
   { label: '注销', value: '0' }
@@ -153,10 +156,11 @@ const getTeamMember = async () => {
   if (res.code === 1000) {
     memberList.value = res.data || ([] as any)
     memberTotal.value = memberList.value.length + 1
-    const { id, avatar, creator_name, dept, create_datetime } = infoStore.currentTeamInfo
+    const { id, avatar, creator, creator_name, dept, create_datetime } = infoStore.currentTeamInfo
     memberList.value.unshift({
       id,
       avatar,
+      username: creator,
       name: creator_name,
       role: '0',
       group: id,
@@ -220,7 +224,7 @@ onMounted(() => {
               </div>
             </template>
           </vxe-column>
-          <vxe-column field="role" title="角色" :formatter="formatterRole" width="200" sortable>
+          <vxe-column field="role" title="角色" width="200" sortable>
             <template #default="{ row, rowIndex }">
               <DropdownPopver :menuItems="sexList" :selectId="sexList[row.role].value" @toChange="toChangeRole($event, row)">
                 <span class="el-dropdown" v-if="rowIndex !== 0 && row.username !== user">
@@ -261,8 +265,6 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .Member_wrap {
-  margin: -26px -36px !important;
-  padding: 0 36px;
   width: 100%;
   .member-box {
     margin-top: 24px;

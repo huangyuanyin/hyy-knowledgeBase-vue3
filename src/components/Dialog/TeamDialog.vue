@@ -156,7 +156,7 @@ const changeIcon = (icon: string) => {
         </div>
       </el-form-item>
       <el-form-item label="" class="form-description" prop="description">
-        <el-input v-model="teamForm.description" type="textarea" :autosize="{ minRows: 4 }" placeholder="团队简介" />
+        <el-input v-model="teamForm.description" type="textarea" maxlength="150" show-word-limit :autosize="{ minRows: 4 }" placeholder="团队简介" />
       </el-form-item>
       <el-form-item class="form-member">
         <template #label>
