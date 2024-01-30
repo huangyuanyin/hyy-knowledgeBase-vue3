@@ -14,17 +14,19 @@ watchEffect(() => {
 })
 
 watch(
-  () => infoStore.currentQuery.aid,
-  async () => {
-    if (infoStore.currentQuery.aid && route.path.includes('sheet')) {
-      await getArticleTree()
-    }
+  () => route.fullPath,
+  () => {
+    sessionStorage.removeItem('recoverVersion')
+    nextTick(() => {
+      if (infoStore.currentMenu === 'sheet') {
+        getArticleTree()
+      }
+    })
+  },
+  {
+    immediate: true
   }
 )
-
-onMounted(async () => {
-  await getArticleTree()
-})
 
 const getArticleTree = async () => {
   body.value = ''

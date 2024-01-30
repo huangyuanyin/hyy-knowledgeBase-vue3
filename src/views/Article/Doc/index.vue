@@ -9,12 +9,17 @@ const isPreview = ref(true)
 const isShowScroll = ref(false)
 
 watch(
-  () => infoStore.currentQuery.aid,
+  () => route.fullPath,
   () => {
     isUpdate.value = false
-    if (infoStore.currentQuery.aid && route.path.includes('doc')) {
-      getArticle()
-    }
+    nextTick(() => {
+      if (infoStore.currentMenu === 'doc') {
+        getArticle()
+      }
+    })
+  },
+  {
+    immediate: true
   }
 )
 
@@ -46,10 +51,6 @@ const getArticle = async () => {
 const scroll = (isScroll: boolean) => {
   isShowScroll.value = isScroll
 }
-
-onMounted(() => {
-  getArticle()
-})
 
 onBeforeMount(() => {
   isUpdate.value = false

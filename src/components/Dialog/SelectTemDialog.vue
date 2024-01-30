@@ -131,6 +131,14 @@ const toChangeTem = (item) => {
   selectTem.value = item
 }
 
+const toUseTem = () => {
+  if (infoStore.currentSidebar === 'DirectorySidebar') {
+    toAddArticle({ id: infoStore.currentQuery.lid })
+  } else {
+    isBookListDialog.value = true
+  }
+}
+
 const toAddArticle = async (val) => {
   const params = {
     title: selectTem.value.name,
@@ -206,7 +214,7 @@ const handleClose = async () => {
           <img class="closeIcon" :src="closeIcon" alt="" @click="handleClose" />
         </div>
         <div class="tem">
-          <el-button :class="[temList.length ? '' : 'disabled']" :disabled="!temList.length" @click="isBookListDialog = true">使用此模板</el-button>
+          <el-button :class="[temList.length ? '' : 'disabled']" :disabled="!temList.length" @click="toUseTem">使用此模板</el-button>
           <el-tabs v-model="templateType" class="template-tabs" @tab-change="handleClick">
             <el-tab-pane :label="item.label" :name="item.value" v-for="(item, index) in temRange" :key="'temRange' + index">
               <div class="empty" v-if="temList.length === 0">

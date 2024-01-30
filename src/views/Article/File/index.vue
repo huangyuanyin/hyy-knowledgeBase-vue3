@@ -7,11 +7,16 @@ const infoStore = useInfoStore()
 const iframeSrc = ref('')
 
 watch(
-  () => infoStore.currentQuery?.aid,
-  (newVal) => {
-    if (infoStore.currentQuery?.aid && route.path.includes('file')) {
-      getArticle(newVal)
-    }
+  () => route.fullPath,
+  () => {
+    nextTick(() => {
+      if (infoStore.currentMenu === 'file') {
+        getArticle(infoStore.currentQuery?.aid)
+      }
+    })
+  },
+  {
+    immediate: true
   }
 )
 
@@ -21,10 +26,6 @@ const getArticle = async (aid) => {
     iframeSrc.value = url
   })
 }
-
-onMounted(() => {
-  getArticle(infoStore.currentQuery?.aid)
-})
 </script>
 
 <template>

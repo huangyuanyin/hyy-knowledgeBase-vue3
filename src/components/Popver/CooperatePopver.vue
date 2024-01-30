@@ -50,7 +50,6 @@ const querySearch = async (queryString: string, cb: (result: any[]) => void): Pr
 }
 
 const handleSelect = (item) => {
-  selectedUserList.value.push(item)
   addArticleCollaborations(item.permusername)
 }
 
@@ -85,13 +84,14 @@ const addArticleCollaborations = async (username) => {
   const res = await addArticleCollaborationsApi(params)
   if (res.code === 1000) {
     ElMessage.success('添加成功')
+    selectedUserList.value.push(res.data[0] as any)
   }
 }
 
 const editArticleCollaborations = async (role, val) => {
   const params = {
     role, // 0: 可阅读，1: 可编辑
-    username: val.username
+    username: val.username || val.permusername
   }
   const res = await editArticleCollaborationsApi(val.id, params)
   if (res.code === 1000) {
@@ -240,7 +240,6 @@ const onShowUserOperationPopver = (val: boolean) => {
       display: flex;
       justify-content: space-between;
       padding: 16px 20px;
-      height: 40px;
       :deep(.el-autocomplete) {
         width: 100%;
         .el-input {
@@ -311,7 +310,6 @@ const onShowUserOperationPopver = (val: boolean) => {
                   display: flex;
                   align-items: center;
                   justify-content: space-between;
-                  height: 44px;
                   padding: 12px 0;
                   width: 100%;
                   &-left {

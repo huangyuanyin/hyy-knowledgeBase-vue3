@@ -28,8 +28,18 @@ const spaceForm = reactive<SpaceForm>({
 })
 const rules = reactive<FormRules<SpaceForm>>({
   spacename: [
-    { required: true, message: '请输入空间名称，长度在 2-50 之间', trigger: 'blur' },
-    { min: 2, max: 50, message: '请输入空间名称，长度在 2-50 之间', trigger: 'blur' }
+    { required: true, message: '请输入空间名称，长度在 2-20 之间', trigger: 'blur' },
+    { min: 2, max: 20, message: '请输入空间名称，长度在 2-20 之间', trigger: 'blur' },
+    {
+      validator: (rule, value, callback) => {
+        if (/\s/.test(value)) {
+          callback(new Error('非法输入：不能包含空格'))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'blur'
+    }
   ],
   spacekey: [{ required: true, message: '请填写域名', trigger: 'blur' }]
 })

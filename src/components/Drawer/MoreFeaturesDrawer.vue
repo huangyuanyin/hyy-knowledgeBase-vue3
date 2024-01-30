@@ -16,7 +16,6 @@ import viewsIcon from '@/assets/icons/drawer/views.svg'
 import commentIcon from '@/assets/icons/drawer/comment.svg'
 import likeIcon from '@/assets/icons/drawer/like.svg'
 import authorIcon from '@/assets/icons/drawer/author.svg'
-
 import { ArticleInfo } from '@/type/article'
 
 const props = defineProps({
@@ -32,7 +31,7 @@ const props = defineProps({
 
 const infoStore = useInfoStore()
 const drawerTab = ref('operation')
-const operationItems = [
+const operationItems = ref([
   { icon: docSet, text: '文档设置', type: 'label' },
   { type: 'hr' },
   { icon: fullScreen, text: '全屏', type: 'label' },
@@ -43,7 +42,7 @@ const operationItems = [
   { icon: copyIcon, text: '复制...', type: 'label' },
   { icon: moveIcon, text: '移动...', type: 'label' },
   { icon: deleteIcon, text: '删除...', type: 'label' }
-]
+])
 const infoItems = ref<any>([
   { icon: countIcon, text: '字数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.counts} 字`, type: 'label' },
   { icon: historyVersion, text: '历史版本', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.versions_count} `, type: 'label' },
@@ -80,6 +79,9 @@ watchEffect(() => {
     { icon: commentIcon, text: '评论数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.comments_count} 条`, type: 'label' },
     { icon: likeIcon, text: '点赞数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.likes_count} 次`, type: 'label' }
   ]
+  if (infoStore.currentMenu === 'file') {
+    operationItems.value.splice(3, 1)
+  }
 })
 
 const handleClick = (tab) => {
@@ -198,10 +200,10 @@ const toHandleArticle = (type, val) => {
       </el-tab-pane>
     </el-tabs>
   </el-drawer>
-  <SaveTemplateDialog :isShow="isSaveTemplateDialog" :parent="null" @closeDialog="isSaveTemplateDialog = false" :info="props.info" />
-  <SaveHistoryVersionDialog :isShow="isSaveHistoryVersionDialog" @closeDialog="isSaveHistoryVersionDialog = false" :info="props.info" />
-  <HistoryVersionDialog :isShow="isHistoryVersionDialog" @closeDialog="isHistoryVersionDialog = false" :info="props.info" />
-  <BookStatisticDialog :isShow="isBookStatisticDialog" @closeDialog="isBookStatisticDialog = false" :info="props.info" />
+  <SaveTemplateDialog :isShow="isSaveTemplateDialog" :parent="null" @closeDialog="isSaveTemplateDialog = false" :info="(infoStore.currentArticleInfo as ArticleInfo)" />
+  <SaveHistoryVersionDialog :isShow="isSaveHistoryVersionDialog" @closeDialog="isSaveHistoryVersionDialog = false" :info="(infoStore.currentArticleInfo as ArticleInfo)" />
+  <HistoryVersionDialog :isShow="isHistoryVersionDialog" @closeDialog="isHistoryVersionDialog = false" :info="(infoStore.currentArticleInfo as ArticleInfo)" />
+  <BookStatisticDialog :isShow="isBookStatisticDialog" @closeDialog="isBookStatisticDialog = false" :info="(infoStore.currentArticleInfo as ArticleInfo)" />
   <ExportFileDialog :isShow="isShowExportFileDialog" @closeDialog="isShowExportFileDialog = false" :type="exportType" :id="exportId" />
   <HandleArticleDialog
     :show="showHandleArticleDialog"

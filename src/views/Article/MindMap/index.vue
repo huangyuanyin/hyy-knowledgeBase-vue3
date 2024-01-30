@@ -12,14 +12,14 @@ const isPreview = ref(false)
 const iframeSrc = ref(`${import.meta.env.VITE_BASE_MINDMAP_URL}?time' + Date.now()`) // 8080：思维导图
 
 watch(
-  () => infoStore.currentQuery?.aid,
+  () => route.fullPath,
   () => {
     sessionStorage.removeItem('recoverVersion')
-    if (infoStore.currentQuery?.aid && route.path.includes('mind') && !sessionStorage.getItem('recoverVersion')) {
-      nextTick(() => {
+    nextTick(() => {
+      if (infoStore.currentMenu === 'mind' && !sessionStorage.getItem('recoverVersion')) {
         getArticle(infoStore.currentQuery?.aid)
-      })
-    }
+      }
+    })
   },
   {
     immediate: true
