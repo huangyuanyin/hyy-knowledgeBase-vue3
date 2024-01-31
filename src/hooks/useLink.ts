@@ -1,5 +1,4 @@
 import qs from 'qs'
-import SparkMD5 from 'spark-md5'
 
 const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
@@ -8,6 +7,8 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
   const { route, router } = routerInfo
   const infoStore = useInfoStore()
   const spaceName = route.path.split('/')[1]
+
+  const basePath = import.meta.env.MODE === 'development' ? '' : '/netKmp/#'
 
   switch (type) {
     case 'teamSet':
@@ -135,7 +136,7 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
     // 从空间管理跳转到团队设置
     case 'fromSpaceSetToTeamBasic':
       window.open(
-        `/${route.path.split('/')[1]}/teamSetting/basic?${qs.stringify({
+        `${basePath}/${route.path.split('/')[1]}/teamSetting/basic?${qs.stringify({
           sid: infoStore.currentQuery?.sid,
           sname: infoStore.currentQuery?.sname,
           gid: data.id,
@@ -146,7 +147,7 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
     // 从空间管理跳转到团队首页
     case 'fromSpaceSetToTeamIndex':
       window.open(
-        `/${route.path.split('/')[1]}/team/book?${qs.stringify({
+        `${basePath}/${route.path.split('/')[1]}/team/book?${qs.stringify({
           sid: infoStore.currentQuery?.sid,
           sname: infoStore.currentQuery?.sname,
           gid: data.id,
@@ -157,7 +158,7 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
     // 从空间管理跳转到团队设置 - 删除
     case 'fromSpaceSetToTeamSettings':
       window.open(
-        `/${route.path.split('/')[1]}/teamSetting/settings?${qs.stringify({
+        `${basePath}/${route.path.split('/')[1]}/teamSetting/settings?${qs.stringify({
           sid: infoStore.currentQuery?.sid,
           sname: infoStore.currentQuery?.sname,
           gid: data.id,

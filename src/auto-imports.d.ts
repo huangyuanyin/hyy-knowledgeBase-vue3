@@ -22,6 +22,7 @@ declare global {
   const defineAsyncComponent: typeof import('vue')['defineAsyncComponent']
   const defineComponent: typeof import('vue')['defineComponent']
   const defineStore: typeof import('pinia')['defineStore']
+  const disabledControl: typeof import('./utils/tool')['disabledControl']
   const downloadFile: typeof import('./utils/file')['downloadFile']
   const effectScope: typeof import('vue')['effectScope']
   const encryp: typeof import('./utils/crypto')['encryp']

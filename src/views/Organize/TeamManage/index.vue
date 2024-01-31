@@ -24,7 +24,7 @@ const getTeam = async () => {
 }
 
 const toTeamSetting = (val) => {
-  useLink(routeInfo, 'fromSpaceSetToTeamSet', val)
+  useLink(routeInfo, 'fromSpaceSetToTeamBasic', val)
 }
 
 const toTeamIndex = (val) => {

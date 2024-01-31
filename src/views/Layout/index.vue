@@ -8,20 +8,22 @@
         :style="{ left: parseInt(sidebarWidth) - 6 + 'px' }"
         v-resize="handleResize"
         @mouseenter="isShowClose = true"
-        @mouseleave="isShowClose = false"
+        @mouseleave=";(visible = false) && (visible2 = false) && (isShowExpand = false) && (isShowClose = false)"
       ></div>
-      <el-tooltip effect="dark" :content="isShowClose ? '收起' : '展开'" placement="right" :visible="visible">
+      <el-tooltip effect="dark" content="收起" placement="right" :visible="visible">
         <div
           class="resize-left"
           v-if="isShowClose"
           @mouseenter=";(visible = true) && (isShowClose = true)"
-          @mouseleave=";(visible = false) && (isShowClose = false)"
+          @mouseleave="hideTooltip"
           :style="{ left: parseInt(sidebarWidth) - 9 + 'px' }"
           @click.stop="toExpandCollapse('close')"
         >
           <span></span>
         </div>
-        <div class="resize-right" @mouseenter="visible = true" @mouseleave="visible = false" v-if="isShowExpand" @click.stop="toExpandCollapse('expand')">
+      </el-tooltip>
+      <el-tooltip effect="dark" content="展开" placement="right" :visible="visible2">
+        <div class="resize-right" @mouseenter="visible2 = true" @mouseleave="visible2 = false" v-if="isShowExpand" @click.stop="toExpandCollapse('expand')">
           <span></span>
         </div>
       </el-tooltip>
@@ -75,6 +77,7 @@ const sidebarWidth = ref('')
 const isShowClose = ref(false)
 const isShowExpand = ref(false)
 const visible = ref(false)
+const visible2 = ref(false)
 const isShowResize = ref(true)
 
 watchEffect(() => {
@@ -89,6 +92,12 @@ watch(
   }
 )
 
+const hideTooltip = () => {
+  visible.value = false
+  visible2.value = false
+  isShowClose.value = false
+}
+
 const handleResize = (val) => {
   sidebarWidth.value = val + 'px'
   sidebarWidth.value ? (isShowClose.value = true) : (isShowClose.value = false)
@@ -96,6 +105,7 @@ const handleResize = (val) => {
 
 const toExpandCollapse = (type) => {
   visible.value = false
+  visible2.value = false
   isShowClose.value = false
   if (type === 'close') {
     isShowResize.value = false
