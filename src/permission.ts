@@ -38,8 +38,6 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
     })
   }
 
-  const { lid = '' } = infoStore.currentQuery || {}
-
   if (to.path === '/login') {
     next()
   } else {
@@ -64,7 +62,14 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
   infoStore.setCurrentSidebar(to.meta.asideComponent as string)
   infoStore.setCurrentSpaceType(judegeSpaceType(to))
   infoStore.setCurrentMenu(to.meta.menu as string)
+}
 
+export async function setupRouterResponder(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
+  const infoStore = useInfoStore()
+  if (to.meta.menu !== 'login' && to.query.query) {
+    const decrypted = base64UrlDecode(to.query.query)
+    infoStore.setCurrentQuery(JSON.parse(decrypted))
+  }
   // 判断是否需要重新获取空间信息
   if (infoStore.currentSpaceType === '个人') await useSpace().getSpaceInfo(null)
   else {
@@ -74,7 +79,6 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
     )
       await useSpace().getSpaceInfo(Number(infoStore.currentQuery?.sid))
   }
-
   // 如果是团队设置页面，则判断是否需要重新获取团队信息
   if (to.meta.asideComponent === 'TeamSidebar') {
     if (
@@ -84,19 +88,14 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
       await useTeam().getTeamInfo(Number(infoStore.currentQuery?.gid))
     }
   }
-
   // 如果是知识库目录页面，则判断是否需要重新获取知识库信息
-  if (infoStore.currentSidebar === 'DirectorySidebar') {
-    if (!sessionStorage.getItem('xinAn-bookInfo') || (sessionStorage.getItem('xinAn-bookInfo') && JSON.parse(sessionStorage.getItem('xinAn-bookInfo')).id !== Number(lid)))
-      await useBook().getBookInfo(Number(lid))
-  }
-}
-
-export async function setupRouterResponder(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
-  const infoStore = useInfoStore()
-  if (to.meta.menu !== 'login' && to.query.query) {
-    const decrypted = base64UrlDecode(to.query.query)
-    infoStore.setCurrentQuery(JSON.parse(decrypted))
+  if (to.meta.asideComponent === 'DirectorySidebar') {
+    if (
+      !sessionStorage.getItem('xinAn-bookInfo') ||
+      (sessionStorage.getItem('xinAn-bookInfo') && JSON.parse(sessionStorage.getItem('xinAn-bookInfo')).id !== infoStore.currentQuery.lid)
+    ) {
+      useBook().getBookInfo(Number(infoStore.currentQuery.lid))
+    }
   }
 }
 

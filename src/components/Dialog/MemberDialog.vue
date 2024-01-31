@@ -148,7 +148,18 @@ const arrayToTree = (list: DeptList[], id: string) => {
     <p>仅展示<bold text-color="#f56c6c">非</bold>【{{ infoStore.currentQuery?.sname }}】空间的公司所有成员</p>
     <div class="container">
       <div class="container-left">
-        <el-tree :data="deptList" :props="defaultProps" node-key="id" highlight-current :current-node-key="deptId" @node-click="toChangeDeptId" />
+        <el-tree
+          :data="deptList"
+          :props="defaultProps"
+          node-key="id"
+          highlight-current
+          :current-node-key="deptId"
+          :expand-on-click-node="false"
+          accordion
+          @node-click="toChangeDeptId"
+          v-loading="loadTable"
+          element-loading-text="请稍等..."
+        />
       </div>
       <div class="container-right">
         <div class="header">

@@ -234,8 +234,12 @@ export const useLinkHooks = () => {
       })
     } else {
       query = { ...(infoStore.currentSpaceType === '个人' ? {} : spaceQuery), ...query }
-      const hash = SparkMD5.hash(JSON.stringify(query))
-      window.open(`/#${infoStore.currentSpaceType === '个人' ? '' : `/${spaceName.value}`}/directory/${data.type}/?query=${hash}`)
+      const base64UrlEncode = (data) => {
+        const encoded = btoa(unescape(encodeURIComponent(data)))
+        return encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+      }
+      const hash = base64UrlEncode(JSON.stringify(query))
+      window.open(`/netKmp/#${infoStore.currentSpaceType === '个人' ? '' : `/${spaceName.value}`}/directory/${data.type}/?query=${hash}`)
     }
   }
 
