@@ -205,7 +205,7 @@ const toDelete = () => {
       }
     }
     :deep(.markdown-body) {
-      max-height: 35vh;
+      max-height: 28vh;
       border: none;
       .v-note-show {
         color: #333;

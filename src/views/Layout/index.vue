@@ -8,7 +8,7 @@
         :style="{ left: parseInt(sidebarWidth) - 6 + 'px' }"
         v-resize="handleResize"
         @mouseenter="isShowClose = true"
-        @mouseleave=";(visible = false) && (visible2 = false) && (isShowExpand = false) && (isShowClose = false)"
+        @mouseleave="hideTooltip"
       ></div>
       <el-tooltip effect="dark" content="收起" placement="right" :visible="visible">
         <div
@@ -96,6 +96,7 @@ const hideTooltip = () => {
   visible.value = false
   visible2.value = false
   isShowClose.value = false
+  isShowExpand.value = false
 }
 
 const handleResize = (val) => {

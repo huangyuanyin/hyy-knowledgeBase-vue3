@@ -1,15 +1,13 @@
 <script lang="ts" setup>
 import { deleteSpacepermissionsApi, getSpacepermissionsApi } from '@/api/spacepermissions'
-import { getUserApi } from '@/api/user'
 
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
 const avatar = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || ''
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const searchInput = ref('')
 const memberData = ref([])
-const myData = ref([])
+const myData = ref<any>([])
 const isShowTeamDialog = ref(false)
 const loadTable = ref(false)
 
@@ -46,25 +44,6 @@ const deleteSpacepermissions = async (id: number) => {
   }
 }
 
-const getUser = async () => {
-  const params = {
-    username: user
-  }
-  const res = await getUserApi(params)
-  if (res.code === 1000) {
-    res.data.map((it) => {
-      if (it.username === user) {
-        it.permname = it.name
-        it.permtype = '0'
-        it.dept = it.dept_name
-      }
-    })
-    myData.value = res.data || ([] as any)
-  } else {
-    ElMessage.error(res.msg)
-  }
-}
-
 const toExit = (data: any) => {
   ElMessageBox.confirm(`确定删除【${data.permname}】吗？删除后对方就无法再访问本团队`, '确定删除该成员？', {
     confirmButtonText: '删除',
@@ -90,12 +69,20 @@ const toDetail = (data: any) => {
 }
 
 const handleMember = () => {
+  myData.value = [
+    {
+      permname: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).creator_name,
+      permtype: '0',
+      dept: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).dept,
+      mobile: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).mobile,
+      update_datetime: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).create_datetime
+    }
+  ]
   memberData.value = [...myData.value, ...memberData.value]
 }
 
 onMounted(async () => {
   await getSpacepermissions()
-  await getUser()
   await handleMember()
 })
 </script>
@@ -155,13 +142,13 @@ onMounted(async () => {
         <el-table-column prop="mobile" label="手机号" width="150" />
         <el-table-column label="加入时间" width="200">
           <template #default="{ row }">
-            <span v-if="row.permtype === '1'">{{ row.update_datetime }}</span>
+            <span>{{ row.update_datetime }}</span>
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作">
-          <template #default="{ row }">
-            <el-button link type="primary" size="small" @click="toDetail(row)" v-if="nickname !== row.permname">详情</el-button>
-            <el-button link type="danger" size="small" @click="toExit(row)" v-if="nickname !== row.permname">离开</el-button>
+          <template #default="{ row, $index }">
+            <el-button link type="primary" size="small" @click="toDetail(row)" v-if="$index !== 0">详情</el-button>
+            <el-button link type="danger" size="small" @click="toExit(row)" v-if="$index !== 0">离开</el-button>
           </template>
         </el-table-column>
       </el-table>

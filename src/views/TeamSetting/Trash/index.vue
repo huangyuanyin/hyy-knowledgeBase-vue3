@@ -86,7 +86,7 @@ onMounted(() => {
           </template>
         </el-table-column>
         <el-table-column prop="modifier_name" label="操作者" width="200" />
-        <el-table-column prop="creator_name" label="归属" width="220">
+        <el-table-column prop="creator_name" label="归属">
           <template #default="{ row }">
             <div class="Belong">
               <span>{{ row.group_name }}</span> /

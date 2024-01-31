@@ -3,20 +3,35 @@ const props = defineProps({
   type: String
 })
 
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const router = useRouter()
 const infoStore = useInfoStore()
+const isHas = ref(false)
+
+watchEffect(() => {
+  nextTick(() => {
+    // 遍历infoStore.currentSpaceInfo.members中的每一项，如果有一项的permusername等于user，就为true
+    isHas.value = infoStore.currentSpaceInfo.members.some((item) => {
+      return item.permusername === user
+    })
+  })
+})
 
 const toPath = () => {
-  if (infoStore.currentQuery.type === 'book') {
-    router.push({
-      path: `${infoStore.currentSpaceInfo.spacekey}/team/book`,
-      query: {
-        sid: infoStore.currentSpaceInfo?.id,
-        sname: infoStore.currentSpaceInfo?.spacename,
-        gid: infoStore.currentTeamInfo?.id,
-        gname: infoStore.currentTeamInfo?.groupname
-      }
-    })
+  if (isHas.value) {
+    if (infoStore.currentQuery.type === 'book') {
+      router.push({
+        path: `${infoStore.currentSpaceInfo.spacekey}/team/book`,
+        query: {
+          sid: infoStore.currentSpaceInfo?.id,
+          sname: infoStore.currentSpaceInfo?.spacename,
+          gid: infoStore.currentTeamInfo?.id,
+          gname: infoStore.currentTeamInfo?.groupname
+        }
+      })
+    }
+  } else {
+    history.go(-2)
   }
 }
 </script>

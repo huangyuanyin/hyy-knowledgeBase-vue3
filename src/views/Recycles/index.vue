@@ -120,7 +120,7 @@ onMounted(() => {
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="归属" width="200">
+        <el-table-column prop="name" label="归属">
           <template #default="{ row }">
             <div class="Belong">
               <span v-if="row.type === 'article'">{{ row.group_name }} / </span>

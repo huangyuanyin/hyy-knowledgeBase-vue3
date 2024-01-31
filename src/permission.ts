@@ -88,6 +88,15 @@ export async function setupRouterResponder(to: RouteLocationNormalized, from: Ro
       await useTeam().getTeamInfo(Number(infoStore.currentQuery?.gid))
     }
   }
+  // 如果是团队首页，则判断是否需要重新获取团队信息
+  if (to.meta.menu === 'team' && infoStore.currentQuery.gid) {
+    if (
+      !sessionStorage.getItem('xinAn-teamInfo') ||
+      (sessionStorage.getItem('xinAn-teamInfo') && JSON.parse(sessionStorage.getItem('xinAn-teamInfo')).id !== Number(infoStore.currentQuery?.gid))
+    ) {
+      await useTeam().getTeamInfo(Number(infoStore.currentQuery?.gid))
+    }
+  }
   // 如果是知识库目录页面，则判断是否需要重新获取知识库信息
   if (to.meta.asideComponent === 'DirectorySidebar') {
     if (

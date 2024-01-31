@@ -24,6 +24,8 @@ const publicType = ref('2')
 const isAdmin = ref(false)
 const memberList = ref([])
 const memberData = ref([])
+const spaceAdminList = ref([]) // 空间管理员列表
+const teamAdminList = ref([]) // 团队管理员列表
 const bookAdmin = ref([
   {
     label: 'bookAdmin',
@@ -35,13 +37,15 @@ const teamInfo = ref([
     avatar: spaceIcon,
     label: 'spaceAdmin',
     name: '空间管理员',
-    member: null
+    member: null,
+    children: []
   },
   {
     avatar: teamIcon,
     label: 'teamAdmin',
     name: '团队管理员',
-    member: null
+    member: null,
+    children: []
   }
 ])
 const sexList = [
@@ -55,6 +59,9 @@ watchEffect(() => {
   infoStore.currentSpaceType === '个人' ? (spaceId.value = JSON.parse(localStorage.getItem('personalSpaceInfo')).id) : (spaceId.value = infoStore.currentQuery?.sid)
   groupId.value = infoStore.currentQuery?.gid
   bookId.value = infoStore.currentQuery?.lid
+  if (infoStore.currentQuery.gname === '公共区') {
+    teamInfo.value.splice(1, 1)
+  }
 })
 
 const toCloseDialog = () => {
@@ -64,6 +71,7 @@ const toCloseDialog = () => {
 
 const toLink = (label) => {
   if (label === 'spaceAdmin') {
+    if (!spaceAdminList.value.includes(user)) return ElMessage.warning('没有访问权限')
     router.push({
       path: `/${spaceName.value}/organize/addressBook`,
       query: {
@@ -72,6 +80,7 @@ const toLink = (label) => {
       }
     })
   } else if (label === 'teamAdmin') {
+    if (!spaceAdminList.value.includes(user) && !teamAdminList.value.includes(user)) return ElMessage.warning('没有访问权限')
     router.push({
       path: `/${spaceName.value}/team/member`,
       query: {
@@ -161,11 +170,16 @@ const deleteCollaborations = async (id) => {
 const getTeamMember = async () => {
   const params = {
     group: groupId.value,
-    role: '1'
+    role: '0' // 0：管理员
   }
   const res = await getTeamMemberApi(params)
   if (res.code === 1000) {
     teamInfo.value[1].member = res.data.length + 1
+    res.data.map((it) => {
+      teamAdminList.value.push(it.username)
+    }) as any
+    teamAdminList.value.push(JSON.parse(sessionStorage.getItem('xinAn-teamInfo')).creator)
+    teamInfo.value[1].children = teamAdminList.value as any
   } else {
     ElMessage.error(res.msg)
   }
@@ -176,6 +190,13 @@ const getSpacesDetail = async () => {
     if (Reflect.ownKeys(res).length === 0) return
     const { members } = res
     teamInfo.value[0].member = members.filter((it) => it.permtype !== '1').length + 1
+    members.map((it) => {
+      if (it.permtype === '0') {
+        spaceAdminList.value.push(it.permusername)
+      }
+    })
+    spaceAdminList.value.push(res.creator)
+    teamInfo.value[0].children = spaceAdminList.value as any
   })
 }
 
@@ -184,7 +205,6 @@ function getSelected(row) {
 }
 
 const toChangeRole = (data, row) => {
-  console.log(`output->data,row`, data, row)
   const params = {
     space: spaceId.value,
     group: groupId.value,
@@ -214,8 +234,8 @@ onMounted(() => {
       <div class="publicity">
         <span>公开性</span>
         <el-radio-group v-model="publicType" class="publicityRadio" @change="toChangePublic">
-          <el-radio label="0" size="large">仅协作者可访问</el-radio>
-          <el-radio v-if="infoStore.currentSpaceType === '组织'" label="1" size="large">团队所有成员可访问</el-radio>
+          <el-radio v-if="infoStore.currentQuery.gname !== '公共区'" label="0" size="large">仅协作者可访问</el-radio>
+          <el-radio v-if="infoStore.currentSpaceType === '组织' && infoStore.currentQuery.gname !== '公共区'" label="1" size="large">团队所有成员可访问</el-radio>
           <el-radio v-if="infoStore.currentSpaceType === '组织'" label="2" size="large">空间所有成员可访问</el-radio>
         </el-radio-group>
       </div>

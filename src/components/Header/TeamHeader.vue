@@ -67,9 +67,9 @@ const toTeamSetting = () => {
       <el-tooltip effect="dark" content="仅团队成员可访问" placement="bottom">
         <span class="privateIcon"><img :src="privateIcon" alt="" /></span>
       </el-tooltip>
-      <el-tooltip effect="dark" content="收藏" placement="bottom">
+      <!-- <el-tooltip effect="dark" content="收藏" placement="bottom">
         <span class="starIcon"> <img :src="startIcon" alt="" /></span>
-      </el-tooltip>
+      </el-tooltip> -->
       <div class="tab">
         <span :class="[currentItem === item.value ? 'active' : '']" v-for="(item, index) in headerItem" :key="'headerItem' + index" @click="toLink(item.value)">
           {{ item.label }}
