@@ -93,6 +93,12 @@ const toHandleArticle = (type, val) => {
   }
 }
 
+const toDownload = (val) => {
+  useArticle().getArticleDetail(val.id, (res) => {
+    downloadFile.downloadEvt(res.body, res.title)
+  })
+}
+
 // 编辑链接弹窗
 const toEditLink = (val) => {
   parentId.value = val.parent
@@ -188,11 +194,11 @@ const toTodo = (val) => {
     @toExport="toExport(props.data)"
     @toCopyArticle="toHandleArticle('copy', props.data)"
     @toMoveArticle="toHandleArticle('move', props.data)"
-    @toTodo="toTodo(props.data)"
+    @toDownload="toDownload(props.data)"
     @toDeleteArticle="toDeleteArticle(props.data)"
   >
     <span rotate-90 mr-8px inline-flex h-full v-if="props.data.type === 'file'" @click.stop>
-      <slot> <img src="/src/assets/icons/moreIcon1_after.svg" alt="" /> </slot>
+      <slot><img src="/src/assets/icons/moreIcon1_after.svg" alt="" /> </slot>
     </span>
   </LibraryOperationPopver>
 

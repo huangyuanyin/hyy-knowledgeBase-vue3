@@ -126,7 +126,7 @@ const handleClose = async () => {
 </script>
 
 <template>
-  <el-dialog class="spaceDialog" v-model="dialogVisible" title="新建空间" width="424" :before-close="handleClose">
+  <el-dialog class="spaceDialog" v-model="dialogVisible" title="创建空间" width="424" :before-close="handleClose">
     <p>用信安空间，进行企业知识管理</p>
     <el-form ref="spaceFormRef" :rules="spaceFormRules" :model="spaceForm" label-width="120px" label-position="top">
       <el-form-item label="空间名称" prop="spacename">
@@ -244,6 +244,9 @@ const handleClose = async () => {
     color: rgba(0, 0, 0, 0.45);
     font-size: 14px;
   }
+  .el-dialog__header {
+    border-bottom: none;
+  }
   .el-dialog__title {
     font-size: 16px;
     color: rgba(0, 0, 0, 0.85);
@@ -265,6 +268,9 @@ const handleClose = async () => {
     width: 100%;
     height: 40px;
     border-radius: 6px;
+  }
+  .el-select__wrapper {
+    height: 40px;
   }
   .form-name {
     display: flex;

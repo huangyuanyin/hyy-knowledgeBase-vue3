@@ -61,7 +61,8 @@ const toShow = async () => {
 const getSpaces = async () => {
   loading.value = true
   const params = {
-    permusername: user
+    permusername: user,
+    is_delete: '0' // 0:未删除 1:已删除
   }
   let res = await getSpacesApi(params)
   loading.value = false
