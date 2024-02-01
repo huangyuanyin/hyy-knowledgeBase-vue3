@@ -3,7 +3,7 @@ export interface commentsParams {
 }
 
 export interface commentsData {
-  content: number
+  content?: number
   body?: string
   parent?: number
 }

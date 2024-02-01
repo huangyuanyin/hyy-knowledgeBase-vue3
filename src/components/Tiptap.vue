@@ -209,7 +209,7 @@ const setLink = () => {
           </button>
         </el-tooltip>
       </div>
-      <div color="#d8dad9" text-12px flex items-center>{{ editor.storage.characterCount.characters() }} / {{ limit }}字</div>
+      <div color="#d8dad9" text-10px flex items-center>{{ editor.storage.characterCount.characters() }} / {{ limit }}字</div>
     </div>
     <editor-content w-full flex :editor="editor" />
   </div>

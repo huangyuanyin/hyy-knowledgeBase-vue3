@@ -8,6 +8,10 @@ export function addCommentsApi(data: commentsData) {
   return http.post<commentsRes>(`comments/`, data, 'base')
 }
 
+export function editCommentsApi(id: number, data: commentsData) {
+  return http.put<commentsRes>(`comments/${id}/`, data, 'base')
+}
+
 export function deleteCommentsApi(id: number) {
   return http.delete<commentsRes>(`comments/${id}/`, {}, 'base')
 }

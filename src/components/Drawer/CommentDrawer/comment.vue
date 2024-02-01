@@ -14,6 +14,10 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  editValue: {
+    type: String,
+    default: ''
+  },
   parent: {
     type: Object,
     default: () => ({})
@@ -21,11 +25,16 @@ const props = defineProps({
   replyId: {
     type: Number,
     default: 0
+  },
+  editId: {
+    type: Number,
+    default: 0
   }
 })
-const emit = defineEmits(['toReply', 'toCancelReply', 'addComments', 'toDeleteComment'])
+const emit = defineEmits(['toReply', 'toEditComment', 'toCancelReply', 'toCancelEdit', 'addComments', 'editComments', 'toDeleteComment'])
 
 const replyValue = ref(props.replyValue)
+const editValue = ref(props.editValue)
 const avatar = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo') || '{}').avatar
 
 watch(
@@ -35,13 +44,29 @@ watch(
   }
 )
 
+watch(
+  () => props.editValue,
+  (val) => {
+    editValue.value = val
+  }
+)
+
 const toCancelReply = () => {
   replyValue.value = ''
   emit('toCancelReply')
 }
 
+const toCancelEdit = () => {
+  editValue.value = props.editValue
+  emit('toCancelEdit', editValue.value)
+}
+
 const toReply = (data: any) => {
   emit('toReply', data)
+}
+
+const toEditComment = (data: any) => {
+  emit('toEditComment', data)
 }
 
 const addComments = (type: string, id: number) => {
@@ -51,6 +76,14 @@ const addComments = (type: string, id: number) => {
   }
   replyValue.value = ''
   emit('addComments', { type, data })
+}
+
+const editComments = (type: string, id: number) => {
+  const data = {
+    id,
+    body: editValue.value
+  }
+  emit('editComments', { type, data })
 }
 
 const toDeleteComment = (data: any) => {
@@ -65,17 +98,23 @@ const toDeleteComment = (data: any) => {
     </div>
     <div class="content">
       <div class="name">
-        <span :class="[!props.parent ? 'master' : '']">{{ props.data.creator }}</span>
+        <span :class="[!props.parent ? 'master' : '']">{{ props.data.creator_name }}</span>
         <img v-if="props.parent" :src="downIcon" />
-        <span v-if="props.parent">{{ props.parent.creator }}</span>
+        <span v-if="props.parent" items-center w-full style="max-width: 100px; display: flex">
+          <img style="transform: none" mr-12px w-24px h-24px rounded-12px :src="props.parent.avatar || avatar" alt="" />
+          {{ props.parent.creator_name }}
+        </span>
       </div>
       <div class="time">{{ props.data.create_datetime }}</div>
-      <div class="text">
+      <div class="text" v-if="editId !== props.data.id">
         <Tiptap v-model="props.data.body" disabled />
+      </div>
+      <div class="text2" v-else>
+        <Tiptap v-model="editValue" />
       </div>
       <div class="operation">
         <span @click="toReply(props.data)"><img :src="commentIcon" /></span>
-        <span><img :src="editIcon" /></span>
+        <span @click="toEditComment(props.data)"><img :src="editIcon" /></span>
         <el-popconfirm
           width="232"
           confirm-button-text="确定"
@@ -92,10 +131,18 @@ const toDeleteComment = (data: any) => {
         </el-popconfirm>
       </div>
       <div class="reply" v-if="replyId === props.data.id">
-        <Tiptap v-model="replyValue" :placeholder="`回复 ${props.data.creator}`" />
+        <Tiptap v-model="replyValue" :placeholder="`回复 ${props.data.creator_name}`" />
         <div>
           <el-button class="cancel" @click="toCancelReply">取消</el-button>
-          <el-button :class="['submit', replyValue === '' ? 'disabled' : '']" :disabled="replyValue === ''" type="" @click="addComments('reply', props.data.id)">回复</el-button>
+          <el-button :class="['submit', replyValue === '' ? 'disabled' : '']" :disabled="replyValue === ''" type="" @click="addComments('reply', props.data.id)">
+            回复 {{ props.data.creator_name }}
+          </el-button>
+        </div>
+      </div>
+      <div class="edit" v-if="editId === props.data.id">
+        <div>
+          <el-button :class="['submit', editValue === '' ? 'disabled' : '']" :disabled="editValue === ''" type="" @click="editComments('reply', props.data.id)"> 提交 </el-button>
+          <el-button class="cancel" @click="toCancelEdit">取消</el-button>
         </div>
       </div>
     </div>
@@ -151,6 +198,11 @@ const toDeleteComment = (data: any) => {
         padding: 4px 0px 0px 0px !important;
       }
     }
+    .text2 {
+      :deep(.tiptap) {
+        padding: 12px 12px 44px 12px !important;
+      }
+    }
   }
   .operation {
     margin-left: -4px;
@@ -174,6 +226,7 @@ const toDeleteComment = (data: any) => {
       }
     }
   }
+  .edit,
   .reply {
     margin-top: 16px;
     div {
@@ -205,6 +258,23 @@ const toDeleteComment = (data: any) => {
       }
     }
   }
+  .edit {
+    margin-top: 0px;
+    div {
+      justify-content: flex-start !important;
+    }
+    .submit {
+      border-color: rgba(46, 215, 144);
+      color: #262626;
+      background-color: rgba(46, 215, 144);
+      &:hover {
+        border-color: #298e64 !important;
+        background-color: #298e64 !important;
+        color: #141414 !important;
+      }
+    }
+  }
+
   // 如果是最后一个item-top
   &:last-child {
     margin-bottom: 0;

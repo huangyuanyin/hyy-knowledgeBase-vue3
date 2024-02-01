@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import inputComment from '@/assets/icons/drawer/inputComment.svg'
-import { getCommentsApi, addCommentsApi, deleteCommentsApi } from '@/api/comments'
+import { getCommentsApi, addCommentsApi, deleteCommentsApi, editCommentsApi } from '@/api/comments'
 import CommentItem from '@/components/Drawer/CommentDrawer/comment.vue'
 
 const props = defineProps({
@@ -17,7 +17,9 @@ const commenting = ref(false)
 const commentValue = ref('')
 const commentList = ref([])
 const replyValue = ref('')
+const editValue = ref('')
 const replyId = ref(null)
+const editId = ref(null)
 const commentTotal = ref(0)
 
 watch(
@@ -44,6 +46,16 @@ const toReply = (item: any) => {
 const toCancelReply = () => {
   replyValue.value = ''
   replyId.value = null
+}
+
+const toCancelEdit = (val) => {
+  editValue.value = val
+  editId.value = null
+}
+
+const toEditComment = (item: any) => {
+  editValue.value = item.body
+  editId.value = item.id
 }
 
 const toDeleteComment = async (item: any) => {
@@ -83,6 +95,21 @@ const addComments = async (type) => {
     } else {
       ElMessage.error(res.msg)
     }
+  }
+}
+
+const editComments = async (type) => {
+  const params = {
+    content: Number(aid.value),
+    body: type.data.body
+  }
+  let res = await editCommentsApi(editId.value, params)
+  if (res.code === 1000) {
+    editValue.value = ''
+    editId.value = null
+    getComments()
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 
@@ -149,10 +176,15 @@ const arrayToTree = (list) => {
             :parent="null"
             :data="item"
             :replyId="replyId"
+            :editId="editId"
             :replyValue="replyValue"
+            :editValue="editValue"
             @toReply="toReply"
+            @toEditComment="toEditComment"
             @toCancelReply="toCancelReply"
+            @toCancelEdit="toCancelEdit"
             @addComments="addComments"
+            @editComments="editComments"
             @toDeleteComment="toDeleteComment"
           />
           <template v-if="item.children">
@@ -161,10 +193,15 @@ const arrayToTree = (list) => {
                 :parent="item"
                 :data="it"
                 :replyId="replyId"
+                :editId="editId"
                 :replyValue="replyValue"
+                :editValue="editValue"
                 @toReply="toReply"
+                @toEditComment="toEditComment"
                 @toCancelReply="toCancelReply"
+                @toCancelEdit="toCancelEdit"
                 @addComments="addComments"
+                @editComments="editComments"
                 @toDeleteComment="toDeleteComment"
               />
               <template v-if="it.children">
@@ -173,10 +210,15 @@ const arrayToTree = (list) => {
                     :parent="it"
                     :data="q"
                     :replyId="replyId"
+                    :editId="editId"
                     :replyValue="replyValue"
+                    :editValue="editValue"
                     @toReply="toReply"
+                    @toEditComment="toEditComment"
                     @toCancelReply="toCancelReply"
+                    @toCancelEdit="toCancelEdit"
                     @addComments="addComments"
+                    @editComments="editComments"
                     @toDeleteComment="toDeleteComment"
                   />
                 </div>

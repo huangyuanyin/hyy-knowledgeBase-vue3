@@ -16,7 +16,14 @@ const passwordForm = reactive({
 })
 const rules = reactive<FormRules>({
   oldPassword: [{ required: true, message: '旧密码不能为空', trigger: 'blur' }],
-  newPassword: [{ required: true, message: '新密码不能为空', trigger: 'blur' }],
+  newPassword: [
+    { required: true, message: '新密码不能为空', trigger: 'blur' },
+    {
+      pattern: /^(?=.*[0-9])(?=.*[a-zA-Z])[0-9a-zA-Z]{6,16}$/,
+      message: '密码必须由数字和字母组合，且长度在6-16位之间',
+      trigger: 'blur'
+    }
+  ],
   newPassword2: [{ required: true, message: '请再次输入新密码', trigger: 'blur' }]
 })
 
@@ -65,17 +72,26 @@ const handleClose = async () => {
 </script>
 
 <template>
-  <el-dialog class="passwordDialog" v-model="dialogVisible" title="更改密码" width="400" :before-close="handleClose" :append-to-body="true">
+  <el-dialog
+    class="passwordDialog"
+    v-model="dialogVisible"
+    title="更改密码"
+    width="400"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :before-close="handleClose"
+    :append-to-body="true"
+  >
     <p>请输入新密码进行设置。</p>
     <el-form ref="passwordFormRef" :rules="rules" :model="passwordForm" label-width="120px" label-position="top">
       <el-form-item label="旧密码" prop="oldPassword">
         <el-input v-model="passwordForm.oldPassword" placeholder="输入旧密码" />
       </el-form-item>
       <el-form-item label="新密码" prop="newPassword">
-        <el-input v-model="passwordForm.newPassword" placeholder="输入新密码" />
+        <el-input v-model="passwordForm.newPassword" placeholder="输入新密码" show-password />
       </el-form-item>
       <el-form-item label="确认密码" prop="newPassword2">
-        <el-input v-model="passwordForm.newPassword2" placeholder="请重新输入新密码" />
+        <el-input v-model="passwordForm.newPassword2" placeholder="请重新输入新密码" show-password />
       </el-form-item>
     </el-form>
     <template #footer>
