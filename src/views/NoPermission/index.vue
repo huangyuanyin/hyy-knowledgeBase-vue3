@@ -31,7 +31,11 @@ const toPath = () => {
       })
     }
   } else {
-    history.go(-2)
+    if (history.length > 2) {
+      history.go(-2)
+    } else {
+      router.push('/')
+    }
   }
 }
 </script>

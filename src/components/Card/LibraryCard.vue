@@ -37,6 +37,7 @@ const deleteInfo = ref<{
   group?: string
   stack?: string
 }>({})
+let canOperate = true // 初始状态允许操作
 
 // const toDeleteLibrary = (val) => {
 //   isShowsDeleteDialog.value = true
@@ -45,11 +46,18 @@ const deleteInfo = ref<{
 
 // 移除常用
 const removeCommon = (val) => {
+  if (!canOperate) {
+    return ElMessage.warning('频繁操作') // 在定时器时间内禁止操作
+  }
   const params = {
     space: val.space,
     user
   }
+  canOperate = false // 启动定时器前禁止操作
   deleteQuickLinks(val.is_common_id, params)
+  setTimeout(() => {
+    canOperate = true // 定时器结束后允许操作
+  }, 800) // 设置定时器时间，单位为毫秒，这里设置为1秒
 }
 
 const deleteQuickLinks = async (id, params) => {
@@ -64,6 +72,9 @@ const deleteQuickLinks = async (id, params) => {
 
 // 添加常用
 const addCommon = async (val) => {
+  if (!canOperate) {
+    return ElMessage.warning('频繁操作')
+  }
   const params = {
     title: val.name,
     target_id: String(val.id),
@@ -72,7 +83,11 @@ const addCommon = async (val) => {
     space: val.space,
     user
   }
+  canOperate = false
   let res = await addQuickLinksApi(params)
+  setTimeout(() => {
+    canOperate = true
+  }, 800)
   if (res.code === 1000) {
     ElMessage.success('添加成功')
     refreshStroe.setRefreshQuickBookList(true)

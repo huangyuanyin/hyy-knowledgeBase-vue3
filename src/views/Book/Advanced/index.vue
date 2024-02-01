@@ -80,7 +80,7 @@ onMounted(() => {
       </div>
       <div class="box-item">
         <h3>高级选项</h3>
-        <el-checkbox v-model="isComment" size="large">
+        <el-checkbox v-model="isComment" size="large" disabled>
           <div class="option">
             <span>开启评论功能</span>
             <p>知识库默认开启评论功能，取消勾选后所有用户都无法评论。</p>

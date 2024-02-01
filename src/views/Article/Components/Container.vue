@@ -12,6 +12,7 @@ import topIcon from '@/assets/icons/top.svg'
 import commentIcon from '@/assets/icons/article/commentIcon.svg'
 import startIconSelect from '@/assets/icons/startIcon_select.svg'
 import startIcon from '@/assets/icons/startIcon.svg'
+import { throttle } from '@/utils/tool'
 
 const props = defineProps({
   content: {
@@ -448,7 +449,17 @@ onMounted(() => {
               <img w-20px h-20px :src="topIcon" alt="" />
             </div>
           </el-tooltip>
-          <div class="pix" flex items-center justify-center rounded="50%" color="#585a5a" cursor-pointer v-if="infoStore.currentMenu !== 'title'" @click="handleLike">
+          <div
+            class="pix"
+            flex
+            items-center
+            justify-center
+            rounded="50%"
+            color="#585a5a"
+            cursor-pointer
+            v-if="infoStore.currentMenu !== 'title'"
+            @click="() => throttle(() => handleLike(), 500)"
+          >
             <img w-20px h-20px :src="(infoStore.currentArticleInfo as ArticleInfo)?.liked ? likeSelectIcon : likeIcon" alt="" />
             <div class="counts" v-if="(infoStore.currentArticleInfo as ArticleInfo)?.likes_count">
               {{ (infoStore.currentArticleInfo as ArticleInfo)?.likes_count }}

@@ -41,3 +41,14 @@ export function disabledControl() {
   }
   document.oncontextmenu = new Function('event.returnValue=false')
 }
+
+let timer = null
+export function throttle(fn, delay = 300) {
+  if (timer == null) {
+    timer = setTimeout(() => {
+      fn()
+      clearTimeout(timer)
+      timer = null
+    }, delay)
+  }
+}

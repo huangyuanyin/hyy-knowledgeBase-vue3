@@ -78,6 +78,7 @@ declare global {
   const shallowRef: typeof import('vue')['shallowRef']
   const space: typeof import('./hooks/useArticle')['space']
   const storeToRefs: typeof import('pinia')['storeToRefs']
+  const throttle: typeof import('./utils/tool')['throttle']
   const toAddArticle: typeof import('./hooks/useArticle')['toAddArticle']
   const toRaw: typeof import('vue')['toRaw']
   const toRef: typeof import('vue')['toRef']
