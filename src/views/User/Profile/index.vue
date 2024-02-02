@@ -17,7 +17,8 @@ const userForm = reactive<UserInfo>({
 const rules = reactive<FormRules<UserInfo>>({
   nickname: [
     { required: true, message: '请输入昵称', trigger: 'blur' },
-    { min: 2, max: 10, message: '请输入昵称，长度在 2-10 之间', trigger: 'blur' }
+    { min: 2, max: 10, message: '请输入昵称，长度在 2-10 之间', trigger: 'blur' },
+    { pattern: /^[^\s]+$/, message: '昵称不允许包含空格', trigger: 'blur' }
   ]
 })
 const deptList = ref([])
@@ -79,10 +80,10 @@ onMounted(async () => {
           </div>
         </el-form-item>
         <el-form-item label="昵称" prop="nickname">
-          <el-input v-model="userForm.nickname" placeholder="必填" />
+          <el-input v-model="userForm.nickname" maxlength="10" show-word-limit placeholder="必填" />
         </el-form-item>
         <el-form-item label="简介">
-          <el-input v-model="userForm.description" type="textarea" rows="7" placeholder="简单介绍一下你自己" />
+          <el-input v-model="userForm.description" type="textarea" rows="7" placeholder="简单介绍一下你自己（暂不支持）" />
         </el-form-item>
         <div flex w-full justify-between>
           <el-form-item label="部门" flex-1 mr-20px>

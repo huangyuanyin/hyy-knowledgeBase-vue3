@@ -41,7 +41,8 @@ const rules = reactive<FormRules<SpaceForm>>({
       trigger: 'blur'
     }
   ],
-  spacekey: [{ required: true, message: '请填写域名', trigger: 'blur' }]
+  spacekey: [{ required: true, message: '请填写域名', trigger: 'blur' }],
+  description: [{ max: 200, message: '长度需小于200个字符', trigger: 'blur' }]
 })
 
 watchEffect(() => {
@@ -112,8 +113,8 @@ onMounted(() => {
         <el-form-item label="空间地址" prop="spacekey">
           <el-input v-model="spaceForm.spacekey" disabled clearable></el-input>
         </el-form-item>
-        <el-form-item label="空间描述">
-          <el-input v-model="spaceForm.description" type="textarea" rows="7" placeholder="如：让天下没有难做的生意" />
+        <el-form-item label="空间描述" prop="description">
+          <el-input v-model="spaceForm.description" type="textarea" maxlength="200" show-word-limit rows="7" placeholder="如：让天下没有难做的生意" />
         </el-form-item>
         <el-form-item label="空间标识">
           <div class="icon-tag">
