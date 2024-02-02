@@ -73,10 +73,16 @@ const toDelete = async (val) => {
       closeDialog()
       // 两秒后给出删除成功提示，1s后跳转到首页
       setTimeout(() => {
-        ElMessage.success('删除成功，即将跳转到个人空间...')
+        ElMessage.success('删除成功，即将进入删除流程...')
       }, 1000)
       setTimeout(() => {
-        router.push({ path: '/dashboard' })
+        router.push({
+          path: 'deleteProcess',
+          query: {
+            sid: infoStore.currentQuery?.sid,
+            sname: infoStore.currentQuery?.sname
+          }
+        })
       }, 2000)
     } else {
       ElMessage.error(res.msg)

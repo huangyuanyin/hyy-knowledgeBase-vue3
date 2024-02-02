@@ -61,8 +61,8 @@ const toShow = async () => {
 const getSpaces = async () => {
   loading.value = true
   const params = {
-    permusername: user,
-    is_delete: '0' // 0:未删除 1:已删除
+    permusername: user
+    // is_delete: '0' // 0:未删除 1:已删除
   }
   let res = await getSpacesApi(params)
   loading.value = false
@@ -72,28 +72,41 @@ const getSpaces = async () => {
     spaces.value[1].list = res.data.filter((item) => item.spacetype === 'organization')
     spaceReverse.value[0].list = res.data.filter((item) => item.spacetype === 'organization')
     spaceReverse.value[1].list = res.data.filter((item) => item.spacetype === 'personal')
+    if (infoStore.currentMenu === 'deleteProcess') {
+      spaceReverse.value[0].list = spaceReverse.value[0].list.filter((item) => item.id != infoStore.currentQuery?.sid)
+    }
   }
 }
 
 const toLink = (type, val?) => {
-  console.log(`output->val`, val)
   switch (type) {
     case 'personal':
       router.push('/dashboard')
       break
     case 'organize':
-      router.push({
-        path: `/${val.spacekey}/dashboard`,
-        query: {
-          sname: val.spacename,
-          sid: val.id
-        }
-      })
-      if (infoStore.currentSidebar === 'Sidebar') return
-      // fix 切换空间，左侧常用列表不刷新
-      setTimeout(() => {
-        location.reload()
-      }, 500)
+      console.log(`output->val`, val)
+      if (val.is_delete === '1') {
+        router.push({
+          path: `/${val.spacekey}/organize/deleteProcess`,
+          query: {
+            sname: val.spacename,
+            sid: val.id
+          }
+        })
+      } else {
+        router.push({
+          path: `/${val.spacekey}/dashboard`,
+          query: {
+            sname: val.spacename,
+            sid: val.id
+          }
+        })
+        if (infoStore.currentSidebar === 'Sidebar') return
+        // fix 切换空间，左侧常用列表不刷新
+        setTimeout(() => {
+          location.reload()
+        }, 500)
+      }
       break
     case 'add':
       router.push(`/${val.spacekey}/organize/dashboard`)
@@ -123,8 +136,8 @@ const toLink = (type, val?) => {
     @show="toShow"
   >
     <template #reference>
-      <span class="arrowDownIcon">
-        <img src="@/assets/icons/arrowRightIcon.svg" alt="" />
+      <span class="arrowDownIcon" cursor-pointer>
+        <slot> <img src="@/assets/icons/arrowRightIcon.svg" alt="" /> </slot>
       </span>
     </template>
     <div class="changeSpac_Wrap">
@@ -165,8 +178,8 @@ const toLink = (type, val?) => {
 
         <Loading v-else />
       </template>
-      <template v-if="props.currentSider === 'SpaceSidebar'">
-        <div class="card">
+      <template v-if="props.currentSider === 'SpaceSidebar' || infoStore.currentSidebar === 'noSidebar'">
+        <div class="card" v-if="infoStore.currentSidebar !== 'noSidebar'">
           <div class="header">
             <img :src="icon" alt="" />
             <div class="title">

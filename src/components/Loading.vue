@@ -3,6 +3,10 @@ const props = defineProps({
   height: {
     type: String,
     default: '175px'
+  },
+  text: {
+    type: String,
+    default: '小黄同学正在努力加载中...'
   }
 })
 </script>
@@ -16,7 +20,7 @@ const props = defineProps({
       <div></div>
       <div></div>
     </div>
-    <span mt-10px text="#663399">小黄同学正在努力加载中...</span>
+    <span mt-10px text="#663399">{{ props.text }}</span>
   </div>
 </template>
 

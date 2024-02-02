@@ -265,6 +265,16 @@ const customRoutes = [
     }
   },
   {
+    path: '/:spaceName/organize/deleteProcess',
+    name: 'Organize-DeleteProcess',
+    component: pageComps['/src/views/Organize/DeleteProcess/index.vue'] as Component,
+    meta: {
+      title: '空间管理·删除流程',
+      menu: 'deleteProcess',
+      asideComponent: 'noSidebar'
+    }
+  },
+  {
     path: '/:spaceName/organize/recycleBin',
     name: 'Organize-RecycleBin',
     component: pageComps['/src/views/Organize/RecycleBin/index.vue'] as Component,

@@ -1,6 +1,6 @@
 <template>
   <el-container w-100vw h-100vh flex class="layout-wrap">
-    <el-aside v-if="currentSidebar" :style="{ width: sidebarWidth }" bg="#fafafa" border-box border-r-1 border-solid border-rgba-0-0-0-0-06>
+    <el-aside v-if="currentSidebar && sidebarWidth" :style="{ width: sidebarWidth }" bg="#fafafa" border-box border-r-1 border-solid border-rgba-0-0-0-0-06>
       <component :is="currentSidebar" />
       <div
         class="resize"
@@ -31,7 +31,7 @@
     <el-main
       flex-1
       :class="[asideComponent === 'DirectorySidebar' ? 'no-padding' : 'use-padding']"
-      :style="{ padding: asideComponentWidth[asideComponent].padding, 'overflow-y': isShowPreviewFile ? 'hidden' : 'auto' }"
+      :style="{ padding: asideComponentWidth[asideComponent]?.padding, 'overflow-y': isShowPreviewFile ? 'hidden' : 'auto' }"
     >
       <router-view />
     </el-main>
@@ -71,6 +71,10 @@ const asideComponentWidth = {
   UserSidebar: {
     with: '256px',
     padding: '48px 52px !important'
+  },
+  noSidebar: {
+    with: '',
+    padding: '0 !important'
   }
 }
 const sidebarWidth = ref('')
@@ -81,7 +85,7 @@ const visible2 = ref(false)
 const isShowResize = ref(true)
 
 watchEffect(() => {
-  sidebarWidth.value = asideComponentWidth[asideComponent.value].with
+  sidebarWidth.value = asideComponentWidth[asideComponent.value]?.with
   isShowPreviewFile.value = route.path.split('/').slice(-2)[0] === 'file' || route.path.split('/').slice(-2)[0] === 'ppt'
 })
 
