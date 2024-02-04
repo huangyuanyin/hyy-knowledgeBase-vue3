@@ -1,5 +1,9 @@
 <script lang="ts" setup>
 import publicTagIcon from '@/assets/icons/publicTagIcon.svg'
+import likeIcon from '@/assets/icons/article/likeIcon.svg'
+import lookIcon from '@/assets/icons/article/lookIcon.svg'
+import empty from '@/assets/img/empty.png'
+import imgaeIcon from '@/assets/img/image.png'
 import { getBookStacksApi } from '@/api/bookstacks'
 
 interface BookGroup {
@@ -18,9 +22,12 @@ const groupInfo = ref({
   groupkey: ''
 }) // 公共区团队信息
 const toolbar = ref('')
+const moduleType = ref('info')
+const selectedList = ref([])
 
 const { bookList: list, getBookList } = useBook()
 const { commonBookList, getCommonList, findCommonItem } = useCommon()
+const { articleList, getDocList } = useArticle()
 
 watchEffect(() => {
   toolbar.value = 'blocks fontsize bold  align bullist numlist  lineheight  link  hr  tableofcontents tableofcontentsupdate | emoticons image fullscreen  preview autolink  '
@@ -83,11 +90,51 @@ const getGroupsDetail = async () => {
   })
 }
 
+const getArticleList = async () => {
+  await getDocList({
+    space: infoStore.currentQuery?.sid,
+    is_selective: '1'
+  })
+  selectedList.value = articleList.value
+}
+
+const changeModule = (val: string) => {
+  moduleType.value = val
+}
+
+const toLink = (type: string, val) => {
+  if (type === 'srticle') {
+    return ElMessage({
+      message: '暂未开放',
+      type: 'warning'
+    })
+    router.push({
+      path: `/${infoStore.currentSpaceInfo.spacekey}/directory/${val.target_type}`,
+      query: {
+        sid: val.space,
+        sname: infoStore.currentQuery?.sname,
+        lid: val.book,
+        lname: val.book_name,
+        gid: val.group,
+        gname: val.group_name,
+        aid: val.id,
+        aname: val.title
+      }
+    })
+  } else {
+    return ElMessage({
+      message: '暂未开放',
+      type: 'warning'
+    })
+  }
+}
+
 onMounted(async () => {
   await getGroupsDetail()
   await getBookStacks()
   await getLibrary()
   await getCommonBookList()
+  await getArticleList()
 })
 </script>
 
@@ -103,7 +150,7 @@ onMounted(async () => {
       </div>
     </div>
     <SwitchModuleItem
-      :moduleGenre="'info'"
+      moduleGenre="info"
       :moduleGenreData="[
         {
           type: 'info',
@@ -114,14 +161,46 @@ onMounted(async () => {
           name: '精选文章'
         }
       ]"
+      @changeModule="changeModule"
     />
-    <Announcement :info="groupInfo" @update="updateBulletin" type="public" />
-    <div class="content">
-      <SwitchModuleItem moduleType="operation">
-        <template v-slot:left><span class="title">知识库</span></template>
-      </SwitchModuleItem>
-      <LibraryTable title="知识库" :commonList="cBookList" :group="bookGroup" @getBookStacks="getBookStacks" />
-    </div>
+    <template v-if="moduleType === 'info'">
+      <Announcement :info="groupInfo" @update="updateBulletin" type="public" />
+      <div class="content">
+        <SwitchModuleItem moduleType="operation">
+          <template v-slot:left><span class="title">知识库</span></template>
+        </SwitchModuleItem>
+        <LibraryTable title="知识库" :commonList="cBookList" :group="bookGroup" @getBookStacks="getBookStacks" />
+      </div>
+    </template>
+    <template v-else>
+      <div mt-24px mr="5%" v-if="selectedList.length">
+        <div mb-32px pb-20px flex mb-20px border-b="1px solid #f4f5f5" v-for="(item, index) in selectedList" :key="'selectedList' + index">
+          <img w-28px h-28px rounded-14px mr-12px :src="imgaeIcon" alt="" />
+          <div>
+            <span mt-3px mb-16px block>{{ item.creator_name }}</span>
+            <div>
+              <span mb-12px font-700 text="18px" block cursor-pointer @click="toLink('srticle', item)">{{ item.title }}</span>
+              <p>
+                {{
+                  '十分庆幸自己在互联网外还有一个角色“内容创作者”，让我每隔一两年关于“写作”的话题都可以拿出来重新讲一讲。（毕竟从17年那个冬天开始写字，到现在也有六七十万字的“成果”。）如果说居住的房子是容纳身体的吃穿住，我们要收纳、打扫、整理，用鸡毛掸子掸一掸落在家居上的灰尘，把家具重新摆弄。那'
+                }}
+              </p>
+              <div flex mt-12px items-center>
+                <img w-24px h-24px cursor-pointer :src="likeIcon" alt="" @click="toLink('star', item)" />
+                <span ml-4px text="#8a8f8d" text-14px mt-6px line-height-24px>{{ item.likes_count }}</span>
+                <div flex items-center mt-6px ml-22px text="#8a8f8d" text-14px line-height-24px cursor-pointer @click="toLink('srticle', item)">
+                  <img :src="lookIcon" w-16px h-16px alt="" mr-4px />
+                  <span>查看原文</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <template v-else>
+        <Empty text="暂无精选文章，快去推荐吧" height="600px" :img="empty" />
+      </template>
+    </template>
   </div>
 </template>
 

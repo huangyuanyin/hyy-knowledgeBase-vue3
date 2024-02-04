@@ -21,12 +21,18 @@ const sharePopverRef = ref(null)
 const publicType = ref('0')
 const currentPage = ref('0')
 const indexed_level = ref(false)
+const is_selective = ref(false)
 const copyLink = ref('')
 const operaList = ref([
   {
     label: '分享范围',
     value: '空间所有成员可访问',
     icon: shareIcon1
+  },
+  {
+    label: '推送精选',
+    value: '否',
+    icon: shareIcon2
   },
   {
     label: '密码访问',
@@ -74,11 +80,18 @@ watch(
   () => props.aInfo,
   (newVal) => {
     if (newVal.indexed_level === '1') {
-      operaList.value[2].value = '开启'
+      operaList.value[3].value = '开启'
       indexed_level.value = true
     } else {
-      operaList.value[2].value = '关闭'
+      operaList.value[3].value = '关闭'
       indexed_level.value = false
+    }
+    if (newVal.is_selective === '0') {
+      operaList.value[1].value = '否'
+      is_selective.value = false
+    } else {
+      operaList.value[1].value = '已推送'
+      is_selective.value = true
     }
   },
   {
@@ -102,13 +115,35 @@ watch(
 )
 
 const toChangePublic = (type: string) => {
-  editArticle(type)
+  if (type === '1' && is_selective.value) {
+    ElMessageBox.confirm('该文章已是精选文章，切换权限为【知识库所有成员可访问】后该文章将会被移除精选文章列表', ``, {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+      confirmButtonClass: 'submitBtn',
+      cancelButtonClass: 'cancelBtn',
+      customClass: 'changePublicDialog',
+      appendTo: '.sharePopver',
+      closeOnClickModal: false,
+      closeOnPressEscape: false,
+      showClose: false
+    })
+      .then(() => {
+        editArticle(type)
+      })
+      .catch(() => {})
+  } else {
+    editArticle(type)
+  }
 }
 
 const toHandle = (item: any) => {
   switch (item.label) {
     case '分享范围':
       currentPage.value = '1'
+      break
+    case '推送精选':
+      currentPage.value = '3'
       break
     case '关闭空间分享':
       toChangePublic('0')
@@ -122,18 +157,31 @@ const toHandle = (item: any) => {
   }
 }
 
-const changeLevel = async () => {
+const changeLevel = async (type: string) => {
   const params = {
     title: props.aInfo.title,
     book: props.aInfo.book,
     space: props.aInfo.space,
-    indexed_level: indexed_level.value ? '1' : '0'
+    indexed_level: indexed_level.value ? '1' : '0',
+    is_selective: is_selective.value ? '1' : '0',
+    public: props.aInfo.public
   }
-  const res = await editArticleApi(Number(infoStore.currentQuery?.aid), params)
+  if (type === 'level') {
+    delete params.is_selective
+  } else {
+    delete params.indexed_level
+    if (is_selective.value) {
+      params.public = '2'
+    } else {
+      delete params.public
+    }
+  }
+  const res: any = await editArticleApi(Number(infoStore.currentQuery?.aid), params)
   if (res.code === 1000) {
     ElMessage.success('更新成功')
     publicType.value = res.data.public
-    operaList.value[2].value = indexed_level.value ? '开启' : '关闭'
+    operaList.value[3].value = res.data.indexed_level ? '开启' : '关闭'
+    operaList.value[1].value = res.data.is_selective === '0' ? '否' : '已推送'
   } else {
     ElMessage.error(res.msg)
   }
@@ -144,12 +192,15 @@ const editArticle = async (val) => {
     title: props.aInfo.title,
     book: props.aInfo.book,
     space: props.aInfo.space,
-    public: val
+    public: val,
+    is_selective: is_selective.value ? '1' : '0'
   }
-  const res = await editArticleApi(Number(infoStore.currentQuery?.aid), params)
+  val === '1' && (params.is_selective = '0')
+  const res: any = await editArticleApi(Number(infoStore.currentQuery?.aid), params)
   if (res.code === 1000) {
     ElMessage.success('更新成功')
     publicType.value = res.data.public
+    operaList.value[1].value = res.data.is_selective === '0' ? '否' : '已推送'
   } else {
     ElMessage.error(res.msg)
   }
@@ -236,7 +287,22 @@ const toCopy = () => {
       <p class="tip">开启后，空间成员可在空间里搜索到当前内容（如果开启了密码，则搜索设置无效）</p>
       <div class="public-item">
         <span>允许空间内搜索</span>
-        <el-switch v-model="indexed_level" style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8a8f8d" @change="changeLevel" />
+        <el-switch v-model="indexed_level" style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8a8f8d" @change="changeLevel('level')" />
+      </div>
+    </div>
+    <div class="box" v-if="currentPage === '3'">
+      <div class="back" @click="currentPage = '0'"><img src="/src/assets/icons/sharePopver/back.svg" alt="" />推送至精选文章</div>
+      <p class="tip">注意：推送后，可在公共区精选文章中查看到该文章，同时系统会将该文章的分享范围自动设置为空间所有成员可访问</p>
+      <div class="public-item">
+        <span>推送至精选文章</span>
+        <el-switch
+          size="large"
+          v-model="is_selective"
+          style="--el-switch-on-color: #13ce66; --el-switch-off-color: #8a8f8d"
+          inline-prompt
+          active-text="已推送"
+          @change="changeLevel('select')"
+        />
       </div>
     </div>
   </el-popover>
@@ -452,5 +518,40 @@ const toCopy = () => {
 <style lang="scss">
 .sharePopver {
   padding: 20px !important;
+}
+.sharePopver {
+  .changePublicDialog {
+    padding: 32px 32px 24px;
+    border-radius: 8px;
+    .el-message-box__header {
+      display: none;
+    }
+    .el-message-box__message {
+      font-size: 14px !important;
+    }
+    .submitBtn,
+    .cancelBtn {
+      margin-left: 8px !important;
+      border-radius: 6px !important;
+      box-shadow: none !important;
+      height: 32px !important;
+      padding: 4px 15px !important;
+      font-size: 14px !important;
+    }
+    .submitBtn {
+      color: #fff !important;
+      background: #00b96b !important;
+      border-color: #00b96b !important;
+    }
+    .cancelBtn {
+      color: #262626 !important;
+      background: #fff !important;
+      border-color: #e7e9e8 !important;
+      &:hover {
+        color: #00b96b !important;
+        border-color: #00b96b !important;
+      }
+    }
+  }
 }
 </style>

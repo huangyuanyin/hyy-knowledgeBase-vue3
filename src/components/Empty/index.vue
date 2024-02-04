@@ -1,15 +1,5 @@
-<template>
-  <div class="Empty-wrap" :style="{ height: props.height }">
-    <div class="empty">
-      <div class="empty-img">
-        <img src="@/assets/img/cooperate.png" alt="" />
-      </div>
-      <p>{{ props.text }}</p>
-    </div>
-  </div>
-</template>
-
 <script lang="ts" setup>
+import cooperate from '@/assets/img/cooperate.png'
 const props = defineProps({
   text: {
     type: String,
@@ -18,9 +8,24 @@ const props = defineProps({
   height: {
     type: String,
     default: '800px'
+  },
+  img: {
+    type: String,
+    default: cooperate
   }
 })
 </script>
+
+<template>
+  <div class="Empty-wrap" :style="{ height: props.height }">
+    <div class="empty">
+      <div class="empty-img">
+        <img :src="props.img" alt="" />
+      </div>
+      <p>{{ props.text }}</p>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .Empty-wrap {

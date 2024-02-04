@@ -13,7 +13,7 @@ const props = defineProps<{
   moduleGenreData?: Button[]
   moduleGenre?: string
 }>()
-const emit = defineEmits(['getBookStacks'])
+const emit = defineEmits(['getBookStacks', 'changeModule'])
 
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
@@ -46,8 +46,9 @@ watchEffect(() => {
 })
 
 const changeType = (type: string) => {
-  return ElMessage.warning('功能暂未开放，敬请期待')
+  if (moduleGenreLocal.value === type) return
   moduleGenreLocal.value = type
+  emit('changeModule', type)
 }
 
 const toChangeView = (type: string) => {
