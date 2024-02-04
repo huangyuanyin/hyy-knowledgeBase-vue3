@@ -3,6 +3,7 @@ import shareIcon1 from '@/assets/icons/sharePopver/1.svg'
 import shareIcon2 from '@/assets/icons/sharePopver/2.svg'
 import shareIcon3 from '@/assets/icons/sharePopver/3.svg'
 import shareIcon4 from '@/assets/icons/sharePopver/4.svg'
+import shareIcon5 from '@/assets/icons/sharePopver/5.svg'
 import { editArticleApi } from '@/api/article'
 import { OperationPopoverProps } from '@/type/operationPopoverType'
 
@@ -32,7 +33,7 @@ const operaList = ref([
   {
     label: '推送精选',
     value: '否',
-    icon: shareIcon2
+    icon: shareIcon5
   },
   {
     label: '密码访问',
