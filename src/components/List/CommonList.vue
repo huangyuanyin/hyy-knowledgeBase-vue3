@@ -158,7 +158,7 @@ const toPermission = (val) => {
           <div class="item-left">
             <img :src="item.icon" alt="" class="bookIcon" />
             <div class="title">
-              <span>{{ item.name || item.title }}</span>
+              <span max-w-18vw overflow-hidden text-ellipsis whitespace-nowrap>{{ item.name || item.title }}</span>
               <img v-if="item.public === '1'" src="/src/assets/icons/publicIcon.svg" alt="" class="publicIcon" />
               <img v-else src="/src/assets/icons/privateIcon.svg" alt="" class="publicIcon" />
             </div>

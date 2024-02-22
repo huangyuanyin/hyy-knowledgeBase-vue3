@@ -58,7 +58,7 @@ export const pptInitData = [
         width: 585,
         height: 188,
         lineHeight: 1.2,
-        content: "<p><strong><span style='font-size:  112px'>黄原寅</span></strong></p>",
+        content: "<p><strong><span style='font-size:  112px'>XXX</span></strong></p>",
         rotate: 0,
         defaultFontName: 'Microsoft Yahei',
         defaultColor: '#333'

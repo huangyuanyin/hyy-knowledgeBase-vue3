@@ -287,11 +287,11 @@ const customIcon = () => {
         <img class="rightArrowIcon" src="/src/assets/icons/rightArrowIcon.svg" alt="" />
         <span @click="toLink('link')">{{ infoStore.currentSpaceType === '个人' ? '个人知识库' : `${group_name}` }}</span>
       </div>
-      <div class="library-name">
+      <div class="book-name">
         <div class="left">
           <img class="bookIcon" :src="infoStore.currentBookInfo.icon" alt="" />
           <div class="name">
-            <span>{{ lname }}</span>
+            <p max-w-8vw overflow-hidden text-ellipsis whitespace-nowrap>{{ lname }}</p>
             <img class="privateIcon" src="/src/assets/icons/privateIcon.svg" alt="" />
           </div>
         </div>
@@ -440,7 +440,7 @@ const customIcon = () => {
         flex: 1;
       }
     }
-    .library-name {
+    .book-name {
       display: flex;
       align-items: center;
       justify-content: space-between;

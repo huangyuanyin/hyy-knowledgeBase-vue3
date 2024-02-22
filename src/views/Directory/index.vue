@@ -114,7 +114,7 @@ onMounted(() => {
             <div class="bookIcon">
               <img :src="infoStore.currentBookInfo.icon" alt="" class="bookIcon" />
             </div>
-            <span>{{ lname }}</span>
+            <span max-w-31vw overflow-hidden text-ellipsis whitespace-nowrap>{{ lname }}</span>
           </div>
           <div class="header-right">
             <div class="button-wrap" v-if="!isEdit">

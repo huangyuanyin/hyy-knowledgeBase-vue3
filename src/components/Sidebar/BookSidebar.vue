@@ -69,7 +69,7 @@ const toLink = (item: any) => {
       <img src="/src/assets/icons/arrowRightIcon.svg" alt="" />
       <span>
         <img class="bookIcon" :src="infoStore.currentBookInfo.icon" alt="" />
-        {{ infoStore.currentBookInfo.name }}
+        <p max-w-8vw overflow-hidden text-ellipsis whitespace-nowrap>{{ infoStore.currentBookInfo.name }}</p>
       </span>
     </div>
     <h4>知识库管理</h4>

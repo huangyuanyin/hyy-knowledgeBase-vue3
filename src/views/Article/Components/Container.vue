@@ -368,7 +368,7 @@ onMounted(() => {
     <el-container>
       <el-header class="header">
         <div class="header_left">
-          <label v-if="infoStore.currentMenu !== 'title'">{{ infoStore.currentQuery?.aname }}</label>
+          <p max-w-60vw overflow-hidden text-ellipsis whitespace-nowrap v-if="infoStore.currentMenu !== 'title'">{{ infoStore.currentQuery?.aname }}</p>
           <div v-else flex text-14px text="#262626">
             <div flex items-center v-for="(item, index) in titleList" :key="'titleList' + index">
               <h5 line-height-30px cursor-pointer v-if="index !== titleList.length - 1" @click="toLink('title', item)">{{ item.title }}</h5>
@@ -497,7 +497,7 @@ onMounted(() => {
       box-sizing: border-box;
       display: flex;
       align-items: center;
-      label {
+      p {
         color: #585a5a;
       }
       span {

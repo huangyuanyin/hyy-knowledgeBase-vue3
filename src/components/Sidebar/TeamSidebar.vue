@@ -59,7 +59,9 @@ const toLink = (item: any) => {
       <img :src="arrowRightIcon" alt="" />
       <span>
         <img class="teamIcon" :src="infoStore.currentTeamInfo.icon" alt="" />
-        {{ infoStore.currentTeamInfo.groupname }}
+        <p max-w-9vw overflow-hidden text-ellipsis whitespace-nowrap>
+          {{ infoStore.currentTeamInfo.groupname }}
+        </p>
       </span>
     </div>
     <h4>团队管理</h4>
@@ -85,7 +87,7 @@ const toLink = (item: any) => {
   box-sizing: border-box;
   padding: 8px;
   .back {
-    margin: 18px 0px 0px 6px;
+    margin: 18px 10px 0px 6px;
     cursor: pointer;
     border-radius: 6px;
     padding: 5px 0px;

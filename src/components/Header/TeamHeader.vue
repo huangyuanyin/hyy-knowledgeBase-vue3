@@ -63,7 +63,9 @@ const toTeamSetting = () => {
   <div class="TeamHeader_wrap">
     <div class="left">
       <span class="teamIcon"><img :src="props.icon" alt="" /></span>
-      <h3>{{ infoStore.currentQuery?.gname }}</h3>
+      <el-tooltip effect="light" :content="infoStore.currentQuery?.gname" placement="bottom-start" :hide-after="0" :show-after="1000" :show-arrow="false">
+        <h3 max-w-21vw overflow-hidden text-ellipsis whitespace-nowrap>{{ infoStore.currentQuery?.gname }}</h3>
+      </el-tooltip>
       <el-tooltip effect="dark" content="仅团队成员可访问" placement="bottom">
         <span class="privateIcon"><img :src="privateIcon" alt="" /></span>
       </el-tooltip>

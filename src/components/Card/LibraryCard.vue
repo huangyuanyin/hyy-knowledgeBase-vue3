@@ -208,7 +208,7 @@ const toMoreSetting = (val) => {
             <img w-16px h-16px :src="pinOutIcon" alt="" />
           </span>
         </el-tooltip>
-        <h3 relative font-600 text-16px mt-12px line-height-24px color="#262626">{{ card.name }}</h3>
+        <p relative font-600 text-16px mt-12px line-height-24px color="#262626" line-clamp-3 overflow-hidden text-ellipsis break-words>{{ card.name }}</p>
         <p relative text-12px line-height-18px font-400 mt-6px mb-6px color="#000" line-clamp-3 overflow-hidden text-ellipsis break-words>{{ card.description }}</p>
         <button
           absolute

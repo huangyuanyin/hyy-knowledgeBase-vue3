@@ -126,7 +126,7 @@ onMounted(() => {
             <el-button @click="uploadImg"> 重新上传 </el-button> -->
             <div relative w-207px h-full ml-14px pt-35px pb-35px pr-22px pl-22px box-sizing>
               <img absolute top-0px left-0px w-full h-full rounded-6px :src="bookForm.cover || cover" alt="" />
-              <h3 relative font-600 text-23px text="#1f2329" line-height-33px tracking-1.5px>{{ bookForm.name }}</h3>
+              <h3 relative font-600 text-23px text="#1f2329" line-height-33px tracking-1.5px line-clamp-3 overflow-hidden text-ellipsis break-words>{{ bookForm.name }}</h3>
               <p relative text-15px line-height-25px mt-4px tracking-1.5px line-clamp-3 overflow-hidden text-ellipsis break-words>{{ bookForm.description }}</p>
             </div>
             <div relative ml-10px flex flex-col flex-1>

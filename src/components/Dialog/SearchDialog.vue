@@ -73,6 +73,7 @@ watch(
         list.value[0].children[0].id = infoStore.currentQuery?.sid
         list.value[0].children[0].icon = spaceIcon.value
       }
+      if (infoStore.currentSpaceType === '个人') list.value.pop()
     }
   }
 )

@@ -326,7 +326,9 @@ onMounted(async () => {
               <span :class="['custom-tree-node']">
                 <div style="display: flex; align-items: center; flex: 1">
                   <img :src="data.icon" alt="" />
-                  <span class="title">{{ data.name || data.groupname || data.title }}</span>
+                  <el-tooltip effect="light" :content="data.name || data.groupname || data.title" placement="bottom-end" :hide-after="0" :show-after="1000" :show-arrow="false">
+                    <p class="title">{{ data.name || data.groupname || data.title }}</p>
+                  </el-tooltip>
                   <span class="type-icon">
                     <img :src="typeIcon[data.public] || privateIcon" alt="" />
                   </span>
@@ -492,7 +494,7 @@ onMounted(async () => {
             margin-left: 6px;
             font-size: 14px;
             color: #585a5a;
-            max-width: calc(100% - 48px);
+            max-width: 140px;
             display: inline-block;
             white-space: nowrap;
             overflow: hidden;
