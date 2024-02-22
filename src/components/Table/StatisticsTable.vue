@@ -62,12 +62,12 @@ watchEffect(() => {
         { prop: 'mark_count', label: '收藏数' }
       ],
       bookCol: [
-        { prop: 'name', label: '知识库名称', width: 200 },
-        { prop: 'word_count', label: '字数' },
-        { prop: 'content_count', label: '文档数' },
-        { prop: 'read_count', label: '阅读量' },
-        { prop: 'like_count', label: '点赞量' },
-        { prop: 'comment_count', label: '评论量' }
+        { prop: 'name', label: '知识库名称' },
+        { prop: 'word_count', label: '字数', width: 150 },
+        { prop: 'content_count', label: '文档数', width: 150 },
+        { prop: 'read_count', label: '阅读量', width: 150 },
+        { prop: 'like_count', label: '点赞量', width: 150 },
+        { prop: 'comment_count', label: '评论量', width: 150 }
       ],
       docCol: [
         { prop: 'title', label: '文档名称', width: 200 },
@@ -123,11 +123,11 @@ const toChangeTab = (val) => {
         <template #default="{ row }">
           <div flex items-center h-56px v-if="column.prop === 'title'">
             <img w-20px h-20px mr-4px :src="contentType[row.type]" alt="" class="icon" />
-            <span>{{ row.title }}</span>
+            <span max-w-200px overflow-hidden text-ellipsis whitespace-nowrap>{{ row.title }}</span>
           </div>
           <div flex items-center h-56px v-else-if="column.prop === 'name'">
             <img w-24px h-24px mr-8px :src="row.icon" alt="" class="icon" />
-            <span>{{ row.name }}</span>
+            <span max-w-250px overflow-hidden text-ellipsis whitespace-nowrap>{{ row.name }}</span>
           </div>
           <span flex items-center v-else line-height-56px h-56px>{{ row[column.prop] }}</span>
         </template>

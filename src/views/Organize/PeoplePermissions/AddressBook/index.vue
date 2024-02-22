@@ -73,8 +73,8 @@ const handleMember = () => {
     {
       permname: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).creator_name,
       permtype: '0',
-      dept: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).dept,
-      mobile: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).mobile,
+      dept: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).user.dept_name,
+      mobile: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).user.mobile,
       update_datetime: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).create_datetime
     }
   ]

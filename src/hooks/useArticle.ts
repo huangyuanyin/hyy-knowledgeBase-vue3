@@ -1,9 +1,9 @@
-import { getArticleTreeApi, getArticleApi, addArticleApi, editArticleApi, deleteArticleApi, getCategoryTreeApi, getDocListApi } from '@/api/article'
+import { getArticleTreeApi, getArticleApi, addArticleApi, editArticleApi, deleteArticleApi, getCategoryTreeApi, getDocListApi, getRecentArticleListApi } from '@/api/article'
 import { sheetData } from '@/components/Excel/data'
 import { useInfoStore } from '@/store/info'
 import { ArticleType, Callback } from '@/type/type'
 import { ArticleInfo } from '@/type/article'
-import { ArticleRes } from '@/api/article/type'
+import { ArticleRes, RecentArticleParams } from '@/api/article/type'
 import { ArticleParams } from '@/api/article/type'
 
 export const useArticle = () => {
@@ -60,6 +60,22 @@ export const useArticle = () => {
       callback && (await callback(res.data))
     } else {
       res.code !== 1003 && ElMessage.error(res.msg)
+    }
+  }
+
+  /**
+   * 获取最近编辑过/浏览过的文档列表
+   * @param params 参数
+   * @param callback
+   */
+  const getRecentDocList = async (params: RecentArticleParams, callback?: Callback) => {
+    params.space = space.value
+    let res = await getRecentArticleListApi(params)
+    if (res.code === 1000) {
+      articleList.value = res.data as ArticleInfo[]
+      callback && (await callback(res.data))
+    } else {
+      ElMessage.error(res.msg)
     }
   }
 
@@ -243,7 +259,7 @@ export const useArticle = () => {
       lid,
       lname: lname
     }
-    let res = await deleteArticleApi(id)
+    let res = (await deleteArticleApi(id)) as any
     if (res.code === 1000) {
       ElMessage.success('删除成功')
       await getArticleList(Number(lid))
@@ -300,6 +316,7 @@ export const useArticle = () => {
     getArticleList,
     getDocList,
     getArticleDetail,
+    getRecentDocList,
     handleAddArticle,
     handleAddArticleApi,
     handleEditArticle,

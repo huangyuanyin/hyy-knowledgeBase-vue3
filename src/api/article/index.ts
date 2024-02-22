@@ -1,4 +1,4 @@
-import { ArticleData, ArticleParams, ArticleRes, HandleArticleData, ArticleAttachmentData, ArticleTemData, ArticleVersionData, CategoryParams } from './type'
+import { ArticleData, ArticleParams, ArticleRes, HandleArticleData, ArticleAttachmentData, ArticleTemData, ArticleVersionData, CategoryParams, RecentArticleParams } from './type'
 
 export function getArticleTreeApi(id: string | Number) {
   return http.get<ArticleRes>(`article_tree/${id}/`, {}, 'base')
@@ -70,4 +70,8 @@ export function getCategoryTreeApi(params: CategoryParams) {
 
 export function getDocListApi(params: ArticleParams) {
   return http.get<ArticleRes>(`articles/`, { params }, 'base')
+}
+
+export function getRecentArticleListApi(params: RecentArticleParams) {
+  return http.get<ArticleRes>(`mine/recent/`, { params }, 'base')
 }

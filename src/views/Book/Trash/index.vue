@@ -91,7 +91,7 @@ onMounted(() => {
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="modifier_name" label="操作者" width="200" />
+        <el-table-column prop="creator_name" label="操作者" width="200" />
         <el-table-column prop="create_datetime" label="删除时间" width="220" />
         <el-table-column label="操作" width="220">
           <template #default="{ row }">

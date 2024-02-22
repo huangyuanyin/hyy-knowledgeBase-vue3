@@ -60,3 +60,10 @@ export interface CategoryParams {
   node_id: number
   action: string
 }
+
+export interface RecentArticleParams {
+  type: string
+  space?: string | number
+  target_type?: string
+  creator?: string
+}

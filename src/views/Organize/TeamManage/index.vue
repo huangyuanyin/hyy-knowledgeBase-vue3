@@ -51,11 +51,11 @@ onMounted(() => {
     </div>
     <div class="box">
       <el-table :data="teamData" stripe style="width: 100%" empty-text="暂无团队">
-        <el-table-column prop="groupname" label="名称" width="250" />
-        <el-table-column prop="creator_name" label="管理员" width="250" />
+        <el-table-column prop="groupname" label="名称" />
+        <el-table-column prop="creator_name" label="管理员" width="150" />
         <el-table-column prop="create_datetime" label="创建时间" width="250" />
-        <el-table-column prop="book_count" label="知识库" width="250" />
-        <el-table-column label="操作">
+        <el-table-column prop="book_count" label="知识库" width="150" />
+        <el-table-column label="操作" width="150">
           <template #default="{ row }">
             <LibraryOperationPopver :menuItems="teamSettingData" @toTeamSetting="toTeamSetting(row)" @toTeamIndex="toTeamIndex(row)" @toDeleteTeam="toDeleteTeam(row)">
               <span class="more-icon" @click.stop>

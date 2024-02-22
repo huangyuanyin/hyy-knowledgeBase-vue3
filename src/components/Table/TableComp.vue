@@ -3,9 +3,9 @@ import limitsIcon from '@/assets/icons/limitsIcon.svg'
 import renameIcon from '@/assets/icons/renameIcon.svg'
 import menuIcon from '@/assets/icons/menuIcon.svg'
 import deleteIcon from '@/assets/icons/deleteIcon.svg'
-import starOutlineIcon from '@/assets/icons/starOutlineIcon.svg'
-import swipOutlineIcon from '@/assets/icons/swipOutlineIcon.svg'
-import newTabOutlineIcon from '@/assets/icons/newTabOutlineIcon.svg'
+// import starOutlineIcon from '@/assets/icons/starOutlineIcon.svg'
+// import swipOutlineIcon from '@/assets/icons/swipOutlineIcon.svg'
+// import newTabOutlineIcon from '@/assets/icons/newTabOutlineIcon.svg'
 import settingIcon from '@/assets/icons/team/settingIcon.svg'
 import editIcon from '@/assets/icons/team/editIcon.svg'
 import privateIcon from '@/assets/icons/privateIcon.svg'
@@ -13,7 +13,9 @@ import empty from '@/assets/img/empty.png'
 import addIcon from '@/assets/icons/addIcon.svg'
 import addIcon_hover from '@/assets/icons/addIcon_hover.svg'
 import articleIcon from '@/assets/icons/articleIcon.svg'
+import { contentType } from '@/data/data'
 import { addQuickLinksApi, deleteQuickLinksApi } from '@/api/quickLinks'
+import { ArticleInfo } from '@/type/article'
 
 const props = defineProps({
   header: {
@@ -53,23 +55,23 @@ const libraryOperationData = [
   { type: 'divider' },
   { type: 'item', icon: deleteIcon, label: '删除', nick: 'toDeleteBook' }
 ]
-const editTableOperation = [
-  {
-    type: 'item',
-    label: '收藏',
-    icon: starOutlineIcon
-  },
-  {
-    type: 'item',
-    label: '移除记录',
-    icon: swipOutlineIcon
-  },
-  {
-    type: 'item',
-    label: '浏览器打开',
-    icon: newTabOutlineIcon
-  }
-]
+// const editTableOperation = [
+//   {
+//     type: 'item',
+//     label: '收藏',
+//     icon: starOutlineIcon
+//   },
+//   {
+//     type: 'item',
+//     label: '移除记录',
+//     icon: swipOutlineIcon
+//   },
+//   {
+//     type: 'item',
+//     label: '浏览器打开',
+//     icon: newTabOutlineIcon
+//   }
+// ]
 const commonTeamData = [
   { type: 'item', icon: settingIcon, label: '团队设置', nick: 'toTeamSetting' },
   { type: 'item', icon: editIcon, label: '退出团队', nick: 'toQuitTeam' }
@@ -178,6 +180,36 @@ const toLink = (val, type) => {
   }
 }
 
+const toHandle = (item: any, type: string) => {
+  switch (type) {
+    case '编辑':
+      const baseUrl = `${infoStore.currentSpaceType === '个人' ? '' : `/${infoStore.currentSpaceInfo.spacekey}`}/directory/${item.target_type}`
+      router.push({
+        path: baseUrl,
+        query: {
+          sid: infoStore.currentQuery?.sid,
+          sname: infoStore.currentQuery?.sname,
+          lid: item.article.book_id,
+          lname: item.article.book_name,
+          gid: item.article.group_id,
+          gname: item.article.group_name,
+          aid: item.target_id,
+          aname: item.article.title
+        }
+      })
+      break
+    case '已收藏':
+    case '收藏':
+      if (!(infoStore.currentArticleInfo as ArticleInfo).marked) {
+        // addMarks()
+      }
+      break
+    default:
+      ElMessage.warning('功能暂未开放，敬请期待')
+      break
+  }
+}
+
 const toMoreSetting = (val) => {
   console.log(`output->val`, val)
   useLink(routeInfo, 'bookSet', val)
@@ -218,14 +250,14 @@ const cancelMark = () => {
       </tr>
     </thead>
     <template v-if="props.data.length">
-      <tbody v-if="props.type === 'dashboard'">
+      <tbody v-if="['updateDoc', 'viewDoc'].includes(props.type) && props.data.length">
         <tr class="docItem" v-for="document in (props.data as any)" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">
-          <td class="item-title">
+          <td class="item-title" @click="toHandle(document, '编辑')">
             <div>
-              <img :src="document.icon" alt="" />
+              <img :src="contentType[document.target_type]" alt="" />
               <div class="item-title-right">
                 <el-tooltip effect="light" :content="document.title" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
-                  <span>{{ document.title }}</span>
+                  <span>{{ document.article.title }}</span>
                 </el-tooltip>
                 <el-tooltip effect="dark" content="编辑" placement="top" :show-arrow="false">
                   <span class="editIcon">
@@ -236,20 +268,45 @@ const cancelMark = () => {
             </div>
           </td>
           <td class="item-user">
-            <span class="username">{{ document.username }}</span>
+            <span class="username">{{ document.creator_name }}</span>
             <span class="divider">/</span>
-            <span class="library">{{ document.library }}</span>
+            <span class="library">{{ document.article.book_name }}</span>
           </td>
           <td class="item-time">
-            <span>{{ document.time }}</span>
+            <span>{{ document.update_datetime }}</span>
           </td>
-          <td class="item-operation">
-            <LibraryOperationPopver :menuItems="editTableOperation" :width="126">
-              <span>
-                <img v-show="hoveredDocument === document.id" src="@/assets/icons/moreIcon1_after.svg" alt="" />
-              </span>
-            </LibraryOperationPopver>
-          </td>
+          <!-- <td class="item-operation">
+            <el-popover
+              ref="docOperationPopver"
+              popper-class="docOperationPopver"
+              placement="bottom-start"
+              width="126"
+              trigger="click"
+              :show-after="100"
+              :hide-after="100"
+              :show-arrow="false"
+            >
+              <template #reference>
+                <span>
+                  <img v-if="['updateDoc', 'viewDoc'].includes(props.type)" src="@/assets/icons/moreIcon1_after.svg" alt="" />
+                </span>
+              </template>
+              <ul>
+                <template v-for="(item, _index) in editTableOperation" :key="'menuItems' + _index">
+                  <StarPopver @cancelMark="cancelMark" :startId="document.mark_id" :tag_mark="document.tag_mark" type="star">
+                    <li class="operation_item" v-if="item.label === '收藏'" :style="{ height: '40px', 'line-height': '40px' }" @click="toHandle(document, '收藏')">
+                      <img v-if="item.icon" :src="item.icon as string" alt="" />
+                      <span :style="{ color: '#262626' }">{{ item.label }}</span>
+                    </li>
+                  </StarPopver>
+                  <li class="operation_item" v-if="item.label !== '收藏'" :style="{ height: '40px', 'line-height': '40px' }" @click="toHandle(document, item.label)">
+                    <img v-if="item.icon" :src="item.icon as string" alt="" />
+                    <span :style="{ color: item.label === '删除' ? '#df2a3f' : '#262626' }">{{ item.label }}</span>
+                  </li>
+                </template>
+              </ul>
+            </el-popover>
+          </td> -->
         </tr>
       </tbody>
       <tbody v-if="props.type === 'star'">
@@ -375,6 +432,9 @@ const cancelMark = () => {
       </tbody>
     </template>
   </table>
+  <div v-if="['updateDoc', 'viewDoc'].includes(props.type) && !props.data.length">
+    <Empty height="400px" :text="props.type === 'updateDoc' ? '你最近编辑的内容将会出现在这里' : '你最近浏览的内容将会出现在这里'" :img="empty" />
+  </div>
   <div class="empty" v-if="!props.data.length && props.type === 'team'">
     <img class="emptyImg" :src="empty" alt="" />
     <p>团队可以是实际存在的部门，也可以是虚拟的项目组，空间中可以创建不同类型的团队完成日常工作与协同。</p>
@@ -562,5 +622,43 @@ const cancelMark = () => {
       }
     }
   }
+}
+
+.docOperationPopver {
+  ul {
+    list-style: none;
+    .operation_item {
+      box-sizing: border-box;
+      padding: 6px 10px !important;
+      display: flex;
+      align-items: center;
+      img {
+        width: 16px;
+        height: 16px;
+        margin-right: 5px;
+      }
+      span {
+        margin-left: 8px;
+        font-size: 14px;
+      }
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.06);
+        cursor: pointer;
+      }
+    }
+    .divider {
+      margin: 4px 12px;
+      height: 1px;
+      background-color: rgba(0, 0, 0, 0.06);
+    }
+  }
+}
+</style>
+
+<style lang="scss">
+.docOperationPopver {
+  padding: 0 !important;
+  min-width: 110px !important;
+  border-radius: 8px !important;
 }
 </style>

@@ -1,10 +1,23 @@
 <script lang="ts" setup>
-import { moduleData, documentsData, moduleAddMenuData } from '@/data/data'
+import { moduleData, moduleAddMenuData } from '@/data/data'
 
 const isShowsLibraryDialog = ref(false)
 const isBookListDialog = ref(false)
 const isShowSelectTemDialog = ref(false)
 const bookListDialogTitle = ref('')
+const docType = ref('updateDoc')
+const articleList = ref([])
+
+const { articleList: list, getRecentDocList } = useArticle()
+
+async function handleRecentDocList(type: string) {
+  const params = {
+    type,
+    space: 10
+  }
+  await getRecentDocList(params)
+  articleList.value = list.value
+}
 
 const handleModule = (id: number): void => {
   switch (id) {
@@ -23,6 +36,15 @@ const toAddArticle = (val: any): void => {
   isBookListDialog.value = true
   bookListDialogTitle.value = val.label.includes('新建') ? val.label.slice(2) : val.label
 }
+
+const changeModule = async (type: string) => {
+  docType.value = type
+  handleRecentDocList(type)
+}
+
+onMounted(async () => {
+  handleRecentDocList('updateDoc')
+})
 </script>
 
 <template>
@@ -47,19 +69,20 @@ const toAddArticle = (val: any): void => {
     <div class="docTitle">文档</div>
     <SwitchModuleItem
       :moduleType="'search'"
-      :moduleGenre="'edit'"
+      :moduleGenre="'updateDoc'"
       :moduleGenreData="[
         {
-          type: 'edit',
+          type: 'updateDoc',
           name: '编辑过'
         },
         {
-          type: 'public',
+          type: 'viewDoc',
           name: '浏览过'
         }
       ]"
+      @changeModule="changeModule"
     />
-    <TableComp :data="documentsData" type="dashboard" />
+    <TableComp :data="articleList" :type="docType" />
   </div>
 
   <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />

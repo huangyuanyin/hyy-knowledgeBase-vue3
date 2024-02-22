@@ -43,8 +43,8 @@ watch(
       statisticsList.value[0].children[2].value = val.mind_count
       statisticsList.value[0].children[3].value = val.ppt_count
       statisticsList.value[0].children[4].value = val.file_count
-      statisticsList.value[1].counts = val.knowledge_cooperate_count || 0
-      statisticsList.value[1].children[0].value = val.write_count
+      statisticsList.value[1].counts = val.write_count || 0
+      statisticsList.value[1].children[0].value = '-'
       statisticsList.value[1].children[1].value = val.read_count
       statisticsList.value[1].children[2].value = val.comment_count
       statisticsList.value[1].children[3].value = val.like_count
