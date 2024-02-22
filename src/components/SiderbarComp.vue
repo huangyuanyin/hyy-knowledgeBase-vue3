@@ -107,7 +107,6 @@ watch(
       }
     } else {
       state.operatData = menuItemsData
-      console.log(`output->infoStore.currentMenu`, infoStore.currentMenu)
       state.headerActive = infoStore.currentMenu === 'library' ? 0 : null
     }
   },

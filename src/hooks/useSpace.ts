@@ -6,7 +6,7 @@ interface CallbackFunction {
 
 export const useSpace = () => {
   const infoStore = useInfoStore()
-  const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
+  const user = JSON.parse(localStorage.getItem('userInfo'))?.username || ''
   const spacesList = ref([])
   const spaceAdmin = ref<boolean>(false)
 

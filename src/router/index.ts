@@ -365,7 +365,7 @@ const customRoutes = [
     }
   },
   {
-    path: '/:spaceName/bookSetting/statistics',
+    path: '/:spaceName?/bookSetting/statistics',
     name: 'Book-Statistics',
     component: pageComps['/src/views/Book/Statistics/index.vue'] as Component,
     meta: {

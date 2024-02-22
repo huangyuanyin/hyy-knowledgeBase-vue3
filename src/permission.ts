@@ -74,10 +74,11 @@ export async function setupRouterResponder(to: RouteLocationNormalized, from: Ro
   if (infoStore.currentSpaceType === '个人') await useSpace().getSpaceInfo(null)
   else {
     if (
-      !sessionStorage.getItem('xinAn-spaceInfo') ||
+      (to.meta.menu !== 'login' && !sessionStorage.getItem('xinAn-spaceInfo')) ||
       (sessionStorage.getItem('xinAn-spaceInfo') && JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).id !== Number(infoStore.currentQuery?.sid))
-    )
+    ) {
       await useSpace().getSpaceInfo(Number(infoStore.currentQuery?.sid))
+    }
   }
   // 如果是团队设置页面，则判断是否需要重新获取团队信息
   if (to.meta.asideComponent === 'TeamSidebar') {

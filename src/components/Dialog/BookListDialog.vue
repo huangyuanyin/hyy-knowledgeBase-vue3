@@ -17,7 +17,8 @@ const props = defineProps({
 })
 const emit = defineEmits(['closeDialog', 'toAddArticle'])
 
-const visible = ref(false)
+const bookName = ref<string>('')
+const visible = ref<boolean>(false)
 const bookList = ref([])
 
 watch(
@@ -71,7 +72,7 @@ const closeDialog = () => {
       </div>
     </template>
     <p class="mb-8px font-normal text-#8a8f8d text-14px">选择一个知识库</p>
-    <el-input class="rounded-6px mb-12px" placeholder="请输入知识库名称进行搜索">
+    <el-input class="rounded-6px mb-12px" v-model="bookName" placeholder="请输入知识库名称进行搜索（暂不支持）">
       <template #prefix>
         <i-ep-Search />
       </template>

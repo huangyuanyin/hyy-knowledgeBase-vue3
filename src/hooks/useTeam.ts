@@ -38,7 +38,7 @@ export const useTeam = () => {
     }
     sparams && (params = { ...params, ...sparams })
     let res = await getGroupsApi(params)
-    if (res.code === 1000) {
+    if (res?.code === 1000) {
       teamList.value = res.data as any
     } else {
       ElMessage.error(res.msg)

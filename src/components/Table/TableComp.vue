@@ -148,8 +148,9 @@ const toLink = (val, type) => {
   if (type === 'team') {
     useTeamPermission(route, router, val)
   } else if (type === 'library') {
+    const baseUrl = `${infoStore.currentSpaceType === '个人' ? '' : `/${infoStore.currentSpaceInfo.spacekey}`}/directory/index`
     router.push({
-      path: `/${infoStore.currentSpaceInfo.spacekey}/directory/index`,
+      path: baseUrl,
       query: {
         sid: val.space,
         sname: infoStore.currentQuery?.sname,
@@ -160,8 +161,9 @@ const toLink = (val, type) => {
       }
     })
   } else if (type === 'star') {
+    const baseUrl = `${infoStore.currentSpaceType === '个人' ? '' : `/${infoStore.currentSpaceInfo.spacekey}`}/directory/${val.target_type}`
     router.push({
-      path: `/${infoStore.currentSpaceInfo.spacekey}/directory/${val.target_type}`,
+      path: baseUrl,
       query: {
         sid: val.space,
         sname: infoStore.currentQuery?.sname,

@@ -60,6 +60,9 @@ watch(
       temForm.content_type = props.info.type
       temForm.target_id = props.info.space
     }
+    if (infoStore.currentSpaceType === '个人') {
+      temOpts.value = temOpts.value.filter((item) => item.value !== '2')
+    }
   }
 )
 

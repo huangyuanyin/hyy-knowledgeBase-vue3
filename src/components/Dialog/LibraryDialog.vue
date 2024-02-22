@@ -35,7 +35,7 @@ const teamList = ref([]) // 当前空间下的全部团队
 const stacksList = ref([]) // 知识库分组集合
 const publicList = ref([])
 const dialogVisible = ref(false)
-const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
+const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo'))?.avatar || '@/assets/img/img.jpg')
 const libraryFormRef = ref<FormInstance>()
 const libraryForm = reactive<RuleForm>({
   name: '',

@@ -26,7 +26,17 @@ const createAxiosInstance = (baseUrlType: keyof typeof baseUrlList): AxiosInstan
 
   instance.interceptors.response.use(
     (response: AxiosResponse) => {
-      return response.data
+      if (response.data.code === 1001 && ['Token解码失败.', 'Token验证失败.'].includes(response.data.msg)) {
+        ElMessage.error('登录过期，请重新登录')
+        localStorage.clear()
+        sessionStorage.clear()
+        setTimeout(() => {
+          window.location.href = '#/login'
+          window.location.reload()
+        }, 1500)
+      } else {
+        return response.data
+      }
     },
     (error: AxiosError) => {
       const status = error.response?.status as keyof typeof errorMessages

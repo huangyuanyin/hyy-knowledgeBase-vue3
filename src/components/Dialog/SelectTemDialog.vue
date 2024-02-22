@@ -34,13 +34,22 @@ watch(
     dialogVisible.value = newVal
     if (newVal) {
       if (infoStore.currentSidebar === 'DirectorySidebar') {
-        temRange.value = [
-          { label: '推荐', desc: '仅在本空间中可以使用', value: 'null' },
-          { label: '本空间', desc: '仅在本空间中可以使用', value: '3' },
-          { label: '本团队', desc: '仅在本团队中可以使用', value: '2' },
-          { label: '本知识库', desc: '仅在本知识库中可以使用', value: '1' },
-          { label: '我的', desc: '可以在你参与的所有知识库中使用', value: '0' }
-        ]
+        if (infoStore.currentSpaceType === '个人') {
+          temRange.value = [
+            { label: '推荐', desc: '仅在本空间中可以使用', value: 'null' },
+            { label: '本空间', desc: '仅在本空间中可以使用', value: '3' },
+            { label: '本知识库', desc: '仅在本知识库中可以使用', value: '1' },
+            { label: '我的', desc: '可以在你参与的所有知识库中使用', value: '0' }
+          ]
+        } else {
+          temRange.value = [
+            { label: '推荐', desc: '仅在本空间中可以使用', value: 'null' },
+            { label: '本空间', desc: '仅在本空间中可以使用', value: '3' },
+            { label: '本团队', desc: '仅在本团队中可以使用', value: '2' },
+            { label: '本知识库', desc: '仅在本知识库中可以使用', value: '1' },
+            { label: '我的', desc: '可以在你参与的所有知识库中使用', value: '0' }
+          ]
+        }
       } else {
         temRange.value = [
           { label: '推荐', desc: '仅在本空间中可以使用', value: 'null' },
