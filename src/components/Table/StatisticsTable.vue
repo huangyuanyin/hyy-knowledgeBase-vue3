@@ -121,7 +121,11 @@ const toChangeTab = (val) => {
     <el-table :data="props.tableData" stripe empty-text="暂无数据" mt-40px w-full>
       <el-table-column v-for="(column, index) in currentTable" :key="'tabColumn' + index" :prop="column.prop" :label="column.label" :width="column.width as number || undefined">
         <template #default="{ row }">
-          <div flex items-center h-56px v-if="column.prop === 'title'">
+          <div flex items-center h-56px v-if="column.prop === 'creator'">
+            <img w-20px h-20px mr-4px :src="'http://10.4.150.56:8032/' + row.avatar" alt="" class="icon" />
+            <span max-w-200px overflow-hidden text-ellipsis whitespace-nowrap ml-4px>{{ row.creator }}</span>
+          </div>
+          <div flex items-center h-56px v-else-if="column.prop === 'title'">
             <img w-20px h-20px mr-4px :src="contentType[row.type]" alt="" class="icon" />
             <span max-w-200px overflow-hidden text-ellipsis whitespace-nowrap>{{ row.title }}</span>
           </div>

@@ -6,7 +6,7 @@ const props = defineProps({
   },
   text: {
     type: String,
-    default: '小黄同学正在努力加载中...'
+    default: '正在努力加载中...'
   }
 })
 </script>

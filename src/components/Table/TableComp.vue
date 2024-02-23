@@ -256,8 +256,8 @@ const cancelMark = () => {
             <div>
               <img :src="contentType[document.target_type]" alt="" />
               <div class="item-title-right">
-                <el-tooltip effect="light" :content="document.title" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
-                  <span>{{ document.article.title }}</span>
+                <el-tooltip effect="light" :content="document.article.title" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
+                  <p max-w-20vw overflow-hidden text-ellipsis whitespace-nowrap>{{ document.article.title }}</p>
                 </el-tooltip>
                 <el-tooltip effect="dark" content="编辑" placement="top" :show-arrow="false">
                   <span class="editIcon">
@@ -489,6 +489,7 @@ const cancelMark = () => {
           display: flex;
           align-items: center;
           max-width: 100%;
+          p,
           span {
             font-size: 14px;
             line-height: 32px;

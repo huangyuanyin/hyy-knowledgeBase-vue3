@@ -9,6 +9,7 @@ import memberIcon from '@/assets/icons/organize/memberIcon.svg'
 import formIcon from '@/assets/icons/formIcon.svg'
 import mindmapIcon from '@/assets/icons/mindmapIcon.svg'
 import pptIcon from '@/assets/icons/pptIcon.svg'
+import fileIcon from '@/assets/icons/fileIcon.svg'
 import bookIcon from '@/assets/icons/bookIcon.svg'
 import templateIcon from '@/assets/icons/templateIcon.svg'
 import importIcon from '@/assets/icons/importIcon.svg'
@@ -372,7 +373,8 @@ export const contentType = ref({
   doc: documentIcon,
   sheet: formIcon,
   mind: mindmapIcon,
-  ppt: pptIcon
+  ppt: pptIcon,
+  file: fileIcon
 })
 
 export const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
