@@ -262,7 +262,9 @@ onMounted(() => {
             <template #default="{ row, rowIndex }">
               <span v-if="['teamAdmin', 'spaceAdmin', 'bookAdmin'].includes(row.label)">可管理</span>
               <span v-if="rowIndex !== 0 && row.permusername === user && ['1', '2', '0'].includes(row.permtype)">{{ sexList.find((it) => it.value === row.permtype).label }}</span>
-              <span v-if="!isAdmin && rowIndex !== 0 && row.permusername !== user && ['1', '2', '0'].includes(row.permtype)">
+              <span
+                v-if="row.permusername === infoStore.currentBookInfo.creator && !isAdmin && rowIndex !== 0 && row.permusername !== user && ['1', '2', '0'].includes(row.permtype)"
+              >
                 {{ sexList.find((it) => it.value === row.permtype).label }}
               </span>
               <DropdownPopver :menuItems="sexList" :selectId="getSelected(row)" @toChange="toChangeRole($event, row)">
