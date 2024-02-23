@@ -76,11 +76,13 @@ const headers = ref({
 })
 const titleList = ref([])
 const showScroll = ref(false)
+const isAlone = ref(false)
 
 const { addCollect } = useCollect()
 const { handleLike } = useLike()
 
 watchEffect(() => {
+  isAlone.value = infoStore.currentQuery?.type === 'alone'
   moreFeaturesDrawer.value = false
   commentDrawer.value = false
   spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : infoStore.currentQuery?.sid
@@ -124,6 +126,7 @@ watchEffect(() => {
     editArticle()
     moreFeaturesDrawer.value = false
   }
+  isAlone.value && (itemList.value = itemList.value.filter((item) => item.label === '收藏'))
 })
 
 watch(
@@ -336,7 +339,7 @@ const getCategoryTree = async () => {
   })
 }
 
-const toLink = (type, val) => {
+const toLink = (type, val?) => {
   switch (type) {
     case 'title':
       router.push({
@@ -350,6 +353,14 @@ const toLink = (type, val) => {
           lname: infoStore.currentQuery?.lname,
           aid: val.id,
           aname: val.title
+        }
+      })
+      break
+    case 'index':
+      router.push({
+        path: '/dashboard',
+        query: {
+          type: 'index'
         }
       })
       break
@@ -368,6 +379,7 @@ onMounted(() => {
     <el-container>
       <el-header class="header">
         <div class="header_left">
+          <img w-26px h-26px mr-6px rounded-4px cursor-pointer v-if="isAlone" src="@/assets/favicon.ico" @click="toLink('index')" />
           <p max-w-60vw overflow-hidden text-ellipsis whitespace-nowrap v-if="infoStore.currentMenu !== 'title'">{{ infoStore.currentQuery?.aname }}</p>
           <div v-else flex text-14px text="#262626">
             <div flex items-center v-for="(item, index) in titleList" :key="'titleList' + index">
@@ -403,17 +415,19 @@ onMounted(() => {
               </span>
             </el-tooltip>
           </div>
-          <div class="button" flex v-for="(item, index) in buttonList" :key="'buttonList' + index">
-            <SharePopver :aInfo="infoStore.currentArticleInfo">
-              <el-button v-if="item.label === '分享'" :type="item.type" @click="toHandle(item)">{{ item.label }}</el-button>
-            </SharePopver>
-            <el-button v-if="item.label === '编辑' || item.label === '发布'" :type="item.type" @click="toHandle(item)">{{ item.label }}</el-button>
-          </div>
+          <template v-if="!isAlone">
+            <div class="button" flex v-for="(item, index) in buttonList" :key="'buttonList' + index">
+              <SharePopver :aInfo="infoStore.currentArticleInfo">
+                <el-button v-if="item.label === '分享'" :type="item.type" @click="toHandle(item)">{{ item.label }}</el-button>
+              </SharePopver>
+              <el-button v-if="item.label === '编辑' || item.label === '发布'" :type="item.type" @click="toHandle(item)">{{ item.label }}</el-button>
+            </div>
+          </template>
           <div class="action" v-if="!isEdit">
             <span :class="[commentDrawer ? 'is_active' : 'comment']">
               <img src="/src/assets/icons/article/commentIcon.svg" alt="" @click="openDrawer('comment')" />
             </span>
-            <span :class="[moreFeaturesDrawer ? 'is_active' : '']">
+            <span v-if="!isAlone" :class="[moreFeaturesDrawer ? 'is_active' : '']">
               <img src="/src/assets/icons/article/rightboardIcon.svg" alt="" @click="openDrawer('more')" />
             </span>
           </div>
@@ -557,7 +571,6 @@ onMounted(() => {
       }
       .action {
         position: relative;
-        width: 64px;
         height: 32px;
         border-radius: 8px;
         border: 1px solid #d8dad9;

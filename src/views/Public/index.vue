@@ -1,16 +1,19 @@
 <script lang="ts" setup>
 import publicTagIcon from '@/assets/icons/publicTagIcon.svg'
 import likeIcon from '@/assets/icons/article/likeIcon.svg'
+import likeSelectIcon from '@/assets/icons/like_select.svg'
 import lookIcon from '@/assets/icons/article/lookIcon.svg'
 import empty from '@/assets/img/empty.png'
-import imgaeIcon from '@/assets/img/image.png'
 import { getBookStacksApi } from '@/api/bookstacks'
+import { throttle } from '@/utils/tool'
 
 interface BookGroup {
   id: number
   name: string
   is_default: string
 }
+
+const { handleLike } = useLike()
 
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
@@ -104,23 +107,12 @@ const changeModule = (val: string) => {
 
 const toLink = (type: string, val) => {
   if (type === 'srticle') {
-    return ElMessage({
-      message: '暂未开放',
-      type: 'warning'
-    })
-    router.push({
-      path: `/${infoStore.currentSpaceInfo.spacekey}/directory/${val.target_type}`,
-      query: {
-        sid: val.space,
-        sname: infoStore.currentQuery?.sname,
-        lid: val.book,
-        lname: val.book_name,
-        gid: val.group,
-        gname: val.group_name,
-        aid: val.id,
-        aname: val.title
-      }
-    })
+    // const spacekey = infoStore.currentSpaceInfo.spacekey
+    window.open(
+      `#/alone/directory/${val.type}/${''}?sid=${val.space}&sname=${infoStore.currentQuery?.sname}&lid=${val.book}&lname=${val.book_name}&gid=${val.group}&gname=${
+        val.group_name
+      }&aid=${val.id}&aname=${val.title}&type=alone`
+    )
   } else {
     return ElMessage({
       message: '暂未开放',
@@ -175,18 +167,14 @@ onMounted(async () => {
     <template v-else>
       <div mt-24px mr="5%" v-if="selectedList.length">
         <div mb-32px pb-20px flex mb-20px border-b="1px solid #f4f5f5" v-for="(item, index) in selectedList" :key="'selectedList' + index">
-          <img w-28px h-28px rounded-14px mr-12px :src="imgaeIcon" alt="" />
+          <img w-28px h-28px rounded-14px mr-12px :src="'http://10.4.150.56:8032/' + item.user.avatar" alt="" />
           <div>
             <span mt-3px mb-16px block>{{ item.creator_name }}</span>
             <div>
               <span mb-12px font-700 text="18px" block cursor-pointer @click="toLink('srticle', item)">{{ item.title }}</span>
-              <p>
-                {{
-                  '十分庆幸自己在互联网外还有一个角色“内容创作者”，让我每隔一两年关于“写作”的话题都可以拿出来重新讲一讲。（毕竟从17年那个冬天开始写字，到现在也有六七十万字的“成果”。）如果说居住的房子是容纳身体的吃穿住，我们要收纳、打扫、整理，用鸡毛掸子掸一掸落在家居上的灰尘，把家具重新摆弄。那'
-                }}
-              </p>
+              <p line-clamp-3 overflow-hidden text-ellipsis break-words>{{ item.description }}</p>
               <div flex mt-12px items-center>
-                <img w-24px h-24px cursor-pointer :src="likeIcon" alt="" @click="toLink('star', item)" />
+                <img w-24px h-24px cursor-pointer :src="item.liked ? likeSelectIcon : likeIcon" alt="" @click="() => throttle(() => handleLike(item), 500)" />
                 <span ml-4px text="#8a8f8d" text-14px mt-6px line-height-24px>{{ item.likes_count }}</span>
                 <div flex items-center mt-6px ml-22px text="#8a8f8d" text-14px line-height-24px cursor-pointer @click="toLink('srticle', item)">
                   <img :src="lookIcon" w-16px h-16px alt="" mr-4px />

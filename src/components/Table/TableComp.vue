@@ -316,7 +316,7 @@ const cancelMark = () => {
               <img :src="document.target_type === 'book' ? document.owner_ship.book_icon : articleIcon" alt="" />
               <div class="item-title-right" @click="toLink(document, 'star')">
                 <el-tooltip effect="light" :content="document.target_name" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
-                  <span>{{ document.target_name }}</span>
+                  <p max-w-20vw overflow-hidden text-ellipsis whitespace-nowrap>{{ document.target_name }}</p>
                 </el-tooltip>
               </div>
             </div>
@@ -391,7 +391,7 @@ const cancelMark = () => {
               <img :src="document.icon" alt="" />
               <div class="item-title-right" @click="toLink(document, 'team')">
                 <el-tooltip effect="light" :content="document.groupname" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
-                  <span>{{ document.groupname }}</span>
+                  <p max-w-20vw overflow-hidden text-ellipsis whitespace-nowrap>{{ document.groupname }}</p>
                 </el-tooltip>
               </div>
               <el-tooltip effect="dark" :content="'仅团队成员可访问'" placement="top" :show-arrow="false">

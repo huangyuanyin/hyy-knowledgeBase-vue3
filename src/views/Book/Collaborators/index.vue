@@ -234,7 +234,7 @@ onMounted(() => {
       <div class="publicity">
         <span>公开性</span>
         <el-radio-group v-model="publicType" class="publicityRadio" @change="toChangePublic">
-          <el-radio v-if="infoStore.currentQuery.gname !== '公共区'" label="0" size="large">仅协作者可访问</el-radio>
+          <el-radio v-if="infoStore.currentQuery.gname !== '公共区'" label="0" size="large">知识库成员可访问</el-radio>
           <el-radio v-if="infoStore.currentSpaceType === '组织' && infoStore.currentQuery.gname !== '公共区'" label="1" size="large">团队所有成员可访问</el-radio>
           <el-radio v-if="infoStore.currentSpaceType === '组织'" label="2" size="large">空间所有成员可访问</el-radio>
         </el-radio-group>

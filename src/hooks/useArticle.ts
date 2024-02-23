@@ -194,8 +194,10 @@ export const useArticle = () => {
    * 编辑文章
    * @param {Number} id 文章id
    * @param {String | Object} data 文章标题 | 文章信息
+   * @param {Function} callback 回调函数
+   * @param {Boolean} isLink 是否跳转链接
    */
-  const handleEditArticle = async (id: Number, data: String | Object, callback?: Callback) => {
+  const handleEditArticle = async (id: Number, data: String | Object, callback?: Callback, isLink = true) => {
     if (!id) return
     let params
     if (typeof data === 'string')
@@ -216,7 +218,7 @@ export const useArticle = () => {
       //   useLinkHooks().handleArticleTypeLink(res.data as any, false)
       // }
       if (callback) return callback && (await callback(res.data))
-      useLinkHooks().handleArticleTypeLink(res.data as any, false)
+      isLink && useLinkHooks().handleArticleTypeLink(res.data as any, false)
     } else {
       ElMessage.error(res.msg)
     }

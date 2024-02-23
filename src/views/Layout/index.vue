@@ -1,6 +1,6 @@
 <template>
   <el-container w-100vw h-100vh flex class="layout-wrap">
-    <el-aside v-if="currentSidebar && sidebarWidth" :style="{ width: sidebarWidth }" bg="#fafafa" border-box border-r-1 border-solid border-rgba-0-0-0-0-06>
+    <el-aside v-if="!isAlone && currentSidebar && sidebarWidth" :style="{ width: sidebarWidth }" bg="#fafafa" border-box border-r-1 border-solid border-rgba-0-0-0-0-06>
       <component :is="currentSidebar" />
       <div
         class="resize"
@@ -40,6 +40,7 @@
 
 <script lang="ts" setup>
 const route = useRoute()
+const infoStore = useInfoStore()
 const isShowPreviewFile = ref<boolean>(false)
 const currentSidebar = ref<null | any>(null)
 const asideComponent = ref<string | null>(route.meta.asideComponent as string | null)
@@ -83,8 +84,10 @@ const isShowExpand = ref(false)
 const visible = ref(false)
 const visible2 = ref(false)
 const isShowResize = ref(true)
+const isAlone = ref(false) // 是否是独立页面
 
 watchEffect(() => {
+  infoStore.currentQuery?.type === 'alone' ? (isAlone.value = true) : (isAlone.value = false)
   sidebarWidth.value = asideComponentWidth[asideComponent.value]?.with
   isShowPreviewFile.value = route.path.split('/').slice(-2)[0] === 'file' || route.path.split('/').slice(-2)[0] === 'ppt'
 })
