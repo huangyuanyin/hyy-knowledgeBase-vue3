@@ -69,7 +69,6 @@ export const useArticle = () => {
    * @param callback
    */
   const getRecentDocList = async (params: RecentArticleParams, callback?: Callback) => {
-    params.space = space.value
     let res = await getRecentArticleListApi(params)
     if (res.code === 1000) {
       articleList.value = res.data as ArticleInfo[]

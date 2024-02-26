@@ -14,6 +14,7 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
 
 const route = useRoute()
 const infoStore = useInfoStore()
+const refreshStroe = useRefreshStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const icon = ref('')
 const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
@@ -84,7 +85,6 @@ const toLink = (type, val?) => {
       router.push('/dashboard')
       break
     case 'organize':
-      console.log(`output->val`, val)
       if (val.is_delete === '1') {
         router.push({
           path: `/${val.spacekey}/organize/deleteProcess`,
@@ -101,11 +101,11 @@ const toLink = (type, val?) => {
             sid: val.id
           }
         })
-        if (infoStore.currentSidebar === 'Sidebar') return
         // fix 切换空间，左侧常用列表不刷新
         setTimeout(() => {
           location.reload()
         }, 500)
+        refreshStroe.setRefreshQuickBookList(true)
       }
       break
     case 'add':

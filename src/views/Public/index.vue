@@ -1,19 +1,14 @@
 <script lang="ts" setup>
 import publicTagIcon from '@/assets/icons/publicTagIcon.svg'
-import likeIcon from '@/assets/icons/article/likeIcon.svg'
-import likeSelectIcon from '@/assets/icons/like_select.svg'
 import lookIcon from '@/assets/icons/article/lookIcon.svg'
 import empty from '@/assets/img/empty.png'
 import { getBookStacksApi } from '@/api/bookstacks'
-import { throttle } from '@/utils/tool'
 
 interface BookGroup {
   id: number
   name: string
   is_default: string
 }
-
-const { handleLike } = useLike()
 
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
@@ -174,11 +169,13 @@ onMounted(async () => {
               <span mb-12px font-700 text="18px" block cursor-pointer @click="toLink('srticle', item)">{{ item.title }}</span>
               <p line-clamp-3 overflow-hidden text-ellipsis break-words>{{ item.description }}</p>
               <div flex mt-12px items-center>
-                <img w-24px h-24px cursor-pointer :src="item.liked ? likeSelectIcon : likeIcon" alt="" @click="() => throttle(() => handleLike(item), 500)" />
-                <span ml-4px text="#8a8f8d" text-14px mt-6px line-height-24px>{{ item.likes_count }}</span>
+                <span mr-22px text="#8a8f8d" text-14px mt-6px line-height-24px>推送于：{{ item.create_datetime }}</span>
+                <span mr-22px text="#8a8f8d" text-14px mt-6px line-height-24px>阅读数：{{ item.views }}</span>
+                <!-- <img w-24px h-24px :src="item.liked ? likeSelectIcon : likeIcon" alt="" /> -->
+                <span ml-4px text="#8a8f8d" text-14px mt-6px line-height-24px>点赞数：{{ item.likes_count }}</span>
                 <div flex items-center mt-6px ml-22px text="#8a8f8d" text-14px line-height-24px cursor-pointer @click="toLink('srticle', item)">
                   <img :src="lookIcon" w-16px h-16px alt="" mr-4px />
-                  <span>查看原文</span>
+                  <span text="#00b96b">查看原文</span>
                 </div>
               </div>
             </div>

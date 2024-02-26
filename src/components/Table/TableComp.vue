@@ -346,13 +346,15 @@ const cancelMark = () => {
               <img :src="document.icon" alt="" />
               <div class="item-title-right" @click="toLink(document, 'library')">
                 <el-tooltip effect="light" :content="document.name" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
-                  <span>{{ document.name }}</span>
+                  <span max-w-20vw overflow-hidden text-ellipsis whitespace-nowrap>{{ document.name }}</span>
                 </el-tooltip>
               </div>
             </div>
           </td>
           <td class="item-user">
-            <span class="username">{{ document.group_name }}</span>
+            <el-tooltip effect="light" :content="document.group_name" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
+              <p class="username" max-w-26vw overflow-hidden text-ellipsis whitespace-nowrap>{{ document.group_name }}</p>
+            </el-tooltip>
           </td>
           <td class="item-user">
             <span class="username">{{ document.creator_name }}</span>
@@ -402,7 +404,9 @@ const cancelMark = () => {
             </div>
           </td>
           <td class="item-desc">
-            <span class="desc">{{ document.description }}</span>
+            <el-tooltip effect="light" :content="document.description" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
+              <p class="desc" max-w-26vw overflow-hidden text-ellipsis whitespace-nowrap>{{ document.description }}</p>
+            </el-tooltip>
           </td>
           <td class="item-user">
             <span class="username">{{ document.member_count + 1 }} 人</span>

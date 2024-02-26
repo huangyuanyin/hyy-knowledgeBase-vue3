@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { moduleData, moduleAddMenuData } from '@/data/data'
 
+const infoStore = useInfoStore()
 const isShowsLibraryDialog = ref(false)
 const isBookListDialog = ref(false)
 const isShowSelectTemDialog = ref(false)
@@ -10,10 +11,21 @@ const articleList = ref([])
 
 const { articleList: list, getRecentDocList } = useArticle()
 
+watch(
+  () => infoStore.currentSpaceInfo.spacekey,
+  (newVal) => {
+    if (newVal) {
+      setTimeout(() => {
+        handleRecentDocList('updateDoc')
+      }, 500)
+    }
+  }
+)
+
 async function handleRecentDocList(type: string) {
   const params = {
     type,
-    space: 10
+    space: String(infoStore.currentSpaceInfo.id)
   }
   await getRecentDocList(params)
   articleList.value = list.value

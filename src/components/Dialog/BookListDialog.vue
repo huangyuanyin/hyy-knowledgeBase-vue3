@@ -93,7 +93,9 @@ const closeDialog = () => {
         @click="toAddArticle(item)"
       >
         <img w-24px h-24px mr-8px :src="item.icon" alt="" />
-        {{ item.groupname }} / {{ item.name }}
+        <p max-w-200px overflow-hidden text-ellipsis whitespace-nowrap>{{ item.groupname }}</p>
+        /
+        <p max-w-19vw overflow-hidden text-ellipsis whitespace-nowrap>{{ item.name }}</p>
       </li>
     </ul>
   </el-dialog>
