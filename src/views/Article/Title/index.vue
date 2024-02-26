@@ -103,6 +103,10 @@ const toLink = (val) => {
       break
   }
 }
+
+const toCopy = () => {
+  useCopy(window.location.href)
+}
 </script>
 
 <template>
@@ -204,30 +208,28 @@ const toLink = (val) => {
           <div h-143px rounded="6px 6px 0px 0" w-full mt-8px border="1px solid #dee0e3" bg="#f5f6f7" flex items-center justify-center>
             <img w-68px h-68px :src="folderIcon" alt="" />
           </div>
-          <SharePopver :aInfo="infoStore.currentArticleInfo">
-            <button
-              w-full
-              mt-12px
-              mb-16px
-              w-98px
-              pt-4px
-              pb-4px
-              pl-20px
-              pr-20px
-              flex
-              items-center
-              justify-center
-              box-border
-              h-32px
-              text-14px
-              rounded-6px
-              text="#1456F0"
-              border="1px solid #1456F0"
-              class="hover:bg-#e0e9ff"
-            >
-              <img w-14px h-14px mr-2px :src="shareIcon" alt="" /> 分享
-            </button>
-          </SharePopver>
+          <button
+            w-full
+            mt-12px
+            mb-16px
+            pt-4px
+            pb-4px
+            pl-20px
+            pr-20px
+            flex
+            items-center
+            justify-center
+            box-border
+            h-32px
+            text-14px
+            rounded-6px
+            text="#1456F0"
+            border="1px solid #1456F0"
+            class="hover:bg-#e0e9ff"
+            @click="toCopy"
+          >
+            <img w-14px h-14px mr-2px :src="shareIcon" alt="" /> 分享
+          </button>
           <span text-12px line-height-24px mt-12px text="#646973">描述</span>
           <div text-14px line-height-24px text="#8f959e">{{ (infoStore.currentArticleInfo as ArticleInfo)?.description || '暂无描述' }}</div>
           <div text-12px line-height-24px mt-12px text="#646973">所有者</div>

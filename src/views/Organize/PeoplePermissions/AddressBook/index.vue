@@ -122,7 +122,7 @@ onMounted(async () => {
           </div>
         </template>
       </SwitchModuleItem>
-      <el-table :data="memberData" stripe style="width: 100%" max-height="75vh" v-loading="loadTable" element-loading-text="加载成员中...">
+      <el-table :data="memberData" stripe style="width: 100%" max-height="75vh" v-loading="loadTable" element-loading-text="加载成员中..." empty-text="搜索结果为空">
         <el-table-column type="selection" width="55" />
         <el-table-column label="姓名" width="180">
           <template #default="{ row }">

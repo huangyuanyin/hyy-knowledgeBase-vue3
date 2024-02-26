@@ -62,10 +62,10 @@ const toDo = () => {
   ElMessage.warning('功能暂未开放，敬请期待')
 }
 
-const formatterRole: VxeColumnPropTypes.Formatter<MemberItem> = ({ cellValue }) => {
-  const item = sexList.find((item) => item.value === cellValue)
-  return item ? item.label : cellValue
-}
+// const formatterRole: VxeColumnPropTypes.Formatter<MemberItem> = ({ cellValue }) => {
+//   const item = sexList.find((item) => item.value === cellValue)
+//   return item ? item.label : cellValue
+// }
 
 const formatterStatus: VxeColumnPropTypes.Formatter<MemberItem> = ({ cellValue }) => {
   const item = statusList.find((item) => item.value === cellValue)
@@ -148,7 +148,8 @@ const deleteTeamMember = async (id) => {
 
 const getTeamMember = async () => {
   const params = {
-    group: infoStore.currentQuery?.gid
+    group: infoStore.currentQuery?.gid,
+    name: memberInput.value
   }
   loadTable.value = true
   let res = await getTeamMemberApi(params)
@@ -156,17 +157,18 @@ const getTeamMember = async () => {
   if (res.code === 1000) {
     memberList.value = res.data || ([] as any)
     memberTotal.value = memberList.value.length + 1
-    const { id, avatar, creator, creator_name, dept, create_datetime } = infoStore.currentTeamInfo
-    memberList.value.unshift({
-      id,
-      avatar,
-      username: creator,
-      name: creator_name,
-      role: '0',
-      group: id,
-      dept,
-      update_datetime: create_datetime
-    })
+    const { id, user, creator, creator_name, create_datetime } = infoStore.currentTeamInfo
+    !memberInput.value &&
+      memberList.value.unshift({
+        id,
+        avatar: 'http://10.4.150.56:8032/' + user.avatar,
+        username: creator,
+        name: creator_name,
+        role: '0',
+        group: id,
+        dept: user.dept_name,
+        update_datetime: create_datetime
+      })
   } else {
     ElMessage.error(res.msg)
   }
@@ -193,7 +195,7 @@ onMounted(() => {
           </el-tooltip>
         </h2>
         <div>
-          <el-input v-model="memberInput" placeholder="搜索成员" clearable>
+          <el-input v-model="memberInput" placeholder="搜索成员" clearable @change="getTeamMember()">
             <template #prefix>
               <i-ep-Search />
             </template>

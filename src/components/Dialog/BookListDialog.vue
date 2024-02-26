@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { getMineBookApi } from '@/api/library'
+import emptyImg from '@/assets/img/empty.png'
+import searchImg from '@/assets/img/search.png'
 
 const props = defineProps({
   show: {
@@ -77,7 +79,7 @@ const closeDialog = () => {
       </div>
     </template>
     <p class="mb-8px font-normal text-#8a8f8d text-14px">选择一个知识库</p>
-    <el-input class="rounded-6px mb-12px" v-model="bookName" placeholder="请输入知识库名称进行搜索（暂不支持）">
+    <el-input class="rounded-6px mb-12px" v-model="bookName" clearable placeholder="请输入知识库名称进行搜索" @change="getMineBook()">
       <template #prefix>
         <i-ep-Search />
       </template>
@@ -103,6 +105,7 @@ const closeDialog = () => {
         <p overflow-hidden text-ellipsis whitespace-nowrap>{{ item.group_name }}</p>
       </li>
     </ul>
+    <Empty v-if="!bookList.length" :img="bookName ? searchImg : emptyImg" height="25vh" :text="bookName ? '搜索结果为空' : '暂无可选知识库'" />
   </el-dialog>
 </template>
 

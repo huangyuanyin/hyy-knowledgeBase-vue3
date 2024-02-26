@@ -26,6 +26,7 @@ const emit = defineEmits(['closeDialog', 'recover'])
 const route = useRoute()
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const spaceId = ref(null) // 当前空间id
 const teamId = ref(null) // 团队id
 const bookId = ref(null) // 知识库id
@@ -195,7 +196,11 @@ const getArticle = async () => {
 
 // 获取团队列表
 const getTeam = async () => {
-  await getTeamList()
+  const parmas = {
+    space: infoStore.currentTeamInfo.space,
+    permusername: user
+  }
+  await getTeamList(parmas)
   teamList.value = list.value
 }
 
@@ -230,12 +235,12 @@ const getBook = async () => {
             <img v-else class="prefix-icon" src="/src/assets/icons/teamIcon.svg" />
           </template>
           <el-option v-for="(item, index) in teamList" :key="'teamList' + index" :label="item.groupname" :value="item.id">
-            <div style="display: flex; align-items: center">
+            <div style="display: flex; align-items: center; width: 100%">
               <img class="icon" :src="publicIcon" alt="" v-if="item.is_default === '1'" />
               <img class="icon" :src="item.icon" alt="" v-else />
               <span>{{ item.groupname }}</span>
             </div>
-            <img v-if="item.id === teamId" class="selectIcon" src="@/assets/icons/selectIcon.svg" />
+            <img ml-8px v-if="item.id === teamId" class="selectIcon" src="@/assets/icons/selectIcon.svg" />
           </el-option>
         </el-select>
         <span class="line"> / </span>
@@ -255,7 +260,7 @@ const getBook = async () => {
               <img class="icon" :src="item.icon || '/src/assets/icons/bookIcon.svg'" alt="" />
               <span>{{ item.name }}</span>
             </div>
-            <img v-if="item.id === bookId" class="selectIcon" src="@/assets/icons/selectIcon.svg" />
+            <img ml-8px v-if="item.id === bookId" class="selectIcon" src="@/assets/icons/selectIcon.svg" />
           </el-option>
         </el-select>
       </div>
@@ -547,7 +552,6 @@ const getBook = async () => {
     display: flex !important;
     align-items: center;
     justify-content: space-between;
-    width: 280px;
     .icon {
       width: 24px !important;
       height: 24px !important;
