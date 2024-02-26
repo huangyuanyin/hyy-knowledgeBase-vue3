@@ -27,4 +27,5 @@ export interface OperationPopoverProps {
   tag_mark?: string
   type?: string
   target_id?: string
+  target_type?: string
 }

@@ -21,6 +21,7 @@ interface BookInfo {
   marked: boolean
   mark_id: number
   tag_mark: string
+  type: string
   body: string
   space: number
   group: number

@@ -118,7 +118,13 @@ onMounted(() => {
           </div>
           <div class="header-right">
             <div class="button-wrap" v-if="!isEdit">
-              <StarPopver @cancelMark="cancelMark" :startId="infoStore.currentBookInfo.mark_id" :tag_mark="infoStore.currentBookInfo.tag_mark" type="book">
+              <StarPopver
+                @cancelMark="cancelMark"
+                :startId="infoStore.currentBookInfo.mark_id"
+                :tag_mark="infoStore.currentBookInfo.tag_mark"
+                :target_type="infoStore.currentBookInfo.type"
+                type="book"
+              >
                 <div class="button" @click="toMark">
                   <img :src="infoStore.currentBookInfo.marked ? startIconSelect : startIcon" alt="" />
                   <span>{{ infoStore.currentBookInfo.marked ? '已收藏' : '收藏' }}</span>

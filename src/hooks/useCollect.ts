@@ -65,6 +65,7 @@ export const useCollect = () => {
       space: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).id,
       tags_id: collectInfo.tags_id,
       target_id: collectInfo.target_id,
+      target_type: collectInfo.target_type,
       creator: user
     }
     let res = await editMarksApi(id, params)

@@ -40,16 +40,14 @@ const props = defineProps({
   box-sizing: border-box;
   .empty {
     &-img {
-      // width: 110px;
       height: 110px;
-      padding: 15.28px 0 11.68px 12.83px;
       margin-bottom: 16px;
       box-sizing: border-box;
       display: flex;
       align-items: center;
       justify-content: center;
       img {
-        width: 97.78px;
+        width: 120px;
         height: 83.04px;
       }
     }

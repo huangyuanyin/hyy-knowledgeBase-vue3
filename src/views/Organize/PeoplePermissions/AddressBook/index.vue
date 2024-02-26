@@ -19,10 +19,11 @@ watchEffect(async () => {
   }
 })
 
-const getSpacepermissions = async () => {
+const getSpacepermissions = async (name?: string) => {
   const params = {
     space: infoStore.currentQuery?.sid
   }
+  name && (params['permname'] = name)
   loadTable.value = true
   const res = await getSpacepermissionsApi(params)
   loadTable.value = false
@@ -71,6 +72,7 @@ const toDetail = (data: any) => {
 const handleMember = () => {
   myData.value = [
     {
+      avatar: 'http://10.4.150.56:8032/' + JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).user.avatar,
       permname: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).creator_name,
       permtype: '0',
       dept: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).user.dept_name,
@@ -79,6 +81,10 @@ const handleMember = () => {
     }
   ]
   memberData.value = [...myData.value, ...memberData.value]
+}
+
+const toSearch = () => {
+  getSpacepermissions(searchInput.value)
 }
 
 onMounted(async () => {
@@ -95,19 +101,19 @@ onMounted(async () => {
         :moduleType="'search'"
         moduleGenre="member"
         :moduleGenreData="[
-          {
-            type: 'member',
-            name: '空间成员'
-          },
-          {
-            type: 'contacts',
-            name: '公司成员'
-          }
+          // {
+          //   type: 'member',
+          //   name: '空间成员'
+          // },
+          // {
+          //   type: 'contacts',
+          //   name: '公司成员'
+          // }
         ]"
       >
         <template #right>
           <div class="button">
-            <el-input v-model="searchInput" placeholder="搜索成员" clearable>
+            <el-input v-model="searchInput" placeholder="搜索成员" clearable @change="toSearch">
               <template #prefix>
                 <i-ep-Search />
               </template>

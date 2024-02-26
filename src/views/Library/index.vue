@@ -1,7 +1,10 @@
 <script lang="ts" setup>
 import addIcon from '@/assets/icons/addIcon.svg'
 import addIcon_hover from '@/assets/icons/addIcon_hover.svg'
+import searchImg from '@/assets/img/search.png'
+import emptyImg from '@/assets/img/empty.png'
 import { getBookStacksApi } from '@/api/bookstacks'
+import { getMineBookApi } from '@/api/library'
 
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
@@ -13,7 +16,7 @@ const bookGroup = ref([]) // 当前空间&&当前团队下的知识库分组
 const libraryInput = ref('')
 const isShowsLibraryDialog = ref(false)
 
-const { bookList: list, getBookList } = useBook()
+// const { bookList: list, getBookList } = useBook()
 const { commonBookList, getCommonList, findCommonItem } = useCommon()
 
 watch(
@@ -62,8 +65,19 @@ const getCommonBookList = async () => {
 
 // 获取当前空间下的知识库列表
 const getBook = async () => {
-  await getBookList({ space: spaceId.value })
-  bookList.value = list.value
+  const params = {
+    name: libraryInput.value,
+    space: spaceId.value,
+    type: 'read' // 可新建；
+  }
+  const res = await getMineBookApi(params)
+  if (res.code === 1000) {
+    bookList.value = res.data as any
+  } else {
+    ElMessage.error(res.msg)
+  }
+  // await getBookList({ space: spaceId.value })
+  // bookList.value = list.value
 }
 
 // 获取个人空间知识库团队下的知识库分组
@@ -79,7 +93,14 @@ const getBookStacks = async () => {
 }
 
 const filterGroupFromPublic = (list) => {
-  return list.filter((item) => item.group_name !== '公共区')
+  return list
+  // return list.filter((item) => item.group_name !== '公共区')
+}
+
+const toSearch = (type) => {
+  if (type === 'book') {
+    getBook()
+  }
 }
 
 onMounted(async () => {
@@ -117,19 +138,19 @@ onMounted(async () => {
           v-else
           :moduleGenre="'my'"
           :moduleGenreData="[
-            {
-              type: 'my',
-              name: '来自团队的'
-            },
-            {
-              type: 'public',
-              name: '邀请协作的'
-            }
+            // {
+            //   type: 'my',
+            //   name: '来自团队的'
+            // },
+            // {
+            //   type: 'public',
+            //   name: '邀请协作的'
+            // }
           ]"
         >
           <template #right>
             <div class="button">
-              <el-input v-model="libraryInput" placeholder="搜索知识库" clearable>
+              <el-input v-model="libraryInput" placeholder="搜索知识库" clearable @change="toSearch('book')">
                 <template #prefix>
                   <i-ep-Search />
                 </template>
@@ -146,6 +167,8 @@ onMounted(async () => {
         </SwitchModuleItem>
         <LibraryTable v-if="infoStore.currentSidebar === 'Sidebar'" title="知识库" :commonList="cBookList" :group="bookGroup" @getBookStacks="getBookStacks" />
         <TableComp v-else :header="['名称', '归属', '创建人', '更新时间', '']" type="library" :data="filterGroupFromPublic(bookList)" />
+        <Empty v-if="!bookList.length && libraryInput" :img="searchImg" height="60vh" text="搜索结果为空" />
+        <Empty v-if="!bookList.length && !libraryInput" :img="emptyImg" height="60vh" text="暂无知识库" />
         <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
       </div>
     </div>
@@ -172,6 +195,9 @@ onMounted(async () => {
         .el-input {
           margin-right: 12px;
           max-width: 164px;
+        }
+        :deep(.is-focus) {
+          border-color: #0bd07d !important;
         }
         :deep(.el-input__wrapper) {
           border-radius: 6px;

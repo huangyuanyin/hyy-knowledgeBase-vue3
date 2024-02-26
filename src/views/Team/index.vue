@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import addIcon from '@/assets/icons/addIcon.svg'
 import addIcon_hover from '@/assets/icons/addIcon_hover.svg'
+import emptyImg from '@/assets/img/empty.png'
 import { isDefaultType } from '@/type/type'
 
 const refreshStroe = useRefreshStore()
@@ -23,7 +24,8 @@ watchEffect(() => {
 // 获取当前空间下的全部团队（除去公共区）
 const getTeam = async () => {
   const params = {
-    is_default: '0' as isDefaultType
+    is_default: '0' as isDefaultType,
+    groupname: teamInput.value
   }
   await getTeamList(params)
   teamList.value = list.value
@@ -34,6 +36,12 @@ const getCommonTeamList = async () => {
   await getCommonList('group')
   cTeamList.value = commonTeamList.value
   findCommonItem('group', teamList.value)
+}
+
+const toSearch = (type: string) => {
+  if (type === 'team') {
+    getTeam()
+  }
 }
 
 onMounted(async () => {
@@ -47,7 +55,7 @@ onMounted(async () => {
     <div class="header">
       <span>团队</span>
       <div class="button">
-        <el-input v-model="teamInput" class="w-50 m-2" placeholder="搜索团队" clearable>
+        <el-input v-model="teamInput" class="w-50 m-2" placeholder="搜索团队" clearable @change="toSearch('team')">
           <template #prefix>
             <i-ep-Search />
           </template>
@@ -62,7 +70,14 @@ onMounted(async () => {
       </div>
     </div>
     <CommonList :list="cTeamList" type="team" v-if="cTeamList.length" />
-    <TableComp :style="{ 'margin-top': cTeamList.length ? '' : '26px' }" :header="['名称', '简介', '成员', '创建人', '加入时间', '']" type="team" :data="teamList" />
+    <TableComp
+      :style="{ 'margin-top': cTeamList.length ? '' : '26px' }"
+      :is-search="teamInput ? true : false"
+      :header="['名称', '简介', '成员', '创建人', '加入时间', '']"
+      type="team"
+      :data="teamList"
+    />
+    <Empty v-if="!teamList.length && teamInput" :img="emptyImg" height="60vh" text="搜索结果为空" />
     <TeamDialog :isShow="isShowsTeamDialog" @closeDialog="isShowsTeamDialog = false" />
   </div>
 </template>

@@ -6,6 +6,7 @@ const route = useRoute()
 const router = useRouter()
 const routeInfo = { route, router }
 const isShowTeamDialog = ref(false)
+const teamInput = ref('')
 const teamData = ref([])
 const teamSettingData = [
   { type: 'item', icon: '', label: '查看团队', nick: 'toTeamIndex' },
@@ -15,10 +16,11 @@ const teamSettingData = [
 
 const { teamList: list, getTeamList } = useTeam()
 
-const getTeam = async () => {
+const getTeam = async (name?: string) => {
   const params = {
     is_default: '0' as isDefaultType
   }
+  name && (params['groupname'] = name)
   await getTeamList(params)
   teamData.value = list.value
 }
@@ -35,6 +37,13 @@ const toDeleteTeam = (val) => {
   useLink(routeInfo, 'fromSpaceSetToTeamSettings', val)
 }
 
+const toSearch = (type) => {
+  console.log(`output->2`, 2)
+  if (type === 'team') {
+    getTeam(teamInput.value)
+  }
+}
+
 onMounted(() => {
   getTeam()
 })
@@ -45,12 +54,12 @@ onMounted(() => {
     <div class="header">
       <span>团队管理</span>
       <div>
-        <el-input placeholder="搜索团队" disabled></el-input>
+        <el-input v-model="teamInput" placeholder="搜索团队" clearable @change="toSearch('team')"></el-input>
         <el-button @click="isShowTeamDialog = true">新建团队</el-button>
       </div>
     </div>
     <div class="box">
-      <el-table :data="teamData" stripe style="width: 100%" empty-text="暂无团队">
+      <el-table :data="teamData" stripe style="width: 100%" :empty-text="teamInput ? '搜索结果为空' : '暂无团队'">
         <el-table-column prop="groupname" label="名称" />
         <el-table-column prop="creator_name" label="管理员" width="150" />
         <el-table-column prop="create_datetime" label="创建时间" width="250" />
@@ -107,6 +116,9 @@ onMounted(() => {
           color: #fff;
         }
       }
+    }
+    :deep(.el-input__wrapper) {
+      width: 200px;
     }
   }
   .box {

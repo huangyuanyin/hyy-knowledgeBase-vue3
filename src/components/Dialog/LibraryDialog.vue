@@ -111,7 +111,7 @@ watchEffect(() => {
     publicList.value = [
       {
         id: '0',
-        label: '仅协作者可访问'
+        label: '知识库所有成员可访问'
       },
       {
         id: '1',

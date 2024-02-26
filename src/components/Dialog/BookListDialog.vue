@@ -34,10 +34,15 @@ watch(
 const getMineBook = async () => {
   const params = {
     space: useArticle().space,
-    type: 'editor' // 可新建；
+    type: 'editor', // 可新建；
+    name: bookName.value
   }
   const res = await getMineBookApi(params)
-  bookList.value = res.data as any
+  if (res.code === 1000) {
+    bookList.value = res.data as any
+  } else {
+    ElMessage.error(res.msg)
+  }
 }
 
 const toAddArticle = async (val) => {
@@ -93,9 +98,9 @@ const closeDialog = () => {
         @click="toAddArticle(item)"
       >
         <img w-24px h-24px mr-8px :src="item.icon" alt="" />
-        <p max-w-200px overflow-hidden text-ellipsis whitespace-nowrap>{{ item.groupname }}</p>
-        /
         <p max-w-19vw overflow-hidden text-ellipsis whitespace-nowrap>{{ item.name }}</p>
+        /
+        <p overflow-hidden text-ellipsis whitespace-nowrap>{{ item.group_name }}</p>
       </li>
     </ul>
   </el-dialog>

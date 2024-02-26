@@ -9,6 +9,7 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
   showArrow: false,
   startId: '',
   tag_mark: '',
+  target_type: '',
   type: '',
   target_id: ''
 })
@@ -37,7 +38,8 @@ const toChangeTag = async () => {
     Number(props.startId),
     {
       tags_id: tagValue.value,
-      target_id: props.type === 'book' ? infoStore.currentQuery?.lid : props.type === 'star' ? props.target_id : infoStore.currentQuery?.aid
+      target_id: props.type === 'book' ? infoStore.currentQuery?.lid : props.type === 'star' ? props.target_id : infoStore.currentQuery?.aid,
+      target_type: props.target_type
     },
     () => {
       props.type === 'star' ? refreshStroe.setRefreshMark(true) : ''
@@ -59,6 +61,7 @@ const toGetTagList = async () => {
 }
 
 const toDeleteCollect = async () => {
+  tagValue.value = ''
   deleteCollect(Number(props.startId), () => {
     starPopverRef.value && starPopverRef.value.hide()
     emit('cancelMark')

@@ -29,6 +29,10 @@ const props = defineProps({
   data: {
     type: Array,
     default: () => []
+  },
+  isSearch: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -103,7 +107,7 @@ const toQuickLink = (operation, val, type) => {
       target_id: String(val.id),
       target_type: type,
       slug: val.slug,
-      space: val.space,
+      space: infoStore.currentSpaceInfo.id,
       user
     }
     addQuickLinks(params, type)
@@ -154,7 +158,7 @@ const toLink = (val, type) => {
     router.push({
       path: baseUrl,
       query: {
-        sid: val.space,
+        sid: infoStore.currentQuery?.sid,
         sname: infoStore.currentQuery?.sname,
         lid: val.id,
         lname: val.name,
@@ -163,20 +167,35 @@ const toLink = (val, type) => {
       }
     })
   } else if (type === 'star') {
-    const baseUrl = `${infoStore.currentSpaceType === '个人' ? '' : `/${infoStore.currentSpaceInfo.spacekey}`}/directory/${val.target_type}`
-    router.push({
-      path: baseUrl,
-      query: {
-        sid: val.space,
-        sname: infoStore.currentQuery?.sname,
-        lid: val.owner_ship.book_id,
-        lname: val.owner_ship.book_name,
-        gid: val.owner_ship.group_id,
-        gname: val.owner_ship.group_name,
-        aid: val.target_id,
-        aname: val.target_name
-      }
-    })
+    if (val.target_type === 'book') {
+      const baseUrl = `${infoStore.currentSpaceType === '个人' ? '' : `/${infoStore.currentSpaceInfo.spacekey}`}/directory/index`
+      router.push({
+        path: baseUrl,
+        query: {
+          sid: infoStore.currentQuery?.sid,
+          sname: infoStore.currentQuery?.sname,
+          lid: val.target_id,
+          lname: val.target_name,
+          gid: val.owner_ship.group_id,
+          gname: val.owner_ship.group_name
+        }
+      })
+    } else {
+      const baseUrl = `${infoStore.currentSpaceType === '个人' ? '' : `/${infoStore.currentSpaceInfo.spacekey}`}/directory/${val.target_type}`
+      router.push({
+        path: baseUrl,
+        query: {
+          sid: val.space,
+          sname: infoStore.currentQuery?.sname,
+          lid: val.owner_ship.book_id,
+          lname: val.owner_ship.book_name,
+          gid: val.owner_ship.group_id,
+          gname: val.owner_ship.group_name,
+          aid: val.target_id,
+          aname: val.target_name
+        }
+      })
+    }
   }
 }
 
@@ -333,7 +352,14 @@ const cancelMark = () => {
             <span>{{ document.create_datetime }}</span>
           </td>
           <td class="item-operation">
-            <StarPopver @cancelMark="cancelMark" :startId="document.id" :tag_mark="document.tags_id" :target_id="document.target_id" type="star">
+            <StarPopver
+              @cancelMark="cancelMark"
+              :startId="document.id"
+              :tag_mark="document.tags_id"
+              :target_id="document.target_id"
+              :target_type="document.target_type"
+              type="star"
+            >
               <span v-if="props.type === 'star'"><img src="@/assets/icons/startIcon_select.svg" alt="" /></span>
             </StarPopver>
           </td>
@@ -439,7 +465,7 @@ const cancelMark = () => {
   <div v-if="['updateDoc', 'viewDoc'].includes(props.type) && !props.data.length">
     <Empty height="400px" :text="props.type === 'updateDoc' ? '你最近编辑的内容将会出现在这里' : '你最近浏览的内容将会出现在这里'" :img="empty" />
   </div>
-  <div class="empty" v-if="!props.data.length && props.type === 'team'">
+  <div class="empty" v-if="!props.data.length && props.type === 'team' && !isSearch">
     <img class="emptyImg" :src="empty" alt="" />
     <p>团队可以是实际存在的部门，也可以是虚拟的项目组，空间中可以创建不同类型的团队完成日常工作与协同。</p>
     <el-button @click="isShowTeamDialog = true">

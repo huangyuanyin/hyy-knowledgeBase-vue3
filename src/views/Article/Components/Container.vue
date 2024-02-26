@@ -398,6 +398,7 @@ onMounted(() => {
               @cancelMark="cancelMark"
               :startId="(infoStore.currentArticleInfo as ArticleInfo)?.mark_id"
               :tag_mark="(infoStore.currentArticleInfo as ArticleInfo )?.tag_mark"
+              :target_type="(infoStore.currentArticleInfo as ArticleInfo )?.type"
               type="article"
             >
               <span v-if="item.label === '收藏' || item.label === '已收藏'" @click="toHandle(item)">

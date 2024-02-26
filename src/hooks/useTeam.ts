@@ -8,6 +8,7 @@ interface CallbackFunction {
 interface TeamParams {
   space?: string
   is_default?: isDefaultType
+  groupname?: string
 }
 
 export const useTeam = () => {
