@@ -31,6 +31,10 @@ const rules = reactive<FormRules<TeamForm>>({
   ]
 })
 
+watchEffect(() => {
+  if (infoStore.currentTeamInfo.id !== infoStore.currentQuery.gid) initData()
+})
+
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid) => {
@@ -73,10 +77,6 @@ function initData() {
   teamForm.description = description
   teamForm.icon = icon
 }
-
-onMounted(() => {
-  initData()
-})
 </script>
 
 <template>

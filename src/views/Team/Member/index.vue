@@ -21,13 +21,14 @@ const route = useRoute()
 const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
 const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
+const username = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const memberInput = ref('')
 const xTable = ref<VxeTableInstance<MemberItem>>()
 const memberList = ref<MemberItem[]>([])
 const memberTotal = ref(0)
 const isShowAddMemberDialog = ref(false)
 const loadTable = ref(false)
+const isTeamAdmin = ref(false)
 const teamInfo = ref({
   icon: ''
 })
@@ -85,7 +86,7 @@ const toDeleteMmber = (type, data) => {
       type: 'warning'
     })
       .then(() => {
-        deleteTeamMember(data.id)
+        deleteTeamMember(data.id, 'exit')
       })
       .catch(() => {
         ElMessage.info('取消操作')
@@ -102,7 +103,7 @@ const toDeleteMmber = (type, data) => {
       type: 'warning'
     })
       .then(() => {
-        deleteTeamMember(data.id)
+        deleteTeamMember(data.id, 'delete')
       })
       .catch(() => {
         ElMessage.info('取消删除')
@@ -136,11 +137,19 @@ const editTeamMember = async (id, params) => {
   }
 }
 
-const deleteTeamMember = async (id) => {
+const deleteTeamMember = async (id, type) => {
   let res = await deleteTeamMemberApi(id)
   if (res.code === 1000) {
-    ElMessage.success('删除成功')
-    getTeamMember()
+    ElMessage.success('操作成功')
+    type === 'delete' && getTeamMember()
+    type === 'exit' &&
+      router.push({
+        path: `/${route.path.split('/')[1]}/team`,
+        query: {
+          sname: infoStore.currentQuery?.sname,
+          sid: infoStore.currentQuery?.sid
+        }
+      })
   } else {
     ElMessage.error(res.msg)
   }
@@ -169,6 +178,11 @@ const getTeamMember = async () => {
         dept: user.dept_name,
         update_datetime: create_datetime
       })
+    memberList.value.forEach((item) => {
+      if (item.username === username && item.role === '0') {
+        isTeamAdmin.value = true
+      }
+    })
   } else {
     ElMessage.error(res.msg)
   }
@@ -229,12 +243,13 @@ onMounted(() => {
           <vxe-column field="role" title="角色" width="200" sortable>
             <template #default="{ row, rowIndex }">
               <DropdownPopver :menuItems="sexList" :selectId="sexList[row.role].value" @toChange="toChangeRole($event, row)">
-                <span class="el-dropdown" v-if="rowIndex !== 0 && row.username !== user">
+                <span class="el-dropdown" v-if="rowIndex !== 0 && row.username !== username && isTeamAdmin">
                   {{ sexList[row.role].label }}
                   <i-ep-ArrowDown />
                 </span>
               </DropdownPopver>
-              <span v-if="rowIndex === 0 || row.username === user">{{ sexList[row.role].label }}</span>
+              <span v-if="rowIndex !== 0 && row.username !== username && !isTeamAdmin">{{ sexList[row.role].label }}</span>
+              <span v-if="rowIndex === 0 || row.username === username">{{ sexList[row.role].label }}</span>
             </template>
           </vxe-column>
           <vxe-column field="dept" width="200" title="所属部门" :formatter="formatterStatus" sortable></vxe-column>
@@ -242,18 +257,18 @@ onMounted(() => {
           <vxe-column title="操作">
             <template #default="{ row, rowIndex }">
               <el-tooltip effect="dark" content="退出" placement="top" :show-arrow="false">
-                <span class="icon" v-if="rowIndex === 0 && row.username === user">
-                  <img :src="editIcon" alt="" @click="toExit(row)" />
+                <span class="icon" v-if="rowIndex === 0 && row.username === username">
+                  <img w-16px h-16px :src="editIcon" alt="" @click="toExit(row)" />
                 </span>
               </el-tooltip>
               <el-tooltip effect="dark" content="退出" placement="top" :show-arrow="false">
-                <span class="icon" v-if="rowIndex !== 0 && row.username === user">
-                  <img :src="editIcon" alt="" @click="toDeleteMmber('exit', row)" />
+                <span class="icon" v-if="rowIndex !== 0 && row.username === username">
+                  <img w-16px h-16px :src="editIcon" alt="" @click="toDeleteMmber('exit', row)" />
                 </span>
               </el-tooltip>
               <el-tooltip effect="dark" content="删除" placement="top" :show-arrow="false">
-                <span class="icon" v-if="rowIndex !== 0 && row.username !== user">
-                  <img :src="deleteIcon" alt="" @click="toDeleteMmber('delete', row)" />
+                <span class="icon" v-if="rowIndex !== 0 && row.username !== username">
+                  <img w-16px h-16px :src="deleteIcon" alt="" @click="toDeleteMmber('delete', row)" />
                 </span>
               </el-tooltip>
             </template>
@@ -341,6 +356,9 @@ onMounted(() => {
         width: 22px;
         height: 22px;
         cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
       .cell {
         display: flex;
