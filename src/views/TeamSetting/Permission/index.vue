@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { getGroupPermissionsApi, updateGroupPermissionsApi } from '@/api/grouppermissions'
+import { editGroupsApi } from '@/api/groups'
 
 const infoStore = useInfoStore()
-const publicType = ref('1')
+const publicType = ref('0')
 const groupSettingId = ref(null)
 const teamOptions = ref([
   {
@@ -120,8 +121,26 @@ const updateGroupPermissions = async (params) => {
   }
 }
 
+const toChangePublic = async () => {
+  const { groupname, groupkey } = JSON.parse(sessionStorage.getItem('xinAn-teamInfo'))
+  const params = {
+    space: infoStore.currentQuery.sid,
+    groupname,
+    groupkey,
+    public: publicType.value
+  }
+  let res = await editGroupsApi(params, groupSettingId.value)
+  if (res.code === 1000) {
+    ElMessage.success('更新成功')
+    infoStore.setCurrentTeamInfo(res.data)
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
 onMounted(() => {
   getGroupPermissions()
+  publicType.value = JSON.parse(sessionStorage.getItem('xinAn-teamInfo')).public || '0'
 })
 </script>
 
@@ -131,9 +150,9 @@ onMounted(() => {
     <div class="box">
       <div class="publicType">
         <h3>公开性</h3>
-        <el-radio-group v-model="publicType" class="item">
-          <el-radio label="1" size="large">仅团队成员可访问 </el-radio>
-          <el-radio disabled label="2" size="large">空间所有成员可访问</el-radio>
+        <el-radio-group v-model="publicType" class="item" @change="toChangePublic">
+          <el-radio label="0" size="large">仅团队成员可访问 </el-radio>
+          <el-radio label="1" size="large">空间所有成员可访问</el-radio>
         </el-radio-group>
       </div>
       <div class="divider"></div>

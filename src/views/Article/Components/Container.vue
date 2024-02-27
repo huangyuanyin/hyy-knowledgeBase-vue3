@@ -77,6 +77,9 @@ const headers = ref({
 const titleList = ref([])
 const showScroll = ref(false)
 const isAlone = ref(false)
+const isEditName = ref<boolean>(false)
+const docName = ref<string>('')
+const inputName = ref(null)
 
 const { addCollect } = useCollect()
 const { handleLike } = useLike()
@@ -369,6 +372,29 @@ const toLink = (type, val?) => {
   }
 }
 
+const toEdit = () => {
+  isEditName.value = true
+  if (isEditName.value) {
+    nextTick(() => {
+      inputName.value.focus()
+      inputName.value.select()
+    })
+  }
+  docName.value = infoStore.currentQuery?.aname
+}
+
+const handleRename = () => {
+  if (docName.value === '') {
+    return ElMessage.warning('文档名不能为空')
+  }
+  if (docName.value === infoStore.currentQuery?.aname) {
+    isEditName.value = false
+    return
+  }
+  isEditName.value = false
+  useArticle().handleEditArticle(Number(infoStore.currentQuery?.aid), docName.value)
+}
+
 onMounted(() => {
   getCategoryTree()
 })
@@ -380,8 +406,11 @@ onMounted(() => {
       <el-header class="header">
         <div class="header_left">
           <img w-26px h-26px mr-6px rounded-4px cursor-pointer v-if="isAlone" src="@/assets/favicon.ico" @click="toLink('index')" />
-          <p max-w-60vw overflow-hidden text-ellipsis whitespace-nowrap v-if="infoStore.currentMenu !== 'title'">{{ infoStore.currentQuery?.aname }}</p>
-          <div v-else flex text-14px text="#262626">
+          <p cursor-pointer max-w-60vw overflow-hidden text-ellipsis whitespace-nowrap v-if="infoStore.currentMenu !== 'title' && !isEditName" @click="toEdit">
+            {{ infoStore.currentQuery?.aname }}
+          </p>
+          <input class="editTitle" ref="inputName" id="inputName" v-if="isEditName" v-model="docName" type="text" @blur.stop="handleRename" @keyup.enter.stop="handleRename" />
+          <div v-if="infoStore.currentMenu === 'title'" flex text-14px text="#262626">
             <div flex items-center v-for="(item, index) in titleList" :key="'titleList' + index">
               <h5 line-height-30px cursor-pointer v-if="index !== titleList.length - 1" @click="toLink('title', item)">{{ item.title }}</h5>
               <h5 line-height-30px text="#6a6a73" v-else>{{ item.title }}</h5>
@@ -526,6 +555,16 @@ onMounted(() => {
           width: 14px;
           height: 14px;
         }
+      }
+      .editTitle {
+        border-radius: 6px;
+        border: 1px solid #00b96b;
+        box-shadow: none;
+        height: 24px;
+        outline: none;
+        padding: 1px 6px;
+        box-sizing: border-box;
+        width: 250px;
       }
     }
     &_right {
