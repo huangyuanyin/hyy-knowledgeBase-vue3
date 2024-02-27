@@ -97,6 +97,10 @@ const getDetailSpaces = async () => {
   spaceForm.icon = icon
 }
 
+const changeIcon = (icon: string) => {
+  spaceForm.icon = icon
+}
+
 onMounted(() => {
   getDetailSpaces()
 })
@@ -118,7 +122,9 @@ onMounted(() => {
         </el-form-item>
         <el-form-item label="空间标识">
           <div class="icon-tag">
-            <img :src="spaceForm.icon" alt="" />
+            <SelectIconPopver @changeIcon="changeIcon">
+              <img :src="spaceForm.icon" alt="" cursor-pointer />
+            </SelectIconPopver>
             <el-upload v-model="spaceForm.icon" class="upload" action="" accept=".png,.jpg,.svg" :auto-upload="false" :show-file-list="false" @change="toUploadImg">
               <el-button class="upload-button"><i-ep-Upload></i-ep-Upload>上传图标</el-button>
               <template #tip>

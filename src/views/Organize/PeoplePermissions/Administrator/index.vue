@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { editSpacepermissionsApi, getSpacepermissionsApi } from '@/api/spacepermissions'
-import { getUserApi } from '@/api/user'
 
 const infoStore = useInfoStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
@@ -22,23 +21,12 @@ const getSpacepermissions = async () => {
 }
 
 const getUser = async () => {
-  const params = {
-    username: user
-  }
-  const res = await getUserApi(params)
-  if (res.code === 1000) {
-    res.data.map((it) => {
-      if (it.username === user) {
-        it.permname = it.name
-        it.permusername = it.username
-        it.permtype = '0'
-        it.dept = it.dept_name
-      }
-    })
-    myData.value = res.data || ([] as any)
-  } else {
-    ElMessage.error(res.msg)
-  }
+  const user = JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).user
+  user.permname = user.name
+  user.permusername = user.username
+  user.permtype = '0'
+  user.dept = user.dept_name
+  myData.value = [user]
 }
 
 const toDeleteAdmin = (item) => {
@@ -92,7 +80,8 @@ onMounted(async () => {
           <template #default="{ row }">
             <span>
               {{ row.permname }}
-              <span v-if="user === row.username" class="my_tag">你自己</span>
+              <span v-if="user === row.permusername" class="my_tag">你自己</span>
+              <span v-if="user !== row.permusername && row.permusername == myData[0].permusername" class="my_tag">创建人</span>
             </span>
           </template>
         </el-table-column>
@@ -104,7 +93,7 @@ onMounted(async () => {
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template #default="{ row }">
-            <el-button type="danger" size="small" v-if="user !== row.username" @click="toDeleteAdmin(row)">移除</el-button>
+            <el-button type="danger" size="small" v-if="user !== row.permusername && row.permusername !== myData[0].permusername" @click="toDeleteAdmin(row)">移除</el-button>
           </template>
         </el-table-column>
       </el-table>
