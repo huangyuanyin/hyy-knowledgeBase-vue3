@@ -11,11 +11,7 @@ import statisticsIcon from '@/assets/icons/statistics.svg'
 const menuList = [
   {
     label: '设置',
-    children: [
-      { label: '知识库信息', nickName: 'basic', icon: teamInfoIcon, path: '/bookSetting/basic' },
-      { label: '权限', nickName: 'collaborators', icon: permissionsIcon, path: '/bookSetting/collaborators' },
-      { label: '更多设置', nickName: 'settings', icon: setIcon, path: '/bookSetting/settings' }
-    ]
+    children: []
   },
   {
     label: '高级功能',
@@ -36,6 +32,18 @@ const router = useRouter()
 watchEffect(() => {
   if (refreshStore.isRefreshBookSet) {
     refreshStore.setRefreshBookSet(false)
+  }
+  if (infoStore.currentTeamInfo.groupname === '公共区') {
+    menuList[0].children = [
+      { label: '知识库信息', nickName: 'basic', icon: teamInfoIcon, path: '/bookSetting/basic' },
+      { label: '更多设置', nickName: 'settings', icon: setIcon, path: '/bookSetting/settings' }
+    ]
+  } else {
+    menuList[0].children = [
+      { label: '知识库信息', nickName: 'basic', icon: teamInfoIcon, path: '/bookSetting/basic' },
+      { label: '权限', nickName: 'collaborators', icon: permissionsIcon, path: '/bookSetting/collaborators' },
+      { label: '更多设置', nickName: 'settings', icon: setIcon, path: '/bookSetting/settings' }
+    ]
   }
 })
 

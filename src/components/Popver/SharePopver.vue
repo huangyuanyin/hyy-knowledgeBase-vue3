@@ -24,6 +24,7 @@ const currentPage = ref('0')
 const indexed_level = ref(false)
 const is_selective = ref(false)
 const copyLink = ref('')
+const isPublicTeam = ref(false)
 const operaList = ref([
   {
     label: '分享范围',
@@ -65,6 +66,8 @@ const publicTypeList = [
 watchEffect(() => {
   currentPage.value = '0'
   publicType.value = props.aInfo.public
+  isPublicTeam.value = infoStore.currentTeamInfo.groupname === '公共区'
+  isPublicTeam.value && operaList.value.pop()
 })
 
 watch(
@@ -141,7 +144,11 @@ const toChangePublic = (type: string) => {
 const toHandle = (item: any) => {
   switch (item.label) {
     case '分享范围':
-      currentPage.value = '1'
+      if (!isPublicTeam.value) {
+        currentPage.value = '1'
+      } else {
+        ElMessage.warning('公共区不支持修改分享范围')
+      }
       break
     case '推送精选':
       currentPage.value = '3'
@@ -150,7 +157,11 @@ const toHandle = (item: any) => {
       toChangePublic('0')
       break
     case '允许空间内搜索':
-      currentPage.value = '2'
+      if (!isPublicTeam.value) {
+        currentPage.value = '2'
+      } else {
+        ElMessage.warning('公共区不支持修改搜索设置')
+      }
       break
     default:
       ElMessage.warning('功能暂未开放，敬请期待')
@@ -230,7 +241,7 @@ const toCopy = () => {
       <h1 v-if="publicType === '0'">当前文档为私密，仅自己和协作者可访问</h1>
       <h1 v-if="publicType === '1'">当前文档为公开，该知识库所有成员可访问</h1>
       <h1 v-if="publicType === '2'">当前文档为公开，空间所有成员可访问</h1>
-      <li>
+      <li v-if="!isPublicTeam">
         <div class="left">
           <div class="icon">
             <img src="/src/assets/icons/sharePopver/metaAvatarIcon.svg" alt="" />
