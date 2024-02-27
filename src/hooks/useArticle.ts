@@ -170,7 +170,7 @@ export const useArticle = () => {
         }
         const spaceQuery = {
           gid: book.group,
-          gname: book.groupname
+          gname: book.groupname || book.group_name
         }
         await callback(true)
         setTimeout(() => {

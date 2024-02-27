@@ -9,7 +9,10 @@ const bookStatistic = ref<BookStatisticsInfo>({} as BookStatisticsInfo)
 const { articleList, getDocList } = useArticle()
 
 const getBookStatistic = async () => {
-  let res = await getBookStatisticApi(infoStore.currentQuery.lid)
+  const params = {
+    book: infoStore.currentQuery.lid
+  }
+  let res = await getBookStatisticApi(params)
   if (res.code === 1000) {
     bookStatistic.value = res.data
   } else {

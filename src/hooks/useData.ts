@@ -4,8 +4,10 @@ import formIcon from '@/assets/icons/formIcon.svg'
 import mindmapIcon from '@/assets/icons/mindmapIcon.svg'
 import pptIcon from '@/assets/icons/pptIcon.svg'
 import fileIcon from '@/assets/icons/uploadFile.svg'
+import folderIcon from '@/assets/icons/folder.svg'
 
 const contentType = {
+  title: folderIcon,
   doc: documentIcon,
   sheet: formIcon,
   mind: mindmapIcon,

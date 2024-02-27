@@ -2,6 +2,7 @@ import docModuleIcon from '@/assets/icons/docModuleIcon.svg'
 import bookModuleIcon from '@/assets/icons/bookModuleIcon.svg'
 import temeplateModuleIcon from '@/assets/icons/temeplateModuleIcon.svg'
 import documentIcon from '@/assets/icons/documentIcon.svg'
+import folderIcon from '@/assets/icons/folder.svg'
 import spaceIcon from '@/assets/icons/organize/spaceIcon.svg'
 import deleteIcon from '@/assets/icons/organize/deleteIcon.svg'
 import setIcon from '@/assets/icons/organize/setIcon.svg'
@@ -370,6 +371,7 @@ export const spaceStartBox = [
 ]
 
 export const contentType = ref({
+  title: folderIcon,
   doc: documentIcon,
   sheet: formIcon,
   mind: mindmapIcon,

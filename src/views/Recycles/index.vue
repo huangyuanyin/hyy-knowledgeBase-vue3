@@ -1,9 +1,6 @@
 <script lang="ts" setup>
 import { WarningFilled } from '@element-plus/icons-vue'
-import documentIcon from '@/assets/icons/documentIcon.svg'
-import formIcon from '@/assets/icons/formIcon.svg'
-import mindmapIcon from '@/assets/icons/mindmapIcon.svg'
-import pptIcon from '@/assets/icons/pptIcon.svg'
+import { contentType } from '@/data/data'
 import { getMyRecyclesApi, deleteMyRecyclesApi, recoverMyRecyclesApi } from '@/api/recycles'
 
 type RecycleData = {
@@ -20,12 +17,6 @@ const spaceId = ref('')
 const showHandleArticleDialog = ref(false)
 const recycleData = ref([])
 const handleData = ref(null)
-const contentType = ref({
-  doc: documentIcon,
-  sheet: formIcon,
-  mind: mindmapIcon,
-  ppt: pptIcon
-})
 
 watchEffect(() => {
   spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : infoStore.currentQuery?.sid
@@ -116,7 +107,7 @@ onMounted(() => {
           <template #default="{ row }">
             <div class="name">
               <img :src="row.type === 'article' ? contentType[row.sub_type] : row.icon" alt="" class="icon" />
-              <span>{{ row.name }}</span>
+              <p max-w-25vw overflow-hidden text-ellipsis whitespace-nowrap>{{ row.name }}</p>
             </div>
           </template>
         </el-table-column>

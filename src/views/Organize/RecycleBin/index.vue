@@ -71,7 +71,7 @@ onMounted(() => {
           <template #default="{ row }">
             <div class="name">
               <img :src="row.icon" alt="" class="icon" />
-              <span>{{ row.groupname }}</span>
+              <p max-w-20vw overflow-hidden text-ellipsis whitespace-nowrap>{{ row.groupname }}</p>
             </div>
           </template>
         </el-table-column>

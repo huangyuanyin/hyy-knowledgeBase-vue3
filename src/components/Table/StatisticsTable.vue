@@ -3,6 +3,8 @@ import documentIcon from '@/assets/icons/documentIcon.svg'
 import formIcon from '@/assets/icons/formIcon.svg'
 import mindmapIcon from '@/assets/icons/mindmapIcon.svg'
 import pptIcon from '@/assets/icons/pptIcon.svg'
+import fileIcon from '@/assets/icons/fileIcon.svg'
+import folderIcon from '@/assets/icons/folder.svg'
 
 const props = defineProps({
   tableData: {
@@ -24,10 +26,12 @@ const searchPlcae = ref({
   docCol: '搜索文档'
 })
 const contentType = ref({
+  title: folderIcon,
   doc: documentIcon,
   sheet: formIcon,
   mind: mindmapIcon,
-  ppt: pptIcon
+  ppt: pptIcon,
+  file: fileIcon
 })
 
 watchEffect(() => {

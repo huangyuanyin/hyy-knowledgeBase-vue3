@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { WarningFilled } from '@element-plus/icons-vue'
-import articleIcon from '@/assets/icons/articleIcon.svg'
+import { contentType } from '@/data/data'
 import { getBookRecyclesApi, recoverBookRecyclesApi, deleteBookRecyclesApi } from '@/api/recycles'
 
 type RecycleData = {
@@ -86,8 +86,8 @@ onMounted(() => {
         <el-table-column label="名称">
           <template #default="{ row }">
             <div class="name">
-              <img :src="articleIcon" alt="" class="icon" />
-              <span>{{ row.title }}</span>
+              <img :src="contentType[row.type]" alt="" class="icon" />
+              <p max-w-20vw overflow-hidden text-ellipsis whitespace-nowrap>{{ row.title }}</p>
             </div>
           </template>
         </el-table-column>
