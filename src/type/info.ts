@@ -33,4 +33,6 @@ export interface TeamStatisticsInfo {
   private_book_count: number
   public_book_count: number
   book_count: number
+  collaboration_count: number
+  collect_count: number
 }

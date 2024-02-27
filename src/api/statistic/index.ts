@@ -1,6 +1,10 @@
 import { BookStatisticsRes, TeamStatisticsRes } from './type'
 
-export function getBookStatisticApi(params) {
+export function getBookStatisticApi(id: number) {
+  return http.get<BookStatisticsRes>(`book/statistics/${id}/`, {}, 'base')
+}
+
+export function getBookDocStatisticApi(params) {
   return http.get<BookStatisticsRes>(`book/statistics/docs/`, { params }, 'base')
 }
 

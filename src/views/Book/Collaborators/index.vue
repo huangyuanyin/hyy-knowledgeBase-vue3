@@ -29,7 +29,8 @@ const teamAdminList = ref([]) // 团队管理员列表
 const bookAdmin = ref([
   {
     label: 'bookAdmin',
-    name: ''
+    name: '',
+    avatar: ''
   }
 ])
 const teamInfo = ref([
@@ -110,14 +111,13 @@ const getCollaborations = async () => {
   const params = {
     book: bookId.value
   }
-
   loadTable.value = true
   const res = await getCollaborationsApi(params)
   loadTable.value = false
   if (res.code === 1000) {
     memberList.value = res.data
+    bookAdmin.value[0].avatar = 'http://10.4.150.56:8032/' + JSON.parse(sessionStorage.getItem('xinAn-teamInfo')).user.avatar
     memberData.value = [...teamInfo.value, ...bookAdmin.value, ...memberList.value]
-    console.log(`output->`, memberData.value)
     if (bookAdmin.value[0].name === nickname) {
       isAdmin.value = true
     }
@@ -262,9 +262,7 @@ onMounted(() => {
             <template #default="{ row, rowIndex }">
               <span v-if="['teamAdmin', 'spaceAdmin', 'bookAdmin'].includes(row.label)">可管理</span>
               <span v-if="rowIndex !== 0 && row.permusername === user && ['1', '2', '0'].includes(row.permtype)">{{ sexList.find((it) => it.value === row.permtype).label }}</span>
-              <span
-                v-if="row.permusername === infoStore.currentBookInfo.creator && !isAdmin && rowIndex !== 0 && row.permusername !== user && ['1', '2', '0'].includes(row.permtype)"
-              >
+              <span v-if="!isAdmin && rowIndex !== 0 && row.permusername !== user && ['1', '2', '0'].includes(row.permtype)">
                 {{ sexList.find((it) => it.value === row.permtype).label }}
               </span>
               <DropdownPopver :menuItems="sexList" :selectId="getSelected(row)" @toChange="toChangeRole($event, row)">

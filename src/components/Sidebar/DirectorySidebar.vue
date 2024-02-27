@@ -24,12 +24,16 @@ const linkType = ref('add') // 链接弹窗类型： add edit
 const parentId = ref(null) // 父级节点id
 const reName = ref('')
 const reNameId = ref(null)
+const reFileName = ref('')
+const reFileNameSuffix = ref('')
 const reNameParent = ref(null)
+const reFileNameId = ref(null)
 const hasPermission = ref(true)
 const defaultProps = {
   class: 'forumList'
 } as unknown as TreeOptionProps
 const inputName = ref(null)
+const inputFileName = ref(null)
 
 const { sid = '', sname = '', gid = '', gname = '', lid = '', lname = '' } = infoStore.currentQuery || {}
 
@@ -214,28 +218,45 @@ const toArticleDetail = (val) => {
 
 // 重命名
 const toRename = (val) => {
-  reNameId.value = val.id
   reNameParent.value = val.parent
-  reName.value = val.title
-  nextTick(() => {
-    inputName.value.focus()
-    inputName.value.select()
-  })
+  if (val.type !== 'file') {
+    reNameId.value = val.id
+    reName.value = val.title
+    nextTick(() => {
+      inputName.value.focus()
+      inputName.value.select()
+    })
+  } else {
+    reFileNameId.value = val.id
+    const suffix = val.title.split('.').pop()
+    reFileNameSuffix.value = suffix
+    reFileName.value = val.title.split('.').slice(0, val.title.split('.').length - 1)
+    nextTick(() => {
+      inputFileName.value.focus()
+      inputFileName.value.select()
+    })
+  }
 }
 
 const handleRename = () => {
-  if (!reName.value) return
-  if (route.path.includes('/directory/index') || reNameId.value !== Number(infoStore.currentQuery?.aid)) {
-    useArticle().handleEditArticle(reNameId.value, reName.value, () => {
+  if (!reName.value && !reFileName.value) return
+  if (reFileName.value) {
+    reFileName.value = reFileName.value + '.' + reFileNameSuffix.value
+  }
+  if (route.path.includes('/directory/index') || (reNameId.value !== Number(infoStore.currentQuery?.aid) && reFileNameId.value !== Number(infoStore.currentQuery?.aid))) {
+    useArticle().handleEditArticle(reNameId.value || reFileNameId.value, reName.value || reFileName.value, () => {
       useArticle().getArticleList(Number(lid), (val: any) => {
         infoStore.currentArticleTreeInfo = val
         route.path.includes('/directory/index') ? (currentNodeKey.value = null) : (currentNodeKey.value = Number(infoStore.currentQuery?.aid))
       })
     })
   } else {
-    useArticle().handleEditArticle(reNameId.value, reName.value)
+    useArticle().handleEditArticle(reNameId.value || reFileNameId.value, reName.value || reFileName.value)
   }
   reNameId.value = null
+  reFileNameId.value = null
+  reName.value = ''
+  reFileName.value = ''
 }
 
 const toAddLink = (data) => {
@@ -356,12 +377,24 @@ const customIcon = () => {
         <template #default="{ data }">
           <span class="list-node">
             <div class="title">
+              <div v-if="reFileNameId === data.id && data.type === 'file'">
+                <input
+                  @click.stop
+                  class="editTitle"
+                  ref="inputFileName"
+                  id="inputFileName"
+                  v-model="reFileName"
+                  type="text"
+                  @blur.stop="handleRename"
+                  @keyup.enter.stop="handleRename"
+                />
+              </div>
               <input
                 @click.stop
                 class="editTitle"
                 ref="inputName"
                 id="inputName"
-                v-if="reNameId === data.id"
+                v-else-if="reNameId === data.id && data.type !== 'file'"
                 v-model="reName"
                 type="text"
                 @blur.stop="handleRename"

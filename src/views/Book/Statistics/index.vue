@@ -1,18 +1,14 @@
 <script lang="ts" setup>
 import likeIcon from '@/assets/icons/bookSetting/like.svg'
-import { getBookStatisticApi } from '@/api/statistic'
+import { getBookDocStatisticApi, getBookStatisticApi } from '@/api/statistic'
 import { BookStatisticsInfo } from '@/type/info'
 
 const infoStore = useInfoStore()
 const bookStatistic = ref<BookStatisticsInfo>({} as BookStatisticsInfo)
-
-const { articleList, getDocList } = useArticle()
+const articleList = ref([])
 
 const getBookStatistic = async () => {
-  const params = {
-    book: infoStore.currentQuery.lid
-  }
-  let res = await getBookStatisticApi(params)
+  let res = await getBookStatisticApi(infoStore.currentQuery.lid)
   if (res.code === 1000) {
     bookStatistic.value = res.data
   } else {
@@ -20,9 +16,24 @@ const getBookStatistic = async () => {
   }
 }
 
+const getBookDocStatistic = async () => {
+  const params = {
+    book: infoStore.currentQuery.lid,
+    range: 0,
+    page: 1,
+    pagesize: 5
+  }
+  let res = await getBookDocStatisticApi(params)
+  if (res.code === 1000) {
+    articleList.value = res.data as any
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
 onMounted(async () => {
   await getBookStatistic()
-  await getDocList({ book: infoStore.currentQuery.lid })
+  await getBookDocStatistic()
 })
 </script>
 

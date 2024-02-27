@@ -79,7 +79,10 @@ const showScroll = ref(false)
 const isAlone = ref(false)
 const isEditName = ref<boolean>(false)
 const docName = ref<string>('')
+const docFileName = ref<string>('')
 const inputName = ref(null)
+const inputFileName = ref(null)
+const reFileNameSuffix = ref('')
 
 const { addCollect } = useCollect()
 const { handleLike } = useLike()
@@ -374,25 +377,38 @@ const toLink = (type, val?) => {
 
 const toEdit = () => {
   isEditName.value = true
-  if (isEditName.value) {
+  if (isEditName.value && infoStore.currentMenu !== 'file') {
     nextTick(() => {
       inputName.value.focus()
       inputName.value.select()
     })
+    docName.value = infoStore.currentQuery?.aname
+  } else if (isEditName.value && infoStore.currentMenu === 'file') {
+    nextTick(() => {
+      inputFileName.value.focus()
+      inputFileName.value.select()
+    })
+    const suffix = infoStore.currentQuery?.aname.split('.').pop()
+    reFileNameSuffix.value = suffix
+    docFileName.value = infoStore.currentQuery?.aname.split('.').slice(0, infoStore.currentQuery?.aname.split('.').length - 1)
   }
-  docName.value = infoStore.currentQuery?.aname
 }
 
-const handleRename = () => {
-  if (docName.value === '') {
+const handleRename = async () => {
+  docFileName.value = docFileName.value + '.' + reFileNameSuffix.value
+  if (docName.value === '' && infoStore.currentMenu !== 'file') {
     return ElMessage.warning('文档名不能为空')
+  } else if (docFileName.value === '' && infoStore.currentMenu === 'file') {
+    return ElMessage.warning('文件名不能为空')
   }
-  if (docName.value === infoStore.currentQuery?.aname) {
+  if (docName.value === infoStore.currentQuery?.aname || docFileName.value === infoStore.currentQuery?.aname) {
     isEditName.value = false
     return
   }
   isEditName.value = false
-  useArticle().handleEditArticle(Number(infoStore.currentQuery?.aid), docName.value)
+  await useArticle().handleEditArticle(Number(infoStore.currentQuery?.aid), docName.value || docFileName.value)
+  docName.value = ''
+  docFileName.value = ''
 }
 
 onMounted(() => {
@@ -409,7 +425,26 @@ onMounted(() => {
           <p cursor-pointer max-w-60vw overflow-hidden text-ellipsis whitespace-nowrap v-if="infoStore.currentMenu !== 'title' && !isEditName" @click="toEdit">
             {{ infoStore.currentQuery?.aname }}
           </p>
-          <input class="editTitle" ref="inputName" id="inputName" v-if="isEditName" v-model="docName" type="text" @blur.stop="handleRename" @keyup.enter.stop="handleRename" />
+          <input
+            class="editTitle"
+            ref="inputName"
+            id="inputName"
+            v-if="infoStore.currentMenu !== 'title' && infoStore.currentMenu !== 'file' && isEditName"
+            v-model="docName"
+            type="text"
+            @blur.stop="handleRename"
+            @keyup.enter.stop="handleRename"
+          />
+          <input
+            class="editTitle"
+            ref="inputFileName"
+            id="inputFileName"
+            v-if="infoStore.currentMenu !== 'title' && infoStore.currentMenu === 'file' && isEditName"
+            v-model="docFileName"
+            type="text"
+            @blur.stop="handleRename"
+            @keyup.enter.stop="handleRename"
+          />
           <div v-if="infoStore.currentMenu === 'title'" flex text-14px text="#262626">
             <div flex items-center v-for="(item, index) in titleList" :key="'titleList' + index">
               <h5 line-height-30px cursor-pointer v-if="index !== titleList.length - 1" @click="toLink('title', item)">{{ item.title }}</h5>
