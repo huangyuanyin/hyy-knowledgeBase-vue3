@@ -29,6 +29,7 @@ const refreshStroe = useRefreshStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const spaceId = ref(null) // 当前空间id
 const teamId = ref(null) // 团队id
+const teamIcon = ref(null) // 团队图标
 const bookId = ref(null) // 知识库id
 const visible = ref(false)
 const with_children = ref(false) // 是否包含子文档
@@ -54,7 +55,19 @@ watch(
       props.title === '复制到...' ? (with_children.value = false) : (with_children.value = true)
       if (visible.value && props.title !== '恢复文档') {
         await initData()
-        await getTeam()
+        if (infoStore.currentSpaceType === '组织') {
+          await getTeam()
+        } else {
+          teamList.value = [
+            {
+              id: localStorage.getItem('personalGroupId'),
+              groupname: JSON.parse(localStorage.getItem('personalSpaceInfo')).spacename,
+              is_default: '0',
+              icon: 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('personalSpaceInfo')).icon
+            }
+          ]
+          teamId.value = localStorage.getItem('personalGroupId')
+        }
         await getBook()
       } else {
         teamId.value = infoStore.currentSpaceType === '个人' ? localStorage.getItem('personalGroupId') : Number(infoStore.currentQuery?.gid) || props.data.group_id
@@ -63,6 +76,17 @@ watch(
     }
   }
 )
+
+watchEffect(() => {
+  if (teamId.value) {
+    teamList.value.forEach((item) => {
+      if (item.id === teamId.value) {
+        teamIcon.value = item.icon
+        selectTeamName.value = item.groupname
+      }
+    })
+  }
+})
 
 const initData = () => {
   spaceId.value = props.data.space
@@ -197,7 +221,7 @@ const getArticle = async () => {
 // 获取团队列表
 const getTeam = async () => {
   const parmas = {
-    space: infoStore.currentTeamInfo.space,
+    space: String(infoStore.currentSpaceInfo.id),
     permusername: user
   }
   await getTeamList(parmas)
@@ -232,7 +256,7 @@ const getBook = async () => {
         <el-select v-model="teamId" placement="bottom-start" popper-class="selectList" @change="toChange('team')">
           <template #prefix>
             <img v-if="selectTeamName === '公共区'" class="prefix-icon" :src="publicIcon" />
-            <img v-else class="prefix-icon" src="/src/assets/icons/teamIcon.svg" />
+            <img w-20px h-20px v-else class="prefix-icon" :src="teamIcon" />
           </template>
           <el-option v-for="(item, index) in teamList" :key="'teamList' + index" :label="item.groupname" :value="item.id">
             <div style="display: flex; align-items: center; width: 100%">
@@ -363,7 +387,7 @@ const getBook = async () => {
   .select {
     margin-bottom: 25px;
     .el-select {
-      width: 160px;
+      width: 250px;
       height: 32px;
       font-size: 14px;
       border-radius: 6px;
