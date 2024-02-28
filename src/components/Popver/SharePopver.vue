@@ -66,8 +66,60 @@ const publicTypeList = [
 watchEffect(() => {
   currentPage.value = '0'
   publicType.value = props.aInfo.public
-  isPublicTeam.value = infoStore.currentTeamInfo.groupname === '公共区'
-  isPublicTeam.value && operaList.value.pop()
+  if (infoStore.currentQuery.gname === '公共区') {
+    isPublicTeam.value = true
+    operaList.value = [
+      {
+        label: '分享范围',
+        value: '空间所有成员可访问',
+        icon: shareIcon1
+      },
+      {
+        label: '推送精选',
+        value: '否',
+        icon: shareIcon5
+      },
+      {
+        label: '密码访问',
+        value: '无密码',
+        icon: shareIcon2
+      },
+      {
+        label: '允许空间内搜索',
+        value: '开启',
+        icon: shareIcon3
+      }
+    ]
+  } else if (infoStore.currentQuery.gname !== '公共区' && infoStore.currentSpaceType === '组织') {
+    isPublicTeam.value = false
+    operaList.value = [
+      {
+        label: '分享范围',
+        value: '空间所有成员可访问',
+        icon: shareIcon1
+      },
+      {
+        label: '推送精选',
+        value: '否',
+        icon: shareIcon5
+      },
+      {
+        label: '密码访问',
+        value: '无密码',
+        icon: shareIcon2
+      },
+      {
+        label: '允许空间内搜索',
+        value: '开启',
+        icon: shareIcon3
+      },
+      {
+        label: '关闭空间分享',
+        value: '',
+        icon: shareIcon4
+      }
+    ]
+  }
 })
 
 watch(
@@ -84,10 +136,10 @@ watch(
   () => props.aInfo,
   (newVal) => {
     if (newVal.indexed_level === '1') {
-      operaList.value[3].value = '开启'
+      operaList.value[3] && (operaList.value[3].value = '开启')
       indexed_level.value = true
     } else {
-      operaList.value[3].value = '关闭'
+      operaList.value[3] && (operaList.value[3].value = '关闭')
       indexed_level.value = false
     }
     if (newVal.is_selective === '0') {

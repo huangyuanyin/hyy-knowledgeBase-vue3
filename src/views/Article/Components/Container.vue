@@ -133,6 +133,11 @@ watchEffect(() => {
     moreFeaturesDrawer.value = false
   }
   isAlone.value && (itemList.value = itemList.value.filter((item) => item.label === '收藏'))
+  if (infoStore.currentSpaceType === '个人') {
+    itemList.value = itemList.value.filter((item) => item.label !== '协作')
+    // 过滤掉buttonList中的分享
+    buttonList.value = buttonList.value.filter((item) => item.label !== '分享')
+  }
 })
 
 watch(

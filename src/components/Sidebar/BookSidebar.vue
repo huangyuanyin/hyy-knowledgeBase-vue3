@@ -33,7 +33,7 @@ watchEffect(() => {
   if (refreshStore.isRefreshBookSet) {
     refreshStore.setRefreshBookSet(false)
   }
-  if (infoStore.currentTeamInfo.groupname === '公共区') {
+  if (infoStore.currentTeamInfo.groupname === '公共区' || infoStore.currentSpaceType === '个人') {
     menuList[0].children = [
       { label: '知识库信息', nickName: 'basic', icon: teamInfoIcon, path: '/bookSetting/basic' },
       { label: '更多设置', nickName: 'settings', icon: setIcon, path: '/bookSetting/settings' }
