@@ -326,6 +326,7 @@ const updateArticleCollaborations = (val) => {
     :trigger="props.trigger"
     :hide-after="props.hideAfter"
     :show-arrow="props.showArrow"
+    @hide="currentPage = '0'"
   >
     <template #reference>
       <slot></slot>

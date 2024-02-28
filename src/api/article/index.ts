@@ -56,6 +56,10 @@ export function getArticleVersionApi(params: ArticleVersionData) {
   return http.get<ArticleRes>(`/article/versions/`, { params }, 'base')
 }
 
+export function editArticleVersionApi(id: number, data: ArticleVersionData) {
+  return http.put<ArticleRes>(`/article/versions/${id}/`, data, 'base')
+}
+
 export function addArticleVersionApi(data: ArticleVersionData) {
   return http.post<ArticleRes>(`/article/versions/`, data, 'base')
 }

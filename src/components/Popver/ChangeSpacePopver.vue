@@ -46,6 +46,7 @@ const spaceReverse = ref([
   }
 ])
 const loading = ref(false)
+const basePath = import.meta.env.MODE === 'development' ? '#/' : '/netKmp/#/'
 
 const initData = () => {
   if (infoStore.currentSidebar === 'SpaceSidebar') {
@@ -116,6 +117,9 @@ const toLink = (type, val?) => {
         path: `/${infoStore.currentSpaceInfo.spacekey}/organize/dashboard`,
         query: route.query
       })
+      break
+    case 'member':
+      window.open(`${basePath}${infoStore.currentSpaceInfo.spacekey}/organize/addressBook?sid=${infoStore.currentQuery.sid}&sname=${infoStore.currentQuery.sname}`)
       break
     default:
       break
@@ -197,13 +201,15 @@ const toLink = (type, val?) => {
                 <div class="member-left">
                   <div class="count">
                     <span>成员数</span>
-                    <span><span style="color: #262626">1</span>/10</span>
+                    <span
+                      ><span style="color: #262626">{{ infoStore.currentSpaceInfo.member_count + 1 }}</span> /10000</span
+                    >
                   </div>
                   <div class="line">
-                    <el-progress :percentage="50" :show-text="false" color="#8a8f8d"></el-progress>
+                    <el-progress :percentage="10" :show-text="false" color="#8a8f8d"></el-progress>
                   </div>
                 </div>
-                <span class="member-right">邀请成员</span>
+                <span class="member-right" @click="toLink('member')">邀请成员</span>
               </div>
               <div class="admin">
                 <span>管理员</span>

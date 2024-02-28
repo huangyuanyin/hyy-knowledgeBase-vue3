@@ -13,6 +13,7 @@ const props = defineProps({
 const emit = defineEmits(['closeDialog'])
 
 const infoStore = useInfoStore()
+const user = JSON.parse(localStorage.getItem('userInfo') as string).username
 const dialogVisible = ref(false)
 const templateType = ref('null')
 const temList = ref([])
@@ -85,7 +86,8 @@ const handleClick = (tab) => {
   const params = {
     template_type: 'user',
     target_type: tab,
-    target_id: null
+    target_id: null,
+    creator: user
   }
   switch (tab) {
     case 'null':
@@ -97,6 +99,11 @@ const handleClick = (tab) => {
     case '3':
       const idParam = tab !== '0' ? Number(infoStore.currentQuery[`${tab === '1' ? 'l' : tab === '2' ? 'g' : 's'}id`]) : null
       params.target_id = idParam
+      if (templateType.value !== '0') {
+        delete params.creator
+      } else {
+        params.creator = user
+      }
       getArticleTem(params)
       break
   }
@@ -155,14 +162,14 @@ const toAddArticle = async (val) => {
     body: selectTem.value.body,
     parent: null,
     book: val.id,
-    space: infoStore.currentQuery.sid,
+    space: infoStore.currentQuery?.sid,
     public: '1'
   }
   let res: any = await addArticleApi(params)
   if (res.code === 1000) {
     handleClose()
     const query = {
-      sid: infoStore.currentQuery.sid,
+      sid: infoStore.currentQuery?.sid,
       sname: infoStore.currentQuery.sname,
       lid: res.data.book,
       lname: val.name,

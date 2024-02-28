@@ -4,7 +4,7 @@ import editIcon from '@/assets/icons/editIcon.svg'
 import deleteIcon from '@/assets/icons/deleteIcon.svg'
 import emptyImg from '@/assets/img/empty.png'
 import { WarningFilled } from '@element-plus/icons-vue'
-import { deleteArticleVersionApi, getArticleVersionApi } from '@/api/article'
+import { deleteArticleVersionApi, editArticleVersionApi, getArticleVersionApi } from '@/api/article'
 
 const props = defineProps({
   isShow: Boolean,
@@ -29,6 +29,9 @@ const selectVersion = ref({
 })
 const temIframe = ref(null)
 const iframeSrc = ref('')
+const versionName = ref(null)
+const reNameId = ref(null)
+const reName = ref('')
 
 watch(
   () => props.isShow,
@@ -113,6 +116,31 @@ const handleClose = async () => {
   dialogVisible.value = false
   emit('closeDialog', false)
 }
+
+const toEditName = (val) => {
+  reNameId.value = val.id
+  reName.value = val.name
+}
+
+const handleRename = async (val) => {
+  if (reName.value === '') {
+    ElMessage.error('版本名称不能为空')
+    return
+  }
+  const params = {
+    name: reName.value,
+    type: val.type,
+    content: val.content
+  }
+  let res = await editArticleVersionApi(reNameId.value, params)
+  if (res.code === 1000) {
+    ElMessage.success('修改成功')
+    getArticleVersion(props.info.id)
+  } else {
+    ElMessage.error(res.msg)
+  }
+  reNameId.value = null
+}
 </script>
 
 <template>
@@ -134,13 +162,23 @@ const handleClose = async () => {
           <el-tab-pane label="版本" name="version">
             <template v-if="versionList.length">
               <div v-for="item in versionList" class="list-item" :class="[selectVersion.id === item.id ? 'selected' : '']" @click="toChangeVersion(item)">
-                <div class="name">{{ item.name }}</div>
+                <div v-if="reNameId !== item.id" class="name">{{ item.name }}</div>
+                <input
+                  @click.stop
+                  class="editTitle"
+                  ref="versionName"
+                  v-if="reNameId === item.id"
+                  v-model="reName"
+                  type="text"
+                  @blur.stop="handleRename(item)"
+                  @keyup.enter.stop="handleRename(item)"
+                />
                 <div>{{ item.update_datetime }}</div>
                 <div class="creator">
-                  <div>{{ item.modifier }}</div>
+                  <div>{{ item.modifier_name }}</div>
                   <div class="opera">
                     <el-tooltip effect="dark" content="修改版本名称" placement="top" :show-arrow="false">
-                      <span><img :src="editIcon" alt="" /></span>
+                      <span @click.stop="toEditName(item)"><img :src="editIcon" alt="" /></span>
                     </el-tooltip>
                     <el-popconfirm
                       width="220"
@@ -256,6 +294,15 @@ const handleClose = async () => {
           color: #262626;
           font-weight: 600;
           margin-bottom: 8px;
+        }
+        .editTitle {
+          border-radius: 6px;
+          border: 1px solid #00b96b;
+          box-shadow: none;
+          height: 24px;
+          outline: none;
+          padding: 1px 6px;
+          box-sizing: border-box;
         }
         div {
           font-size: 12px;
