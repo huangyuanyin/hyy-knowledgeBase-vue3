@@ -6,6 +6,7 @@ import shareIcon4 from '@/assets/icons/sharePopver/4.svg'
 import shareIcon5 from '@/assets/icons/sharePopver/5.svg'
 import { editArticleApi } from '@/api/article'
 import { OperationPopoverProps } from '@/type/operationPopoverType'
+import { getArticleCollaborationsApi, getCollaborationsApi } from '@/api/collaborations'
 
 const props = withDefaults(defineProps<OperationPopoverProps>(), {
   placement: 'bottom-start',
@@ -25,6 +26,8 @@ const indexed_level = ref(false)
 const is_selective = ref(false)
 const copyLink = ref('')
 const isPublicTeam = ref(false)
+const selectUserList = ref([])
+const userList = ref([])
 const operaList = ref([
   {
     label: '分享范围',
@@ -121,6 +124,16 @@ watchEffect(() => {
     ]
   }
 })
+
+watch(
+  () => currentPage.value,
+  (newVal) => {
+    if (newVal === '4') {
+      getCollaborations()
+      getArticleCollaborations()
+    }
+  }
+)
 
 watch(
   () => route.query.query,
@@ -274,6 +287,34 @@ const toCopy = () => {
   sharePopverRef.value && sharePopverRef.value.hide()
   useCopy(copyLink.value, '分享链接')
 }
+
+const getCollaborations = async () => {
+  const params = {
+    book: infoStore.currentQuery?.lid
+  }
+  const res = await getCollaborationsApi(params)
+  if (res.code === 1000) {
+    selectUserList.value = res.data
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const getArticleCollaborations = async () => {
+  const params = {
+    content: infoStore.currentQuery?.aid
+  }
+  const res = await getArticleCollaborationsApi(params)
+  if (res.code === 1000) {
+    userList.value = res.data
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+const updateArticleCollaborations = (val) => {
+  val && getArticleCollaborations()
+}
 </script>
 
 <template>
@@ -305,7 +346,7 @@ const toCopy = () => {
         </div>
         <div class="right">
           <el-tooltip effect="dark" content="查看所有协作者" placement="top" :show-arrow="false">
-            <span>
+            <span @click="currentPage = '4'">
               <img src="/src/assets/icons/sharePopver/userIcon.svg" alt="" />
             </span>
           </el-tooltip>
@@ -368,6 +409,10 @@ const toCopy = () => {
           @change="changeLevel('select')"
         />
       </div>
+    </div>
+    <div class="box" v-if="currentPage === '4'">
+      <div class="back" @click="currentPage = '0'"><img src="/src/assets/icons/sharePopver/back.svg" alt="" />文档协作者</div>
+      <CooperatePopverItem :userList="userList" :selectUserList="selectUserList" @updateArticleCollaborations="updateArticleCollaborations" />
     </div>
   </el-popover>
 </template>
@@ -575,6 +620,18 @@ const toCopy = () => {
         height: 16px;
       }
     }
+  }
+}
+:deep(.CooperatePopverItem_wrap) {
+  .search {
+    padding: 0 6px;
+    margin: 16px 0;
+  }
+  .userlist-box {
+    border: none;
+  }
+  .userlist .item {
+    padding: 10px 0;
   }
 }
 </style>

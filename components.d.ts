@@ -21,6 +21,7 @@ declare module 'vue' {
     CommentDrawer: typeof import('./src/components/Drawer/CommentDrawer/index.vue')['default']
     CommonList: typeof import('./src/components/List/CommonList.vue')['default']
     CooperatePopver: typeof import('./src/components/Popver/CooperatePopver.vue')['default']
+    CooperatePopverItem: typeof import('./src/components/Item/CooperatePopverItem.vue')['default']
     DeleteDialog: typeof import('./src/components/Dialog/DeleteDialog.vue')['default']
     DirectorySidebar: typeof import('./src/components/Sidebar/DirectorySidebar.vue')['default']
     DropdownPopver: typeof import('./src/components/Popver/DropdownPopver.vue')['default']
