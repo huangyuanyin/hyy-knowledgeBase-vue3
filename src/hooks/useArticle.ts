@@ -131,7 +131,6 @@ export const useArticle = () => {
       default:
         break
     }
-    console.log(`output->book`, book, title, articleType[title])
     handleAddArticleApi(book, articleType[title], parent, callback)
   }
 
@@ -143,7 +142,6 @@ export const useArticle = () => {
    * @param {Function} callback 回调函数
    */
   const handleAddArticleApi = async (book, article, parent: number | null, callback: Callback) => {
-    console.log(`output->`, article)
     const params = {
       title: article.title,
       type: article.type,
@@ -151,7 +149,7 @@ export const useArticle = () => {
       parent,
       book: book.id,
       space: space.value,
-      public: '1' // 知识库所有成员都可以访问
+      public: '2' // 空间所有成员都可以访问
     }
     article.type === 'title' && delete params.body
     let res = (await addArticleApi(params)) as ArticleRes<ArticleInfo>
