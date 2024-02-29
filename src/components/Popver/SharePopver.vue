@@ -31,7 +31,7 @@ const userList = ref([])
 const operaList = ref([
   {
     label: '分享范围',
-    value: '空间所有成员可访问',
+    value: '知识库所有成员可访问',
     icon: shareIcon1
   },
   {
@@ -98,7 +98,7 @@ watchEffect(() => {
     operaList.value = [
       {
         label: '分享范围',
-        value: '空间所有成员可访问',
+        value: '知识库所有成员可访问',
         icon: shareIcon1
       },
       {

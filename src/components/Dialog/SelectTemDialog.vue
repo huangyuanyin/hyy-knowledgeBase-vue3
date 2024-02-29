@@ -99,11 +99,15 @@ const handleClick = (tab) => {
     case '1':
     case '2':
     case '3':
-      const idParam = tab !== '0' ? Number(infoStore.currentQuery[`${tab === '1' ? 'l' : tab === '2' ? 'g' : 's'}id`]) : null
-      params.target_id = idParam
-      if (templateType.value !== '0') {
+      if (tab !== '0') {
+        if (infoStore.currentQuery === null) {
+          params.target_id = JSON.parse(localStorage.getItem('personalSpaceInfo')).id
+        } else {
+          params.target_id = Number(infoStore.currentQuery[`${tab === '1' ? 'l' : tab === '2' ? 'g' : 's'}id`])
+        }
         delete params.creator
       } else {
+        params.target_id = null
         params.creator = user
       }
       getArticleTem(params)
@@ -164,7 +168,7 @@ const toAddArticle = async (val) => {
     body: selectTem.value.body,
     parent: props.parent,
     book: val.id,
-    space: infoStore.currentQuery?.sid,
+    space: (infoStore.currentQuery && infoStore.currentQuery?.sid) || JSON.parse(localStorage.getItem('personalSpaceInfo')).id,
     public: '1'
   }
   let res: any = await addArticleApi(params)

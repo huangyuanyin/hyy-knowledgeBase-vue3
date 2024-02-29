@@ -18,6 +18,7 @@ const refreshStroe = useRefreshStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const icon = ref('')
 const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
+const adminInfo = ref<any>('')
 const isShowsSpaceDialog = ref(false)
 const changeSpacePopverRef = ref<any>(null)
 const spacesList = ref([])
@@ -51,6 +52,7 @@ const basePath = import.meta.env.MODE === 'development' ? '#/' : '/netKmp/#/'
 const initData = () => {
   if (infoStore.currentSidebar === 'SpaceSidebar') {
     icon.value = infoStore.currentSpaceInfo.icon || '/src/assets/icons/spaceIcon.svg'
+    adminInfo.value = JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).user
   }
 }
 
@@ -212,8 +214,22 @@ const toLink = (type, val?) => {
                 <span class="member-right" @click="toLink('member')">邀请成员</span>
               </div>
               <div class="admin">
-                <span>管理员</span>
-                <img :src="avatar" />
+                <span>创建人</span>
+                <el-popover placement="bottom-end" :width="282" trigger="hover" :show-arrow="false" :hide-after="0">
+                  <template #reference>
+                    <img cursor-pointer :src="'http://10.4.150.56:8032/' + adminInfo.avatar" />
+                  </template>
+                  <div pl-6px>
+                    <div flex items-center>
+                      <img w-44px h-44px :src="'http://10.4.150.56:8032/' + adminInfo.avatar" alt="" />
+                      <p ml-15px text="#262626" text-18px min-h-44px line-height-44px>{{ adminInfo.name }}</p>
+                    </div>
+                    <div>
+                      <div mt-16px mb-16px w-full h-1px style="background-color: rgba(0, 0, 0, 0.04)"></div>
+                      <span>{{ adminInfo.dept_name }}</span> / <span>{{ adminInfo.post_name }}</span>
+                    </div>
+                  </div>
+                </el-popover>
               </div>
               <div class="button" @click="toLink('set')">
                 <img class="settingIcon" src="/src/assets/icons/settingIcon.svg" alt="" />
@@ -223,8 +239,22 @@ const toLink = (type, val?) => {
             </div>
             <div class="content-member" v-else>
               <div class="admin">
-                <span>管理员</span>
-                <img :src="avatar" />
+                <span>创建人</span>
+                <el-popover placement="bottom-end" :width="282" trigger="hover" :show-arrow="false" :hide-after="0">
+                  <template #reference>
+                    <img cursor-pointer :src="'http://10.4.150.56:8032/' + adminInfo.avatar" />
+                  </template>
+                  <div pl-6px>
+                    <div flex items-center>
+                      <img w-44px h-44px :src="'http://10.4.150.56:8032/' + adminInfo.avatar" alt="" />
+                      <p ml-15px text="#262626" text-18px min-h-44px line-height-44px>{{ adminInfo.name }}</p>
+                    </div>
+                    <div>
+                      <div mt-16px mb-16px w-full h-1px style="background-color: rgba(0, 0, 0, 0.04)"></div>
+                      <span>{{ adminInfo.dept_name }}</span> / <span>{{ adminInfo.post_name }}</span>
+                    </div>
+                  </div>
+                </el-popover>
               </div>
             </div>
             <div class="divider"></div>
