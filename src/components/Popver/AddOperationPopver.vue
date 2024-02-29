@@ -15,6 +15,7 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
 const emit = defineEmits()
 
 const infoStore = useInfoStore()
+const refreshStroe = useRefreshStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const spaceId = ref('')
 const bookId = ref('')
@@ -72,6 +73,7 @@ const toUpload = async (file) => {
   let res = await uploadArticleApi(formData)
   if (res.code === 1000) {
     ElMessage.success('上传成功')
+    refreshStroe.setRefreshBookList(true)
     useLinkHooks().handleArticleTypeLink(res.data as any, false)
   } else {
     ElMessage.error(res.msg)

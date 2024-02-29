@@ -44,7 +44,7 @@ watch(
     } else {
       linkDialogTitle.value = '添加链接'
     }
-    linkForm.space = infoStore.currentSpaceType === '个人' ? (localStorage.getItem('personalSpaceId') as string) : infoStore.currentQuery?.sid
+    linkForm.space = infoStore.currentQuery?.sid
     linkForm.book = infoStore.currentQuery?.lid as string
     linkForm.parent = props.parent
   }

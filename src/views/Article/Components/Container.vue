@@ -37,6 +37,7 @@ const emit = defineEmits(['toPublish', 'scrollTo'])
 
 const route = useRoute()
 const infoStore = useInfoStore()
+const refreshStroe = useRefreshStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
 const isEdit = ref(false)
@@ -344,6 +345,7 @@ const toUpload = async (file) => {
   let res = await uploadArticleApi(formData)
   if (res.code === 1000) {
     ElMessage.success('上传成功')
+    refreshStroe.setRefreshBookList(true)
     useLinkHooks().handleArticleTypeLink(res.data as any, false)
   } else {
     ElMessage.error(res.msg)

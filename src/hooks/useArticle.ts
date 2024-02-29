@@ -14,7 +14,6 @@ export const useArticle = () => {
   const spaceName = ref<string>('')
   const articleInfo = ref<ArticleInfo>({} as ArticleInfo) // 当前文章详情
   const isHasPermission = ref<boolean>(true) // 是否有权限
-  const currentNodeKey = ref<number>(0) // 当前选中的文章id
   const articleList = ref<ArticleInfo[]>([]) // 目录列表
   const articleType: ArticleType = {
     文档: { type: 'doc', title: '无标题文档', body: '' },
@@ -57,7 +56,6 @@ export const useArticle = () => {
     if (res.code === 1000) {
       articleList.value = res.data as ArticleInfo[]
       infoStore.currentArticleTreeInfo = articleList.value
-      currentNodeKey.value = Number(aid)
       callback && (await callback(res.data))
     } else {
       res.code !== 1003 && ElMessage.error(res.msg)
@@ -272,6 +270,7 @@ export const useArticle = () => {
           query
         })
       } else {
+        if (infoStore.currentMenu === 'title') return
         router.push({
           path: `${basePath}/directory/${res.data.parent_type}`,
           query: {
@@ -311,7 +310,6 @@ export const useArticle = () => {
     articleInfo,
     articleType,
     articleList,
-    currentNodeKey,
     isHasPermission,
     toDeleteArticle,
     getArticleList,

@@ -53,10 +53,19 @@ watchEffect(() => {
 })
 
 watch(
-  () => infoStore.currentQuery?.lid,
+  () => infoStore.currentQuery?.aid,
   (newVal) => {
     if (newVal) {
       currentNodeKey.value = Number(infoStore.currentQuery?.aid)
+      bookTree.value.setCurrentKey(newVal)
+    }
+  }
+)
+
+watch(
+  () => infoStore.currentQuery?.lid,
+  (newVal) => {
+    if (newVal) {
       if (infoStore.currentSidebar === 'DirectorySidebar') {
         handleArticleList()
       }
@@ -64,18 +73,6 @@ watch(
   },
   {
     immediate: true
-  }
-)
-
-// 监听currentNodeKey
-watch(
-  () => currentNodeKey.value,
-  (newVal) => {
-    isLoading.value = true
-    setTimeout(() => {
-      bookTree.value.setCurrentKey(newVal)
-      isLoading.value = false
-    }, 500)
   }
 )
 
@@ -114,11 +111,12 @@ function handleAddArticle(title: string, data?) {
 }
 
 async function handleArticleList() {
-  const { articleList, currentNodeKey: node, isHasPermission, getArticleList } = useArticle()
+  const { articleList, isHasPermission, getArticleList } = useArticle()
   await getArticleList(Number(lid))
   hasPermission.value = isHasPermission.value
   infoStore.currentArticleTreeInfo = articleList.value
-  currentNodeKey.value = node.value
+  currentNodeKey.value = Number(infoStore.currentQuery?.aid || null)
+  bookTree.value.setCurrentKey(Number(infoStore.currentQuery?.aid || null))
 }
 
 const toLink = (type?: string) => {
@@ -199,9 +197,7 @@ const toLink = (type?: string) => {
 }
 
 const toArticleDetail = (val) => {
-  console.log(`output->val`, infoStore.currentQuery, val)
   if (val.id == infoStore.currentQuery?.aid) return
-  val.type === 'links' || val.type === 'title' ? bookTree.value.setCurrentKey(Number(infoStore.currentQuery?.aid)) : (currentNodeKey.value = val.id)
   switch (val.type) {
     case 'links':
       val.open_windows === '1' ? window.open(val.description) : (window.location.href = val.description)
@@ -243,7 +239,7 @@ const handleRename = () => {
     useArticle().handleEditArticle(reNameId.value || reFileNameId.value, reName.value || reFileName.value, () => {
       useArticle().getArticleList(Number(lid), (val: any) => {
         infoStore.currentArticleTreeInfo = val
-        route.path.includes('/directory/index') ? (currentNodeKey.value = null) : (currentNodeKey.value = Number(infoStore.currentQuery?.aid))
+        currentNodeKey.value = route.path.includes('/directory/index') ? null : Number(infoStore.currentQuery?.aid)
       })
     })
   } else {
@@ -819,5 +815,8 @@ const customIcon = () => {
       border-color: #00b96b;
     }
   }
+}
+.el-tree-node:focus > .el-tree-node__content {
+  background-color: #fff;
 }
 </style>
