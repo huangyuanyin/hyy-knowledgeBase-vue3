@@ -12,6 +12,7 @@ export const useRefreshStore = defineStore('refresh', () => {
   const isRefreshMind = ref(false) // 刷新思维导图
   const isRefreshMark = ref(false) // 刷新收藏
   const isRefreshUserInfo = ref(false) // 刷新用户信息
+  const isRefreshTitleTreeName = ref(false) // 刷新分组名称树
 
   const setRefreshBookStacks = (val: boolean) => {
     isRefreshBookStacks.value = val
@@ -65,6 +66,10 @@ export const useRefreshStore = defineStore('refresh', () => {
     isRefreshUserInfo.value = val
   }
 
+  const setRefreshTitleTreeName = (val: boolean) => {
+    isRefreshTitleTreeName.value = val
+  }
+
   return {
     isRefreshBookStacks,
     setRefreshBookStacks,
@@ -91,6 +96,8 @@ export const useRefreshStore = defineStore('refresh', () => {
     isRefreshMark,
     setRefreshMark,
     isRefreshUserInfo,
-    setRefreshUserInfo
+    setRefreshUserInfo,
+    isRefreshTitleTreeName,
+    setRefreshTitleTreeName
   }
 })

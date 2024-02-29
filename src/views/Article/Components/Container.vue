@@ -140,6 +140,10 @@ watchEffect(() => {
     // 过滤掉buttonList中的分享
     buttonList.value = buttonList.value.filter((item) => item.label !== '分享')
   }
+  if (refreshStroe.isRefreshTitleTreeName) {
+    getCategoryTree()
+    refreshStroe.setRefreshTitleTreeName(false)
+  }
 })
 
 watch(

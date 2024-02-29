@@ -32,7 +32,7 @@ const teamId = ref(null) // 团队id
 const teamIcon = ref(null) // 团队图标
 const bookId = ref(null) // 知识库id
 const visible = ref(false)
-const with_children = ref(false) // 是否包含子文档
+const with_children = ref(true) // 是否包含子文档
 const articleId = ref(null) // 文章id
 const dataSource = ref([]) // 目录树
 const selectTeamName = ref('')
@@ -52,7 +52,6 @@ watch(
   async (newVal: boolean) => {
     visible.value = newVal
     if (newVal) {
-      props.title === '复制到...' ? (with_children.value = false) : (with_children.value = true)
       if (visible.value && props.title !== '恢复文档') {
         await initData()
         if (infoStore.currentSpaceType === '组织') {
@@ -167,7 +166,7 @@ const copyArticle = async () => {
     target_book_id: bookId.value,
     node_id: props.data.id,
     book_id: props.data.book,
-    with_children: with_children.value, // 不包含子文档
+    with_children: with_children.value,
     action: levelType.value === '1' ? 'moveAfter' : 'prependChild'
   }
   let res = await copyArticleApi(params)
@@ -178,6 +177,7 @@ const copyArticle = async () => {
       useLinkHooks().handleArticleTypeLink(handleAfterData(res.data), false)
     }
     refreshStroe.setRefreshBookList(true)
+    refreshStroe.setRefreshTitleTreeName(true)
   } else {
     ElMessage.error(res.msg)
   }
@@ -190,7 +190,7 @@ const moveArticle = async () => {
     target_book_id: bookId.value,
     node_id: props.data.id,
     book_id: props.data.book,
-    with_children: with_children.value, // 不包含子文档
+    with_children: with_children.value,
     action: levelType.value === '1' ? 'moveAfter' : 'prependChild'
   }
   let res = await moveArticleApi(params)
@@ -201,6 +201,7 @@ const moveArticle = async () => {
       useLinkHooks().handleArticleTypeLink(handleAfterData(res.data), false)
     }
     refreshStroe.setRefreshBookList(true)
+    refreshStroe.setRefreshTitleTreeName(true)
   } else {
     ElMessage.error(res.msg)
   }
@@ -353,7 +354,7 @@ const getBook = async () => {
     </div>
     <template #footer>
       <span class="dialog-footer" :style="{ 'justify-content': props.title !== '恢复文档' ? 'space-between' : 'flex-end' }">
-        <el-checkbox v-if="props.title !== '恢复文档'" v-model="with_children" label="包含子文档" size="large" :disabled="props.title === '复制到...'" />
+        <el-checkbox v-if="props.title !== '恢复文档'" v-model="with_children" label="包含子文档" size="large" />
         <div>
           <el-button @click="closeDialog">取消</el-button>
           <el-button type="success" @click="toSubmit" :disabled="!bookList.length">确认</el-button>
