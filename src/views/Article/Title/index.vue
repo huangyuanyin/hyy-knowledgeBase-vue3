@@ -21,6 +21,7 @@ const body = ref('')
 const list = ref<ArticleInfo[]>([])
 const isShowLinkDialog = ref<boolean>(false)
 const isHandleTitleDialog = ref<boolean>(false)
+const isShowSelectTemDialog = ref<boolean>(false)
 const parentId = ref<number>(null)
 const contentType = ref({
   doc: documentIcon,
@@ -73,6 +74,11 @@ function handleAddArticle(title: string, data?) {
 const toAddLink = (data: number) => {
   parentId.value = data
   isShowLinkDialog.value = true
+}
+
+const toImportTem = (data: number) => {
+  parentId.value = data
+  isShowSelectTemDialog.value = true
 }
 
 const toUpload = async (file) => {
@@ -172,6 +178,7 @@ const toCopy = () => {
                 @toAddMindmap="handleAddArticle('脑图', aid)"
                 @toAddGroup="handleAddArticle('新建分组', aid)"
                 @toAddLink="toAddLink(aid)"
+                @toImportTem="toImportTem(aid)"
               >
                 <button
                   w-98px
@@ -240,6 +247,7 @@ const toCopy = () => {
   </div>
   <LinkDialog :isShow="isShowLinkDialog" :parent="parentId" type="add" :id="null" @closeDialog="isShowLinkDialog = false" />
   <HandleTitleDialog :isShow="isHandleTitleDialog" @closeDialog="isHandleTitleDialog = false" />
+  <SelectTemDialog :isShow="isShowSelectTemDialog" :parent="parentId" @closeDialog="isShowSelectTemDialog = false" />
 </template>
 
 <style lang="scss" scoped>

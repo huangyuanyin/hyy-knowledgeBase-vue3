@@ -19,6 +19,7 @@ const isAllExpand = ref(true) // 是否全部展开
 const group_name = ref<string>('')
 const nickName = ref<string>(infoStore.currentSpaceInfo.spacekey || route.fullPath.split('/')[1])
 const isShowLinkDialog = ref(false)
+const isShowSelectTemDialog = ref(false)
 const isLoading = ref(false)
 const linkType = ref('add') // 链接弹窗类型： add edit
 const parentId = ref(null) // 父级节点id
@@ -45,18 +46,10 @@ watchEffect(() => {
     })
     refreshStroe.setRefreshBookList(false)
   }
-  if (refreshStroe.isRefreshArticleList) {
-    nextTick(() => {
-      handleArticleList()
-    })
-    refreshStroe.setRefreshArticleList(false)
+  group_name.value = gname
+  if (infoStore.currentSidebar !== 'DirectorySidebar') {
+    infoStore.setCurrentArticleTreeInfo([])
   }
-  nextTick(async () => {
-    group_name.value = gname
-    if (lid && infoStore.currentSidebar === 'DirectorySidebar') {
-      handleArticleList()
-    }
-  })
 })
 
 watch(
@@ -64,6 +57,9 @@ watch(
   (newVal) => {
     if (newVal) {
       currentNodeKey.value = Number(infoStore.currentQuery?.aid)
+      if (infoStore.currentSidebar === 'DirectorySidebar') {
+        handleArticleList()
+      }
     }
   },
   {
@@ -269,6 +265,11 @@ const closeLinkDialog = () => {
   linkType.value = 'add'
 }
 
+const toImportTem = (data) => {
+  parentId.value = data.id
+  isShowSelectTemDialog.value = true
+}
+
 const toScroll = () => {
   ElMessage.warning('功能暂未开放，敬请期待')
 }
@@ -362,7 +363,7 @@ const customIcon = () => {
     <div class="list" v-else>
       <el-tree
         v-loading="isLoading"
-        element-loading-text="文章加载中..."
+        element-loading-text="文章列表加载中..."
         ref="bookTree"
         :data="infoStore.currentArticleTreeInfo"
         node-key="id"
@@ -415,6 +416,7 @@ const customIcon = () => {
                 @toAddMindmap="handleAddArticle('脑图', data)"
                 @toAddGroup="handleAddArticle('新建分组', data)"
                 @toAddLink="toAddLink(data)"
+                @toImportTem="toImportTem(data)"
               >
                 <span class="addIcon" @click.stop>
                   <img src="/src/assets/icons/addIcon.svg" alt="" />
@@ -427,6 +429,7 @@ const customIcon = () => {
     </div>
   </div>
   <LinkDialog :isShow="isShowLinkDialog" :parent="parentId" :type="linkType" :id="null" @closeDialog="closeLinkDialog" />
+  <SelectTemDialog :isShow="isShowSelectTemDialog" :parent="parentId" @closeDialog="isShowSelectTemDialog = false" />
 </template>
 
 <style lang="scss" scoped>

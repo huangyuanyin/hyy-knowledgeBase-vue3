@@ -177,7 +177,7 @@ const copyArticle = async () => {
     if (props.data.book === bookId.value) {
       useLinkHooks().handleArticleTypeLink(handleAfterData(res.data), false)
     }
-    refreshStroe.setRefreshArticleList(true)
+    refreshStroe.setRefreshBookList(true)
   } else {
     ElMessage.error(res.msg)
   }
@@ -200,7 +200,7 @@ const moveArticle = async () => {
     if (props.data.book === bookId.value) {
       useLinkHooks().handleArticleTypeLink(handleAfterData(res.data), false)
     }
-    refreshStroe.setRefreshArticleList(true)
+    refreshStroe.setRefreshBookList(true)
   } else {
     ElMessage.error(res.msg)
   }

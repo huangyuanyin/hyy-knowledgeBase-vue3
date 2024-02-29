@@ -102,7 +102,7 @@ export async function setupRouterResponder(to: RouteLocationNormalized, from: Ro
   if (to.meta.asideComponent === 'DirectorySidebar') {
     if (
       !sessionStorage.getItem('xinAn-bookInfo') ||
-      (sessionStorage.getItem('xinAn-bookInfo') && JSON.parse(sessionStorage.getItem('xinAn-bookInfo')).id !== infoStore.currentQuery.lid)
+      (sessionStorage.getItem('xinAn-bookInfo') && JSON.parse(sessionStorage.getItem('xinAn-bookInfo')).id != infoStore.currentQuery.lid)
     ) {
       useBook().getBookInfo(Number(infoStore.currentQuery.lid))
     }

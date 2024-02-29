@@ -43,6 +43,7 @@ const isEdit = ref(false)
 const moreFeaturesDrawer = ref(false) // 更多功能抽屉
 const commentDrawer = ref(false) // 评论抽屉
 const isShowLinkDialog = ref(false) // 添加链接弹窗
+const isShowSelectTemDialog = ref(false) // 导入模板弹窗
 const parentId = ref(null) // 添加链接的父级id
 const spaceId = ref('') // 当前空间id
 const publicType = ref('') // 知识库的公开性
@@ -189,6 +190,11 @@ function handleAddArticle(title: string, data?) {
 const toAddLink = (data: number) => {
   parentId.value = data
   isShowLinkDialog.value = true
+}
+
+const toImportTem = (data: number) => {
+  parentId.value = data
+  isShowSelectTemDialog.value = true
 }
 
 const toHandle = (item: any) => {
@@ -520,6 +526,7 @@ onMounted(() => {
               @toAddMindmap="handleAddArticle('脑图', Number(infoStore.currentQuery?.aid))"
               @toAddGroup="handleAddArticle('新建分组', Number(infoStore.currentQuery?.aid))"
               @toAddLink="toAddLink(Number(infoStore.currentQuery?.aid))"
+              @toImportTem="toImportTem(Number(infoStore.currentQuery?.aid))"
             >
               <el-button type="success">新建</el-button>
             </AddOperationPopver>
@@ -562,6 +569,7 @@ onMounted(() => {
   </div>
   <NoPermission v-if="typeof infoStore.currentArticleInfo === 'string'" type="article" />
   <LinkDialog :isShow="isShowLinkDialog" :parent="parentId" type="add" :id="null" @closeDialog="isShowLinkDialog = false" />
+  <SelectTemDialog :isShow="isShowSelectTemDialog" :parent="parentId" @closeDialog="isShowSelectTemDialog = false" />
 </template>
 
 <style lang="scss" scoped>

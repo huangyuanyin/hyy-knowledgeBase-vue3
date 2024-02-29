@@ -51,6 +51,7 @@ export const useArticle = () => {
    * @param {Number} bookId   当前知识库id
    */
   const getArticleList = async (bookId: Number, callback?: Callback) => {
+    articleList.value = []
     let res = await getArticleTreeApi(bookId)
     isHasPermission.value = res.code === 1003 ? false : true
     if (res.code === 1000) {
@@ -154,9 +155,9 @@ export const useArticle = () => {
     article.type === 'title' && delete params.body
     let res = (await addArticleApi(params)) as ArticleRes<ArticleInfo>
     if (res.code === 1000) {
+      refreshStroe.setRefreshBookList(true)
       if (res.data.type === 'title') {
         ElMessage.success('分组新建成功')
-        refreshStroe.setRefreshBookList(true)
       } else {
         const query = {
           sid,
@@ -214,6 +215,7 @@ export const useArticle = () => {
       //   if (callback) return callback && (await callback(res.data))
       //   useLinkHooks().handleArticleTypeLink(res.data as any, false)
       // }
+      refreshStroe.setRefreshBookList(true)
       if (callback) return callback && (await callback(res.data))
       isLink && useLinkHooks().handleArticleTypeLink(res.data as any, false)
     } else {

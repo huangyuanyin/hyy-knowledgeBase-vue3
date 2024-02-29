@@ -8,11 +8,13 @@ import { contentType } from '@/data/data'
 import { addArticleApi, getArticleTemApi, deleteArticleTemApi } from '@/api/article'
 
 const props = defineProps({
-  isShow: Boolean
+  isShow: Boolean,
+  parent: null
 })
 const emit = defineEmits(['closeDialog'])
 
 const infoStore = useInfoStore()
+const refreshStroe = useRefreshStore()
 const user = JSON.parse(localStorage.getItem('userInfo') as string).username
 const dialogVisible = ref(false)
 const templateType = ref('null')
@@ -160,7 +162,7 @@ const toAddArticle = async (val) => {
     title: selectTem.value.name,
     type: selectTem.value.content_type,
     body: selectTem.value.body,
-    parent: null,
+    parent: props.parent,
     book: val.id,
     space: infoStore.currentQuery?.sid,
     public: '1'
@@ -168,17 +170,18 @@ const toAddArticle = async (val) => {
   let res: any = await addArticleApi(params)
   if (res.code === 1000) {
     handleClose()
+    refreshStroe.setRefreshBookList(true)
     const query = {
       sid: infoStore.currentQuery?.sid,
-      sname: infoStore.currentQuery.sname,
+      sname: infoStore.currentQuery?.sname,
       lid: res.data.book,
-      lname: val.name,
+      lname: infoStore.currentQuery?.lname,
       aid: res.data.id,
       aname: res.data.title
     }
     const spaceQuery = {
-      gid: val.group,
-      gname: val.groupname
+      gid: infoStore.currentQuery?.gid,
+      gname: infoStore.currentQuery?.gname
     }
     const basePath = infoStore.currentSpaceType === '个人' ? '' : `/${infoStore.currentSpaceInfo.spacekey}`
     router.push({
