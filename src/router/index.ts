@@ -275,6 +275,16 @@ const customRoutes = [
     }
   },
   {
+    path: '/:spaceName/organize/statistics',
+    name: 'Organize-Statistics',
+    component: pageComps['/src/views/Organize/Statistics/index.vue'] as Component,
+    meta: {
+      title: '空间管理·统计',
+      menu: 'statistics',
+      asideComponent: 'OrganizeSidebar'
+    }
+  },
+  {
     path: '/:spaceName/organize/recycleBin',
     name: 'Organize-RecycleBin',
     component: pageComps['/src/views/Organize/RecycleBin/index.vue'] as Component,

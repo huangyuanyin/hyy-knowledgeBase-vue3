@@ -1,4 +1,4 @@
-import { BookStatisticsRes, TeamStatisticsRes } from './type'
+import { BookStatisticsRes, TeamStatisticsRes, SpaceStatisticsRes } from './type'
 
 export function getBookStatisticApi(id: number) {
   return http.get<BookStatisticsRes>(`book/statistics/${id}/`, {}, 'base')
@@ -22,4 +22,16 @@ export function getTeamBookStatisticApi(id: number) {
 
 export function getTeamArticleStatisticApi(id: number) {
   return http.get<TeamStatisticsRes>(`group/statistic/articles/${id}/`, {}, 'base')
+}
+
+export function getSpaceStatisticApi(id: number) {
+  return http.get<SpaceStatisticsRes>(`space/statistics/${id}/`, {}, 'base')
+}
+
+export function getSpaceMemberStatisticApi(id: number, params: any) {
+  return http.get<SpaceStatisticsRes>(`space/statistic/members/${id}/`, { params }, 'base')
+}
+
+export function getSpaceTeamStatisticApi(id: number, params: any) {
+  return http.get<SpaceStatisticsRes>(`space/statistic/groups/${id}/`, { params }, 'base')
 }

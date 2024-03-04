@@ -44,6 +44,7 @@ import edit from '@/assets/icons/bookSetting/edit.svg'
 import settingIcon from '@/assets/icons/team/settingIcon.svg'
 import reminderFreeIcon from '@/assets/icons/team/reminderFreeIcon.svg'
 import publicIcon from '@/assets/icons/publicIcon.svg'
+import statisticsIcon from '@/assets/icons/statistics.svg'
 
 export const menuItemsData = [
   { type: 'item', icon: documentIcon, label: '文档', nick: 'toAddDoc' },
@@ -339,6 +340,14 @@ export const organizeMenu = [
   },
   {
     id: 5,
+    title: '统计',
+    icon: statisticsIcon,
+    url: '/statistics',
+    nick: 'statistics',
+    children: []
+  },
+  {
+    id: 6,
     title: '回收站',
     icon: deleteIcon,
     url: '/recycleBin',

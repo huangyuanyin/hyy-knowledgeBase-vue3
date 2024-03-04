@@ -10,9 +10,13 @@ const props = defineProps({
   tableData: {
     type: Array,
     default: () => []
+  },
+  total: {
+    type: Number,
+    default: 0
   }
 })
-const emit = defineEmits(['changeTab'])
+const emit = defineEmits(['changeTab', 'toSearch', 'changePage'])
 
 const route = useRoute()
 const tab = ref([])
@@ -20,10 +24,12 @@ const tabColumns = ref()
 const currentTable = ref([])
 const currentTab = ref('')
 const search = ref('')
+const currentPage = ref(1)
 const searchPlcae = ref({
   memberCol: '搜索成员',
   bookCol: '搜索知识库',
-  docCol: '搜索文档'
+  docCol: '搜索文档',
+  teamCol: '搜索团队'
 })
 const contentType = ref({
   title: folderIcon,
@@ -50,7 +56,7 @@ watchEffect(() => {
     }
     currentTab.value = 'docCol'
     currentTable.value = tabColumns.value.docCol
-  } else {
+  } else if (route.meta.asideComponent === 'TeamSidebar') {
     tab.value = [
       { label: '成员明细', value: 'memberCol' },
       { label: '知识库明细', value: 'bookCol' },
@@ -69,8 +75,8 @@ watchEffect(() => {
         { prop: 'name', label: '知识库名称' },
         { prop: 'word_count', label: '字数', width: 150 },
         { prop: 'content_count', label: '文档数', width: 150 },
-        { prop: 'read_count', label: '阅读量', width: 150 },
-        { prop: 'like_count', label: '点赞量', width: 150 },
+        { prop: 'read_count', label: '获阅读量', width: 150 },
+        { prop: 'like_count', label: '获赞数', width: 150 },
         { prop: 'comment_count', label: '评论量', width: 150 }
       ],
       docCol: [
@@ -79,9 +85,36 @@ watchEffect(() => {
         { prop: 'create_datetime', label: '创建时间' },
         { prop: 'update_datetime', label: '更新时间' },
         { prop: 'word_count', label: '字数', width: 70 },
-        { prop: 'read_count', label: '阅读量', width: 70 },
-        { prop: 'comments_count', label: '评论量', width: 70 },
-        { prop: 'likes_count', label: '点赞量', width: 70 }
+        { prop: 'read_count', label: '获阅读量', width: 70 },
+        { prop: 'likes_count', label: '获赞数', width: 70 },
+        { prop: 'comments_count', label: '评论量', width: 70 }
+      ]
+    }
+    currentTab.value = 'memberCol'
+    currentTable.value = tabColumns.value.memberCol
+  } else if (route.meta.asideComponent === 'OrganizeSidebar') {
+    tab.value = [
+      { label: '成员明细', value: 'memberCol' },
+      { label: '团队明细', value: 'teamCol' }
+    ]
+    tabColumns.value = {
+      memberCol: [
+        { prop: 'creator', label: '成员名称', width: 200 },
+        { prop: 'content_count', label: '文档数' },
+        { prop: 'read_count', label: '阅读数' },
+        { prop: 'comment_count', label: '评论数' },
+        { prop: 'like_count', label: '点赞数' },
+        { prop: 'mark_count', label: '收藏数' }
+      ],
+      teamCol: [
+        { prop: 'name', label: '团队名称' },
+        { prop: 'create_datetime', label: '创建时间', width: 200 },
+        { prop: 'member_count', label: '成员数', width: 100 },
+        { prop: 'book_count', label: '知识库数', width: 100 },
+        { prop: 'content_count', label: '文档数', width: 100 },
+        { prop: 'read_count', label: '阅读量', width: 100 },
+        { prop: 'like_count', label: '点赞量', width: 100 },
+        { prop: 'comment_count', label: '评论量', width: 100 }
       ]
     }
     currentTab.value = 'memberCol'
@@ -92,7 +125,22 @@ watchEffect(() => {
 const toChangeTab = (val) => {
   currentTab.value = val
   currentTable.value = tabColumns.value[val]
+  search.value = ''
+  currentPage.value = 1
   emit('changeTab', val)
+}
+
+const toSearch = () => {
+  emit('toSearch', [currentTab.value, search.value])
+}
+
+const changePage = (val) => {
+  currentPage.value = val
+  emit('changePage', [currentTab.value, val])
+}
+
+const toExport = () => {
+  ElMessage.warning('功能暂未开放，敬请期待！')
 }
 </script>
 
@@ -114,12 +162,12 @@ const toChangeTab = (val) => {
         </span>
       </div>
       <div flex items-center>
-        <el-input class="search" v-model="search" :placeholder="searchPlcae[currentTab]" clearable>
+        <el-input class="search" v-model="search" :placeholder="searchPlcae[currentTab]" clearable @change="toSearch">
           <template #prefix>
             <i-ep-Search />
           </template>
         </el-input>
-        <el-button class="button" w-60px h-32px rounded-6px cursor-pointer>导出</el-button>
+        <el-button class="button" w-60px h-32px rounded-6px cursor-pointer @click="toExport">导出</el-button>
       </div>
     </div>
     <el-table :data="props.tableData" stripe empty-text="暂无数据" mt-40px w-full>
@@ -135,12 +183,15 @@ const toChangeTab = (val) => {
           </div>
           <div flex items-center h-56px v-else-if="column.prop === 'name'">
             <img w-24px h-24px mr-8px :src="row.icon" alt="" class="icon" />
-            <span max-w-250px overflow-hidden text-ellipsis whitespace-nowrap>{{ row.name }}</span>
+            <el-tooltip effect="light" :content="row.name" placement="bottom-start" :hide-after="0" :show-after="1000" :show-arrow="false">
+              <span max-w-250px overflow-hidden text-ellipsis whitespace-nowrap>{{ row.name }}</span>
+            </el-tooltip>
           </div>
           <span flex items-center v-else line-height-56px h-56px>{{ row[column.prop] }}</span>
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination flex justify-end mt-20px background layout="prev, pager, next" v-model="currentPage" @change="changePage" :total="props.total" />
   </div>
 </template>
 
