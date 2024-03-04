@@ -202,6 +202,10 @@ const toLink = (val, type) => {
 const toHandle = (item: any, type: string) => {
   switch (type) {
     case '编辑':
+      if (item.article.is_delete === '1') {
+        ElMessage.error('该文档已被删除')
+        return
+      }
       const baseUrl = `${infoStore.currentSpaceType === '个人' ? '' : `/${infoStore.currentSpaceInfo.spacekey}`}/directory/${item.target_type}`
       router.push({
         path: baseUrl,

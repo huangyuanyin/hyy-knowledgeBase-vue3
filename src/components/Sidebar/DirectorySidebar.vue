@@ -293,6 +293,30 @@ const toMoreSetting = () => {
 const customIcon = () => {
   return h('img', { src: miniDropDownIcon }) // 默认图标路径
 }
+
+// 节点拖拽
+// 拖拽完成时触发的事件  参数依次为：被拖拽节点、结束拖拽时最后进入的节点、被拖拽节点的放置位置（before、after、inner）、event
+// 注意：目标节点是已经移动完之后的节点
+const handleDrop = (draggingNode, dropNode, dropType) => {
+  console.log(`output->`, draggingNode, draggingNode, dropType)
+  // 定义一个空数组用于存放需要持久化到数据库的节点
+  var paramData = {}
+  // 当拖拽类型不为inner,说明只是在现有的节点间移动，只需要寻找目标节点的父ID，获取其对象以及所有的子节点,data为目标节点的父节点;
+  // 否则，当拖拽类型为inner,说明拖拽节点成为了目标节点的子节点,只需要获取目标节点对象即可
+  // 目标节点的ID
+  var dropNodeId = dropNode.level == 1 && dropType != 'inner' ? null : dropNode.data.id
+  // 被拖拽节点的ID
+  var draggingNodeId = draggingNode.data.id
+  // 被拖拽节点的name
+  var draggingNodeName = draggingNode.data.title
+  paramData = {
+    title: draggingNodeName, // 被拖拽节点的name
+    parent: dropNodeId, // 目标节点的ID
+    space: sid,
+    book: lid
+  }
+  useArticle().handleEditArticle(draggingNodeId, paramData, () => {})
+}
 </script>
 
 <template>
@@ -367,11 +391,12 @@ const customIcon = () => {
         node-key="id"
         :current-node-key="currentNodeKey"
         :props="defaultProps"
-        default-expand-all
         highlight-current
         :expand-on-click-node="false"
         :icon="customIcon"
         @node-click="toArticleDetail"
+        draggable
+        @node-drop="handleDrop"
       >
         <template #default="{ data }">
           <span class="list-node">
