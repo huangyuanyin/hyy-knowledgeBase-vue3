@@ -79,3 +79,7 @@ export function getDocListApi(params: ArticleParams) {
 export function getRecentArticleListApi(params: RecentArticleParams) {
   return http.get<ArticleRes>(`mine/recent/`, { params }, 'base')
 }
+
+export function checkEditPermissionApi(id: number) {
+  return http.get<ArticleRes>(`article/has_edit_permission/${id}/`, {}, 'base')
+}

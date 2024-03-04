@@ -303,7 +303,9 @@ const customIcon = () => {
         <img v-else-if="infoStore.currentSpaceType !== '个人' && gname !== '公共区'" class="favicon" :src="infoStore.currentBookInfo.group_icon" @click="toLink('back')" />
         <img v-else-if="infoStore.currentSpaceType !== '个人' && gname === '公共区'" class="favicon" src="/src/assets/icons/spaceIcon.svg" alt="" />
         <img class="rightArrowIcon" src="/src/assets/icons/rightArrowIcon.svg" alt="" />
-        <span @click="toLink('link')">{{ infoStore.currentSpaceType === '个人' ? '个人知识库' : `${group_name}` }}</span>
+        <p flex-1 text-12px text="#8a8f8d" cursor-pointer max-w-18vw overflow-hidden text-ellipsis whitespace-nowrap @click="toLink('link')">
+          {{ infoStore.currentSpaceType === '个人' ? '个人知识库' : `${group_name}` }}
+        </p>
       </div>
       <div class="book-name">
         <div class="left">

@@ -5,7 +5,7 @@ import { getCollaborationsApi, getArticleCollaborationsApi } from '@/api/collabo
 import CommentDrawer from '@/components/Drawer/CommentDrawer/index.vue'
 import { ArticleInfo } from '@/type/article'
 import { folderMenuItemsData } from '@/data/data'
-import { uploadArticleApi } from '@/api/article'
+import { checkEditPermissionApi, uploadArticleApi } from '@/api/article'
 import likeIcon from '@/assets/icons/like.svg'
 import likeSelectIcon from '@/assets/icons/like_select.svg'
 import topIcon from '@/assets/icons/top.svg'
@@ -85,6 +85,7 @@ const docFileName = ref<string>('')
 const inputName = ref(null)
 const inputFileName = ref(null)
 const reFileNameSuffix = ref('')
+const isEditPermission = ref(true)
 
 const { addCollect } = useCollect()
 const { handleLike } = useLike()
@@ -202,7 +203,7 @@ const toImportTem = (data: number) => {
   isShowSelectTemDialog.value = true
 }
 
-const toHandle = (item: any) => {
+const toHandle = async (item: any) => {
   switch (item.label) {
     case '分享':
       // const url = window.location.href
@@ -218,13 +219,18 @@ const toHandle = (item: any) => {
       }
       break
     case '编辑':
-      moreFeaturesDrawer.value = false
-      const data = {
-        id: Number(infoStore.currentQuery?.aid),
-        title: infoStore.currentQuery?.aname,
-        type: route.path.split('/').slice(-2)[0]
+      await checkEditPermission()
+      if (!isEditPermission.value) {
+        return ElMessage.error('无编辑权限')
+      } else {
+        moreFeaturesDrawer.value = false
+        const data = {
+          id: Number(infoStore.currentQuery?.aid),
+          title: infoStore.currentQuery?.aname,
+          type: route.path.split('/').slice(-2)[0]
+        }
+        useLinkHooks().handleArticleTypeLink(data, true)
       }
-      useLinkHooks().handleArticleTypeLink(data, true)
       break
     case '已收藏':
     case '收藏':
@@ -235,6 +241,16 @@ const toHandle = (item: any) => {
     default:
       ElMessage.warning('功能暂未开放，敬请期待')
       break
+  }
+}
+
+const checkEditPermission = async () => {
+  let res = await checkEditPermissionApi(Number(infoStore.currentQuery?.aid))
+  if (res.code === 1000) {
+    isEditPermission.value = res.data as any
+  } else {
+    isEditPermission.value = false
+    ElMessage.error(res.msg)
   }
 }
 

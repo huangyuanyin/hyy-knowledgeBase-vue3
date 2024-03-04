@@ -104,7 +104,7 @@ export const useArticle = () => {
       callback && (await callback(res.data))
     } else {
       await infoStore.setCurrentArticleInfo('无权限')
-      ElMessage.error(res.msg)
+      res.code !== 1003 && ElMessage.error(res.msg)
       res.code === 1003 && (await callback('无权限'))
     }
   }
