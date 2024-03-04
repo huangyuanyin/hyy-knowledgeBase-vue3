@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { MenuItem, OperationPopoverProps } from '@/type/operationPopoverType'
+import selectIcon from '@/assets/icons/selectIcon.svg'
 
 const props = withDefaults(defineProps<OperationPopoverProps>(), {
   placement: 'bottom-start',
@@ -9,6 +10,7 @@ const props = withDefaults(defineProps<OperationPopoverProps>(), {
   showAfter: 100,
   hideAfter: 100,
   showArrow: false,
+  selectMenu: '',
   menuItems: Array as () => MenuItem[]
 })
 const emit = defineEmits()
@@ -39,6 +41,7 @@ const toHandle = (item: MenuItem) => {
       <template v-for="(item, _index) in props.menuItems" :key="'menuItems' + _index">
         <li class="operation_item" v-if="item.type === 'item'" :style="{ height: props.height + 'px', 'line-height': props.height + 'px' }" @click="toHandle(item)">
           <img v-if="item.icon" :src="item.icon as string" alt="" />
+          <img v-if="selectMenu" :src="selectMenu === item.label ? selectIcon : ''" alt="" />
           <span :style="{ color: item.label === '删除' ? '#df2a3f' : '#262626' }">{{ item.label }}</span>
         </li>
         <li class="divider" v-else-if="item.type === 'divider'"></li>

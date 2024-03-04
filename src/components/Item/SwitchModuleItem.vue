@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { addBookStacksApi } from '@/api/bookstacks'
+import { docTypeName } from '@/data/data'
 
 interface Button {
   type: string
@@ -13,7 +14,7 @@ const props = defineProps<{
   moduleGenreData?: Button[]
   moduleGenre?: string
 }>()
-const emit = defineEmits(['getBookStacks', 'changeModule'])
+const emit = defineEmits(['getBookStacks', 'changeModule', 'toSearchDoc'])
 
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
@@ -22,6 +23,7 @@ const groupId = ref('') // 当前团队id
 const moduleGenreLocal = ref(props.moduleGenre)
 const isShowsLibraryDialog = ref(false)
 const viewType = ref('group')
+const currentSearchType = ref('类型')
 const addOperation = [
   {
     type: 'item',
@@ -48,6 +50,7 @@ watchEffect(() => {
 const changeType = (type: string) => {
   if (moduleGenreLocal.value === type) return
   moduleGenreLocal.value = type
+  currentSearchType.value = '类型'
   emit('changeModule', type)
 }
 
@@ -82,6 +85,11 @@ const addBookStacks = async () => {
 
 const toAddLibrary = () => {
   isShowsLibraryDialog.value = true
+}
+
+const toSearchDoc = (type) => {
+  currentSearchType.value = type.label
+  emit('toSearchDoc', type.value)
 }
 </script>
 
@@ -126,15 +134,28 @@ const toAddLibrary = () => {
         </div>
       </div>
       <div class="module-search" v-if="props.moduleType === 'search'">
-        <div class="search-item">
-          <span>类型 <img src="/src/assets/icons/downIcon.svg" alt="" /></span>
-        </div>
-        <div class="search-item">
-          <span>归属 <img src="/src/assets/icons/downIcon.svg" alt="" /></span>
-        </div>
-        <div class="search-item">
-          <span>创建者 <img src="/src/assets/icons/downIcon.svg" alt="" /></span>
-        </div>
+        <LibraryOperationPopver
+          :selectMenu="currentSearchType === '类型' ? '所有' : currentSearchType"
+          :menuItems="docTypeName"
+          :height="32"
+          :width="120"
+          @toSearchDoc="toSearchDoc"
+        >
+          <div class="search-item">
+            <span>{{ currentSearchType === '所有' ? '类型' : currentSearchType }} <img src="/src/assets/icons/downIcon.svg" alt="" /></span>
+          </div>
+        </LibraryOperationPopver>
+        <!-- <LibraryOperationPopver
+          :selectMenu="currentSearchType === '类型' ? '所有' : currentSearchType"
+          :menuItems="creatorList"
+          :height="32"
+          :width="120"
+          @toSearchDoc="toSearchDoc"
+        >
+          <div class="search-item">
+            <span>创建者 <img src="/src/assets/icons/downIcon.svg" alt="" /></span>
+          </div>
+        </LibraryOperationPopver> -->
       </div>
     </slot>
   </div>

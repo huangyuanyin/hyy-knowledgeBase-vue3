@@ -379,6 +379,15 @@ export const contentType = ref({
   file: fileIcon
 })
 
+export const docTypeName = [
+  { label: '所有', value: '', type: 'item', nick: 'toSearchDoc' },
+  { label: '文档', value: 'doc', type: 'item', nick: 'toSearchDoc' },
+  { label: '表格', value: 'sheet', type: 'item', nick: 'toSearchDoc' },
+  { label: '脑图', value: 'mind', type: 'item', nick: 'toSearchDoc' },
+  { label: '幻灯片', value: 'ppt', type: 'item', nick: 'toSearchDoc' },
+  { label: '文件', value: 'file', type: 'item', nick: 'toSearchDoc' }
+]
+
 export const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
 export const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
 

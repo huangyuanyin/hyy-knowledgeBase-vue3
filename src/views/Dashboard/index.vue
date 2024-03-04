@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { moduleData, moduleAddMenuData } from '@/data/data'
+import empty from '@/assets/img/empty.png'
 
 const infoStore = useInfoStore()
 const isShowsLibraryDialog = ref(false)
@@ -8,6 +9,7 @@ const isShowSelectTemDialog = ref(false)
 const bookListDialogTitle = ref('')
 const docType = ref('updateDoc')
 const articleList = ref([])
+const isEmpty = ref(false)
 
 const { articleList: list, getRecentDocList } = useArticle()
 
@@ -22,13 +24,20 @@ watch(
   }
 )
 
-async function handleRecentDocList(type: string) {
+async function handleRecentDocList(type: string, target_type?: string) {
   const params = {
     type,
-    space: String(infoStore.currentSpaceInfo.id)
+    space: String(infoStore.currentSpaceInfo.id),
+    target_type
   }
+  !target_type && delete params.target_type
   await getRecentDocList(params)
   articleList.value = list.value
+  if (target_type && !articleList.value.length) {
+    isEmpty.value = true
+  } else {
+    isEmpty.value = false
+  }
 }
 
 const handleModule = (id: number): void => {
@@ -52,6 +61,10 @@ const toAddArticle = (val: any): void => {
 const changeModule = async (type: string) => {
   docType.value = type
   handleRecentDocList(type)
+}
+
+const toSearchDoc = (type) => {
+  handleRecentDocList(docType.value, type)
 }
 
 onMounted(async () => {
@@ -93,10 +106,11 @@ onMounted(async () => {
         }
       ]"
       @changeModule="changeModule"
+      @toSearchDoc="toSearchDoc"
     />
-    <TableComp :data="articleList" :type="docType" />
+    <TableComp v-if="!isEmpty" :data="articleList" :type="docType" />
+    <Empty v-else text="暂无内容" :img="empty" height="50vh" />
   </div>
-
   <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
   <BookListDialog :show="isBookListDialog" @closeDialog="isBookListDialog = false" :title="bookListDialogTitle" />
   <SelectTemDialog :isShow="isShowSelectTemDialog" @closeDialog="isShowSelectTemDialog = false" />

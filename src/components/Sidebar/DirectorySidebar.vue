@@ -665,7 +665,6 @@ const customIcon = () => {
           margin-right: 4px;
           &:hover {
             background-color: #d8dad9;
-            border: 1px solid #d8dad9;
           }
         }
       }
