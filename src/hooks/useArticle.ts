@@ -1,4 +1,14 @@
-import { getArticleTreeApi, getArticleApi, addArticleApi, editArticleApi, deleteArticleApi, getCategoryTreeApi, getDocListApi, getRecentArticleListApi } from '@/api/article'
+import {
+  getArticleTreeApi,
+  getArticleApi,
+  addArticleApi,
+  editArticleApi,
+  deleteArticleApi,
+  getCategoryTreeApi,
+  getDocListApi,
+  getRecentArticleListApi,
+  getPublicDataApi
+} from '@/api/article'
 import { sheetData } from '@/components/Excel/data'
 import { useInfoStore } from '@/store/info'
 import { ArticleType, Callback } from '@/type/type'
@@ -52,13 +62,13 @@ export const useArticle = () => {
   const getArticleList = async (bookId: Number, callback?: Callback) => {
     articleList.value = []
     let res = await getArticleTreeApi(bookId)
-    isHasPermission.value = res.code === 1003 ? false : true
+    isHasPermission.value = res.code === 1100 ? false : true
     if (res.code === 1000) {
       articleList.value = res.data as ArticleInfo[]
       infoStore.currentArticleTreeInfo = articleList.value
       callback && (await callback(res.data))
     } else {
-      res.code !== 1003 && ElMessage.error(res.msg)
+      res.code !== 1100 && ElMessage.error(res.msg)
     }
   }
 
@@ -97,15 +107,15 @@ export const useArticle = () => {
    * @param {Callback} callback 回调函数
    */
   const getArticleDetail = async (articleId: number, callback?: Callback) => {
-    let res = await getArticleApi(articleId)
+    let res = infoStore.currentQuery?.type === 'share' ? await getPublicDataApi(articleId) : await getArticleApi(articleId)
     if (res.code === 1000) {
       await infoStore.setCurrentArticleInfo(res.data as ArticleInfo)
       await (articleInfo.value = res.data as ArticleInfo)
       callback && (await callback(res.data))
     } else {
       await infoStore.setCurrentArticleInfo('无权限')
-      res.code !== 1003 && ElMessage.error(res.msg)
-      res.code === 1003 && (await callback('无权限'))
+      res.code !== 1100 && ElMessage.error(res.msg)
+      res.code === 1100 && (await callback('无权限'))
     }
   }
 

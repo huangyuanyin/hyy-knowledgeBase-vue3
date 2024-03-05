@@ -43,7 +43,6 @@ export const useData = () => {
    * @param type 空间类型
    */
   function setSpaceAndType(value: string, type: string) {
-    console.log(`output->space.value`, value)
     space.value = value
     spaceName.value = infoStore.currentSpaceType === '个人' ? '' : route.path.split('/')[1]
     spaceIcon.value =

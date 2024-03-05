@@ -87,7 +87,11 @@ const isShowResize = ref(true)
 const isAlone = ref(false) // 是否是独立页面
 
 watchEffect(() => {
-  infoStore.currentQuery?.type === 'alone' ? (isAlone.value = true) : (isAlone.value = false)
+  if (['alone', 'share'].includes(infoStore.currentQuery?.type)) {
+    isAlone.value = true
+  } else {
+    isAlone.value = false
+  }
   sidebarWidth.value = asideComponentWidth[asideComponent.value]?.with
   isShowPreviewFile.value = route.path.split('/').slice(-2)[0] === 'file' || route.path.split('/').slice(-2)[0] === 'ppt'
 })

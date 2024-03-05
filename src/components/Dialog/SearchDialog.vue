@@ -140,9 +140,12 @@ function navigateToSearch(type, val) {
       scope_name: val.name,
       q: value.value
     }
-    console.log(`output->query`, query)
-    const hash = SparkMD5.hash(JSON.stringify(query))
-    window.open(`${window.location.origin}${infoStore.currentSpaceType === '个人' ? '' : `/#/${infoStore.currentSpaceInfo.spacekey}`}/search?query=${hash}`)
+    const baseUrl = import.meta.env.MODE === 'development' ? window.location.origin : 'http://10.4.150.27:8080/netKmp/'
+    window.open(
+      `${baseUrl}${infoStore.currentSpaceType === '个人' ? '' : `/#/${infoStore.currentSpaceInfo.spacekey}`}/search?sid=${query.sid}&sname=${query.sname}&scope=${
+        query.scope
+      }&scope_id=${query.scope_id}&scope_name=${query.scope_name}&q=${query.q}`
+    )
   } else {
     router.push({
       path: `${infoStore.currentSpaceType === '个人' ? '' : `/${infoStore.currentSpaceInfo.spacekey}`}/search`,

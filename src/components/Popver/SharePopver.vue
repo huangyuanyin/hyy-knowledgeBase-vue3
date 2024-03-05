@@ -138,7 +138,19 @@ watch(
 watch(
   () => route.query.query,
   () => {
-    copyLink.value = window.location.href
+    const type = route.path.split('/').slice(-2)[0]
+    const query = {
+      sid: infoStore.currentQuery?.sid,
+      sname: infoStore.currentQuery?.sname,
+      gid: infoStore.currentQuery?.gid,
+      gname: infoStore.currentQuery?.gname,
+      lid: infoStore.currentQuery?.lid,
+      lname: infoStore.currentQuery?.lname,
+      aid: infoStore.currentQuery?.aid,
+      aname: infoStore.currentQuery?.aname,
+      type: 'share'
+    }
+    copyLink.value = `http://10.4.150.27:8080/netKmp/#/share/directory/${type}?sid=${query.sid}&sname=${query.sname}&lid=${query.lid}&lname=${query.lname}&gid=${query.gid}&gname=${query.gname}&aid=${query.aid}&aname=${query.aname}&type=share`
   },
   {
     immediate: true
@@ -284,8 +296,23 @@ const editArticle = async (val) => {
 }
 
 const toCopy = () => {
-  sharePopverRef.value && sharePopverRef.value.hide()
-  useCopy(copyLink.value, '分享链接')
+  ElMessageBox.confirm('通过此链接分享出去的文章权限为所有人可访问！', '安全提示', {
+    confirmButtonText: '我已知晓',
+    confirmButtonClass: 'submitBtn',
+    showCancelButton: false,
+    customClass: 'shareArticleDialog',
+    type: 'warning'
+  })
+    .then(() => {
+      sharePopverRef.value && sharePopverRef.value.hide()
+      useCopy(copyLink.value, '分享链接')
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消分享'
+      })
+    })
 }
 
 const getCollaborations = async () => {
@@ -651,20 +678,6 @@ const updateArticleCollaborations = (val) => {
     .el-message-box__message {
       font-size: 14px !important;
     }
-    .submitBtn,
-    .cancelBtn {
-      margin-left: 8px !important;
-      border-radius: 6px !important;
-      box-shadow: none !important;
-      height: 32px !important;
-      padding: 4px 15px !important;
-      font-size: 14px !important;
-    }
-    .submitBtn {
-      color: #fff !important;
-      background: #00b96b !important;
-      border-color: #00b96b !important;
-    }
     .cancelBtn {
       color: #262626 !important;
       background: #fff !important;
@@ -674,6 +687,35 @@ const updateArticleCollaborations = (val) => {
         border-color: #00b96b !important;
       }
     }
+  }
+  .submitBtn,
+  .cancelBtn {
+    margin-left: 8px !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    height: 32px !important;
+    padding: 4px 15px !important;
+    font-size: 14px !important;
+  }
+  .submitBtn {
+    color: #fff !important;
+    background: #00b96b !important;
+    border-color: #00b96b !important;
+  }
+}
+.shareArticleDialog {
+  .submitBtn {
+    margin-left: 8px !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    height: 32px !important;
+    padding: 4px 15px !important;
+    font-size: 14px !important;
+  }
+  .submitBtn {
+    color: #fff !important;
+    background: #00b96b !important;
+    border-color: #00b96b !important;
   }
 }
 </style>

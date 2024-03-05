@@ -56,7 +56,8 @@ export const useTag = () => {
     const params = {
       name,
       space: infoStore.currentQuery?.sid,
-      action_type: 'mark'
+      action_type: 'mark',
+      creator: user
     }
     let res = await editTagApi(tagId, params)
     if (res.code === 1000) {

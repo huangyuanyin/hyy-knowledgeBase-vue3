@@ -78,7 +78,7 @@ const headers = ref({
 })
 const titleList = ref([])
 const showScroll = ref(false)
-const isAlone = ref(false)
+const isAlone = ref(false) // 是否是单独的页面
 const isEditName = ref<boolean>(false)
 const docName = ref<string>('')
 const docFileName = ref<string>('')
@@ -91,7 +91,7 @@ const { addCollect } = useCollect()
 const { handleLike } = useLike()
 
 watchEffect(() => {
-  isAlone.value = infoStore.currentQuery?.type === 'alone'
+  isAlone.value = ['alone', 'share'].includes(infoStore.currentQuery?.type)
   moreFeaturesDrawer.value = false
   commentDrawer.value = false
   spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : infoStore.currentQuery?.sid
@@ -490,29 +490,31 @@ onMounted(() => {
           </span>
         </div>
         <div class="header_right" v-if="infoStore.currentMenu !== 'title'">
-          <div class="item" v-for="(item, index) in itemList" :key="'itemList' + index">
-            <StarPopver
-              @cancelMark="cancelMark"
-              :startId="(infoStore.currentArticleInfo as ArticleInfo)?.mark_id"
-              :tag_mark="(infoStore.currentArticleInfo as ArticleInfo )?.tag_mark"
-              :target_type="(infoStore.currentArticleInfo as ArticleInfo )?.type"
-              type="article"
-            >
-              <span v-if="item.label === '收藏' || item.label === '已收藏'" @click="toHandle(item)">
-                <img :src="(infoStore.currentArticleInfo as ArticleInfo ).marked ? startIconSelect : startIcon" alt="" />
-              </span>
-            </StarPopver>
-            <el-tooltip effect="dark" :content="item.label" placement="bottom" :show-arrow="false">
-              <span v-if="item.label === '协作'" @click="toCooperate">
-                <CooperatePopver :selectUserList="selectUserList" :userList="userList" @updateArticleCollaborations="updateArticleCollaborations" />
-              </span>
-            </el-tooltip>
-            <el-tooltip effect="dark" :content="item.label" placement="bottom" :show-arrow="false">
-              <span v-if="item.type === 'img' && isEdit" class="img">
-                <img :src="item.icon" alt="" />
-              </span>
-            </el-tooltip>
-          </div>
+          <template v-if="infoStore.currentQuery?.type !== 'share'">
+            <div class="item" v-for="(item, index) in itemList" :key="'itemList' + index">
+              <StarPopver
+                @cancelMark="cancelMark"
+                :startId="(infoStore.currentArticleInfo as ArticleInfo)?.mark_id"
+                :tag_mark="(infoStore.currentArticleInfo as ArticleInfo )?.tag_mark"
+                :target_type="(infoStore.currentArticleInfo as ArticleInfo )?.type"
+                type="article"
+              >
+                <span v-if="item.label === '收藏' || item.label === '已收藏'" @click="toHandle(item)">
+                  <img :src="(infoStore.currentArticleInfo as ArticleInfo ).marked ? startIconSelect : startIcon" alt="" />
+                </span>
+              </StarPopver>
+              <el-tooltip effect="dark" :content="item.label" placement="bottom" :show-arrow="false">
+                <span v-if="item.label === '协作'" @click="toCooperate">
+                  <CooperatePopver :selectUserList="selectUserList" :userList="userList" @updateArticleCollaborations="updateArticleCollaborations" />
+                </span>
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="item.label" placement="bottom" :show-arrow="false">
+                <span v-if="item.type === 'img' && isEdit" class="img">
+                  <img :src="item.icon" alt="" />
+                </span>
+              </el-tooltip>
+            </div>
+          </template>
           <template v-if="!isAlone">
             <div class="button" flex v-for="(item, index) in buttonList" :key="'buttonList' + index">
               <SharePopver :aInfo="infoStore.currentArticleInfo">
@@ -570,7 +572,7 @@ onMounted(() => {
             rounded="50%"
             color="#585a5a"
             cursor-pointer
-            v-if="infoStore.currentMenu !== 'title'"
+            v-if="infoStore.currentMenu !== 'title' && infoStore.currentQuery?.type !== 'share'"
             @click="() => throttle(() => handleLike(), 500)"
           >
             <img w-20px h-20px :src="(infoStore.currentArticleInfo as ArticleInfo)?.liked ? likeSelectIcon : likeIcon" alt="" />

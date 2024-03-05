@@ -48,12 +48,12 @@ export const useBook = () => {
       params = group
     }
     let res = await getLibraryApi(params)
-    isHasPermission.value = res.code === 1003 ? false : true
+    isHasPermission.value = res.code === 1100 ? false : true
     if (res.code === 1000) {
       bookList.value = res.data as any
       callback && (await callback(res))
     } else {
-      res.code !== 1003 && ElMessage.error(res.msg)
+      res.code !== 1100 && ElMessage.error(res.msg)
     }
   }
 
