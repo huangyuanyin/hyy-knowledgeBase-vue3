@@ -2,6 +2,7 @@
 import { getOperationlogApi } from '@/api/log'
 import rightArrowIcon from '@/assets/icons/rightArrow.svg'
 import { ArticleInfo } from '@/type/article'
+import { avatar } from '@/data/data'
 
 const props = defineProps({
   isShow: {
@@ -20,7 +21,6 @@ const props = defineProps({
 const emit = defineEmits(['closeDialog'])
 
 const infoStore = useInfoStore()
-const avatar = JSON.parse(localStorage.getItem('userInfo')).name
 const visible = ref(false)
 const isHistoryVersionDialog = ref(false)
 const statistic = ref([
@@ -77,7 +77,7 @@ watch(
       statistic.value[2].value = (infoStore.currentArticleInfo as ArticleInfo).update_datetime
       statistic.value[3].value = (infoStore.currentArticleInfo as ArticleInfo).create_datetime
       edit.value[0].value = (infoStore.currentArticleInfo as ArticleInfo).creator_name
-      edit.value[1].value = avatar
+      edit.value[1].value = avatar.value
       readData.value[0].value = (infoStore.currentArticleInfo as ArticleInfo).views
       readData.value[1].value = (infoStore.currentArticleInfo as ArticleInfo).comments_count
       readData.value[2].value = (infoStore.currentArticleInfo as ArticleInfo).likes_count

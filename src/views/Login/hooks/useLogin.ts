@@ -35,7 +35,13 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
       ElMessage.success('登录成功')
       await getSpaces()
       infoStore.setCurrentSpaceType('个人')
-      router.push({ path: '/' })
+      if (sessionStorage.getItem('to')) {
+        let to = sessionStorage.getItem('to')
+        sessionStorage.removeItem('to')
+        window.open(to as string, '_self')
+      } else {
+        router.push({ path: '/' })
+      }
     } else {
       showError(res.msg)
     }

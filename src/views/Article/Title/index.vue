@@ -14,7 +14,6 @@ import { folderMenuItemsData } from '@/data/data'
 import { ArticleInfo } from '@/type/article'
 import { uploadArticleApi } from '@/api/article'
 
-const route = useRoute()
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
@@ -114,35 +113,7 @@ const toLink = (val) => {
 }
 
 const toCopy = () => {
-  const type = route.path.split('/').slice(-2)[0]
-  const query = {
-    sid: infoStore.currentQuery?.sid,
-    sname: infoStore.currentQuery?.sname,
-    gid: infoStore.currentQuery?.gid,
-    gname: infoStore.currentQuery?.gname,
-    lid: infoStore.currentQuery?.lid,
-    lname: infoStore.currentQuery?.lname,
-    aid: infoStore.currentQuery?.aid,
-    aname: infoStore.currentQuery?.aname,
-    type: 'share'
-  }
-  const link = `http://10.4.150.27:8080/netKmp/#/share/directory/${type}?sid=${query.sid}&sname=${query.sname}&lid=${query.lid}&lname=${query.lname}&gid=${query.gid}&gname=${query.gname}&aid=${query.aid}&aname=${query.aname}&type=share`
-  ElMessageBox.confirm('通过此链接分享出去的文章权限为所有人可访问！', '安全提示', {
-    confirmButtonText: '我已知晓',
-    confirmButtonClass: 'submitBtn',
-    customClass: 'shareArticleDialog',
-    showCancelButton: false,
-    type: 'warning'
-  })
-    .then(() => {
-      useCopy(link)
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '取消分享'
-      })
-    })
+  useCopy(window.location.href)
 }
 </script>
 
@@ -286,21 +257,6 @@ const toCopy = () => {
   .empty,
   .list {
     height: calc(100vh - 52px);
-  }
-}
-.shareArticleDialog {
-  .submitBtn {
-    margin-left: 8px !important;
-    border-radius: 6px !important;
-    box-shadow: none !important;
-    height: 32px !important;
-    padding: 4px 15px !important;
-    font-size: 14px !important;
-  }
-  .submitBtn {
-    color: #fff !important;
-    background: #00b96b !important;
-    border-color: #00b96b !important;
   }
 }
 </style>

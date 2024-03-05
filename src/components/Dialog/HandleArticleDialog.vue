@@ -2,6 +2,7 @@
 import { copyArticleApi, getArticleTreeApi, moveArticleApi } from '@/api/article'
 import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
 import publicIcon from '@/assets/icons/library/publicIcon.svg'
+import { user } from '@/data/data'
 
 const props = defineProps({
   show: {
@@ -26,7 +27,6 @@ const emit = defineEmits(['closeDialog', 'recover'])
 const route = useRoute()
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const spaceId = ref(null) // 当前空间id
 const teamId = ref(null) // 团队id
 const teamIcon = ref(null) // 团队图标
@@ -88,13 +88,13 @@ watchEffect(() => {
 })
 
 const initData = () => {
-  spaceId.value = props.data.space
+  spaceId.value = infoStore.currentQuery?.sid || props.data.space
   if (route.path.split('/')[1] === 'directory') {
     teamId.value = JSON.parse(localStorage.getItem('personalSpaceInfo')).default_group
   } else {
     teamId.value = Number(infoStore.currentQuery?.gid)
   }
-  bookId.value = props.data.book
+  bookId.value = infoStore.currentQuery?.lid || props.data.book
   articleId.value = null
   pinPosition.value = '0'
 }
@@ -165,7 +165,7 @@ const copyArticle = async () => {
     target_id: articleId.value,
     target_book_id: bookId.value,
     node_id: props.data.id,
-    book_id: props.data.book,
+    book_id: infoStore.currentQuery?.lid || props.data.book,
     with_children: with_children.value,
     action: levelType.value === '1' ? 'moveAfter' : 'prependChild'
   }
@@ -173,7 +173,7 @@ const copyArticle = async () => {
   if (res.code === 1000) {
     ElMessage.success('复制成功')
     closeDialog()
-    if (props.data.book === bookId.value) {
+    if (infoStore.currentQuery?.lid === bookId.value || props.data.book === bookId.value) {
       useLinkHooks().handleArticleTypeLink(handleAfterData(res.data), false)
     }
     refreshStroe.setRefreshBookList(true)
@@ -189,7 +189,7 @@ const moveArticle = async () => {
     target_id: articleId.value,
     target_book_id: bookId.value,
     node_id: props.data.id,
-    book_id: props.data.book,
+    book_id: infoStore.currentQuery?.lid || props.data.book,
     with_children: with_children.value,
     action: levelType.value === '1' ? 'moveAfter' : 'prependChild'
   }
@@ -197,7 +197,7 @@ const moveArticle = async () => {
   if (res.code === 1000) {
     ElMessage.success('移动成功')
     closeDialog()
-    if (props.data.book === bookId.value) {
+    if (infoStore.currentQuery?.lid === bookId.value || props.data.book === bookId.value) {
       useLinkHooks().handleArticleTypeLink(handleAfterData(res.data), false)
     }
     refreshStroe.setRefreshBookList(true)
@@ -236,7 +236,7 @@ const getBook = async () => {
     if (teamId.value !== Number(infoStore.currentQuery?.gid) && infoStore.currentSpaceType === '组织') {
       bookId.value = bookList.value.length > 0 ? bookList.value[0].id : null
     } else {
-      bookId.value = props.data.book
+      bookId.value = infoStore.currentQuery?.lid || props.data.book
     }
     if (bookId.value === null) return (dataSource.value = [])
     getArticle()

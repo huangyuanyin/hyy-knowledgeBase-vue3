@@ -13,6 +13,7 @@ import commentIcon from '@/assets/icons/article/commentIcon.svg'
 import startIconSelect from '@/assets/icons/startIcon_select.svg'
 import startIcon from '@/assets/icons/startIcon.svg'
 import { throttle } from '@/utils/tool'
+import { user, avatar } from '@/data/data'
 
 const props = defineProps({
   content: {
@@ -38,8 +39,6 @@ const emit = defineEmits(['toPublish', 'scrollTo'])
 const route = useRoute()
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
-const avatar = ref('http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg')
 const isEdit = ref(false)
 const moreFeaturesDrawer = ref(false) // 更多功能抽屉
 const commentDrawer = ref(false) // 评论抽屉
@@ -339,6 +338,13 @@ const openDrawer = (val) => {
     moreFeaturesDrawer.value = !moreFeaturesDrawer.value
     commentDrawer.value = false
   } else {
+    if (!localStorage.getItem('isAuth') || localStorage.getItem('isAuth') === 'false') {
+      return ElMessage.warning({
+        duration: 2000,
+        dangerouslyUseHTMLString: true,
+        message: `<span>未登录状态，请</span><button style='color:green;margin-left:6px' onclick="to()">前往登录</button>`
+      })
+    }
     commentDrawer.value = !commentDrawer.value
     moreFeaturesDrawer.value = false
   }
@@ -378,6 +384,25 @@ const getCategoryTree = async () => {
   })
 }
 
+const toOpenCommentDrawer = () => {
+  if (!localStorage.getItem('isAuth') || localStorage.getItem('isAuth') === 'false') {
+    return ElMessage.warning({
+      duration: 2000,
+      dangerouslyUseHTMLString: true,
+      message: `<span>未登录状态，请</span><button style='color:green;margin-left:6px' onclick="to()">前往登录</button>`
+    })
+  }
+  commentDrawer.value = true
+}
+
+window.to = () => {
+  sessionStorage.setItem('to', window.location.href)
+  console.log(`output->wo`, window.history)
+  router.push({
+    path: '/login'
+  })
+}
+
 const toLink = (type, val?) => {
   switch (type) {
     case 'title':
@@ -396,6 +421,13 @@ const toLink = (type, val?) => {
       })
       break
     case 'index':
+      if (!localStorage.getItem('isAuth') || localStorage.getItem('isAuth') === 'false') {
+        return ElMessage.warning({
+          duration: 2000,
+          dangerouslyUseHTMLString: true,
+          message: `<span>未登录状态，请</span><button style='color:green;margin-left:6px' onclick="to()">前往登录</button>`
+        })
+      }
       router.push({
         path: '/dashboard',
         query: {
@@ -445,7 +477,7 @@ const handleRename = async () => {
 }
 
 onMounted(() => {
-  getCategoryTree()
+  if (infoStore.currentMenu === 'title') getCategoryTree()
 })
 </script>
 
@@ -580,7 +612,7 @@ onMounted(() => {
               {{ (infoStore.currentArticleInfo as ArticleInfo)?.likes_count }}
             </div>
           </div>
-          <div class="pix2" flex items-center justify-center rounded="50%" color="#585a5a" cursor-pointer @click="commentDrawer = true">
+          <div class="pix2" flex items-center justify-center rounded="50%" color="#585a5a" cursor-pointer @click="toOpenCommentDrawer">
             <img w-20px h-20px :src="commentIcon" alt="" />
             <div class="counts" v-if="(infoStore.currentArticleInfo as ArticleInfo)?.comments_count">{{ (infoStore.currentArticleInfo as ArticleInfo)?.comments_count }}</div>
           </div>

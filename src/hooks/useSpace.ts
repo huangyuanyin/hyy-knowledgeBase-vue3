@@ -20,6 +20,7 @@ export const useSpace = () => {
       infoStore.setCurrentSpaceInfo(JSON.parse(localStorage.getItem('personalSpaceInfo')))
       infoStore.setIsSpaceAdmin(String(true))
     } else {
+      if (infoStore.currentQuery?.type === 'share') return
       let res = await getSpacesDetailApi(id)
       if (res.code === 1000) {
         if (res.data.creator === user) {

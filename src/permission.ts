@@ -38,7 +38,7 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
     })
   }
 
-  if (to.path === '/login') {
+  if (to.path === '/login' || to.path.split('/')[1] === 'share') {
     next()
   } else {
     let token = localStorage.getItem('token')

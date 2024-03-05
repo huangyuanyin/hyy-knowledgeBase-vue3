@@ -1,5 +1,6 @@
 import { editLibraryApi, getLibraryApi, getLibraryDetailApi } from '@/api/library'
 import { useInfoStore } from '@/store/info'
+import { user } from '@/data/data'
 
 interface BookParams {
   space?: string
@@ -14,7 +15,6 @@ interface CallbackFunction {
 
 export const useBook = () => {
   const infoStore = useInfoStore()
-  const user = (JSON.parse(localStorage.getItem('userInfo')) || {}).username || ''
   const bookList = ref<Array<any>>([])
   const isHasPermission = ref<boolean>(false)
 
@@ -23,6 +23,7 @@ export const useBook = () => {
    * @param {number} id 知识库id
    */
   const getBookInfo = async (id: number, callback?: CallbackFunction) => {
+    if (infoStore.currentQuery?.type === 'share') return
     let res = await getLibraryDetailApi(id)
     if (res.code === 1000) {
       infoStore.setCurrentBookInfo(res.data)

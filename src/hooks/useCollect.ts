@@ -1,5 +1,6 @@
 import { Callback } from '@/type/type'
 import { addMarksApi, deleteMarksApi, editMarksApi, getMarksApi } from '@/api/marks'
+import { user } from '@/data/data'
 
 interface CollectInfo {
   target_type?: string
@@ -9,7 +10,6 @@ interface CollectInfo {
 }
 
 export const useCollect = () => {
-  const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
   const collectList = ref<Array<any>>([])
 
   /**

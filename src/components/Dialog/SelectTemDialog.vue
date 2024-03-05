@@ -6,6 +6,7 @@ import emptyImg from '@/assets/img/empty-tem.png'
 import deleteIcon from '@/assets/icons/deleteIcon.svg'
 import { contentType } from '@/data/data'
 import { addArticleApi, getArticleTemApi, deleteArticleTemApi } from '@/api/article'
+import { user } from '@/data/data'
 
 const props = defineProps({
   isShow: Boolean,
@@ -15,7 +16,6 @@ const emit = defineEmits(['closeDialog'])
 
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const user = JSON.parse(localStorage.getItem('userInfo') as string).username
 const dialogVisible = ref(false)
 const templateType = ref('null')
 const temList = ref([])
