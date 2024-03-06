@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { getSpacesApi } from '@/api/spaces'
+import { environmentPrefix } from '@/data/data'
 import { MenuItem, OperationPopoverProps } from '@/type/operationPopoverType'
 
 const props = withDefaults(defineProps<OperationPopoverProps>(), {
@@ -47,7 +48,7 @@ const spaceReverse = ref([
   }
 ])
 const loading = ref(false)
-const basePath = import.meta.env.MODE === 'development' ? '#/' : '/netKmp/#/'
+const basePath = import.meta.env.MODE === 'development' ? '#/' : `${environmentPrefix[import.meta.env.MODE]}#/`
 
 const initData = () => {
   if (infoStore.currentSidebar === 'SpaceSidebar') {

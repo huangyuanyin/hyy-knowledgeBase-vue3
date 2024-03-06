@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import Layout from '@/views/Layout/index.vue'
 import { setupRouterInterceptor, setupRouterResponder } from '@/permission'
+import { environmentPrefix } from '@/data/data'
 
 const pages = import.meta.glob('@/views/**/page.ts', {
   eager: true,
@@ -528,7 +529,7 @@ const routes: Array<RouteRecordRaw> = [
 ]
 
 const router = createRouter({
-  history: createWebHashHistory('/netKmp/'),
+  history: createWebHashHistory(`${environmentPrefix[import.meta.env.MODE]}`),
   routes
 })
 

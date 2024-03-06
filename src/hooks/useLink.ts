@@ -1,4 +1,5 @@
 import qs from 'qs'
+import { environmentPrefix } from '@/data/data'
 
 const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
@@ -8,7 +9,7 @@ export const useLink = (routerInfo, type, data, spaceType?) => {
   const infoStore = useInfoStore()
   const spaceName = route.path.split('/')[1]
 
-  const basePath = import.meta.env.MODE === 'development' ? '' : '/netKmp/#'
+  const basePath = import.meta.env.MODE === 'development' ? '' : `${environmentPrefix[import.meta.env.MODE]}#`
 
   switch (type) {
     case 'teamSet':
@@ -240,7 +241,7 @@ export const useLinkHooks = () => {
         return encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
       }
       const hash = base64UrlEncode(JSON.stringify(query))
-      window.open(`/netKmp/#${infoStore.currentSpaceType === '个人' ? '' : `/${spaceName.value}`}/directory/${data.type}/?query=${hash}`)
+      window.open(`${environmentPrefix[import.meta.env.MODE]}#${infoStore.currentSpaceType === '个人' ? '' : `/${spaceName.value}`}/directory/${data.type}/?query=${hash}`)
     }
   }
 

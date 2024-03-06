@@ -405,3 +405,9 @@ export const nickname = (JSON.parse(localStorage.getItem('userInfo')) && JSON.pa
 export const user = (JSON.parse(localStorage.getItem('userInfo')) && JSON.parse(localStorage.getItem('userInfo')).username) || ''
 
 export const alphanumericRegex = /^[0-9a-zA-Z]+$/
+
+export const environmentPrefix = {
+  development: '/',
+  staging: '/netKmp/',
+  55: '/knowledge/'
+}

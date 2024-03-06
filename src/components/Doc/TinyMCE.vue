@@ -7,6 +7,7 @@
 <script lang="ts" setup>
 import tinymce from 'tinymce/tinymce'
 import Editor from '@tinymce/tinymce-vue'
+import { environmentPrefix } from '@/data/data'
 
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps({
@@ -74,14 +75,14 @@ const initOptions = ref({
   // skin: false,
   // menubar: false,
   // content_css: false,
-  skin_url: isDev ? '/tinymce/skins/ui/oxide' : '/netKmp/tinymce/skins/ui/oxide',
+  skin_url: isDev ? '/tinymce/skins/ui/oxide' : `${environmentPrefix[import.meta.env.MODE]}tinymce/skins/ui/oxide`,
   // skin: 'jam', //果酱图标
   // icons: 'jam', //果酱图标
   content_style: props.bodyStyle, // 设置内容样式
   with: '100px',
   height: props.height,
   placeholder: '直接输入正文...', // 设置占位符
-  language_url: isDev ? '/tinymce/langs/zh-Hans.js' : '/netKmp/tinymce/langs/zh-Hans.js', // 设置本地语言，在本地的路径
+  language_url: isDev ? '/tinymce/langs/zh-Hans.js' : `${environmentPrefix[import.meta.env.MODE]}tinymce/langs/zh-Hans.js`, // 设置本地语言，在本地的路径
   language: 'zh-Hans', // 设置本地语言
   plugins: props.plugins, // 插件
   toolbar: props.readonly ? false : props.toolbar, // 工具栏
@@ -211,7 +212,7 @@ watch(
 )
 
 onBeforeMount(() => {
-  tinymce.baseURL = isDev ? '/tinymce' : '/netKmp/tinymce'
+  tinymce.baseURL = isDev ? '/tinymce' : `${environmentPrefix[import.meta.env.MODE]}tinymce`
 })
 </script>
 

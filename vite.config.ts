@@ -10,8 +10,13 @@ import { createStyleImportPlugin, VxeTableResolve } from 'vite-plugin-style-impo
 import UnoCSS from 'unocss/vite'
 
 export default defineConfig(({ mode }) => {
+  const environmentPrefix = {
+    development: '/',
+    staging: '/netKmp/',
+    55: '/knowledge/'
+  }
   return {
-    base: mode === 'development' ? '/' : '/netKmp/',
+    base: environmentPrefix[mode],
     build: {
       outDir: './dist', // 指定输出目录为 "./dist"
       assetsDir: './assets', // 指定静态文件引入路径为 "./assets"
