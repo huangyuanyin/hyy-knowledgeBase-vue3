@@ -19,6 +19,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['closeDialog', 'toAddArticle'])
 
+const infoStore = useInfoStore()
 const bookName = ref<string>('')
 const visible = ref<boolean>(false)
 const bookList = ref([])
@@ -34,8 +35,9 @@ watch(
 )
 
 const getMineBook = async () => {
+  const space = infoStore.currentSidebar === 'Sidebar' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : infoStore.currentQuery?.sid
   const params = {
-    space: useArticle().space,
+    space,
     type: 'editor', // 可新建；
     name: bookName.value
   }
@@ -67,6 +69,7 @@ const toAddArticle = async (val) => {
 
 const closeDialog = () => {
   visible.value = false
+  bookName.value = ''
   emit('closeDialog', false)
 }
 </script>

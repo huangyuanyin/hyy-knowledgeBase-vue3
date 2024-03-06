@@ -1,6 +1,5 @@
 import { getTeamMemberApi } from '@/api/member'
-
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
+import { user } from '@/data/data'
 
 // 判断是否有权限访问团队
 export const useTeamPermission = (route, router, data) => {

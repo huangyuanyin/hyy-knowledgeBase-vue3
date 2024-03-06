@@ -8,6 +8,7 @@ import { MenuItem } from '@/type/operationPopoverType'
 import { contentItemsData, moreMenuItemsData } from '@/data/data'
 import { deleteQuickLinksApi } from '@/api/quickLinks'
 // import { getTeamMemberApi } from '@/api/member'
+import { user } from '@/data/data'
 
 interface ContentItem {
   title: string
@@ -43,7 +44,6 @@ const route = useRoute()
 const routeInfo = { route, router }
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const icon = ref('')
 const state = reactive({
   headerActive: null,

@@ -4,6 +4,7 @@ interface LibraryCardItem {
 }
 
 export interface LibraryCard {
+  id: number
   name: string
   icon: string
   cover: string

@@ -1,12 +1,11 @@
 import { getSpacesDetailApi } from '@/api/spaces'
-
+import { user } from '@/data/data'
 interface CallbackFunction {
   (success: object): void
 }
 
 export const useSpace = () => {
   const infoStore = useInfoStore()
-  const user = JSON.parse(localStorage.getItem('userInfo'))?.username || ''
   const spacesList = ref([])
   const spaceAdmin = ref<boolean>(false)
 

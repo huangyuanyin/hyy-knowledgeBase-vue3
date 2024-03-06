@@ -35,7 +35,7 @@ export const useTeam = () => {
    */
   const getTeamList = async (sparams?: TeamParams) => {
     let params = {
-      space: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).id
+      space: infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).id
     }
     sparams && (params = { ...params, ...sparams })
     let res = await getGroupsApi(params)

@@ -126,11 +126,11 @@ onMounted(async () => {
             {
               type: 'my',
               name: '我个人的'
-            },
-            {
-              type: 'public',
-              name: '邀请协作的'
             }
+            // {
+            //   type: 'public',
+            //   name: '邀请协作的'
+            // }
           ]"
           @getBookStacks="getBookStacks"
         />
@@ -167,8 +167,8 @@ onMounted(async () => {
         </SwitchModuleItem>
         <LibraryTable v-if="infoStore.currentSidebar === 'Sidebar'" title="知识库" :commonList="cBookList" :group="bookGroup" @getBookStacks="getBookStacks" />
         <TableComp v-else :header="['名称', '归属', '创建人', '更新时间', '']" type="library" :data="filterGroupFromPublic(bookList)" />
-        <Empty v-if="!bookList.length && libraryInput" :img="searchImg" height="60vh" text="搜索结果为空" />
-        <Empty v-if="!bookList.length && !libraryInput" :img="emptyImg" height="60vh" text="暂无知识库" />
+        <Empty v-if="infoStore.currentSidebar !== 'Sidebar' && !bookList.length && libraryInput" :img="searchImg" height="60vh" text="搜索结果为空" />
+        <Empty v-if="infoStore.currentSidebar !== 'Sidebar' && !bookList.length && !libraryInput" :img="emptyImg" height="60vh" text="暂无知识库" />
         <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
       </div>
     </div>

@@ -110,18 +110,18 @@ watch(
 watch(
   () => props.commonList,
   (newVal) => {
-    if (newVal.length) {
-      processedGroup.value.map((item) => {
-        item.library.map((it) => {
-          it.is_common_id = null
-          newVal.map((val: any) => {
-            if (it.id === Number(val.target_id)) {
-              it.is_common_id = val.id
-            }
-          })
+    // if (newVal.length) {
+    processedGroup.value.map((item) => {
+      item.library.map((it) => {
+        it.is_common_id = null
+        newVal.map((val: any) => {
+          if (it.id === Number(val.target_id)) {
+            it.is_common_id = val.id
+          }
         })
       })
-    }
+    })
+    // }
   },
   {
     immediate: true

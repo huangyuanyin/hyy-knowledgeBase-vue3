@@ -33,8 +33,8 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
       await setUserInfo(res.data)
       nickname.value = res.data.name
       ElMessage.success('登录成功')
-      await getSpaces()
       infoStore.setCurrentSpaceType('个人')
+      await getSpaces()
       if (sessionStorage.getItem('to')) {
         let to = sessionStorage.getItem('to')
         sessionStorage.removeItem('to')
@@ -99,6 +99,7 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
     let res = await addSpaceApi(spaceForm)
     if (res.code === 1000) {
       localStorage.setItem('personalSpaceInfo', JSON.stringify(res.data))
+      infoStore.setCurrentSpaceInfo(res.data)
     } else {
       ElMessage.error(res.msg)
     }

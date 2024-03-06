@@ -16,6 +16,7 @@ import articleIcon from '@/assets/icons/articleIcon.svg'
 import { contentType } from '@/data/data'
 import { addQuickLinksApi, deleteQuickLinksApi } from '@/api/quickLinks'
 import { ArticleInfo } from '@/type/article'
+import { user } from '@/data/data'
 
 const props = defineProps({
   header: {
@@ -41,7 +42,6 @@ const router = useRouter()
 const routeInfo = { route, router }
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const isShowTeamDialog = ref(false)
 const isShowsDeleteDialog = ref(false)
 const deleteInfo = ref<{

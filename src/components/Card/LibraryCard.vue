@@ -10,6 +10,7 @@ import coverImg from '@/assets/img/cover/21.png'
 import { addQuickLinksApi, deleteQuickLinksApi } from '@/api/quickLinks'
 // import { commonLibraryData, notCommonLibraryData } from '@/data/data'
 import { LibraryCard } from '@/type/card'
+import { user } from '@/data/data'
 
 const props = defineProps({
   cardList: {
@@ -26,9 +27,10 @@ const route = useRoute()
 const routeInfo = { route, router }
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const isShowsLibraryDialog = ref(false)
 const isShowsDeleteDialog = ref(false)
+const addCommonId = ref(null)
+const removeCommonId = ref(null)
 const deleteInfo = ref<{
   id?: string
   name?: string
@@ -63,6 +65,7 @@ const removeCommon = (val) => {
 const deleteQuickLinks = async (id, params) => {
   let res = await deleteQuickLinksApi(id, params)
   if (res.code === 1000) {
+    removeCommonId.value = null
     ElMessage.success('移除成功')
     refreshStroe.setRefreshQuickBookList(true)
   } else {
@@ -89,6 +92,7 @@ const addCommon = async (val) => {
     canOperate = true
   }, 800)
   if (res.code === 1000) {
+    addCommonId.value = null
     ElMessage.success('添加成功')
     refreshStroe.setRefreshQuickBookList(true)
   } else {
@@ -198,13 +202,50 @@ const toMoreSetting = (val) => {
         <div class="bg" absolute top-0 left-0 w-full h-full rounded-8px outline-none shadow-1xl bg-white>
           <img w-full h-full rounded-8px :src="card.cover || coverImg" alt="" />
         </div>
-        <el-tooltip effect="dark" content="移除常用" placement="top" :show-arrow="false" :hide-after="0" :teleported="false">
-          <span v-if="card.is_common_id" class="common" @click.stop="removeCommon(card)" w-24px h-24px cursor-pointer absolute items-center justify-center top-5px right-6px>
+        <el-tooltip
+          effect="dark"
+          :visible="removeCommonId === card.id"
+          content="移除常用"
+          placement="top"
+          :auto-close="3000"
+          :show-arrow="false"
+          :hide-after="0"
+          :teleported="false"
+        >
+          <span
+            v-if="card.is_common_id"
+            class="common"
+            @mouseenter="removeCommonId = card.id"
+            @mouseleave="removeCommonId = null"
+            @click.stop="removeCommon(card)"
+            w-24px
+            h-24px
+            cursor-pointer
+            absolute
+            items-center
+            justify-center
+            top-5px
+            right-6px
+          >
             <img w-16px h-16px :src="commonUseIcon" alt="" />
           </span>
         </el-tooltip>
-        <el-tooltip effect="dark" content="添加常用" placement="top" :show-arrow="false" :hide-after="0" :teleported="false">
-          <span v-if="!card.is_common_id" class="common" @click.stop="addCommon(card)" w-24px h-24px cursor-pointer absolute items-center justify-center top-5px right-6px>
+        <el-tooltip effect="dark" :visible="addCommonId === card.id" content="添加常用" placement="top" :auto-close="3000" :show-arrow="false" :hide-after="0" :teleported="false">
+          <span
+            v-if="!card.is_common_id"
+            class="common"
+            @mouseenter="addCommonId = card.id"
+            @mouseleave="addCommonId = null"
+            @click.stop="addCommon(card)"
+            w-24px
+            h-24px
+            cursor-pointer
+            absolute
+            items-center
+            justify-center
+            top-5px
+            right-6px
+          >
             <img w-16px h-16px :src="pinOutIcon" alt="" />
           </span>
         </el-tooltip>
