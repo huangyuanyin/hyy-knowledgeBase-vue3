@@ -150,7 +150,8 @@ watch(
       aname: infoStore.currentQuery?.aname,
       type: 'share'
     }
-    copyLink.value = `http://10.4.150.27:8080/netKmp/#/share/directory/${type}?sid=${query.sid}&sname=${query.sname}&lid=${query.lid}&lname=${query.lname}&gid=${query.gid}&gname=${query.gname}&aid=${query.aid}&aname=${query.aname}&type=share`
+    const base = import.meta.env.VITE_URL
+    copyLink.value = `${base}#/share/directory/${type}?sid=${query.sid}&sname=${query.sname}&lid=${query.lid}&lname=${query.lname}&gid=${query.gid}&gname=${query.gname}&aid=${query.aid}&aname=${query.aname}&type=share`
   },
   {
     immediate: true

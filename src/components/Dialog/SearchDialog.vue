@@ -140,7 +140,7 @@ function navigateToSearch(type, val) {
       scope_name: val.name,
       q: value.value
     }
-    const baseUrl = import.meta.env.MODE === 'development' ? window.location.origin : 'http://10.4.150.27:8080/netKmp/'
+    const baseUrl = import.meta.env.MODE === 'development' ? window.location.origin : import.meta.env.VITE_URL
     window.open(
       `${baseUrl}${infoStore.currentSpaceType === '个人' ? '' : `/#/${infoStore.currentSpaceInfo.spacekey}`}/search?sid=${query.sid}&sname=${query.sname}&scope=${
         query.scope
