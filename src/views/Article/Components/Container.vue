@@ -85,6 +85,7 @@ const inputName = ref(null)
 const inputFileName = ref(null)
 const reFileNameSuffix = ref('')
 const isEditPermission = ref(true)
+const basePath = import.meta.env.MODE === 'development' ? '' : `${environmentPrefix[import.meta.env.MODE]}#`
 
 const { addCollect } = useCollect()
 const { handleLike } = useLike()
@@ -407,7 +408,7 @@ const toLink = (type, val?) => {
   switch (type) {
     case 'title':
       router.push({
-        path: route.path,
+        path: `${basePath}/directory/${val.type}/${''}`,
         query: {
           sid: infoStore.currentQuery?.sid,
           sname: infoStore.currentQuery?.sname,

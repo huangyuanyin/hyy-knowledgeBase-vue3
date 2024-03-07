@@ -31,7 +31,7 @@ const linkForm = reactive({
 })
 const rules = reactive<FormRules>({
   title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
-  description: [{ required: true, message: '请输入链接', trigger: 'blur' }]
+  body: [{ required: true, message: '请输入链接', trigger: 'blur' }]
 })
 
 watch(
@@ -55,7 +55,7 @@ async function handleArticleDetail(id: number) {
   const { articleInfo, getArticleDetail } = useArticle()
   await getArticleDetail(id)
   linkForm.title = articleInfo.value.title
-  linkForm.description = articleInfo.value.description
+  linkForm.body = articleInfo.value.body
   linkForm.open_windows = articleInfo.value.open_windows === '1' ? true : false
 }
 
@@ -124,8 +124,8 @@ const handleClose = async () => {
           <el-input v-model="linkForm.title" placeholder="" />
         </div>
       </el-form-item>
-      <el-form-item label="网页链接" class="form-description" prop="description">
-        <el-input v-model="linkForm.description" placeholder="" />
+      <el-form-item label="网页链接" class="form-description" prop="body">
+        <el-input v-model="linkForm.body" placeholder="http://xxxx.com/" />
       </el-form-item>
       <el-form-item label="" class="form-description" prop="open_windows">
         <el-checkbox v-model="linkForm.open_windows" label="在新标签页打开" size="large" />

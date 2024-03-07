@@ -44,7 +44,10 @@ export const useArticle = () => {
         result.push({
           title: item.title,
           id: item.id,
-          parent: item.parent
+          parent: item.parent,
+          creator: item.creator,
+          type: item.type,
+          update_datetime: item.update_datetime
         })
         if (item.parent && item.parent.length) {
           recurse(item.parent)

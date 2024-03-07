@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import inputComment from '@/assets/icons/drawer/inputComment.svg'
-import { getCommentsApi, addCommentsApi, deleteCommentsApi, editCommentsApi } from '@/api/comments'
+import { getCommentTreeApi, addCommentsApi, deleteCommentsApi, editCommentsApi } from '@/api/comments'
 import CommentItem from '@/components/Drawer/CommentDrawer/comment.vue'
 
 const props = defineProps({
@@ -114,13 +114,11 @@ const editComments = async (type) => {
 }
 
 const getComments = async () => {
-  const params = {
-    content: aid.value
-  }
-  let res = await getCommentsApi(params)
+  let res = await getCommentTreeApi(Number(aid.value))
   if (res.code === 1000) {
     commentTotal.value = res.data.length
-    commentList.value = arrayToTree(res.data)
+    commentList.value = res.data
+    // commentList.value = arrayToTree(res.data)
   } else {
     ElMessage.error(res.msg)
   }
@@ -190,7 +188,7 @@ const arrayToTree = (list) => {
           <template v-if="item.children">
             <div class="item-bottom" v-for="(it, index) in item.children" :key="'children' + index">
               <CommentItem
-                :parent="item"
+                :parent="item.id"
                 :data="it"
                 :replyId="replyId"
                 :editId="editId"
@@ -204,7 +202,7 @@ const arrayToTree = (list) => {
                 @editComments="editComments"
                 @toDeleteComment="toDeleteComment"
               />
-              <template v-if="it.children">
+              <!-- <template v-if="it.children">
                 <div class="item-bottom three" v-for="(q, index) in it.children" :key="'children' + index">
                   <CommentItem
                     :parent="it"
@@ -222,7 +220,7 @@ const arrayToTree = (list) => {
                     @toDeleteComment="toDeleteComment"
                   />
                 </div>
-              </template>
+              </template> -->
             </div>
           </template>
         </div>

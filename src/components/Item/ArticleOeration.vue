@@ -44,7 +44,13 @@ const toCopyLink = (val) => {
   const linkUrl = ref('')
   const spaceName = route.path.split('/')[1]
   if (val.type === 'links') {
-    linkUrl.value = val.description
+    useArticle().getArticleDetail(Number(val.id), (res: any) => {
+      linkUrl.value = res.body
+      if (!res.body.startsWith('http://') && !res.body.startsWith('https://')) {
+        linkUrl.value = `https://${linkUrl.value}`
+      }
+      useCopy(linkUrl.value)
+    })
   } else {
     if (val.id == Number(infoStore.currentQuery?.aid)) {
       linkUrl.value = window.location.href

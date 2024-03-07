@@ -15,3 +15,11 @@ export function editCommentsApi(id: number, data: commentsData) {
 export function deleteCommentsApi(id: number) {
   return http.delete<commentsRes>(`comments/${id}/`, {}, 'base')
 }
+
+export function getCommentTreeApi(id: number) {
+  return http.get<commentsRes>(`comment_tree/${id}/`, {}, 'base')
+}
+
+export function deleteCommentTreeApi(id: number) {
+  return http.delete<commentsRes>(`comment_tree/${id}/`, {}, 'base')
+}

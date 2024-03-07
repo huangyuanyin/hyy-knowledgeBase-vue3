@@ -13,10 +13,10 @@ import Container from '../Components/Container.vue'
 import { folderMenuItemsData } from '@/data/data'
 import { ArticleInfo } from '@/type/article'
 import { uploadArticleApi } from '@/api/article'
+import { user } from '@/data/data'
 
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const user = JSON.parse(localStorage.getItem('xinAn-userInfo')).username || ''
 const aid = ref<number>(null)
 const body = ref('')
 const list = ref<ArticleInfo[]>([])
@@ -39,24 +39,27 @@ const headers = ref({
 
 watchEffect(() => {
   aid.value = Number(infoStore.currentQuery?.aid)
-  list.value = infoStore.currentArticleTreeInfo && getList(aid.value, infoStore.currentArticleTreeInfo)
+  // list.value = infoStore.currentArticleTreeInfo && getList(aid.value, infoStore.currentArticleTreeInfo)
   if (infoStore.currentMenu === 'title') {
-    useArticle().getArticleDetail(aid.value)
+    // useArticle().getArticleDetail(aid.value)
+    nextTick(() => {
+      getCategoryTree()
+    })
   }
 })
 
-function getList(id: number, data: ArticleInfo[], children: ArticleInfo[] = []) {
-  data.forEach((item) => {
-    if (item.id === id) {
-      children.push(...(item.children || []))
-    } else {
-      if (item.children?.length) {
-        getList(id, item.children, children)
-      }
-    }
-  })
-  return children
-}
+// function getList(id: number, data: ArticleInfo[], children: ArticleInfo[] = []) {
+//   data.forEach((item) => {
+//     if (item.id === id) {
+//       children.push(...(item.children || []))
+//     } else {
+//       if (item.children?.length) {
+//         getList(id, item.children, children)
+//       }
+//     }
+//   })
+//   return children
+// }
 
 function getBookInfo() {
   return {
@@ -70,6 +73,12 @@ function getBookInfo() {
 function handleAddArticle(title: string, data?) {
   const book = getBookInfo()
   useArticle().handleAddArticle({ book, title }, () => {}, data === null ? null : data)
+}
+
+const getCategoryTree = async () => {
+  useArticle().handleCategoryTree(Number(infoStore.currentQuery?.aid), 'children', (res: any) => {
+    list.value = res
+  })
 }
 
 const toAddLink = (data: number) => {
@@ -104,7 +113,13 @@ const toUpload = async (file) => {
 const toLink = (val) => {
   switch (val.type) {
     case 'links':
-      val.open_windows === '1' ? window.open(val.description) : (window.location.href = val.description)
+      useArticle().getArticleDetail(Number(val.id), (res: any) => {
+        let link = res.body
+        if (!res.body.startsWith('http://') && !res.body.startsWith('https://')) {
+          link = `https://${link}`
+        }
+        val.open_windows === '1' ? window.open(link) : (window.location.href = link)
+      })
       break
     default:
       useLinkHooks().handleArticleTypeLink(val, false)
@@ -131,7 +146,7 @@ const toCopy = () => {
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="creator_name" label="创建人" width="200px" />
+            <el-table-column prop="creator" label="创建人" width="200px" />
             <el-table-column prop="update_datetime" label="修改时间" width="250px" />
             <el-table-column label="操作" width="100px">
               <template #default="row">

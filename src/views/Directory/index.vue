@@ -92,7 +92,13 @@ const getBookDetail = async () => {
 const toArticleDetail = (val) => {
   switch (val.type) {
     case 'links':
-      val.open_windows === '1' ? window.open(val.description) : (window.location.href = val.description)
+      useArticle().getArticleDetail(Number(val.id), (res: any) => {
+        let link = res.body
+        if (!res.body.startsWith('http://') && !res.body.startsWith('https://')) {
+          link = `https://${link}`
+        }
+        val.open_windows === '1' ? window.open(link) : (window.location.href = link)
+      })
       break
     default:
       useLinkHooks().handleArticleTypeLink(val, false)

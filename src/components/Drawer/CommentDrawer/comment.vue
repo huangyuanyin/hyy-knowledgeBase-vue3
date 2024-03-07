@@ -92,7 +92,8 @@ const toDeleteComment = (data: any) => {
 </script>
 
 <template>
-  <div class="comment_wrap" :style="{ 'margin-bottom': props.data.children.length ? '20px' : ' 0px' }">
+  <!-- <div class="comment_wrap" :style="{ 'margin-bottom': props.data.children.length ? '20px' : ' 0px' }"> -->
+  <div class="comment_wrap" :style="{ 'margin-bottom': '20px' }">
     <div class="avatar">
       <img :src="props.data.avatar || avatar" alt="" />
     </div>
@@ -101,11 +102,11 @@ const toDeleteComment = (data: any) => {
         <span :class="[!props.parent ? 'master' : '']">{{ props.data.creator_name }}</span>
         <img v-if="props.parent" :src="downIcon" />
         <span v-if="props.parent" items-center w-full style="max-width: 100px; display: flex">
-          <img style="transform: none" mr-12px w-24px h-24px rounded-12px :src="props.parent.avatar || avatar" alt="" />
-          {{ props.parent.creator_name }}
+          <img style="transform: none" mr-12px w-24px h-24px rounded-12px :src="props.data.avatar || avatar" alt="" />
+          {{ props.data.parent_name }}
         </span>
       </div>
-      <div class="time">{{ props.data.create_datetime }}</div>
+      <div class="time">{{ props.data.update_datetime }}</div>
       <div class="text" v-if="editId !== props.data.id">
         <Tiptap v-model="props.data.body" disabled />
       </div>
