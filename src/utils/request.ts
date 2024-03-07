@@ -52,7 +52,7 @@ const createAxiosInstance = (baseUrlType: keyof typeof baseUrlList): AxiosInstan
 const modifyRequestConfig = (config: AxiosRequestConfig): AxiosRequestConfig => {
   const { url, method, paramsHeaderState, params } = config
   if (url !== 'forum/login/' && !url.includes('public_data/')) {
-    const Authorization: string = localStorage.getItem('token') || ''
+    const Authorization: string = localStorage.getItem('xinAn-token') || ''
     config.headers = {
       ...config.headers,
       Authorization

@@ -398,11 +398,11 @@ export const docTypeName = [
 ]
 
 export const avatar = ref(
-  (JSON.parse(localStorage.getItem('userInfo')) && 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar) || '@/assets/img/img.jpg'
+  (JSON.parse(localStorage.getItem('xinAn-userInfo')) && 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('xinAn-userInfo')).avatar) || '@/assets/img/img.jpg'
 )
-export const nickname = (JSON.parse(localStorage.getItem('userInfo')) && JSON.parse(localStorage.getItem('userInfo')).nickname) || ''
+export const nickname = (JSON.parse(localStorage.getItem('xinAn-userInfo')) && JSON.parse(localStorage.getItem('xinAn-userInfo')).nickname) || ''
 
-export const user = (JSON.parse(localStorage.getItem('userInfo')) && JSON.parse(localStorage.getItem('userInfo')).username) || ''
+export const user = (JSON.parse(localStorage.getItem('xinAn-userInfo')) && JSON.parse(localStorage.getItem('xinAn-userInfo')).username) || ''
 
 export const alphanumericRegex = /^[0-9a-zA-Z]+$/
 

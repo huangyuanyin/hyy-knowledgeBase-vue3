@@ -26,7 +26,7 @@ export const useData = () => {
   watch(
     () => route.fullPath,
     () => {
-      user.value = (JSON.parse(localStorage.getItem('userInfo')) || {}).username || ''
+      user.value = (JSON.parse(localStorage.getItem('xinAn-userInfo')) || {}).username || ''
 
       const personalSpaceInfo = JSON.parse(localStorage.getItem('personalSpaceInfo'))
 
@@ -46,7 +46,7 @@ export const useData = () => {
     space.value = value
     spaceName.value = infoStore.currentSpaceType === '个人' ? '' : route.path.split('/')[1]
     spaceIcon.value =
-      infoStore.currentSpaceType === '个人' ? 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar : infoStore.currentSpaceInfo.icon || ''
+      infoStore.currentSpaceType === '个人' ? 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('xinAn-userInfo')).avatar : infoStore.currentSpaceInfo.icon || ''
   }
 
   /**

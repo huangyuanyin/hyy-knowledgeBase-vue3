@@ -21,7 +21,7 @@ const emit = defineEmits(['closeDialog'])
 
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
+const user = JSON.parse(localStorage.getItem('xinAn-userInfo')).username || ''
 const avatarUrl = import.meta.env.VITE_BASE_LOGIN_URL
 const dialogVisible = ref(false)
 const loadTable = ref(false)

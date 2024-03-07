@@ -6,14 +6,14 @@ const nickname = ref('')
 
 watchEffect(() => {
   if (UserPopverRef.value) {
-    nickname.value = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
-    avatar.value = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || '@/assets/img/img.jpg'
+    nickname.value = JSON.parse(localStorage.getItem('xinAn-userInfo')).nickname || ''
+    avatar.value = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('xinAn-userInfo')).avatar || '@/assets/img/img.jpg'
   }
 })
 
 const toExit = () => {
-  localStorage.removeItem('userInfo')
-  localStorage.removeItem('token')
+  localStorage.removeItem('xinAn-userInfo')
+  localStorage.removeItem('xinAn-token')
   localStorage.removeItem('personalSpaceInfo')
   localStorage.removeItem('personalGroupId')
   localStorage.removeItem('tinymce-autosavetime')

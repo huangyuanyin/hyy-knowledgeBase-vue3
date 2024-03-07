@@ -25,7 +25,7 @@ export const useSpace = () => {
         if (res.data.creator === user) {
           spaceAdmin.value = true
         }
-        // 循环res.data，找到item.permusername等于JSON.parse(localStorage.getItem('user')).userInfo.username的项，判断item.permtype是否为0，是则isAdmin为true,否则为false，找到则中止循环
+        // 循环res.data，找到item.permusername等于JSON.parse(localStorage.getItem('user')).xinAn-userInfo.username的项，判断item.permtype是否为0，是则isAdmin为true,否则为false，找到则中止循环
         res.data.members.map((item) => {
           if (item.permusername === user) {
             if (item.permtype === '0') {

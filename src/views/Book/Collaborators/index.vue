@@ -9,8 +9,8 @@ import { getTeamMemberApi } from '@/api/member'
 const route = useRoute()
 const router = useRouter()
 const infoStore = useInfoStore()
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
-const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
+const user = JSON.parse(localStorage.getItem('xinAn-userInfo')).username || ''
+const nickname = JSON.parse(localStorage.getItem('xinAn-userInfo')).nickname || ''
 const spaceId = ref('')
 const spaceName = ref('')
 const groupId = ref('')

@@ -35,7 +35,7 @@ const emit = defineEmits(['toReply', 'toEditComment', 'toCancelReply', 'toCancel
 
 const replyValue = ref(props.replyValue)
 const editValue = ref(props.editValue)
-const avatar = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo') || '{}').avatar
+const avatar = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('xinAn-userInfo') || '{}').avatar
 
 watch(
   () => props.replyValue,

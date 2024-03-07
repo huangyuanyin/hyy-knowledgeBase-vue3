@@ -2,7 +2,7 @@
 import selectIcon from '@/assets/icons/user/select.svg'
 
 const infoStore = useInfoStore()
-const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
+const userInfo = JSON.parse(localStorage.getItem('xinAn-userInfo')) || {}
 const isShowPasswordDialog = ref(false)
 const account = ref([
   {

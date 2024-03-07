@@ -15,7 +15,7 @@ interface BookCollaborationsInfo {
 
 export const useCollaborations = () => {
   const route = Vrouter.currentRoute.value
-  const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
+  const user = JSON.parse(localStorage.getItem('xinAn-userInfo')).username || ''
   const space = ref<string>('')
   const spaceName = ref<string>('')
   const teamList = ref<Array<any>>([])

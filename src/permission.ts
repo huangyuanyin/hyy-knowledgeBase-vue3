@@ -41,7 +41,7 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
   if (to.path === '/login' || to.path.split('/')[1] === 'share') {
     next()
   } else {
-    let token = localStorage.getItem('token')
+    let token = localStorage.getItem('xinAn-token')
     token ? next() : next('/login')
   }
   if (to.path === '/directory/sheet/edit' && from.path === '/') {

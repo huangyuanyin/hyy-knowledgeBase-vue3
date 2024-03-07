@@ -3,7 +3,7 @@ import { avatar } from '@/data/data'
 import { FormInstance, FormRules } from 'element-plus'
 import { UserInfo } from '@/type/user'
 
-const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
+const userInfo = JSON.parse(localStorage.getItem('xinAn-userInfo')) || {}
 const userFormRef = ref<FormInstance>()
 const userForm = reactive<UserInfo>({
   avatar: '',

@@ -8,7 +8,7 @@ const props = defineProps({
 const emit = defineEmits(['closeDialog'])
 
 const infoStore = useInfoStore()
-const avatar = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo') || '{}').avatar
+const avatar = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('xinAn-userInfo') || '{}').avatar
 const dialogVisible = ref(false)
 const loading = ref(false)
 const inputValue = ref('')

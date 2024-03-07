@@ -2,7 +2,7 @@
 import { editSpacepermissionsApi, getSpacepermissionsApi } from '@/api/spacepermissions'
 
 const infoStore = useInfoStore()
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
+const user = JSON.parse(localStorage.getItem('xinAn-userInfo')).username || ''
 const isShowAddAdminDialog = ref(false)
 const adminData = ref([])
 const myData = ref([])

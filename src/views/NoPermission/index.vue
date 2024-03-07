@@ -3,7 +3,7 @@ const props = defineProps({
   type: String
 })
 
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
+const user = JSON.parse(localStorage.getItem('xinAn-userInfo')).username || ''
 const router = useRouter()
 const infoStore = useInfoStore()
 const isHas = ref(false)

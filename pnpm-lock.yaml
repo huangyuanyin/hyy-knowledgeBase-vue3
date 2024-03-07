@@ -74,6 +74,9 @@ dependencies:
   crypto-js:
     specifier: ^4.1.1
     version: registry.npmmirror.com/crypto-js@4.2.0
+  devtools-detector:
+    specifier: ^2.0.15
+    version: 2.0.15
   element-plus:
     specifier: ^2.3.9
     version: registry.npmmirror.com/element-plus@2.5.1(vue@3.4.14)
@@ -628,6 +631,16 @@ packages:
 
   /commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==, tarball: https://registry.npmmirror.com/commander/-/commander-2.20.3.tgz}
+
+  /compare-versions@3.6.0:
+    resolution: {integrity: sha512-W6Af2Iw1z4CB7q4uU4hv646dW9GQuBM+YpC0UvUCWSD8w90SJjp+ujJuXaEMtAXBtSqGfMPuFOVn4/+FlaqfBA==, tarball: https://registry.npmmirror.com/compare-versions/-/compare-versions-3.6.0.tgz}
+    dev: false
+
+  /devtools-detector@2.0.15:
+    resolution: {integrity: sha512-JWls4QM/iSp2jUjzWXbnITXxVWvNNM1TFW6mFiyfQ4Ta1a+kZxSrggN4gvkWmB0G3BCt96kSChz9Hil2NkimbA==, tarball: https://registry.npmmirror.com/devtools-detector/-/devtools-detector-2.0.15.tgz}
+    dependencies:
+      compare-versions: 3.6.0
+    dev: false
 
   /electron-to-chromium@1.4.633:
     resolution: {integrity: sha512-7BvxzXrHFliyQ1oZc6NRMjyEaKOO1Ma1NY98sFZofogWlm+klLWSgrDw7EhatiMgi4R4NV+iWxDdxuIKXtPbOw==, tarball: https://registry.npmmirror.com/electron-to-chromium/-/electron-to-chromium-1.4.633.tgz}

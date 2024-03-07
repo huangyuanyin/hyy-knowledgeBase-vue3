@@ -16,7 +16,7 @@ import { uploadArticleApi } from '@/api/article'
 
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
+const user = JSON.parse(localStorage.getItem('xinAn-userInfo')).username || ''
 const aid = ref<number>(null)
 const body = ref('')
 const list = ref<ArticleInfo[]>([])
@@ -34,7 +34,7 @@ const contentType = ref({
   links: linkIcon
 })
 const headers = ref({
-  Authorization: localStorage.getItem('token')
+  Authorization: localStorage.getItem('xinAn-token')
 })
 
 watchEffect(() => {

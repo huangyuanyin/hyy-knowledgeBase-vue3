@@ -90,7 +90,7 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
 
   const addSpace = async () => {
     const spaceForm = {
-      icon: JSON.parse(localStorage.getItem('userInfo')).avatar,
+      icon: JSON.parse(localStorage.getItem('xinAn-userInfo')).avatar,
       spacename: `${nickname.value}个人空间`,
       spacekey: loginForm.username,
       spacetype: 'personal',
