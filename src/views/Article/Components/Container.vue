@@ -13,7 +13,7 @@ import commentIcon from '@/assets/icons/article/commentIcon.svg'
 import startIconSelect from '@/assets/icons/startIcon_select.svg'
 import startIcon from '@/assets/icons/startIcon.svg'
 import { throttle } from '@/utils/tool'
-import { user, avatar } from '@/data/data'
+import { user, avatar, environmentPrefix } from '@/data/data'
 
 const props = defineProps({
   content: {

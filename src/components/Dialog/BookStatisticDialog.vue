@@ -77,7 +77,7 @@ watch(
       statistic.value[2].value = (infoStore.currentArticleInfo as ArticleInfo).update_datetime
       statistic.value[3].value = (infoStore.currentArticleInfo as ArticleInfo).create_datetime
       edit.value[0].value = (infoStore.currentArticleInfo as ArticleInfo).creator_name
-      edit.value[1].value = avatar.value
+      edit.value[1].value = (infoStore.currentArticleInfo as ArticleInfo).creator_name
       readData.value[0].value = (infoStore.currentArticleInfo as ArticleInfo).views
       readData.value[1].value = (infoStore.currentArticleInfo as ArticleInfo).comments_count
       readData.value[2].value = (infoStore.currentArticleInfo as ArticleInfo).likes_count
