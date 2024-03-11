@@ -73,7 +73,6 @@ onMounted(() => {
 })
 
 function initData() {
-  console.log(`output->inf`, infoStore.currentQuery)
   value.value = (infoStore.currentQuery?.q as string) || ''
   time_horizon.value = ''
   scope.value = (infoStore.currentQuery?.scope as string) || ''
