@@ -1,12 +1,16 @@
 <script lang="ts" setup>
 import emptyImg from '@/assets/img/empty.png'
+import searchImg from '@/assets/img/search.png'
+import { Search } from '@element-plus/icons-vue'
 
 const refreshStroe = useRefreshStore()
 const isShowsGroupDialog = ref(false)
 const groupTitle = ref('新建分组')
 const groupName = ref('')
 const groupId = ref(null)
+const title = ref('')
 const tagActive = ref(0)
+const isSearch = ref(false)
 const groups = ref([
   {
     id: 0,
@@ -92,7 +96,7 @@ const toShowTagDialog = (type: string, group?: any) => {
 }
 
 const toGetCollectList = async (id?) => {
-  await getCollectList(id, (res) => {
+  await getCollectList(id, title.value, (res) => {
     if (tagActive.value === 0) {
       groups.value[0].marks_count = res.length
     }
@@ -100,8 +104,22 @@ const toGetCollectList = async (id?) => {
   collectList.value = clist.value
 }
 
-const toDo = () => {
-  ElMessage.warning('功能暂未开放，敬请期待')
+const toSearch = () => {
+  toGetCollectList(tagActive.value === 0 ? '' : tagActive.value)
+  if (title.value === '') {
+    isSearch.value = false
+  }
+}
+
+const toDo = (val) => {
+  switch (val) {
+    case 'title':
+      isSearch.value = true
+      break
+    case 'type':
+      ElMessage.warning('该功能暂未开放，敬请期待！')
+      break
+  }
 }
 </script>
 
@@ -110,8 +128,9 @@ const toDo = () => {
     <div class="header">
       <span>收藏</span>
       <div class="search">
-        <span @click="toDo"><img src="/src/assets/icons/searchIcon.svg" alt="" /></span>
-        <span @click="toDo"><img src="/src/assets/icons/filterIcon.svg" alt="" /></span>
+        <span @click="toDo('title')" v-if="!isSearch" flex items-center><img src="/src/assets/icons/searchIcon.svg" alt="" /></span>
+        <el-input v-else v-model="title" @change="toSearch" width="200px" clearable :prefix-icon="Search" placeholder=""></el-input>
+        <span @click="toDo('type')" flex items-center><img src="/src/assets/icons/filterIcon.svg" alt="" /></span>
       </div>
     </div>
     <div class="content">
@@ -133,11 +152,12 @@ const toDo = () => {
       </div>
       <div class="right">
         <TableComp :header="['名称', '归属', '收藏时间', '']" type="star" :data="(collectList as any)" />
-        <div v-if="!collectList.length" class="empty">
+        <div v-if="!collectList.length && !title" class="empty">
           <img :src="emptyImg" alt="" />
           <span>暂无内容</span>
           <span>快去收藏吧</span>
         </div>
+        <Empty v-if="!collectList.length && title" :img="searchImg" height="60vh" text="搜索结果为空" />
       </div>
     </div>
   </div>
@@ -158,8 +178,24 @@ const toDo = () => {
       color: #262626;
     }
     .search {
+      height: 34px;
       display: flex;
       align-items: center;
+      margin-right: 20px;
+      :deep(.el-input) {
+        .is-focus {
+          border-color: #0bd07d !important;
+        }
+      }
+      :deep(.el-input__wrapper) {
+        width: 10vw;
+        border-radius: 6px;
+        border: 1px solid #d9d9d9;
+        box-shadow: none;
+        &:hover {
+          border-color: #0bd07d;
+        }
+      }
       span {
         width: 24px;
         height: 24px;
@@ -180,7 +216,7 @@ const toDo = () => {
     margin-top: 17px;
     margin-bottom: -26px;
     .left {
-      height: calc(100vh - 44px - 26px);
+      height: calc(100vh - 44px - 34px);
       overflow: auto;
       width: 203px;
       min-width: 203px;

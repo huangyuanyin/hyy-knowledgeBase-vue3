@@ -5,6 +5,7 @@ import mindmapIcon from '@/assets/icons/mindmapIcon.svg'
 import pptIcon from '@/assets/icons/pptIcon.svg'
 import fileIcon from '@/assets/icons/fileIcon.svg'
 import folderIcon from '@/assets/icons/folder.svg'
+import { rangeList } from '@/data/data'
 
 const props = defineProps({
   tableData: {
@@ -25,6 +26,8 @@ const currentTable = ref([])
 const currentTab = ref('')
 const search = ref('')
 const currentPage = ref(1)
+const currentRangeType = ref('全部')
+const currentRange = ref('0')
 const searchPlcae = ref({
   memberCol: '搜索成员',
   bookCol: '搜索知识库',
@@ -39,6 +42,12 @@ const contentType = ref({
   ppt: pptIcon,
   file: fileIcon
 })
+const tipList = ref({
+  memberCol: '仅筛选文档新建',
+  bookCol: '仅筛选点赞量、收藏量、评论量',
+  docCol: '仅筛选点赞量、评论量',
+  teamCol: '仅筛选点赞量、收藏量、评论量'
+})
 
 watchEffect(() => {
   if (route.meta.asideComponent === 'BookSidebar') {
@@ -49,7 +58,7 @@ watchEffect(() => {
         { prop: 'creator_name', label: '创建者' },
         { prop: 'create_datetime', label: '创建时间', width: 200 },
         { prop: 'update_datetime', label: '更新时间', width: 200 },
-        { prop: 'views', label: '阅读量' },
+        { prop: 'read_count', label: '阅读量' },
         { prop: 'comments_count', label: '评论量' },
         { prop: 'likes_count', label: '点赞量' }
       ]
@@ -85,7 +94,7 @@ watchEffect(() => {
         { prop: 'create_datetime', label: '创建时间' },
         { prop: 'update_datetime', label: '更新时间' },
         { prop: 'word_count', label: '字数', width: 70 },
-        { prop: 'read_count', label: '获阅读量', width: 70 },
+        { prop: 'read_count', label: '获阅读量', width: 90 },
         { prop: 'likes_count', label: '获赞数', width: 70 },
         { prop: 'comments_count', label: '评论量', width: 70 }
       ]
@@ -126,17 +135,25 @@ const toChangeTab = (val) => {
   currentTab.value = val
   currentTable.value = tabColumns.value[val]
   search.value = ''
+  currentRangeType.value = '全部'
+  currentRange.value = '0'
   currentPage.value = 1
   emit('changeTab', val)
 }
 
 const toSearch = () => {
-  emit('toSearch', [currentTab.value, search.value])
+  emit('toSearch', [currentTab.value, search.value, currentRange.value])
 }
 
 const changePage = (val) => {
   currentPage.value = val
   emit('changePage', [currentTab.value, val])
+}
+
+const toSearchByRange = (val) => {
+  currentRangeType.value = val.label
+  currentRange.value = val.value
+  emit('toSearch', [currentTab.value, search.value, val.value])
 }
 
 const toExport = () => {
@@ -162,6 +179,13 @@ const toExport = () => {
         </span>
       </div>
       <div flex items-center>
+        <LibraryOperationPopver :selectMenu="currentRangeType" :menuItems="rangeList" placement="bottom-end" :height="42" :width="120" @toSearchByRange="toSearchByRange">
+          <div class="search-item" flex items-center>
+            <el-tooltip effect="dark" :content="tipList[currentTab]" placement="top" :show-arrow="false">
+              <span flex items-center cursor-pointer text-15px text="#262626">{{ currentRangeType }}<img src="/src/assets/icons/downIcon.svg" alt="" /></span>
+            </el-tooltip>
+          </div>
+        </LibraryOperationPopver>
         <el-input class="search" v-model="search" :placeholder="searchPlcae[currentTab]" clearable @change="toSearch">
           <template #prefix>
             <i-ep-Search />
@@ -170,7 +194,7 @@ const toExport = () => {
         <el-button class="button" w-60px h-32px rounded-6px cursor-pointer @click="toExport">导出</el-button>
       </div>
     </div>
-    <el-table :data="props.tableData" stripe empty-text="暂无数据" mt-40px w-full>
+    <el-table :data="props.tableData" stripe :empty-text="search ? '搜索结果为空' : '暂无数据'" mt-40px w-full>
       <el-table-column v-for="(column, index) in currentTable" :key="'tabColumn' + index" :prop="column.prop" :label="column.label" :width="column.width as number || undefined">
         <template #default="{ row }">
           <div flex items-center h-56px v-if="column.prop === 'creator'">
@@ -206,6 +230,11 @@ const toExport = () => {
   color: #262626;
   font-weight: 700;
 }
+:deep(.el-input) {
+  .is-focus {
+    border-color: #0bd07d !important;
+  }
+}
 .search {
   margin: 0 16px;
   width: 200px;
@@ -223,6 +252,22 @@ const toExport = () => {
     color: #009456;
     border-color: #009456;
     background-color: #fff;
+  }
+}
+:deep(.el-pagination) {
+  li,
+  button {
+    border-radius: 6px !important;
+    border: 1px solid #d9d9d9 !important;
+    background-color: #fff !important;
+    &:hover {
+      border-color: #0bd07d !important;
+      color: #0bd07d !important;
+    }
+  }
+  .is-active {
+    border: 1px solid #00b96b !important;
+    color: #00b96b !important;
   }
 }
 </style>

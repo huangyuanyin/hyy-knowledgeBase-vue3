@@ -11,6 +11,7 @@ const tableData = ref([])
 const searchName = ref('')
 const currentPage = ref(1)
 const total = ref(0)
+const range = ref(0)
 
 const getSpaceStatistic = async () => {
   let res = await getSpaceStatisticApi(infoStore.currentQuery.sid)
@@ -24,6 +25,7 @@ const getSpaceStatistic = async () => {
 const getSpaceMemberStatistic = async () => {
   const params = {
     name: searchName.value,
+    range: range.value,
     page: currentPage.value,
     pagesize: 10
   }
@@ -40,6 +42,7 @@ const getSpaceMemberStatistic = async () => {
 const getSpaceTeamStatistic = async () => {
   const params = {
     name: searchName.value,
+    range: range.value,
     page: currentPage.value,
     pagesize: 10
   }
@@ -55,6 +58,8 @@ const getSpaceTeamStatistic = async () => {
 
 const changeTab = (val: string) => {
   searchName.value = ''
+  currentPage.value = 1
+  range.value = 0
   switch (val) {
     case 'memberCol':
       getSpaceMemberStatistic()
@@ -67,25 +72,32 @@ const changeTab = (val: string) => {
 
 const toSearch = (val) => {
   searchName.value = val[1]
-  if (val[0] === 'memberCol') {
-    getSpaceMemberStatistic()
-  } else {
-    getSpaceTeamStatistic()
+  currentPage.value = 1
+  range.value = val[2] || 0
+  switch (val[0]) {
+    case 'memberCol':
+      getSpaceMemberStatistic()
+      break
+    case 'teamCol':
+      getSpaceTeamStatistic()
+      break
   }
 }
 
 const changePage = (val) => {
   currentPage.value = val[1]
-  if (val[0] === 'memberCol') {
-    getSpaceMemberStatistic()
-  } else {
-    getSpaceTeamStatistic()
+  switch (val[0]) {
+    case 'memberCol':
+      getSpaceMemberStatistic()
+      break
+    case 'teamCol':
+      getSpaceTeamStatistic()
+      break
   }
 }
 
 onMounted(async () => {
   await getSpaceStatistic()
-  await getSpaceTeamStatistic()
   await getSpaceMemberStatistic()
   tableData.value = memberListStatistic.value
 })
@@ -94,7 +106,7 @@ onMounted(async () => {
 <template>
   <div class="Statistics_wrap" max-w-1080px m-auto>
     <div class="header" mb-28px>
-      <span font-700 text-20px text="rgba(0, 0, 0, 0.85)">统计{{ total }}</span>
+      <span font-700 text-20px text="rgba(0, 0, 0, 0.85)">统计</span>
       <p text-14px mt-6px text="#8a8f8d">{{ new Date().toLocaleDateString() }}（实时更新当日数据，“--”表示暂无数据）</p>
     </div>
     <StatisticsCard :info="spaceStatistic" />

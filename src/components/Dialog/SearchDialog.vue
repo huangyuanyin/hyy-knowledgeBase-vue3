@@ -58,6 +58,7 @@ watch(
   (newVal: boolean) => {
     visible.value = newVal
     if (newVal) {
+      value.value = ''
       list.value[0].children[0].id = infoStore.currentSpaceInfo.id || JSON.parse(localStorage.getItem('personalSpaceInfo')).id
       const { spaceIcon } = useData()
       if (route.path.includes('/search')) {

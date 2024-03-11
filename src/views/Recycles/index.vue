@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { WarningFilled } from '@element-plus/icons-vue'
+import { WarningFilled, Search } from '@element-plus/icons-vue'
 import { contentType } from '@/data/data'
 import { getMyRecyclesApi, deleteMyRecyclesApi, recoverMyRecyclesApi } from '@/api/recycles'
 
@@ -17,6 +17,7 @@ const spaceId = ref('')
 const showHandleArticleDialog = ref(false)
 const recycleData = ref([])
 const handleData = ref(null)
+const name = ref('')
 
 watchEffect(() => {
   spaceId.value = infoStore.currentSpaceType === '个人' ? JSON.parse(localStorage.getItem('personalSpaceInfo')).id : infoStore.currentQuery?.sid
@@ -58,7 +59,8 @@ const handleRecover = async (data) => {
 
 const getMyRecycles = async () => {
   const params = {
-    space: spaceId.value
+    space: spaceId.value,
+    name: name.value
   }
   let res = await getMyRecyclesApi(params)
   if (res.code === 1000) {
@@ -98,11 +100,11 @@ onMounted(() => {
     <div class="header">
       <span>回收站</span>
       <div>
-        <el-input placeholder="搜索回收站" disabled></el-input>
+        <el-input v-model="name" @change="getMyRecycles" width="200px" clearable :prefix-icon="Search" placeholder="搜索回收站"></el-input>
       </div>
     </div>
     <div class="box">
-      <el-table :data="recycleData" style="width: 100%" empty-text="暂无数据">
+      <el-table :data="recycleData" style="width: 100%" :empty-text="name ? '搜索结果为空' : '暂无数据'">
         <el-table-column prop="name" label="名称">
           <template #default="{ row }">
             <div class="name">
@@ -161,7 +163,13 @@ onMounted(() => {
       display: flex;
       align-items: center;
       height: 32px;
+      :deep(.el-input) {
+        .is-focus {
+          border-color: #0bd07d !important;
+        }
+      }
       :deep(.el-input__wrapper) {
+        width: 10vw;
         border-radius: 6px;
         border: 1px solid #d9d9d9;
         box-shadow: none;

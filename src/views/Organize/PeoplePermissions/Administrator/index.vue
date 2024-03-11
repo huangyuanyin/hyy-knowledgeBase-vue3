@@ -105,7 +105,7 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .Administrator_wrap {
   margin: auto;
-  max-width: 1080px;
+  max-width: 124vh;
   .header {
     font-size: 20px;
     color: #262626;
@@ -117,7 +117,7 @@ onMounted(async () => {
     justify-content: space-between;
   }
   .box {
-    max-width: 1080px;
+    max-width: 124vh;
     .my_tag {
       margin-left: 8px;
       background-color: #eff0f0;

@@ -108,7 +108,7 @@ function initData() {
 <style lang="scss" scoped>
 .Basic_wrap {
   margin: auto;
-  max-width: 1080px;
+  max-width: 124vh;
   .header {
     font-size: 20px;
     color: #262626;
@@ -122,9 +122,12 @@ function initData() {
       :deep(.el-form-item__label) {
         line-height: 40px;
       }
-      .el-input {
+      :deep(.el-input) {
         height: 40px;
         max-width: 448px;
+        .is-focus {
+          border-color: #0bd07d !important;
+        }
       }
       :deep(.el-form-item.is-error .el-input__wrapper) {
         border-color: #f56c6c;

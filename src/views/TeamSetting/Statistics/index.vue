@@ -9,6 +9,10 @@ const teamMemberStatistic = ref([])
 const teamArticleStatistic = ref([])
 const teamBookStatistic = ref([])
 const teamTableData = ref([])
+const name = ref('')
+const range = ref(0)
+const total = ref(0)
+const currentPage = ref(1)
 const book = ref([
   {
     label: '知识库种类',
@@ -26,8 +30,39 @@ const book = ref([
   }
 ])
 
+const handleApi = async (val) => {
+  switch (val) {
+    case 'memberCol':
+      await getTeamMemberStatistic()
+      teamTableData.value = teamMemberStatistic.value
+      break
+    case 'bookCol':
+      await getTeamBookStatistic()
+      teamTableData.value = teamBookStatistic.value
+      break
+    case 'docCol':
+      await getTeamArticleStatistic()
+      teamTableData.value = teamArticleStatistic.value
+      break
+    default:
+      break
+  }
+}
+
+const toSearch = async (val) => {
+  currentPage.value = 1
+  name.value = val[1]
+  range.value = val[2] || 0
+  handleApi(val[0])
+}
+
+const changePage = (val) => {
+  currentPage.value = val[1]
+  handleApi(val[0])
+}
+
 const getTeamStatistic = async () => {
-  let res = await getTeamStatisticApi(infoStore.currentQuery.gid)
+  let res: any = await getTeamStatisticApi(infoStore.currentQuery.gid)
   if (res.code === 1000) {
     teamStatistic.value = res.data
     book.value[0].children[0].value = res.data.book_count
@@ -40,42 +75,71 @@ const getTeamStatistic = async () => {
 }
 
 const getTeamMemberStatistic = async () => {
-  let res = await getTeamMemberStatisticApi(infoStore.currentQuery.gid)
+  const parmas = {
+    name: name.value,
+    range: range.value,
+    page: currentPage.value,
+    pagesize: 10
+  }
+  let res: any = await getTeamMemberStatisticApi(infoStore.currentQuery.gid, parmas)
   if (res.code === 1000) {
     teamMemberStatistic.value = res.data
+    total.value = res.total
   } else {
     ElMessage.error(res.msg)
   }
 }
 
 const getTeamBookStatistic = async () => {
-  let res = await getTeamBookStatisticApi(infoStore.currentQuery.gid)
+  const parmas = {
+    name: name.value,
+    range: range.value,
+    page: currentPage.value,
+    pagesize: 10
+  }
+  let res: any = await getTeamBookStatisticApi(infoStore.currentQuery.gid, parmas)
   if (res.code === 1000) {
     teamBookStatistic.value = res.data
+    total.value = res.total
   } else {
     ElMessage.error(res.msg)
   }
 }
 
 const getTeamArticleStatistic = async () => {
-  let res = await getTeamArticleStatisticApi(infoStore.currentQuery.gid)
+  const parmas = {
+    title: name.value,
+    range: range.value,
+    page: currentPage.value,
+    pagesize: 10
+  }
+  let res: any = await getTeamArticleStatisticApi(infoStore.currentQuery.gid, parmas)
   if (res.code === 1000) {
     teamArticleStatistic.value = res.data
+    total.value = res.total
   } else {
     ElMessage.error(res.msg)
   }
 }
 
-const changeTab = (val: string) => {
+const changeTab = async (val: string) => {
+  range.value = 0
+  currentPage.value = 1
+  name.value = ''
   switch (val) {
     case 'memberCol':
+      await getTeamMemberStatistic()
       teamTableData.value = teamMemberStatistic.value
       break
     case 'bookCol':
+      await getTeamBookStatistic()
       teamTableData.value = teamBookStatistic.value
       break
     case 'docCol':
+      await getTeamArticleStatistic()
       teamTableData.value = teamArticleStatistic.value
+      break
+    default:
       break
   }
 }
@@ -83,8 +147,6 @@ const changeTab = (val: string) => {
 onMounted(async () => {
   await getTeamStatistic()
   await getTeamMemberStatistic()
-  await getTeamBookStatistic()
-  await getTeamArticleStatistic()
   teamTableData.value = teamMemberStatistic.value
 })
 </script>
@@ -112,7 +174,7 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-    <StatisticsTable :table-data="teamTableData" @changeTab="changeTab" />
+    <StatisticsTable :total="total" :table-data="teamTableData" @toSearch="toSearch" @changePage="changePage" @changeTab="changeTab" />
   </div>
 </template>
 

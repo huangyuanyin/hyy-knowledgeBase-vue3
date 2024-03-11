@@ -397,6 +397,12 @@ export const docTypeName = [
   { label: '文件', value: 'file', type: 'item', nick: 'toSearchDoc' }
 ]
 
+export const rangeList = [
+  { label: '全部', value: '0', type: 'item', nick: 'toSearchByRange' },
+  { label: '近三十天', value: '30', type: 'item', nick: 'toSearchByRange' },
+  { label: '一年', value: '365', type: 'item', nick: 'toSearchByRange' }
+]
+
 export const avatar = ref(
   (JSON.parse(localStorage.getItem('xinAn-userInfo')) && 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('xinAn-userInfo')).avatar) || '@/assets/img/img.jpg'
 )

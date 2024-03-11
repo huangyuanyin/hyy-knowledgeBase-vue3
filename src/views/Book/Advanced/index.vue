@@ -126,7 +126,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .Advanced_wrap {
   margin: auto;
-  max-width: 1080px;
+  max-width: 124vh;
   .header {
     font-size: 20px;
     color: #262626;

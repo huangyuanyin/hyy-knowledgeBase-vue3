@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import publicIcon from '@/assets/icons/library/publicIcon.svg'
 import { v4 as uuidv4 } from 'uuid'
-import { FormInstance } from 'element-plus'
+import { FormInstance, FormRules } from 'element-plus'
 import { getBookStacksApi } from '@/api/bookstacks'
 import { addLibraryApi } from '@/api/library'
 import { icon1 } from '@/data/iconBase64'
@@ -46,6 +46,12 @@ const libraryForm = reactive<RuleForm>({
   space: '',
   group: '1',
   stacks: ''
+})
+const rules = reactive<FormRules>({
+  name: [
+    { required: true, message: '请输入知识库名称，长度在 2-50 之间', trigger: 'blur' },
+    { min: 2, max: 50, message: '请输入知识库名称，长度在 2-50 之间', trigger: 'blur' }
+  ]
 })
 
 const { teamList: list, getTeamList } = useTeam()
@@ -216,7 +222,7 @@ const changeIcon = (val: string) => {
 
 <template>
   <el-dialog class="libraryDialog" v-model="dialogVisible" title="新建知识库" width="424" :before-close="toClose">
-    <el-form ref="libraryFormRef" :model="libraryForm" label-width="120px" label-position="top">
+    <el-form ref="libraryFormRef" :model="libraryForm" :rules="rules" label-width="120px" label-position="top">
       <el-form-item label="基本信息" prop="name">
         <div class="form-name">
           <SelectIconPopver @changeIcon="changeIcon">
@@ -356,6 +362,7 @@ const changeIcon = (val: string) => {
     height: 40px;
   }
   .form-description {
+    margin-top: 16px;
     margin-bottom: 24px;
   }
   .form-name {

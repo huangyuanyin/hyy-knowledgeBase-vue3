@@ -82,7 +82,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .TeamManage_wrap {
   margin: auto;
-  max-width: 1080px;
+  max-width: 124vh;
   .header {
     font-size: 20px;
     color: rgba(0, 0, 0, 0.85);
@@ -122,7 +122,7 @@ onMounted(() => {
     }
   }
   .box {
-    max-width: 1080px;
+    max-width: 124vh;
     .more {
       width: 24px;
       height: 24px;

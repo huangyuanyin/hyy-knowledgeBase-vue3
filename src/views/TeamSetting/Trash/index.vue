@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { Search } from '@element-plus/icons-vue'
 import { getTeamRecyclesApi, recoverTeamRecyclesApi, deleteTeamRecyclesApi } from '@/api/recycles'
 
 type RecycleData = {
@@ -10,6 +11,7 @@ type RecycleData = {
 
 const infoStore = useInfoStore()
 const recycleData: Ref<RecycleData[]> = ref([])
+const name = ref('')
 
 const toRecover = (row: RecycleData) => {
   recoverSpaceRecycles(row.id)
@@ -52,7 +54,8 @@ const deleteSpaceRecycles = async (id) => {
 
 const getSpaceRecycles = async () => {
   const params = {
-    group: infoStore.currentQuery?.gid
+    group: infoStore.currentQuery?.gid,
+    name: name.value
   }
   let res = await getTeamRecyclesApi(params)
   if (res.code === 1000) {
@@ -72,11 +75,11 @@ onMounted(() => {
     <div class="header">
       <span>回收站</span>
       <div>
-        <el-input placeholder="搜索回收站" disabled></el-input>
+        <el-input v-model="name" @change="getSpaceRecycles" width="200px" clearable :prefix-icon="Search" placeholder="搜索回收站"></el-input>
       </div>
     </div>
     <div class="box">
-      <el-table :data="recycleData" style="width: 100%" empty-text="暂无数据">
+      <el-table :data="recycleData" style="width: 100%" :empty-text="name ? '搜索结果为空' : '暂无数据'">
         <el-table-column label="名称">
           <template #default="{ row }">
             <div class="name">
@@ -109,7 +112,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .Trash_wrap {
   margin: auto;
-  max-width: 1080px;
+  max-width: 124vh;
   .header {
     font-size: 20px;
     color: rgba(0, 0, 0, 0.85);
@@ -123,7 +126,13 @@ onMounted(() => {
       display: flex;
       align-items: center;
       height: 32px;
+      :deep(.el-input) {
+        .is-focus {
+          border-color: #0bd07d !important;
+        }
+      }
       :deep(.el-input__wrapper) {
+        width: 10vw;
         border-radius: 6px;
         border: 1px solid #d9d9d9;
         box-shadow: none;
@@ -134,7 +143,7 @@ onMounted(() => {
     }
   }
   .box {
-    max-width: 1080px;
+    max-width: 124vh;
     :deep(.el-table__row) {
       height: 57px;
     }

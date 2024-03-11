@@ -156,7 +156,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .Basic_wrap {
   margin: auto;
-  max-width: 1080px;
+  max-width: 124vh;
   .header {
     font-size: 20px;
     color: #262626;
@@ -175,7 +175,10 @@ onMounted(() => {
         max-width: 448px;
       }
       :deep(.el-form-item.is-error .el-input__wrapper) {
-        border-color: #f56c6c;
+        border-color: #f56c6c !important;
+      }
+      :deep(.is-focus) {
+        border: 1px solid #0bd07d !important;
       }
       :deep(.el-input__wrapper),
       :deep(.el-textarea__inner) {

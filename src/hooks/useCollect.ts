@@ -17,8 +17,9 @@ export const useCollect = () => {
    * @param {number} id 标签id
    * @param {Callback} callback 回调函数
    */
-  const getCollectList = async (id?: number, callback?: Callback) => {
+  const getCollectList = async (id?: number, title = '', callback?: Callback) => {
     const params = {
+      title,
       tags_id: id,
       space: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).id,
       creator: user

@@ -7,6 +7,7 @@ import searchImg from '@/assets/img/search.png'
 const route = useRoute()
 const infoStore = useInfoStore()
 const isTip = ref(false)
+const loading = ref(false)
 const value = ref('')
 const list = ref([])
 const spaceRange = ref([
@@ -118,6 +119,7 @@ const handleTime = (val) => {
 const handleSpace = (val) => {
   scope.value = val.type
   scope_id.value = val.value
+  list.value = []
   getSearch()
 }
 
@@ -139,13 +141,24 @@ const getSearch = async () => {
   }
   scope_id.value === '0' && delete params.scope_id && (params.scope = 'all')
   time_horizon.value === '' && delete params.time_horizon
+  loading.value = true
   let res = await getSearchApi(params)
+  loading.value = false
   if (res.code === 1000) {
     list.value = res.data as any
   } else {
     ElMessage.error(res.msg)
     list.value = []
   }
+}
+
+const toLink = (item) => {
+  const baseUrl = import.meta.env.MODE === 'development' ? window.location.origin : import.meta.env.VITE_URL
+  window.open(
+    `${baseUrl}${infoStore.currentSpaceType === '个人' ? '' : `/#/${infoStore.currentSpaceInfo.spacekey}`}/directory/${item.type}?sid=${item.space}&sname=${item.space_name}&gid=${
+      item.group
+    }&gname=${item.group_name}&lid=${item.book}&lname=${item.book_name}&aid=${item.id}&aname=${item.title}`
+  )
 }
 </script>
 
@@ -222,10 +235,10 @@ const getSearch = async () => {
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-          <span flex items-center ml-18px cursor-pointer text-14px text="#262626">
+          <!-- <span flex items-center ml-18px cursor-pointer text-14px text="#262626">
             创建者
             <img ml-2px :src="arrowDownIcon2" alt="" />
-          </span>
+          </span> -->
           <el-dropdown trigger="click" @command="handleTime">
             <span flex items-center ml-18px cursor-pointer text-14px text="#262626">
               {{ getTimeLabel() }}
@@ -248,14 +261,14 @@ const getSearch = async () => {
         相关内容
         <span text-12px text="#8a8f8d" ml-6px>为你找到约 {{ list.length }} 个结果</span>
       </p>
-      <template v-if="list.length">
+      <template v-if="list.length && !loading">
         <div flex items-start flex-col v-for="(item, index) in list" :key="'list' + index">
           <div w-full flex items-start pt-20px pb-20px box-border border-b border-solid border="#0000000f">
             <span>
               <img w-26px h-26px mr-14px :src="judegeArticleType(item.type)" alt="" />
             </span>
             <div flex flex-col items-start>
-              <span line-22px text="16px #262626" mb-8px cursor-pointer>{{ item.title }}</span>
+              <span line-22px text="16px #262626" mb-8px cursor-pointer @click="toLink(item)">{{ item.title }}</span>
               <p v-html="highlightKeywords(item.abstract, value)" text="14px #262626" mb-8px></p>
               <p text="12px #8a8f8d" line-18px>
                 {{ item.book_name }}<span ml-12px>{{ item.update_datetime }}</span>
@@ -264,7 +277,7 @@ const getSearch = async () => {
           </div>
         </div>
       </template>
-      <div v-else p-40px>
+      <div v-if="!list.length && !loading" p-40px>
         <div h-66px mt-60px mb-30px flex items-center w-full justify-center>
           <img w-98px h-66px :src="searchImg" alt="" />
         </div>
@@ -273,6 +286,7 @@ const getSearch = async () => {
           <p>试试更换搜索范围，或更改查询词</p>
         </div>
       </div>
+      <Loading v-if="loading" text="数据量较大，正在努力搜索中..." height="70vh" />
     </template>
     <template v-else>
       <p text="#262626 14px" line-22px mt-12px>使用上方搜索框，开始搜索吧</p>

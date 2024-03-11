@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { Search } from '@element-plus/icons-vue'
 import spaceIcon from '@/assets/icons/spaceIcon.svg'
 import teamIcon from '@/assets/icons/teamIcon.svg'
 import imgIcon from '@/assets/img/img.jpg'
@@ -18,6 +19,7 @@ const stacksId = ref('')
 const bookId = ref('')
 const slug = ref('')
 const name = ref('')
+const searchName = ref('')
 const isShowAddBookMemberDialog = ref(false)
 const loadTable = ref(false)
 const publicType = ref('2')
@@ -107,9 +109,14 @@ const toChangePublic = (val) => {
   editBook(params)
 }
 
+const toSearch = () => {
+  getCollaborations()
+}
+
 const getCollaborations = async () => {
   const params = {
-    book: bookId.value
+    book: bookId.value,
+    name: searchName.value
   }
   loadTable.value = true
   const res = await getCollaborationsApi(params)
@@ -117,7 +124,11 @@ const getCollaborations = async () => {
   if (res.code === 1000) {
     memberList.value = res.data
     bookAdmin.value[0].avatar = 'http://10.4.150.56:8032/' + JSON.parse(sessionStorage.getItem('xinAn-teamInfo')).user.avatar
-    memberData.value = [...teamInfo.value, ...bookAdmin.value, ...memberList.value]
+    if (searchName.value) {
+      memberData.value = memberList.value
+    } else {
+      memberData.value = [...teamInfo.value, ...bookAdmin.value, ...memberList.value]
+    }
     if (bookAdmin.value[0].name === nickname) {
       isAdmin.value = true
     }
@@ -243,11 +254,20 @@ onMounted(() => {
         <div class="header">
           <span>知识库成员</span>
           <div>
-            <el-input disabled placeholder="搜索成员"></el-input>
+            <el-input v-model="searchName" @change="toSearch" width="200px" clearable :prefix-icon="Search" placeholder="搜索成员"></el-input>
             <el-button v-if="infoStore.currentSpaceType === '组织'" @click="isShowAddBookMemberDialog = true">添加</el-button>
           </div>
         </div>
-        <el-table :data="memberData" stripe style="width: 100%" min-height="100" max-height="80vh" v-loading="loadTable" element-loading-text="加载成员中...">
+        <el-table
+          :data="memberData"
+          stripe
+          style="width: 100%"
+          min-height="100"
+          max-height="80vh"
+          v-loading="loadTable"
+          element-loading-text="加载成员中..."
+          :empty-text="searchName ? '搜索结果为空' : '暂无数据'"
+        >
           <el-table-column prop="name" label="用户">
             <template #default="{ row }">
               <div class="cell">
@@ -294,15 +314,20 @@ onMounted(() => {
 <style lang="scss" scoped>
 .Collaborators_wrap {
   margin: auto;
-  max-width: 1080px;
+  max-width: 124vh;
   .header {
     font-size: 20px;
     color: #262626;
     line-height: 28px;
     margin-bottom: 28px;
+    :deep(.el-input) {
+      .is-focus {
+        border-color: #0bd07d !important;
+      }
+    }
   }
   .box {
-    max-width: 1080px;
+    max-width: 124vh;
     .publicity {
       margin-bottom: 56px;
       span {
