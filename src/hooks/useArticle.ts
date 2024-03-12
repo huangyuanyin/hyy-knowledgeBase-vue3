@@ -162,9 +162,11 @@ export const useArticle = () => {
       parent,
       book: book.id,
       space: space.value,
-      public: '2', // 空间所有成员都可以访问
-      pluginkey: pluginList[article.type].pluginkey,
-      pluginver: pluginList[article.type].pluginver
+      public: '2' // 空间所有成员都可以访问
+    }
+    if (['doc', 'sheet', 'mind', 'ppt'].includes(article.type)) {
+      params['pluginkey'] = pluginList[article.type].pluginkey
+      params['pluginver'] = pluginList[article.type].pluginver
     }
     article.type === 'title' && delete params.body
     let res = (await addArticleApi(params)) as ArticleRes<ArticleInfo>

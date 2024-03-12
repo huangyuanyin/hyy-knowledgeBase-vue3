@@ -58,6 +58,9 @@ const modifyRequestConfig = (config: AxiosRequestConfig): AxiosRequestConfig => 
       Authorization
     }
   }
+  if (url === 'mine/search/') {
+    config.timeout = 100000 * 100000
+  }
   if (method === 'get' && paramsHeaderState && params) {
     Object.entries(params).forEach(([key, element]) => {
       config.headers[key] = element

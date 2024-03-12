@@ -77,7 +77,7 @@ function initData() {
   time_horizon.value = ''
   scope.value = (infoStore.currentQuery?.scope as string) || ''
   scope_id.value = (infoStore.currentQuery?.scope_id as string) || ''
-  sub_type.value = "['all']"
+  sub_type.value = "['doc']"
   spaceRange.value[1].value = infoStore.currentQuery?.sid
   if (infoStore.currentQuery?.scope !== 'organization')
     spaceRange.value.push({
@@ -141,6 +141,7 @@ const getSearch = async () => {
   scope_id.value === '0' && delete params.scope_id && (params.scope = 'all')
   time_horizon.value === '' && delete params.time_horizon
   loading.value = true
+  list.value = []
   let res = await getSearchApi(params)
   loading.value = false
   if (res.code === 1000) {

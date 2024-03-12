@@ -36,6 +36,7 @@ const deptName = ref('') // 当前部门名称
 const memberList = ref([]) // 成员列表
 const memberTotal = ref(0) // 成员总数
 const selectMemberList = ref<DeptList[]>([]) // 已选择成员
+const searchName = ref('') // 搜索成员
 
 watch(
   () => props.isShow,
@@ -141,11 +142,37 @@ const arrayToTree = (list: DeptList[], id: string) => {
   })
   return result
 }
+
+const toSearch = async () => {
+  // const params = {
+  //   username: searchName.value
+  // }
+  // loadTable.value = true
+  // let res = await getDepartUserApi(params)
+  // loadTable.value = false
+  // if (res.code === 1000) {
+  //   if (props.spaceMember.length) {
+  //     memberList.value = res.data.filter((item) => {
+  //       return !props.spaceMember.some((v) => v.permusername === item.username)
+  //     })
+  //     memberList.value = memberList.value.filter((item) => {
+  //       return item.username !== user
+  //     })
+  //   }
+  //   memberTotal.value = memberList.value.length
+  // } else {
+  //   ElMessage.error(res.msg)
+  // }
+  ElMessage.warning('暂未开放')
+}
 </script>
 
 <template>
   <el-dialog class="memberDialog" v-model="dialogVisible" title="添加成员" width="900" :before-close="handleClose">
-    <p>仅展示<bold text-color="#f56c6c">非</bold>【{{ infoStore.currentQuery?.sname }}】空间的公司所有成员</p>
+    <div flex items-center justify-between mt="-20px" mb-28px>
+      <p>仅展示<bold text-color="#f56c6c">非</bold>【{{ infoStore.currentQuery?.sname }}】空间的公司所有成员</p>
+      <el-input v-model="searchName" @change="toSearch" placeholder="请输入成员名称" style="width: 300px" />
+    </div>
     <div class="container">
       <div class="container-left">
         <el-tree
@@ -281,10 +308,19 @@ const arrayToTree = (list: DeptList[], id: string) => {
 .memberDialog {
   border-radius: 8px;
   p {
-    margin-top: -20px;
-    margin-bottom: 28px;
     color: #8a8f8d;
     font-size: 14px;
+  }
+  .is-focus {
+    border-color: #0bd07d !important;
+  }
+  .el-input__wrapper {
+    border-radius: 6px;
+    border: 1px solid #d9d9d9;
+    box-shadow: none;
+    &:hover {
+      border-color: #0bd07d;
+    }
   }
   .el-dialog__header {
     border-bottom: none;

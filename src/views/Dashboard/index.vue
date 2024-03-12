@@ -10,6 +10,7 @@ const bookListDialogTitle = ref('')
 const docType = ref('updateDoc')
 const articleList = ref([])
 const isEmpty = ref(false)
+const isLoading = ref(false)
 
 const { articleList: list, getRecentDocList } = useArticle()
 
@@ -31,7 +32,9 @@ async function handleRecentDocList(type: string, target_type?: string) {
     target_type
   }
   !target_type && delete params.target_type
+  isLoading.value = true
   await getRecentDocList(params)
+  isLoading.value = false
   articleList.value = list.value
   if (target_type && !articleList.value.length) {
     isEmpty.value = true
@@ -108,8 +111,9 @@ onMounted(async () => {
       @changeModule="changeModule"
       @toSearchDoc="toSearchDoc"
     />
-    <TableComp v-if="!isEmpty" :data="articleList" :type="docType" />
-    <Empty v-else text="暂无内容" :img="empty" height="50vh" />
+    <TableComp v-if="!isEmpty && !isLoading" :data="articleList" :type="docType" />
+    <Empty v-if="isEmpty && !isLoading" text="暂无内容" :img="empty" height="50vh" />
+    <Loading v-if="isLoading" text="正在努力加载中..." height="50vh" />
   </div>
   <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
   <BookListDialog :show="isBookListDialog" @closeDialog="isBookListDialog = false" :title="bookListDialogTitle" />
