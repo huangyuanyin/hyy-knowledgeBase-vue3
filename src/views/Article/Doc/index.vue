@@ -13,7 +13,7 @@ watch(
   () => {
     isUpdate.value = false
     nextTick(() => {
-      if (infoStore.currentMenu === 'doc') {
+      if (infoStore.currentMenu === 'doc' && !sessionStorage.getItem('recoverVersion')) {
         getArticle()
       }
     })
@@ -31,8 +31,10 @@ watchEffect(() => {
   }
   setTimeout(() => {
     isUpdate.value = true
+  }, 500)
+  setTimeout(() => {
     sessionStorage.removeItem('recoverVersion')
-  }, 200)
+  }, 2000)
 })
 
 const getArticle = async () => {

@@ -12,44 +12,32 @@ const isPreview = ref(false)
 const iframeSrc = ref(`${import.meta.env.VITE_BASE_MINDMAP_URL}?time' + Date.now()`) // 8080：思维导图
 
 watch(
-  () => route.fullPath,
+  () => route.path.split('/').slice(-1)[0],
   () => {
-    sessionStorage.removeItem('recoverVersion')
-    nextTick(() => {
-      if (infoStore.currentMenu === 'mind' && !sessionStorage.getItem('recoverVersion')) {
-        getArticle(infoStore.currentQuery?.aid)
-      }
-    })
+    if (route.path.split('/').slice(-1)[0] !== 'edit') {
+      sessionStorage.removeItem('recoverVersion')
+    }
   },
   {
     immediate: true
   }
 )
 
-watch(
-  () => route.path.split('/').slice(-1)[0],
-  () => {
-    sessionStorage.removeItem('recoverVersion')
-    isPublish.value = false
-    if (route.path.split('/').slice(-1)[0] === 'edit' && !refreshStore.isRefreshMind && route.path.includes('mind') && !sessionStorage.getItem('recoverVersion')) {
-      nextTick(() => {
-        getArticle(infoStore.currentQuery?.aid)
-      })
-      refreshStore.setRefreshMind(false)
-    }
-  }
-)
-
 watchEffect(() => {
   route.path.split('/').slice(-1)[0] === 'edit' ? (isPreview.value = false) : (isPreview.value = true)
-  if (sessionStorage.getItem('recoverVersion')) {
+  if (infoStore.currentMenu === 'mind' && !refreshStore.isRefreshMind && !sessionStorage.getItem('recoverVersion')) {
+    nextTick(() => {
+      getArticle(infoStore.currentQuery?.aid)
+    })
+  }
+  if (refreshStore.isRefreshMind && sessionStorage.getItem('recoverVersion')) {
     isLoading.value = true
     modelValue.value = sessionStorage.getItem('recoverVersion')
     isLoading.value = false
     iframeSrc.value = null
-    iframeSrc.value = `${import.meta.env.VITE_BASE_MINDMAP_URL}?time' + Date.now()`
+    iframeSrc.value = `${import.meta.env.VITE_BASE_MINDMAP_URL}?time=' + ${Date.now()}`
     myIframe.value.contentWindow.postMessage({ type: 'getOldData', data: modelValue.value, isPreview: false }, '*')
-    sessionStorage.removeItem('recoverVersion')
+    refreshStore.setRefreshMind(false)
   }
 })
 

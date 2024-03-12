@@ -3,6 +3,7 @@ import Container from '../Components/Container.vue'
 
 const route = useRoute()
 const infoStore = useInfoStore()
+const refreshStore = useRefreshStore()
 const modelValue = ref('')
 const pptIframe = ref(null)
 const isPreview = ref(false)
@@ -11,19 +12,32 @@ const isPublish = ref(false)
 const iframeSrc = ref(import.meta.env.VITE_BASE_PPT_URL)
 
 watch(
-  () => route.fullPath,
+  () => route.path.split('/').slice(-1)[0],
   () => {
-    nextTick(() => {
-      if (route.path.includes('/ppt')) {
-        getArticle(infoStore.currentQuery.aid)
-      }
-      route.path.split('/').slice(-1)[0] === 'edit' ? (isPreview.value = false) : (isPreview.value = true)
-    })
+    if (route.path.split('/').slice(-1)[0] !== 'edit') {
+      sessionStorage.removeItem('recoverVersion')
+    }
   },
   {
     immediate: true
   }
 )
+
+watchEffect(() => {
+  route.path.split('/').slice(-1)[0] === 'edit' ? (isPreview.value = false) : (isPreview.value = true)
+  if (infoStore.currentMenu === 'ppt' && !refreshStore.isRefreshPPT && !sessionStorage.getItem('recoverVersion')) {
+    nextTick(() => {
+      getArticle(infoStore.currentQuery?.aid)
+    })
+  }
+  if (refreshStore.isRefreshPPT && sessionStorage.getItem('recoverVersion')) {
+    iframeSrc.value = null
+    iframeSrc.value = `${import.meta.env.VITE_BASE_PPT_URL}?time=' + ${Date.now()}`
+    sendMessageToIframe(JSON.parse(JSON.stringify(sessionStorage.getItem('recoverVersion'))))
+    isPublish.value = false
+    refreshStore.setRefreshPPT(false)
+  }
+})
 
 const toPublish = (val) => {
   if (val === 'ppt') {

@@ -17,6 +17,7 @@ const emit = defineEmits(['closeDialog'])
 
 const route = useRoute()
 const router = useRouter()
+const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
 const dialogVisible = ref(false)
 const tabName = ref('version')
@@ -106,7 +107,8 @@ const toRecoverVersion = async () => {
     }
   })
   sessionStorage.setItem('recoverVersion', selectVersion.value.body)
-  refreshStore.setRefreshMind(true)
+  infoStore.currentMenu === 'mind' && refreshStore.setRefreshMind(true)
+  infoStore.currentMenu === 'ppt' && refreshStore.setRefreshPPT(true)
 }
 
 const isreload = ref(false)
