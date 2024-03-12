@@ -403,6 +403,25 @@ export const rangeList = [
   { label: '一年', value: '365', type: 'item', nick: 'toSearchByRange' }
 ]
 
+export const pluginList = {
+  doc: {
+    pluginkey: 'tinymce',
+    pluginver: '6.7.3'
+  },
+  sheet: {
+    pluginkey: 'luckysheet',
+    pluginver: '2.1.13'
+  },
+  mind: {
+    pluginkey: 'simple-mind-map',
+    pluginver: '0.9.0'
+  },
+  ppt: {
+    pluginkey: 'pptist',
+    pluginver: '0.0.1'
+  }
+}
+
 export const avatar = ref(
   (JSON.parse(localStorage.getItem('xinAn-userInfo')) && 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('xinAn-userInfo')).avatar) || '@/assets/img/img.jpg'
 )

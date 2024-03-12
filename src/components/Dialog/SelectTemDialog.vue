@@ -4,7 +4,7 @@ import closeIcon from '@/assets/icons/closeIcon.svg'
 import emptyImg from '@/assets/img/empty-tem.png'
 // import more2Icon from '@/assets/icons/more2.svg'
 import deleteIcon from '@/assets/icons/deleteIcon.svg'
-import { contentType } from '@/data/data'
+import { contentType, pluginList } from '@/data/data'
 import { addArticleApi, getArticleTemApi, deleteArticleTemApi } from '@/api/article'
 import { user } from '@/data/data'
 
@@ -169,7 +169,9 @@ const toAddArticle = async (val) => {
     parent: props.parent,
     book: val.id,
     space: (infoStore.currentQuery && infoStore.currentQuery?.sid) || JSON.parse(localStorage.getItem('personalSpaceInfo')).id,
-    public: '1'
+    public: '1',
+    pluginkey: pluginList[selectTem.value.content_type].pluginkey,
+    pluginver: pluginList[selectTem.value.content_type].pluginver
   }
   let res: any = await addArticleApi(params)
   if (res.code === 1000) {

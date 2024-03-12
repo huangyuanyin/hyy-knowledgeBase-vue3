@@ -15,6 +15,7 @@ import { ArticleType, Callback } from '@/type/type'
 import { ArticleInfo } from '@/type/article'
 import { ArticleRes, RecentArticleParams } from '@/api/article/type'
 import { ArticleParams } from '@/api/article/type'
+import { pluginList } from '@/data/data'
 
 export const useArticle = () => {
   const infoStore = useInfoStore()
@@ -161,7 +162,9 @@ export const useArticle = () => {
       parent,
       book: book.id,
       space: space.value,
-      public: '2' // 空间所有成员都可以访问
+      public: '2', // 空间所有成员都可以访问
+      pluginkey: pluginList[article.type].pluginkey,
+      pluginver: pluginList[article.type].pluginver
     }
     article.type === 'title' && delete params.body
     let res = (await addArticleApi(params)) as ArticleRes<ArticleInfo>

@@ -227,7 +227,7 @@ const toHandle = async (item: any) => {
         const data = {
           id: Number(infoStore.currentQuery?.aid),
           title: infoStore.currentQuery?.aname,
-          type: route.path.split('/').slice(-2)[0]
+          type: route.path.split('/').slice(-2)[0] !== 'directory' ? route.path.split('/').slice(-2)[0] : route.path.split('/').slice(-1)[0]
         }
         useLinkHooks().handleArticleTypeLink(data, true)
       }
