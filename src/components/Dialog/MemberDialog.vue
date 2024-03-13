@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import memberIcon from '@/assets/icons/user/memberIcon.svg'
 import { addSpacepermissionsApi } from '@/api/spacepermissions'
-import { getDepartmentsApi, getDepartUserApi } from '@/api/user'
+import { getDepartmentsApi, getDepartUserApi, getUserApi } from '@/api/user'
 import { ElTable } from 'element-plus'
 
 interface DeptList {
@@ -36,13 +36,16 @@ const deptName = ref('') // 当前部门名称
 const memberList = ref([]) // 成员列表
 const memberTotal = ref(0) // 成员总数
 const selectMemberList = ref<DeptList[]>([]) // 已选择成员
-const searchName = ref('') // 搜索成员
+const searchName = ref([]) // 搜索成员
+const searchList = ref([]) // 搜索成员列表
+const searchloading = ref(false) // 搜索成员loading
 
 watch(
   () => props.isShow,
   async (newVal: boolean) => {
     dialogVisible.value = newVal
     if (dialogVisible.value) {
+      searchName.value = []
       await getDepartments()
       await getDepartUser(deptId.value)
     }
@@ -51,7 +54,7 @@ watch(
 
 const handleSubmit = async () => {
   try {
-    addSpacepermissions()
+    addSpacepermissions('all')
   } catch (error) {
     // error
   }
@@ -72,19 +75,20 @@ const toChangeDeptId = (data: DeptList) => {
 
 const handleSelectionChange = (val) => {
   selectMemberList.value = val
-  console.log(`output->selectMemberList.value`, selectMemberList.value)
 }
 
 // 添加空间成员
-const addSpacepermissions = async () => {
+const addSpacepermissions = async (type) => {
   const params = {
     permusername: [],
     space: infoStore.currentQuery?.sid,
     permtype: '1'
   }
-  selectMemberList.value.forEach((item) => {
-    params.permusername.push(item.username)
-  })
+  type === 'all' &&
+    selectMemberList.value.forEach((item) => {
+      params.permusername.push(item.username)
+    })
+  type === 'some' && (params.permusername = searchName.value)
   let res = await addSpacepermissionsApi(params)
   if (res.code === 1000) {
     ElMessage.success('添加成功')
@@ -143,27 +147,24 @@ const arrayToTree = (list: DeptList[], id: string) => {
   return result
 }
 
-const toSearch = async () => {
-  // const params = {
-  //   username: searchName.value
-  // }
-  // loadTable.value = true
-  // let res = await getDepartUserApi(params)
-  // loadTable.value = false
-  // if (res.code === 1000) {
-  //   if (props.spaceMember.length) {
-  //     memberList.value = res.data.filter((item) => {
-  //       return !props.spaceMember.some((v) => v.permusername === item.username)
-  //     })
-  //     memberList.value = memberList.value.filter((item) => {
-  //       return item.username !== user
-  //     })
-  //   }
-  //   memberTotal.value = memberList.value.length
-  // } else {
-  //   ElMessage.error(res.msg)
-  // }
-  ElMessage.warning('暂未开放')
+const toSearch = async (query: string) => {
+  if (query) {
+    const params = {
+      name: query,
+      page: 1,
+      pagesize: 10000
+    }
+    searchloading.value = true
+    let res = await getUserApi(params)
+    searchloading.value = false
+    if (res.code === 1000) {
+      searchList.value = res.data
+    } else {
+      ElMessage.error(res.msg)
+    }
+  } else {
+    searchList.value = []
+  }
 }
 </script>
 
@@ -171,7 +172,36 @@ const toSearch = async () => {
   <el-dialog class="memberDialog" v-model="dialogVisible" title="添加成员" width="900" :before-close="handleClose">
     <div flex items-center justify-between mt="-20px" mb-28px>
       <p>仅展示<bold text-color="#f56c6c">非</bold>【{{ infoStore.currentQuery?.sname }}】空间的公司所有成员</p>
-      <el-input v-model="searchName" @change="toSearch" placeholder="请输入成员名称" style="width: 300px" />
+      <el-select
+        v-model="searchName"
+        multiple
+        filterable
+        clearable
+        remote
+        reserve-keyword
+        placeholder="搜索成员名称"
+        :remote-method="toSearch"
+        :loading="searchloading"
+        :max-collapse-tags="4"
+        style="min-width: 240px; max-width: 20vw"
+      >
+        <el-option v-for="item in searchList" :key="item.id" :label="item.name" :value="item.username">
+          <div flex items-center>
+            <img :src="'http://10.4.150.56:8032/' + item.avatar" w-24px h-24px mr-4px />
+            <span>{{ item.name }}</span>
+            <span>
+              （<span>{{ item.post_name }}）</span>
+            </span>
+            <span mr-10px ml-10px>-</span>
+            <span>{{ item.dept_name }}</span>
+          </div>
+        </el-option>
+        <template #footer>
+          <el-button style="float: right; background-color: '#00b968'" size="small" class="submit2" border-none color="#fff" @click="addSpacepermissions('some')">
+            添加所选成员
+          </el-button>
+        </template>
+      </el-select>
     </div>
     <div class="container">
       <div class="container-left">
@@ -305,16 +335,31 @@ const toSearch = async () => {
 </style>
 
 <style lang="scss">
+.submit2 {
+  border: none !important;
+  background-color: #00b968 !important;
+  color: #fff !important;
+  margin-bottom: 10px;
+  &:hover {
+    cursor: pointer !important;
+    background-color: #009456 !important;
+  }
+}
 .memberDialog {
   border-radius: 8px;
   p {
     color: #8a8f8d;
     font-size: 14px;
   }
-  .is-focus {
+  .is-focus,
+  .is-focused {
     border-color: #0bd07d !important;
   }
-  .el-input__wrapper {
+  .el-select__input {
+    margin-left: 0px;
+  }
+  .el-input__wrapper,
+  .el-select__wrapper {
     border-radius: 6px;
     border: 1px solid #d9d9d9;
     box-shadow: none;
