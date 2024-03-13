@@ -38,6 +38,7 @@ const dataSource = ref([]) // 目录树
 const selectTeamName = ref('')
 const teamList = ref([])
 const bookList = ref([])
+const isDisabled = ref(false)
 const pinPosition = ref('0') // 0：置顶 1：选中 2：置底
 const levelType = ref('2') // 1：同级 2：子级
 const treeProps = {
@@ -52,6 +53,7 @@ watch(
   async (newVal: boolean) => {
     visible.value = newVal
     if (newVal) {
+      isDisabled.value = false
       if (visible.value && props.title !== '恢复文档') {
         await initData()
         if (infoStore.currentSpaceType === '组织') {
@@ -169,6 +171,7 @@ const copyArticle = async () => {
     with_children: with_children.value,
     action: levelType.value === '1' ? 'moveAfter' : 'prependChild'
   }
+  isDisabled.value = true
   let res = await copyArticleApi(params)
   if (res.code === 1000) {
     ElMessage.success('复制成功')
@@ -179,6 +182,7 @@ const copyArticle = async () => {
     refreshStroe.setRefreshBookList(true)
     refreshStroe.setRefreshTitleTreeName(true)
   } else {
+    isDisabled.value = false
     ElMessage.error(res.msg)
   }
 }
@@ -193,6 +197,7 @@ const moveArticle = async () => {
     with_children: with_children.value,
     action: levelType.value === '1' ? 'moveAfter' : 'prependChild'
   }
+  isDisabled.value = true
   let res = await moveArticleApi(params)
   if (res.code === 1000) {
     ElMessage.success('移动成功')
@@ -203,6 +208,7 @@ const moveArticle = async () => {
     refreshStroe.setRefreshBookList(true)
     refreshStroe.setRefreshTitleTreeName(true)
   } else {
+    isDisabled.value = false
     ElMessage.error(res.msg)
   }
 }
@@ -236,7 +242,7 @@ const getBook = async () => {
     if (teamId.value !== Number(infoStore.currentQuery?.gid) && infoStore.currentSpaceType === '组织') {
       bookId.value = bookList.value.length > 0 ? bookList.value[0].id : null
     } else {
-      bookId.value = infoStore.currentQuery?.lid || props.data.book
+      bookId.value = Number(infoStore.currentQuery?.lid) || props.data.book
     }
     if (bookId.value === null) return (dataSource.value = [])
     getArticle()
@@ -357,7 +363,7 @@ const getBook = async () => {
         <el-checkbox v-if="props.title !== '恢复文档'" v-model="with_children" label="包含子文档" size="large" />
         <div>
           <el-button @click="closeDialog">取消</el-button>
-          <el-button type="success" @click="toSubmit" :disabled="!bookList.length">确认</el-button>
+          <el-button type="success" @click="toSubmit" :disabled="!bookList.length || isDisabled">确认</el-button>
         </div>
       </span>
     </template>

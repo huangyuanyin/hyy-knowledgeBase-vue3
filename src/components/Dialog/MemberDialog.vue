@@ -39,6 +39,7 @@ const selectMemberList = ref<DeptList[]>([]) // 已选择成员
 const searchName = ref([]) // 搜索成员
 const searchList = ref([]) // 搜索成员列表
 const searchloading = ref(false) // 搜索成员loading
+const selectName = ref([]) // 搜索成员名称
 
 watch(
   () => props.isShow,
@@ -48,6 +49,15 @@ watch(
       searchName.value = []
       await getDepartments()
       await getDepartUser(deptId.value)
+    }
+  }
+)
+
+watch(
+  () => searchName.value,
+  (newVal) => {
+    if (!newVal.length) {
+      selectName.value = []
     }
   }
 )
@@ -166,6 +176,25 @@ const toSearch = async (query: string) => {
     searchList.value = []
   }
 }
+
+const toAddMember = (val) => {
+  let arr = []
+  val.forEach((item) => {
+    searchList.value.forEach((v) => {
+      if (item === v.username) {
+        arr.push({ name: v.name, username: v.username })
+      }
+    })
+  })
+  arr.forEach((item) => {
+    selectName.value.push(item)
+  })
+  selectName.value = selectName.value.filter((item, index) => selectName.value.findIndex((obj) => JSON.stringify(obj) === JSON.stringify(item)) === index)
+}
+
+const toRemoveMember = (val) => {
+  selectName.value = selectName.value.filter((v) => v.username !== val)
+}
 </script>
 
 <template>
@@ -180,10 +209,15 @@ const toSearch = async (query: string) => {
         remote
         reserve-keyword
         placeholder="搜索成员名称"
+        loading-text="搜索中..."
+        no-match-text="搜索内容为空"
+        no-data-text="无数据"
         :remote-method="toSearch"
         :loading="searchloading"
         :max-collapse-tags="4"
         style="min-width: 240px; max-width: 20vw"
+        @change="toAddMember"
+        @remove-tag="toRemoveMember"
       >
         <el-option v-for="item in searchList" :key="item.id" :label="item.name" :value="item.username">
           <div flex items-center>
@@ -197,6 +231,7 @@ const toSearch = async (query: string) => {
           </div>
         </el-option>
         <template #footer>
+          <el-tag v-for="(item, index) in selectName" :key="'searchName' + index">{{ item.name }}</el-tag>
           <el-button style="float: right; background-color: '#00b968'" size="small" class="submit2" border-none color="#fff" @click="addSpacepermissions('some')">
             添加所选成员
           </el-button>

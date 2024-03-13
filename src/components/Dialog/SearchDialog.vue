@@ -7,7 +7,6 @@ import publicIcon from '@/assets/icons/library/publicIcon.svg'
 import { useBook } from '@/hooks/useBook'
 import { useTeam } from '@/hooks/useTeam'
 import { useData } from '@/hooks/useData'
-import SparkMD5 from 'spark-md5'
 
 const props = defineProps({
   show: {
@@ -27,6 +26,14 @@ const selectedIndex = ref(0)
 const listContainer = ref<HTMLElement | null>(null)
 const list = ref<any[]>([
   {
+    label: '搜索范围：知识库',
+    children: []
+  },
+  {
+    label: '搜索范围：团队',
+    children: []
+  },
+  {
     label: '搜索范围：空间',
     children: [
       {
@@ -42,14 +49,6 @@ const list = ref<any[]>([
         icon: publicAreaIcon
       }
     ]
-  },
-  {
-    label: '搜索范围：知识库',
-    children: []
-  },
-  {
-    label: '搜索范围：团队',
-    children: []
   }
 ])
 
@@ -59,20 +58,17 @@ watch(
     visible.value = newVal
     if (newVal) {
       value.value = ''
-      list.value[0].children[0].id = infoStore.currentSpaceInfo.id || JSON.parse(localStorage.getItem('personalSpaceInfo')).id
+      list.value[2].children[0].id = infoStore.currentSpaceInfo.id || JSON.parse(localStorage.getItem('personalSpaceInfo')).id
       const { spaceIcon } = useData()
       if (route.path.includes('/search')) {
         value.value = infoStore.currentQuery.q ? (infoStore.currentQuery.q as string) : ''
-        selectId.value = `${infoStore.currentQuery.scope_id}${infoStore.currentQuery.scope_name}`
-      } else {
-        selectId.value = String(infoStore.currentSpaceInfo.id || JSON.parse(localStorage.getItem('personalSpaceInfo')).id) + list.value[0].children[0].name
       }
       handleBookList()
       if (infoStore.currentSpaceType === '组织') {
         handleTeamList()
       } else {
-        list.value[0].children[0].id = infoStore.currentQuery?.sid
-        list.value[0].children[0].icon = spaceIcon.value
+        list.value[2].children[0].id = infoStore.currentQuery?.sid
+        list.value[2].children[0].icon = spaceIcon.value
       }
       if (infoStore.currentSpaceType === '个人') list.value.pop()
     }
@@ -83,13 +79,18 @@ async function handleBookList() {
   const { bookList, getBookList } = useBook()
   const { user } = await useData()
   await getBookList({ space: infoStore.currentQuery?.sid, permusername: user.value })
-  list.value[1].children = bookList.value
+  list.value[0].children = bookList.value
+  if (route.path.includes('/search')) {
+    selectId.value = `${infoStore.currentQuery.scope_id}${infoStore.currentQuery.scope_name}`
+  } else {
+    selectId.value = `${bookList.value[0].id}${bookList.value[0].name}`
+  }
 }
 
 async function handleTeamList() {
   const { teamList, getTeamList } = useTeam()
   await getTeamList()
-  list.value[2].children = teamList.value.map((item) => {
+  list.value[1].children = teamList.value.map((item) => {
     const { groupname, ...rest } = item
     return { ...rest, name: groupname }
   })
