@@ -84,7 +84,7 @@ const addCommon = async (val) => {
     target_type: 'book',
     slug: val.slug,
     space: val.space,
-    user
+    user: JSON.parse(localStorage.getItem('xinAn-userInfo')).username
   }
   canOperate = false
   let res = await addQuickLinksApi(params)

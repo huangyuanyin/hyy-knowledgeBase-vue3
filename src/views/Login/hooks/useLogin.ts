@@ -35,13 +35,6 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
       ElMessage.success('登录成功')
       infoStore.setCurrentSpaceType('个人')
       await getSpaces()
-      if (sessionStorage.getItem('to')) {
-        let to = sessionStorage.getItem('to')
-        sessionStorage.removeItem('to')
-        window.open(to as string, '_self')
-      } else {
-        router.push({ path: '/' })
-      }
     } else {
       showError(res.msg)
     }
@@ -81,8 +74,12 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
     }
     let res = await getSpacesApi(params)
     if (res.code === 1000) {
-      if (res.data.length > 0) return localStorage.setItem('personalSpaceInfo', JSON.stringify(res.data[0]))
-      addSpace()
+      if (res.data.length > 0) {
+        localStorage.setItem('personalSpaceInfo', JSON.stringify(res.data[0]))
+        handleTo()
+      } else {
+        addSpace()
+      }
     } else {
       ElMessage.error(res.msg)
     }
@@ -100,8 +97,19 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
     if (res.code === 1000) {
       localStorage.setItem('personalSpaceInfo', JSON.stringify(res.data))
       infoStore.setCurrentSpaceInfo(res.data)
+      handleTo()
     } else {
       ElMessage.error(res.msg)
+    }
+  }
+
+  const handleTo = () => {
+    if (sessionStorage.getItem('to')) {
+      let to = sessionStorage.getItem('to')
+      sessionStorage.removeItem('to')
+      window.open(to as string, '_self')
+    } else {
+      router.push({ path: '/' })
     }
   }
 

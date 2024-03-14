@@ -695,7 +695,7 @@ const handleDrop = (draggingNode, dropNode, dropType) => {
         }
         .el-icon {
           border-radius: 6px;
-          margin-right: 4px;
+          // margin-right: 4px;
           &:hover {
             background-color: #d8dad9;
           }
@@ -703,6 +703,7 @@ const handleDrop = (draggingNode, dropNode, dropType) => {
       }
 
       .list-node {
+        padding-left: 4px;
         width: calc(100% - 24px);
         height: 100%;
         display: flex;
