@@ -388,6 +388,15 @@ export const contentType = ref({
   file: fileIcon
 })
 
+export const contentTypeName = ref({
+  title: '分组',
+  doc: '文档',
+  sheet: '表格',
+  mind: '脑图',
+  ppt: '幻灯片',
+  file: '文件'
+})
+
 export const docTypeName = [
   { label: '所有', value: '', type: 'item', nick: 'toSearchDoc' },
   { label: '文档', value: 'doc', type: 'item', nick: 'toSearchDoc' },

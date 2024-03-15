@@ -19,3 +19,7 @@ export function editGroupsApi(data: groupsParams, id?: number) {
 export function deleteGroupsApi(id?: number) {
   return http.delete<groupsRes>(`space/groups/${id}/`, {}, 'base')
 }
+
+export function getGroupActiviteApi(id?: number) {
+  return http.get<groupsRes>(`group/activities/${id}/`, {}, 'base')
+}

@@ -74,7 +74,8 @@ const toBack = () => {
         <template #default="{ data }">
           <span class="custom-tree-node">
             <div>
-              <img :src="data.icon" alt="" />
+              <img v-if="data.icon" :src="data.icon" alt="" />
+              <span v-else w-16px></span>
               <span class="name">{{ data.title }}</span>
             </div>
             <span class="rightIcon" v-if="data.children.length">
