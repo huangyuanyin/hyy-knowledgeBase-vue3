@@ -57,7 +57,7 @@ const editConfig = ref({
 watch(
   () => props.body,
   async () => {
-    handleCreateSheet()
+    handleCreateSheet(true)
   }
 )
 
@@ -106,7 +106,7 @@ const handleCreateSheet = async (isDestory?: boolean) => {
 
 onMounted(async () => {
   if (!props.isTem) {
-    handleCreateSheet(true)
+    // handleCreateSheet(true)
   } else {
     createFromTemLuckysheet()
   }

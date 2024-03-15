@@ -267,8 +267,8 @@ const toLink = (item) => {
             <span>
               <img w-26px h-26px mr-14px :src="judegeArticleType(item.type)" alt="" />
             </span>
-            <div flex flex-col items-start h-32px>
-              <span line-32px text="16px #262626" mb-8px cursor-pointer @click="toLink(item)">{{ item.title }}</span>
+            <div flex flex-col items-start>
+              <span line-32px box-border text="16px #262626" mb-8px cursor-pointer @click="toLink(item)">{{ item.title }}</span>
               <p v-html="highlightKeywords(item.abstract, value)" text="14px #262626" mb-8px></p>
               <p text="12px #8a8f8d" line-18px>
                 {{ item.book_name }}<span ml-12px>{{ item.update_datetime }}</span>

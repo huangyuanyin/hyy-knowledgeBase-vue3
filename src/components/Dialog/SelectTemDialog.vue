@@ -72,6 +72,9 @@ watch(
       iframeSrc.value = `${import.meta.env.VITE_BASE_PPT_URL}?timestamp=` + Date.now()
     } else if (newVal.content_type === 'mind') {
       iframeSrc.value = `${import.meta.env.VITE_BASE_MINDMAP_URL}?timestamp=` + Date.now()
+    } else if (newVal.content_type === 'sheet') {
+      sessionStorage.setItem('getSheetData', newVal.body)
+      iframeSrc.value = `${import.meta.env.VITE_BASE_SHEET_URL}?timestamp=` + Date.now()
     }
     nextTick(() => {
       sendMessageToIframe(selectTem.value.body)
@@ -218,9 +221,9 @@ const handleClose = async () => {
     <div class="box">
       <div class="left">
         <MavonEditor v-if="selectTem.content_type === 'doc'" :html="selectTem.body" :navigation="false" />
-        <Excel v-if="selectTem.content_type === 'sheet'" :body="selectTem.body" :isPreview="true" :isTem="Date.now()" :isreload="isreload" />
+        <!-- <Excel v-if="selectTem.content_type === 'sheet'" :body="selectTem.body" :isPreview="true" :isTem="Date.now()" :isreload="isreload" /> -->
         <iframe
-          v-if="['ppt', 'mind'].includes(selectTem.content_type)"
+          v-if="['ppt', 'mind', 'sheet'].includes(selectTem.content_type)"
           class="iframe"
           ref="temIframe"
           :src="iframeSrc"

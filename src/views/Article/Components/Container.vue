@@ -210,6 +210,7 @@ const toHandle = async (item: any) => {
       // useCopy(url, '分享链接')
       break
     case '发布':
+      sessionStorage.removeItem('getSheetData')
       if (route.path.includes('ppt') || route.path.includes('mind')) {
         emit('toPublish', route.path.split('/').slice(-2)[0])
         return

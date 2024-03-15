@@ -11,6 +11,7 @@ export const useRefreshStore = defineStore('refresh', () => {
   const isRefreshSpaceSet = ref(false) // 刷新空间设置
   const isRefreshMind = ref(false) // 刷新思维导图
   const isRefreshPPT = ref(false) // 刷新PPT
+  const isRefreshSheet = ref(false) // 刷新表格
   const isRefreshMark = ref(false) // 刷新收藏
   const isRefreshUserInfo = ref(false) // 刷新用户信息
   const isRefreshTitleTreeName = ref(false) // 刷新分组名称树
@@ -63,6 +64,10 @@ export const useRefreshStore = defineStore('refresh', () => {
     isRefreshPPT.value = val
   }
 
+  const setRefreshSheet = (val: boolean) => {
+    isRefreshSheet.value = val
+  }
+
   const setRefreshMark = (val: boolean) => {
     isRefreshMark.value = val
   }
@@ -100,6 +105,8 @@ export const useRefreshStore = defineStore('refresh', () => {
     setRefreshMind,
     isRefreshPPT,
     setRefreshPPT,
+    isRefreshSheet,
+    setRefreshSheet,
     isRefreshMark,
     setRefreshMark,
     isRefreshUserInfo,

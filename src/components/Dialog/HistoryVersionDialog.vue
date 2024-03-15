@@ -52,6 +52,9 @@ watch(
       iframeSrc.value = `${import.meta.env.VITE_BASE_PPT_URL}?timestamp=` + Date.now()
     } else if (selectVersion.value.type === 'mind') {
       iframeSrc.value = `${import.meta.env.VITE_BASE_MINDMAP_URL}?timestamp=` + Date.now()
+    } else if (selectVersion.value.type === 'sheet') {
+      sessionStorage.setItem('getSheetData', selectVersion.value.body)
+      iframeSrc.value = `${import.meta.env.VITE_BASE_SHEET_URL}?timestamp=` + Date.now()
     }
     nextTick(() => {
       sendMessageToIframe(selectVersion.value.body)
@@ -106,9 +109,14 @@ const toRecoverVersion = async () => {
       ...route.query
     }
   })
-  sessionStorage.setItem('recoverVersion', selectVersion.value.body)
-  infoStore.currentMenu === 'mind' && refreshStore.setRefreshMind(true)
-  infoStore.currentMenu === 'ppt' && refreshStore.setRefreshPPT(true)
+  if (infoStore.currentMenu === 'sheet') {
+    sessionStorage.setItem('getSheetData', selectVersion.value.body)
+    refreshStore.setRefreshSheet(true)
+  } else if (infoStore.currentMenu === 'mind' || infoStore.currentMenu === 'ppt') {
+    sessionStorage.setItem('recoverVersion', selectVersion.value.body)
+    infoStore.currentMenu === 'mind' && refreshStore.setRefreshMind(true)
+    infoStore.currentMenu === 'ppt' && refreshStore.setRefreshPPT(true)
+  }
 }
 
 const isreload = ref(false)
@@ -210,9 +218,9 @@ const handleRename = async (val) => {
       </div>
       <div class="preview" v-if="selectVersion">
         <MavonEditor v-if="selectVersion.type === 'doc'" :html="selectVersion.body" :navigation="false" />
-        <Excel v-if="selectVersion.type === 'sheet'" :body="selectVersion.body" :isPreview="true" :isTem="Date.now()" :isreload="isreload" />
+        <!-- <Excel v-if="selectVersion.type === 'sheet'" :body="selectVersion.body" :isPreview="true" :isTem="Date.now()" :isreload="isreload" /> -->
         <iframe
-          v-if="['ppt', 'mind'].includes(selectVersion.type)"
+          v-if="['ppt', 'mind', 'sheet'].includes(selectVersion.type)"
           class="iframe"
           ref="temIframe"
           :src="iframeSrc"
