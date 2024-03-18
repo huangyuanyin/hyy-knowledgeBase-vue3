@@ -5,6 +5,7 @@ import linkTypeIcon from '@/assets/icons/linkType.svg'
 import fileTypeIcon from '@/assets/icons/fileType.svg'
 import { sidebarSearchMenuItemsData, directorySidebarOperationData } from '@/data/data'
 import { useLinkHooks } from '@/hooks/useLink'
+import { addArticleApi } from '@/api/article'
 
 const route = useRoute()
 const routeInfo = {
@@ -20,6 +21,9 @@ const group_name = ref<string>('')
 const nickName = ref<string>(infoStore.currentSpaceInfo.spacekey || route.fullPath.split('/')[1])
 const isShowLinkDialog = ref(false)
 const isShowSelectTemDialog = ref(false)
+const isShowsGroupDialog = ref(false)
+const groupDialogTitle = ref('新建分组')
+const groupDialogParent = ref(null)
 const isLoading = ref(false)
 const linkType = ref('add') // 链接弹窗类型： add edit
 const parentId = ref(null) // 父级节点id
@@ -300,6 +304,53 @@ const customIcon = () => {
   return h('img', { src: miniDropDownIcon }) // 默认图标路径
 }
 
+const toOpenTitleDialog = (data) => {
+  isShowsGroupDialog.value = true
+  groupDialogTitle.value = '新建分组'
+  groupDialogParent.value = data.id
+}
+
+const toAddTitle = async (val) => {
+  const params = {
+    title: val[0],
+    type: 'title',
+    description: val[1],
+    parent: groupDialogParent.value,
+    book: infoStore.currentQuery.lid,
+    space: infoStore.currentQuery.sid,
+    public: '2' // 空间所有成员都可以访问
+  }
+  let res: any = await addArticleApi(params as any)
+  if (res.code === 1000) {
+    isShowsGroupDialog.value = false
+    refreshStroe.setRefreshBookList(true)
+    ElMessage.success('新建分组成功')
+    const query = {
+      sid,
+      sname,
+      lid: infoStore.currentQuery.lid,
+      lname: infoStore.currentQuery.lname,
+      aid: res.data.id,
+      aname: res.data.title
+    }
+    const spaceQuery = {
+      gid: infoStore.currentQuery.gid,
+      gname: infoStore.currentQuery.gname
+    }
+    setTimeout(() => {
+      router.push({
+        path: `${infoStore.currentSpaceType === '个人' ? '' : `/${route.path.split('/')[1]}`}/directory/title/${''}`,
+        query: {
+          ...(infoStore.currentSpaceType === '个人' ? {} : spaceQuery),
+          ...query
+        }
+      })
+    }, 500)
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
 // 节点拖拽
 // 拖拽完成时触发的事件  参数依次为：被拖拽节点、结束拖拽时最后进入的节点、被拖拽节点的放置位置（before、after、inner）、event
 // 注意：目标节点是已经移动完之后的节点
@@ -443,7 +494,7 @@ const handleDrop = (draggingNode, dropNode, dropType) => {
                 @toAddSheet="handleAddArticle('表格', data)"
                 @toAddPPT="handleAddArticle('幻灯片', data)"
                 @toAddMindmap="handleAddArticle('脑图', data)"
-                @toAddGroup="handleAddArticle('新建分组', data)"
+                @toAddGroup="toOpenTitleDialog(data)"
                 @toAddLink="toAddLink(data)"
                 @toImportTem="toImportTem(data)"
               >
@@ -459,6 +510,7 @@ const handleDrop = (draggingNode, dropNode, dropType) => {
   </div>
   <LinkDialog :isShow="isShowLinkDialog" :parent="parentId" :type="linkType" :id="null" @closeDialog="closeLinkDialog" />
   <SelectTemDialog :isShow="isShowSelectTemDialog" :parent="parentId" @closeDialog="isShowSelectTemDialog = false" />
+  <GroupDialog :isShow="isShowsGroupDialog" @closeDialog="isShowsGroupDialog = false" @toAddTitle="toAddTitle" :title="groupDialogTitle" type="title" />
 </template>
 
 <style lang="scss" scoped>
@@ -838,6 +890,10 @@ const handleDrop = (draggingNode, dropNode, dropType) => {
     color: #fff;
     background: #00b96b;
     border-color: #00b96b;
+    &:hover {
+      background: #00b96b;
+      border-color: #00b96b;
+    }
   }
   .cancelBtn {
     color: #262626;

@@ -4,18 +4,21 @@ import { FormInstance } from 'element-plus'
 const props = defineProps({
   isShow: Boolean,
   title: String,
-  name: String
+  name: String,
+  description: String,
+  type: String
 })
 
-const emit = defineEmits(['closeDialog', 'toAddTag', 'toEditTag'])
+const emit = defineEmits(['closeDialog', 'toAddTag', 'toEditTag', 'toAddTitle'])
 
 const dialogVisible = ref(false)
 const groupFormRef = ref(null)
 const groupForm = reactive({
-  name: ''
+  name: '',
+  description: ''
 })
 const rules = reactive({
-  name: [{ required: true, message: 'Please input Activity name', trigger: 'blur' }]
+  name: [{ required: true, message: '分组名称不能为空', trigger: 'blur' }]
 })
 
 watch(
@@ -24,6 +27,7 @@ watch(
     if (newVal) {
       dialogVisible.value = newVal
       groupForm.name = props.name
+      groupForm.description = props.description
     }
   }
 )
@@ -32,10 +36,14 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid) => {
     if (valid) {
-      if (props.title === '新建分组') {
-        emit('toAddTag', groupForm.name)
+      if (props.type === 'star') {
+        if (props.title === '新建分组') {
+          emit('toAddTag', groupForm.name)
+        } else {
+          emit('toEditTag', groupForm.name)
+        }
       } else {
-        emit('toEditTag', groupForm.name)
+        emit('toAddTitle', [groupForm.name, groupForm.description])
       }
       handleClose()
     }
@@ -60,6 +68,11 @@ const resetForm = (formEl: FormInstance | undefined) => {
       <el-form-item label="分组名称" prop="name">
         <div class="form-name">
           <el-input v-model="groupForm.name" placeholder="" show-word-limit />
+        </div>
+      </el-form-item>
+      <el-form-item label="分组描述" prop="desc" v-if="props.type !== 'star'">
+        <div class="form-name">
+          <el-input v-model="groupForm.description" placeholder="" show-word-limit />
         </div>
       </el-form-item>
     </el-form>
@@ -92,6 +105,26 @@ const resetForm = (formEl: FormInstance | undefined) => {
     label {
       color: rgba(0, 0, 0, 0.85);
       font-size: 14px;
+    }
+  }
+  .is-error {
+    border-color: #ff4d4f !important;
+    .is-focus {
+      border: none !important;
+    }
+    .el-input__wrapper {
+      border: none !important;
+    }
+  }
+  .is-focus,
+  .is-focused {
+    border-color: #0bd07d !important;
+  }
+  .el-input__wrapper {
+    border: 1px solid #d9d9d9;
+    box-shadow: none;
+    &:hover {
+      border-color: #0bd07d;
     }
   }
   .el-input,

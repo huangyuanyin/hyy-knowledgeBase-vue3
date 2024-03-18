@@ -125,6 +125,18 @@ const handleClose = async () => {
       font-size: 14px;
     }
   }
+  .is-focus,
+  .is-focused {
+    border-color: #0bd07d !important;
+  }
+  .el-input__wrapper {
+    border-radius: 6px;
+    border: 1px solid #d9d9d9;
+    box-shadow: none;
+    &:hover {
+      border-color: #0bd07d;
+    }
+  }
   .el-input,
   .el-select {
     width: 100%;

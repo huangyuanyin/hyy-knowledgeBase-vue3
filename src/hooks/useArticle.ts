@@ -288,7 +288,6 @@ export const useArticle = () => {
           query
         })
       } else {
-        if (infoStore.currentMenu === 'title') return
         router.push({
           path: `${basePath}/directory/${res.data.parent_type}`,
           query: {

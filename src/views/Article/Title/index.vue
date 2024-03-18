@@ -12,9 +12,10 @@ import editIcon from '@/assets/icons/edit.svg'
 import Container from '../Components/Container.vue'
 import { folderMenuItemsData } from '@/data/data'
 import { ArticleInfo } from '@/type/article'
-import { uploadArticleApi } from '@/api/article'
+import { addArticleApi, uploadArticleApi } from '@/api/article'
 import { user } from '@/data/data'
 
+const route = useRoute()
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const aid = ref<number>(null)
@@ -23,6 +24,8 @@ const list = ref<ArticleInfo[]>([])
 const isShowLinkDialog = ref<boolean>(false)
 const isHandleTitleDialog = ref<boolean>(false)
 const isShowSelectTemDialog = ref<boolean>(false)
+const isShowsGroupDialog = ref<boolean>(false)
+const groupDialogParent = ref<number>(null)
 const parentId = ref<number>(null)
 const contentType = ref({
   doc: documentIcon,
@@ -130,6 +133,52 @@ const toLink = (val) => {
 const toCopy = () => {
   useCopy(window.location.href)
 }
+
+const toOpenTitleDialog = (val) => {
+  isShowsGroupDialog.value = true
+  groupDialogParent.value = val
+}
+
+const toAddTitle = async (val) => {
+  const params = {
+    title: val[0],
+    type: 'title',
+    description: val[1],
+    parent: groupDialogParent.value,
+    book: infoStore.currentQuery.lid,
+    space: infoStore.currentQuery.sid,
+    public: '2' // 空间所有成员都可以访问
+  }
+  let res: any = await addArticleApi(params as any)
+  if (res.code === 1000) {
+    isShowsGroupDialog.value = false
+    refreshStroe.setRefreshBookList(true)
+    ElMessage.success('新建分组成功')
+    const query = {
+      sid: infoStore.currentQuery.sid,
+      sname: infoStore.currentQuery.sname,
+      lid: infoStore.currentQuery.lid,
+      lname: infoStore.currentQuery.lname,
+      aid: res.data.id,
+      aname: res.data.title
+    }
+    const spaceQuery = {
+      gid: infoStore.currentQuery.gid,
+      gname: infoStore.currentQuery.gname
+    }
+    setTimeout(() => {
+      router.push({
+        path: `${infoStore.currentSpaceType === '个人' ? '' : `/${route.path.split('/')[1]}`}/directory/title/${''}`,
+        query: {
+          ...(infoStore.currentSpaceType === '个人' ? {} : spaceQuery),
+          ...query
+        }
+      })
+    }, 500)
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
 </script>
 
 <template>
@@ -193,7 +242,7 @@ const toCopy = () => {
                 @toAddSheet="handleAddArticle('表格', aid)"
                 @toAddPPT="handleAddArticle('幻灯片', aid)"
                 @toAddMindmap="handleAddArticle('脑图', aid)"
-                @toAddGroup="handleAddArticle('新建分组', aid)"
+                @toAddGroup="toOpenTitleDialog(aid)"
                 @toAddLink="toAddLink(aid)"
                 @toImportTem="toImportTem(aid)"
               >
@@ -265,6 +314,7 @@ const toCopy = () => {
   <LinkDialog :isShow="isShowLinkDialog" :parent="parentId" type="add" :id="null" @closeDialog="isShowLinkDialog = false" />
   <HandleTitleDialog :isShow="isHandleTitleDialog" @closeDialog="isHandleTitleDialog = false" />
   <SelectTemDialog :isShow="isShowSelectTemDialog" :parent="parentId" @closeDialog="isShowSelectTemDialog = false" />
+  <GroupDialog :isShow="isShowsGroupDialog" @closeDialog="isShowsGroupDialog = false" @toAddTitle="toAddTitle" title="新建分组" type="title" />
 </template>
 
 <style lang="scss" scoped>

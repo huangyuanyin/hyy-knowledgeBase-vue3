@@ -5,7 +5,7 @@ import { getCollaborationsApi, getArticleCollaborationsApi } from '@/api/collabo
 import CommentDrawer from '@/components/Drawer/CommentDrawer/index.vue'
 import { ArticleInfo } from '@/type/article'
 import { folderMenuItemsData } from '@/data/data'
-import { checkEditPermissionApi, uploadArticleApi } from '@/api/article'
+import { addArticleApi, checkEditPermissionApi, uploadArticleApi } from '@/api/article'
 import likeIcon from '@/assets/icons/like.svg'
 import likeSelectIcon from '@/assets/icons/like_select.svg'
 import topIcon from '@/assets/icons/top.svg'
@@ -43,7 +43,9 @@ const isEdit = ref(false)
 const moreFeaturesDrawer = ref(false) // 更多功能抽屉
 const commentDrawer = ref(false) // 评论抽屉
 const isShowLinkDialog = ref(false) // 添加链接弹窗
-const isShowSelectTemDialog = ref(false) // 导入模板弹窗
+const isShowSelectTemDialog = ref(false) // 导入模板弹
+const isShowsGroupDialog = ref(false) // 新建分组弹窗
+const groupDialogParent = ref(null) // 新建分组的父级id
 const parentId = ref(null) // 添加链接的父级id
 const spaceId = ref('') // 当前空间id
 const publicType = ref('') // 知识库的公开性
@@ -478,6 +480,52 @@ const handleRename = async () => {
   docFileName.value = ''
 }
 
+const toOpenTitleDialog = (val) => {
+  isShowsGroupDialog.value = true
+  groupDialogParent.value = val
+}
+
+const toAddTitle = async (val) => {
+  const params = {
+    title: val[0],
+    type: 'title',
+    description: val[1],
+    parent: groupDialogParent.value,
+    book: infoStore.currentQuery.lid,
+    space: infoStore.currentQuery.sid,
+    public: '2' // 空间所有成员都可以访问
+  }
+  let res: any = await addArticleApi(params as any)
+  if (res.code === 1000) {
+    isShowsGroupDialog.value = false
+    refreshStroe.setRefreshBookList(true)
+    ElMessage.success('新建分组成功')
+    const query = {
+      sid: infoStore.currentQuery.sid,
+      sname: infoStore.currentQuery.sname,
+      lid: infoStore.currentQuery.lid,
+      lname: infoStore.currentQuery.lname,
+      aid: res.data.id,
+      aname: res.data.title
+    }
+    const spaceQuery = {
+      gid: infoStore.currentQuery.gid,
+      gname: infoStore.currentQuery.gname
+    }
+    setTimeout(() => {
+      router.push({
+        path: `${infoStore.currentSpaceType === '个人' ? '' : `/${route.path.split('/')[1]}`}/directory/title/${''}`,
+        query: {
+          ...(infoStore.currentSpaceType === '个人' ? {} : spaceQuery),
+          ...query
+        }
+      })
+    }, 500)
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
 onMounted(() => {
   if (infoStore.currentMenu === 'title') getCategoryTree()
 })
@@ -582,7 +630,7 @@ onMounted(() => {
               @toAddSheet="handleAddArticle('表格', Number(infoStore.currentQuery?.aid))"
               @toAddPPT="handleAddArticle('幻灯片', Number(infoStore.currentQuery?.aid))"
               @toAddMindmap="handleAddArticle('脑图', Number(infoStore.currentQuery?.aid))"
-              @toAddGroup="handleAddArticle('新建分组', Number(infoStore.currentQuery?.aid))"
+              @toAddGroup="toOpenTitleDialog(Number(infoStore.currentQuery?.aid))"
               @toAddLink="toAddLink(Number(infoStore.currentQuery?.aid))"
               @toImportTem="toImportTem(Number(infoStore.currentQuery?.aid))"
             >
@@ -628,6 +676,7 @@ onMounted(() => {
   <NoPermission v-if="typeof infoStore.currentArticleInfo === 'string'" type="article" />
   <LinkDialog :isShow="isShowLinkDialog" :parent="parentId" type="add" :id="null" @closeDialog="isShowLinkDialog = false" />
   <SelectTemDialog :isShow="isShowSelectTemDialog" :parent="parentId" @closeDialog="isShowSelectTemDialog = false" />
+  <GroupDialog :isShow="isShowsGroupDialog" @closeDialog="isShowsGroupDialog = false" @toAddTitle="toAddTitle" title="新建分组" type="title" />
 </template>
 
 <style lang="scss" scoped>

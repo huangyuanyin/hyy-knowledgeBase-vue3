@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { addArticleApi } from '@/api/article'
 import { menuItemsData } from '@/data/data'
 import { MenuItem } from '@/type/operationPopoverType'
 
@@ -11,11 +12,13 @@ const props = defineProps({
 
 const route = useRoute()
 const infoStore = useInfoStore()
+const refreshStroe = useRefreshStore()
 const isShowLinkDialog = ref(false)
 const isShowSelectTemDialog = ref(false)
 const isBookListDialog = ref(false)
 const isSearchDialog = ref(false)
 const bookListDialogTitle = ref('')
+const isShowsGroupDialog = ref(false)
 
 const { gid = '', gname = '', lid = '', lname = '' } = infoStore.currentQuery || {}
 
@@ -31,6 +34,51 @@ const toAddArticle = (val) => {
       groupname: gname
     }
     useArticle().handleAddArticle({ book, title: val.label }, () => {})
+  }
+}
+
+const toOpenTitleDialog = () => {
+  isShowsGroupDialog.value = true
+}
+
+const toAddTitle = async (val) => {
+  const params = {
+    title: val[0],
+    type: 'title',
+    description: val[1],
+    parent: null,
+    book: infoStore.currentQuery.lid,
+    space: infoStore.currentQuery.sid,
+    public: '2' // 空间所有成员都可以访问
+  }
+  let res: any = await addArticleApi(params as any)
+  if (res.code === 1000) {
+    isShowsGroupDialog.value = false
+    refreshStroe.setRefreshBookList(true)
+    ElMessage.success('新建分组成功')
+    const query = {
+      sid: infoStore.currentQuery.sid,
+      sname: infoStore.currentQuery.sname,
+      lid: infoStore.currentQuery.lid,
+      lname: infoStore.currentQuery.lname,
+      aid: res.data.id,
+      aname: res.data.title
+    }
+    const spaceQuery = {
+      gid: infoStore.currentQuery.gid,
+      gname: infoStore.currentQuery.gname
+    }
+    setTimeout(() => {
+      router.push({
+        path: `${infoStore.currentSpaceType === '个人' ? '' : `/${route.path.split('/')[1]}`}/directory/title/${''}`,
+        query: {
+          ...(infoStore.currentSpaceType === '个人' ? {} : spaceQuery),
+          ...query
+        }
+      })
+    }, 500)
+  } else {
+    ElMessage.error(res.msg)
   }
 }
 
@@ -52,7 +100,7 @@ const toDo = (val) => {
       @toAddPPT="toAddArticle"
       @toAddMindmap="toAddArticle"
       @toImportTem="isShowSelectTemDialog = true"
-      @toAddGroup="toAddArticle"
+      @toAddGroup="toOpenTitleDialog"
       @toAddLink="isShowLinkDialog = true"
       @toDo="toDo"
     />
@@ -61,6 +109,7 @@ const toDo = (val) => {
   <LinkDialog :isShow="isShowLinkDialog" :parent="null" @closeDialog="isShowLinkDialog = false" />
   <BookListDialog :show="isBookListDialog" @closeDialog="isBookListDialog = false" :title="bookListDialogTitle" />
   <SearchDialog :show="isSearchDialog" @closeDialog="isSearchDialog = false" />
+  <GroupDialog :isShow="isShowsGroupDialog" @closeDialog="isShowsGroupDialog = false" @toAddTitle="toAddTitle" title="新建分组" type="title" />
 </template>
 
 <style lang="scss" scoped>

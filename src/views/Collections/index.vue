@@ -161,7 +161,15 @@ const toDo = (val) => {
       </div>
     </div>
   </div>
-  <GroupDialog :isShow="isShowsGroupDialog" @closeDialog="isShowsGroupDialog = false" @toAddTag="toAddTag" @toEditTag="toEditTag" :title="groupTitle" :name="groupName" />
+  <GroupDialog
+    :isShow="isShowsGroupDialog"
+    @closeDialog="isShowsGroupDialog = false"
+    @toAddTag="toAddTag"
+    @toEditTag="toEditTag"
+    :title="groupTitle"
+    :name="groupName"
+    type="star"
+  />
 </template>
 
 <style lang="scss" scoped>

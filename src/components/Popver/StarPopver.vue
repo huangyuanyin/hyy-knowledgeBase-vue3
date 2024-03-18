@@ -98,7 +98,7 @@ const toDeleteCollect = async () => {
       </div>
       <div class="bottom" @click="isShowsGroupDialog = true"><i-ep-Plus />新建分组</div>
     </div>
-    <GroupDialog :isShow="isShowsGroupDialog" @closeDialog="isShowsGroupDialog = false" @toAddTag="toAddTag" title="新建分组" />
+    <GroupDialog :isShow="isShowsGroupDialog" @closeDialog="isShowsGroupDialog = false" @toAddTag="toAddTag" title="新建分组" type="star" />
   </el-popover>
 </template>
 <style lang="scss" scoped>
