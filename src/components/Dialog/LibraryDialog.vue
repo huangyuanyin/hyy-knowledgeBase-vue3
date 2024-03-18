@@ -352,6 +352,41 @@ const changeIcon = (val: string) => {
       font-size: 14px;
     }
   }
+  .is-error {
+    border-color: #ff4d4f !important;
+    .is-focus {
+      border: none !important;
+    }
+    .el-input__wrapper {
+      border: none !important;
+    }
+  }
+  .is-focus,
+  .is-focused {
+    border: 1px solid #0bd07d !important;
+  }
+  .el-input__wrapper {
+    border: 1px solid #d9d9d9;
+    box-shadow: none;
+    &:hover {
+      border-color: #0bd07d;
+    }
+  }
+  .el-textarea__inner {
+    border: 1px solid #d9d9d9;
+    box-shadow: none;
+    &:hover {
+      border-color: #0bd07d;
+    }
+  }
+  .el-select__wrapper {
+    border: 1px solid #d9d9d9;
+    &:hover {
+      border-color: #0bd07d;
+    }
+    box-shadow: none !important;
+    border-radius: 6px !important;
+  }
   .el-input,
   .el-select {
     width: 100%;

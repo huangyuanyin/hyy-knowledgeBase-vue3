@@ -37,9 +37,8 @@ const remoteMethod = (query: string) => {
     setTimeout(() => {
       loading.value = false
       memberOptions.value = list.value.filter((item) => {
-        return item.permusername.toLowerCase().includes(query.toLowerCase()) || item.permname.toLowerCase().includes(query.toLowerCase())
+        return item.permusername.toLowerCase().includes(query.toLowerCase()) || item.user.name.toLowerCase().includes(query.toLowerCase())
       })
-      console.log(`output->`, memberOptions.value)
     }, 200)
   } else {
     memberOptions.value = []
@@ -82,12 +81,21 @@ const editSpacepermissions = async (id, permusername) => {
 
 <template>
   <el-dialog class="addAdminDialog" v-model="dialogVisible" title="添加管理员" width="520" :before-close="handleClose">
-    <el-select v-model="inputValue" filterable remote placeholder="输入姓名、昵称 进行搜索" :remote-method="remoteMethod" :loading="loading" no-data-text="未搜索到结果">
+    <el-select
+      class="selectAdmin"
+      v-model="inputValue"
+      filterable
+      remote
+      placeholder="输入姓名、昵称 进行搜索"
+      :remote-method="remoteMethod"
+      :loading="loading"
+      no-data-text="未搜索到结果"
+    >
       <el-option v-for="item in memberOptions" :key="item.permusername" :label="item.permusername" :value="item.permusername">
         <div class="options" @click="toAddAdmin(item)">
-          <img class="icon" :src="item.avatar || avatar" alt="" />
-          <span class="name">{{ item.permname }}</span>
-          <span class="dept">（{{ item.dept }}）</span>
+          <img class="icon" :src="'http://10.4.150.56:8032/' + item.user.avatar || avatar" alt="" />
+          <span class="name">{{ item.user.nickname }}</span>
+          <span class="dept">（{{ item.user.dept_name }}）</span>
         </div>
       </el-option>
     </el-select>
@@ -95,12 +103,6 @@ const editSpacepermissions = async (id, permusername) => {
 </template>
 
 <style lang="scss" scoped>
-.el-select {
-  width: 100%;
-  .el-input__wrapper {
-    border-radius: 6px;
-  }
-}
 .options {
   display: flex;
   align-items: center;
@@ -117,6 +119,22 @@ const editSpacepermissions = async (id, permusername) => {
   .dept {
     margin-left: 18px;
     color: #8a8f8d;
+  }
+}
+</style>
+
+<style lang="scss">
+.selectAdmin {
+  width: 100%;
+  .el-select__wrapper {
+    border: 1px solid #0bd07d !important;
+    box-shadow: none !important;
+    border-radius: 6px !important;
+  }
+  .el-input__wrapper {
+  }
+  .el-select__input {
+    margin-left: 0px !important;
   }
 }
 </style>

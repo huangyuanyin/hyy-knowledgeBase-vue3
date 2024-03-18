@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import imgIcon from '@/assets/img/img.jpg'
 import { v4 as uuidv4 } from 'uuid'
 import { FormInstance } from 'element-plus'
 import { addGroupsApi } from '@/api/groups'
@@ -8,8 +7,11 @@ import { icon11 } from '@/data/iconBase64'
 
 interface ListItem {
   permusername: string
-  permname: string
-  dept: string
+  user: {
+    avatar: string
+    name: string
+    dept_name: string
+  }
 }
 
 const props = defineProps({
@@ -54,10 +56,9 @@ const remoteMethod = (query: string) => {
     setTimeout(() => {
       loadingMember.value = false
       options.value = list.value.filter((item) => {
-        return item.permusername.toLowerCase().includes(query.toLowerCase()) || item.permname.toLowerCase().includes(query.toLowerCase())
+        return item.permusername.toLowerCase().includes(query.toLowerCase()) || item.user.name.toLowerCase().includes(query.toLowerCase())
       })
     }, 200)
-    console.log(`output->options.value`, options.value, list.value)
   } else {
     options.value = []
   }
@@ -182,17 +183,17 @@ const changeIcon = (icon: string) => {
           default-first-option
           popper-class="member-popver"
         >
-          <el-option v-for="(item, index) in options" :key="'options' + index" :label="item.permname" :value="item.permusername">
+          <el-option v-for="(item, index) in options" :key="'options' + index" :label="item.user.name" :value="item.permusername">
             <div class="item">
               <span class="img">
-                <img :src="imgIcon" alt="" />
+                <img :src="'http://10.4.150.56:8032/' + item.user.avatar" alt="" />
               </span>
               <div class="info">
                 <span class="label">
-                  {{ item.permname }}
+                  {{ item.user.name }}
                   <span class="nickname">({{ item.permusername }})</span>
                 </span>
-                <span class="value">{{ item.dept }}</span>
+                <span class="value">{{ item.user.dept_name }}</span>
               </div>
             </div>
           </el-option>
@@ -316,6 +317,32 @@ const changeIcon = (icon: string) => {
       color: rgba(0, 0, 0, 0.85);
       font-size: 14px;
     }
+  }
+  .is-focus,
+  .is-focused {
+    border-color: #0bd07d !important;
+  }
+  .el-input__wrapper {
+    border: 1px solid #d9d9d9;
+    box-shadow: none;
+    &:hover {
+      border-color: #0bd07d;
+    }
+  }
+  .el-textarea__inner {
+    border: 1px solid #d9d9d9;
+    box-shadow: none;
+    &:hover {
+      border-color: #0bd07d;
+    }
+  }
+  .el-select__wrapper {
+    border: 1px solid #d9d9d9;
+    &:hover {
+      border-color: #0bd07d;
+    }
+    box-shadow: none !important;
+    border-radius: 6px !important;
   }
   .el-input,
   .el-select {

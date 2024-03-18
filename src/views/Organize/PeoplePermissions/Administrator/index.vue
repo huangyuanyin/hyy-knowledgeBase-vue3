@@ -26,7 +26,7 @@ const getUser = async () => {
   user.permusername = user.username
   user.permtype = '0'
   user.dept = user.dept_name
-  myData.value = [user]
+  myData.value = [{ user }]
 }
 
 const toDeleteAdmin = (item) => {
@@ -79,13 +79,17 @@ onMounted(async () => {
         <el-table-column prop="permname" label="姓名" width="350">
           <template #default="{ row }">
             <span>
-              {{ row.permname }}
-              <span v-if="user === row.permusername" class="my_tag">你自己</span>
-              <span v-if="user !== row.permusername && row.permusername == myData[0].permusername" class="my_tag">创建人</span>
+              {{ row.user.nickname }}
+              <span v-if="user === row.user.username" class="my_tag">你自己</span>
+              <span v-if="user !== row.user.username && row.user.username == myData[0].user.username" class="my_tag">创建人</span>
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="permusername" label="用户名" width="250" align="center" />
+        <el-table-column prop="permusername" label="用户名" width="250" align="center">
+          <template #default="{ row }">
+            <span> {{ row.user.username }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="role" label="角色" width="250" align="center">
           <template #default="">
             <span>管理员</span>

@@ -235,7 +235,7 @@ const toHandle = async (item: any) => {
       break
     case '已收藏':
     case '收藏':
-      if (!(infoStore.currentArticleInfo as ArticleInfo).marked) {
+      if (!(infoStore.currentArticleInfo as ArticleInfo)?.marked) {
         addMarks()
       }
       break
@@ -534,7 +534,7 @@ onMounted(() => {
                 type="article"
               >
                 <span v-if="item.label === '收藏' || item.label === '已收藏'" @click="toHandle(item)">
-                  <img :src="(infoStore.currentArticleInfo as ArticleInfo ).marked ? startIconSelect : startIcon" alt="" />
+                  <img :src="(infoStore.currentArticleInfo as ArticleInfo )?.marked ? startIconSelect : startIcon" alt="" />
                 </span>
               </StarPopver>
               <el-tooltip effect="dark" :content="item.label" placement="bottom" :show-arrow="false">

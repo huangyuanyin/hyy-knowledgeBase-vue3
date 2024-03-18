@@ -62,10 +62,10 @@ const changeTab = (val: string) => {
   range.value = 0
   switch (val) {
     case 'memberCol':
-      getSpaceMemberStatistic()
+      tableData.value = memberListStatistic.value
       break
     case 'teamCol':
-      getSpaceTeamStatistic()
+      tableData.value = teamListStatistic.value
       break
   }
 }
@@ -99,6 +99,7 @@ const changePage = (val) => {
 onMounted(async () => {
   await getSpaceStatistic()
   await getSpaceMemberStatistic()
+  await getSpaceTeamStatistic()
   tableData.value = memberListStatistic.value
 })
 </script>

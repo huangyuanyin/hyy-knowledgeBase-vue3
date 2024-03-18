@@ -46,7 +46,7 @@ const deleteSpacepermissions = async (id: number) => {
 }
 
 const toExit = (data: any) => {
-  ElMessageBox.confirm(`确定删除【${data.permname}】吗？删除后对方就无法再访问本团队`, '确定删除该成员？', {
+  ElMessageBox.confirm(`确定删除【${data.name}】吗？删除后对方就无法再访问本团队`, '确定删除该成员？', {
     confirmButtonText: '删除',
     cancelButtonText: '取消',
     customClass: 'deleteMemberDialog',
@@ -72,12 +72,14 @@ const toDetail = (data: any) => {
 const handleMember = () => {
   myData.value = [
     {
-      avatar: 'http://10.4.150.56:8032/' + JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).user.avatar,
-      permname: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).creator_name,
       permtype: '0',
-      dept: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).user.dept_name,
-      mobile: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).user.mobile,
-      update_datetime: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).create_datetime
+      update_datetime: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).create_datetime,
+      user: {
+        avatar: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).user.avatar,
+        name: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).creator_name,
+        dept_name: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).user.dept_name,
+        mobile: JSON.parse(sessionStorage.getItem('xinAn-spaceInfo')).user.mobile
+      }
     }
   ]
   memberData.value = [...myData.value, ...memberData.value]
@@ -128,29 +130,33 @@ onMounted(async () => {
           <template #default="{ row }">
             <div flex items-center>
               <span h-40px flex items-center justify-center mr-8px>
-                <img v-if="nickname === row.permname" w-24px h-24px :src="avatar" alt="" />
-                <img v-else w-24px h-24px :src="row.avatar" alt="" />
+                <img v-if="nickname === row.user.username" w-24px h-24px :src="row.user.avatar" alt="" />
+                <img v-else w-24px h-24px :src="'http://10.4.150.56:8032/' + row.user.avatar" alt="" />
               </span>
               <span>
-                {{ row.permname }}
-                <span v-if="nickname === row.permname" class="my_tag">你自己</span>
+                {{ row.user.name }}
+                <span v-if="nickname === row.user.name" class="my_tag">你自己</span>
               </span>
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="dept" label="所在部门" width="180" />
+        <el-table-column prop="dept" label="所在部门" width="180">
+          <template #default="{ row }">
+            <span>{{ row.user.dept_name }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="permtype" label="身份" width="150">
           <template #default="{ row }">
             <span v-if="row.permtype === '0'">管理员</span>
             <span v-else>成员</span>
           </template>
         </el-table-column>
-        <el-table-column prop="mobile" label="手机号" width="150" />
-        <el-table-column label="加入时间" width="200">
+        <el-table-column prop="mobile" label="手机号" width="150">
           <template #default="{ row }">
-            <span>{{ row.update_datetime }}</span>
+            <span>{{ row.user.mobile }}</span>
           </template>
         </el-table-column>
+        <el-table-column prop="update_datetime" label="加入时间" width="200" />
         <el-table-column fixed="right" label="操作">
           <template #default="{ row, $index }">
             <el-button link type="primary" size="small" @click="toDetail(row)" v-if="$index !== 0">详情</el-button>

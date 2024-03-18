@@ -66,7 +66,6 @@ const toAddMember = () => {
   } else {
     emit('submitMember', selectMemberList.value)
     handleClose()
-    console.log(`output->已选择`, selectMemberList.value)
   }
 }
 
@@ -100,7 +99,6 @@ const getSpacepermissions = async () => {
   if (res.code === 1000) {
     memberList.value = res.data.filter((item) => {
       return !props.selectMember.some((item2: any) => {
-        console.log(`output->prtop`, props.selectMember)
         return item2.username === item.permusername
       })
     })
@@ -127,8 +125,8 @@ const getSpacepermissions = async () => {
       <el-table-column property="permusername" label="全选">
         <template #default="{ row }">
           <div class="cell">
-            <img :src="row.avatar || avatar" alt="" />
-            <span class="name">{{ row.permname }}</span>
+            <img :src="'http://10.4.150.56:8032/' + row.user.avatar" alt="" />
+            <span class="name">{{ row.user.name }}</span>
             <span class="nick">（{{ row.permusername }}）</span>
           </div>
         </template>
