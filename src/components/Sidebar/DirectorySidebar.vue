@@ -39,6 +39,7 @@ const defaultProps = {
 } as unknown as TreeOptionProps
 const inputName = ref(null)
 const inputFileName = ref(null)
+const isShowUploadDialog = ref(false)
 
 const { sid = '', sname = '', gid = '', gname = '', lid = '', lname = '' } = infoStore.currentQuery || {}
 
@@ -497,6 +498,7 @@ const handleDrop = (draggingNode, dropNode, dropType) => {
                 @toAddGroup="toOpenTitleDialog(data)"
                 @toAddLink="toAddLink(data)"
                 @toImportTem="toImportTem(data)"
+                @toImportFile=";(parentId = data.id) && (isShowUploadDialog = true)"
               >
                 <span class="addIcon" @click.stop>
                   <img src="/src/assets/icons/addIcon.svg" alt="" />
@@ -511,6 +513,7 @@ const handleDrop = (draggingNode, dropNode, dropType) => {
   <LinkDialog :isShow="isShowLinkDialog" :parent="parentId" :type="linkType" :id="null" @closeDialog="closeLinkDialog" />
   <SelectTemDialog :isShow="isShowSelectTemDialog" :parent="parentId" @closeDialog="isShowSelectTemDialog = false" />
   <GroupDialog :isShow="isShowsGroupDialog" @closeDialog="isShowsGroupDialog = false" @toAddTitle="toAddTitle" :title="groupDialogTitle" type="title" />
+  <UploadFileDialog :isShow="isShowUploadDialog" @closeDialog="isShowUploadDialog = false" :parent="parentId" />
 </template>
 
 <style lang="scss" scoped>

@@ -55,7 +55,7 @@ export const menuItemsData = [
   { type: 'item', icon: bookIcon, label: '知识库' },
   { type: 'divider' },
   { type: 'item', icon: templateIcon, label: '从模板新建', nick: 'toImportTem' },
-  { type: 'item', icon: importIcon, label: '导入...' }
+  { type: 'item', icon: importIcon, label: '导入...', nick: 'toImportFile' }
 ]
 
 export const spaceMenuItemsData = [
@@ -68,7 +68,7 @@ export const spaceMenuItemsData = [
   { type: 'item', icon: teamIcon, label: '团队', nick: 'toAddTeam' },
   { type: 'divider' },
   { type: 'item', icon: templateIcon, label: '从模板新建', nick: 'toImportTem' },
-  { type: 'item', icon: importIcon, label: '导入...', nick: 'toDo' }
+  { type: 'item', icon: importIcon, label: '导入...', nick: 'toImportFile' }
 ]
 
 export const sidebarSearchMenuItemsData = [
@@ -78,7 +78,7 @@ export const sidebarSearchMenuItemsData = [
   { type: 'item', icon: pptIcon, label: '幻灯片', nick: 'toAddPPT' },
   { type: 'divider' },
   { type: 'item', icon: templateIcon, label: '从模板新建', nick: 'toImportTem' },
-  { type: 'item', icon: importIcon, label: '导入...' },
+  { type: 'item', icon: importIcon, label: '导入...', nick: 'toImportFile' },
   { type: 'divider' },
   { type: 'item', icon: groupIcon, label: '新建分组', nick: 'toAddGroup' },
   { type: 'item', icon: linkIcon, label: '添加链接', nick: 'toAddLink' },
@@ -92,7 +92,7 @@ export const folderMenuItemsData = [
   { type: 'item', icon: pptIcon, label: '幻灯片', nick: 'toAddPPT' },
   { type: 'divider' },
   { type: 'item', icon: templateIcon, label: '从模板新建', nick: 'toImportTem' },
-  { type: 'item', icon: importIcon, label: '导入...' },
+  { type: 'item', icon: importIcon, label: '导入...', nick: 'toImportFile' },
   { type: 'divider' },
   { type: 'item', icon: groupIcon, label: '新建分组', nick: 'toAddGroup' },
   { type: 'item', icon: linkIcon, label: '添加链接', nick: 'toAddLink' }
@@ -104,7 +104,7 @@ export const moduleAddMenuData = [
   { type: 'item', icon: mindmapIcon, label: '新建脑图', nick: 'toAddMindmap' },
   { type: 'item', icon: pptIcon, label: '新建幻灯片', nick: 'toAddPPT' },
   { type: 'divider' },
-  { type: 'item', icon: importIcon, label: '导入...' }
+  { type: 'item', icon: importIcon, label: '导入...', nick: 'toImportFile' }
 ]
 
 export const libraryOperationData = [
@@ -218,6 +218,37 @@ export const fileOperationData = [
   { type: 'item', icon: exportIcon, label: '下载', nick: 'toDownload' },
   { type: 'divider' },
   { type: 'item', icon: deleteIcon2, label: '删除', nick: 'toDeleteArticle' }
+]
+
+export const importFileType = [
+  {
+    icon: 'https://gw.alipayobjects.com/zos/basement_prod/408f32c8-8385-4562-b037-c35ea82d2563.svg',
+    title: 'Word',
+    tips: '.docx .doc',
+    accept: '.docx,.doc',
+    type: 'word'
+  },
+  {
+    icon: 'https://gw.alipayobjects.com/zos/basement_prod/5fdf1f7c-4a2f-4bd0-9d6b-6803b8bb86b6.svg',
+    title: 'Excel',
+    tips: '.xlsx',
+    accept: '.xlsx',
+    type: 'sheet'
+  },
+  {
+    icon: 'https://gw.alipayobjects.com/mdn/prod_resou/afts/img/A*LWh4QLOft30AAAAAAAAAAAAAARQnAQ',
+    title: '脑图',
+    tips: '.xmind',
+    accept: '.xmind',
+    type: 'mind'
+  },
+  {
+    icon: 'https://gw.alipayobjects.com/zos/bmw-prod/7a6c8901-3f7a-4deb-bd9f-b1d5fe138898.svg',
+    title: 'PPT',
+    tips: '.pptx .ppt',
+    accept: '.pptx,.ppt',
+    type: 'ppt'
+  }
 ]
 
 export const cooperateLink =

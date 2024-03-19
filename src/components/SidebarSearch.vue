@@ -19,6 +19,8 @@ const isBookListDialog = ref(false)
 const isSearchDialog = ref(false)
 const bookListDialogTitle = ref('')
 const isShowsGroupDialog = ref(false)
+const isShowUploadDialog = ref(false)
+const type = ref('')
 
 const { gid = '', gname = '', lid = '', lname = '' } = infoStore.currentQuery || {}
 
@@ -102,14 +104,17 @@ const toDo = (val) => {
       @toImportTem="isShowSelectTemDialog = true"
       @toAddGroup="toOpenTitleDialog"
       @toAddLink="isShowLinkDialog = true"
-      @toDo="toDo"
+      @toImportFile="
+        ;(infoStore.currentSidebar === 'DirectorySidebar' ? (isShowUploadDialog = true) : (isBookListDialog = true)) && (type = 'import') && (bookListDialogTitle = '导入...')
+      "
     />
   </div>
   <SelectTemDialog :isShow="isShowSelectTemDialog" @closeDialog="isShowSelectTemDialog = false" />
   <LinkDialog :isShow="isShowLinkDialog" :parent="null" @closeDialog="isShowLinkDialog = false" />
-  <BookListDialog :show="isBookListDialog" @closeDialog="isBookListDialog = false" :title="bookListDialogTitle" />
+  <BookListDialog :show="isBookListDialog" @closeDialog=";(isBookListDialog = false) && (type = '')" :title="bookListDialogTitle" :type="type" />
   <SearchDialog :show="isSearchDialog" @closeDialog="isSearchDialog = false" />
   <GroupDialog :isShow="isShowsGroupDialog" @closeDialog="isShowsGroupDialog = false" @toAddTitle="toAddTitle" title="新建分组" type="title" />
+  <UploadFileDialog :isShow="isShowUploadDialog" @closeDialog="isShowUploadDialog = false" />
 </template>
 
 <style lang="scss" scoped>

@@ -11,6 +11,7 @@ const docType = ref('updateDoc')
 const articleList = ref([])
 const isEmpty = ref(false)
 const isLoading = ref(false)
+const type = ref('')
 
 const { articleList: list, getRecentDocList } = useArticle()
 
@@ -88,6 +89,7 @@ onMounted(async () => {
           @toAddSheet="toAddArticle"
           @toAddMindmap="toAddArticle"
           @toAddPPT="toAddArticle"
+          @toImportFile=";(isBookListDialog = true) && (type = 'import') && (bookListDialogTitle = '导入...')"
         >
           <ModuleItem :module="module" />
         </AddOperationPopver>
@@ -116,7 +118,7 @@ onMounted(async () => {
     <Loading v-if="isLoading" text="正在努力加载中..." height="50vh" />
   </div>
   <LibraryDialog :isShow="isShowsLibraryDialog" @closeDialog="isShowsLibraryDialog = false" />
-  <BookListDialog :show="isBookListDialog" @closeDialog="isBookListDialog = false" :title="bookListDialogTitle" />
+  <BookListDialog :show="isBookListDialog" @closeDialog="isBookListDialog = false" :title="bookListDialogTitle" :type="type" />
   <SelectTemDialog :isShow="isShowSelectTemDialog" @closeDialog="isShowSelectTemDialog = false" />
 </template>
 

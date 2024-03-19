@@ -25,6 +25,7 @@ const isShowLinkDialog = ref<boolean>(false)
 const isHandleTitleDialog = ref<boolean>(false)
 const isShowSelectTemDialog = ref<boolean>(false)
 const isShowsGroupDialog = ref<boolean>(false)
+const isShowUploadDialog = ref<boolean>(false)
 const groupDialogParent = ref<number>(null)
 const parentId = ref<number>(null)
 const contentType = ref({
@@ -245,6 +246,7 @@ const toAddTitle = async (val) => {
                 @toAddGroup="toOpenTitleDialog(aid)"
                 @toAddLink="toAddLink(aid)"
                 @toImportTem="toImportTem(aid)"
+                @toImportFile=";(parentId = aid) && (isShowUploadDialog = true)"
               >
                 <button
                   w-98px
@@ -315,6 +317,7 @@ const toAddTitle = async (val) => {
   <HandleTitleDialog :isShow="isHandleTitleDialog" @closeDialog="isHandleTitleDialog = false" />
   <SelectTemDialog :isShow="isShowSelectTemDialog" :parent="parentId" @closeDialog="isShowSelectTemDialog = false" />
   <GroupDialog :isShow="isShowsGroupDialog" @closeDialog="isShowsGroupDialog = false" @toAddTitle="toAddTitle" title="新建分组" type="title" />
+  <UploadFileDialog :isShow="isShowUploadDialog" @closeDialog="isShowUploadDialog = false" :parent="parentId" />
 </template>
 
 <style lang="scss" scoped>

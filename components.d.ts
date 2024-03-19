@@ -118,6 +118,7 @@ declare module 'vue' {
     TeamSidebar: typeof import('./src/components/Sidebar/TeamSidebar.vue')['default']
     TinyMCE: typeof import('./src/components/Doc/TinyMCE.vue')['default']
     Tiptap: typeof import('./src/components/Tiptap.vue')['default']
+    UploadFileDialog: typeof import('./src/components/Dialog/UploadFileDialog.vue')['default']
     UserPopver: typeof import('./src/components/Popver/UserPopver.vue')['default']
     UserSidebar: typeof import('./src/components/Sidebar/UserSidebar.vue')['default']
   }

@@ -43,7 +43,7 @@ const isEdit = ref(false)
 const moreFeaturesDrawer = ref(false) // 更多功能抽屉
 const commentDrawer = ref(false) // 评论抽屉
 const isShowLinkDialog = ref(false) // 添加链接弹窗
-const isShowSelectTemDialog = ref(false) // 导入模板弹
+const isShowSelectTemDialog = ref(false) // 选择模板弹窗
 const isShowsGroupDialog = ref(false) // 新建分组弹窗
 const groupDialogParent = ref(null) // 新建分组的父级id
 const parentId = ref(null) // 添加链接的父级id
@@ -81,6 +81,7 @@ const titleList = ref([])
 const showScroll = ref(false)
 const isAlone = ref(false) // 是否是单独的页面
 const isEditName = ref<boolean>(false)
+const isShowUploadDialog = ref(false)
 const docName = ref<string>('')
 const docFileName = ref<string>('')
 const inputName = ref(null)
@@ -633,6 +634,7 @@ onMounted(() => {
               @toAddGroup="toOpenTitleDialog(Number(infoStore.currentQuery?.aid))"
               @toAddLink="toAddLink(Number(infoStore.currentQuery?.aid))"
               @toImportTem="toImportTem(Number(infoStore.currentQuery?.aid))"
+              @toImportFile=";(parentId = Number(infoStore.currentQuery?.aid)) && (isShowUploadDialog = true)"
             >
               <el-button type="success">新建</el-button>
             </AddOperationPopver>
@@ -677,6 +679,7 @@ onMounted(() => {
   <LinkDialog :isShow="isShowLinkDialog" :parent="parentId" type="add" :id="null" @closeDialog="isShowLinkDialog = false" />
   <SelectTemDialog :isShow="isShowSelectTemDialog" :parent="parentId" @closeDialog="isShowSelectTemDialog = false" />
   <GroupDialog :isShow="isShowsGroupDialog" @closeDialog="isShowsGroupDialog = false" @toAddTitle="toAddTitle" title="新建分组" type="title" />
+  <UploadFileDialog :isShow="isShowUploadDialog" @closeDialog="isShowUploadDialog = false" :parent="parentId" />
 </template>
 
 <style lang="scss" scoped>

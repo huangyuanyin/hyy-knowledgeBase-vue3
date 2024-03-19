@@ -23,6 +23,11 @@ const infoStore = useInfoStore()
 const bookName = ref<string>('')
 const visible = ref<boolean>(false)
 const bookList = ref([])
+const isShowUploadDialog = ref(false)
+const lid = ref(null)
+const lname = ref('')
+const gid = ref(null)
+const gname = ref('')
 
 watch(
   () => props.show,
@@ -52,6 +57,12 @@ const getMineBook = async () => {
 const toAddArticle = async (val) => {
   if (props.type === 'template') {
     return emit('toAddArticle', val)
+  } else if (props.type === 'import') {
+    isShowUploadDialog.value = true
+    lid.value = val.id
+    lname.value = val.name
+    gid.value = val.group
+    gname.value = val.group_name
   } else {
     const params = {
       book: val,
@@ -70,6 +81,10 @@ const toAddArticle = async (val) => {
 const closeDialog = () => {
   visible.value = false
   bookName.value = ''
+  lid.value = null
+  lname.value = ''
+  gid.value = null
+  gname.value = ''
   emit('closeDialog', false)
 }
 </script>
@@ -78,7 +93,7 @@ const closeDialog = () => {
   <el-dialog class="BookListDialog" v-model="visible" width="520px" @close="closeDialog">
     <template #header="{ titleId, titleClass }">
       <div class="header">
-        <h4 class="text-16px line-24px text-#000" :id="titleId" :class="titleClass">{{ props.title === '从模板新建' ? '' : '新建' }}{{ props.title }}</h4>
+        <h4 class="text-16px line-24px text-#000" :id="titleId" :class="titleClass">{{ ['从模板新建', '导入...'].includes(props.title) ? '' : '新建' }}{{ props.title }}</h4>
       </div>
     </template>
     <p class="mb-8px font-normal text-#8a8f8d text-14px">选择一个知识库</p>
@@ -110,6 +125,7 @@ const closeDialog = () => {
     </ul>
     <Empty v-if="!bookList.length" :img="bookName ? searchImg : emptyImg" height="25vh" :text="bookName ? '搜索结果为空' : '暂无可选知识库'" />
   </el-dialog>
+  <UploadFileDialog :isShow="isShowUploadDialog" @closeDialog="isShowUploadDialog = false" :lid="lid" :lname="lname" :gid="gid" :gname="gname" />
 </template>
 
 <style lang="scss">

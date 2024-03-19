@@ -50,6 +50,7 @@ const toHandle = (val) => {
     case '新建表格':
     case '新建脑图':
     case '新建幻灯片':
+    case '导入...':
       emit(val.nick, val)
       break
     case '上传文件':
