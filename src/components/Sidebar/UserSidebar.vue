@@ -105,6 +105,9 @@ const toLink = (type: string, data?: any) => {
   overflow: hidden;
   box-sizing: border-box;
   padding: 8px;
+  .el-tree-node.is-current > .el-tree-node__content {
+    background-color: #eff0f0;
+  }
   .back {
     margin: 18px 0px 0px 6px;
     cursor: pointer;

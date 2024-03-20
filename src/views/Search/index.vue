@@ -16,15 +16,15 @@ const spaceRange = ref([
 ])
 const scope = ref('')
 const scope_id = ref('')
-const sub_type = ref('')
+const sub_type = ref(['doc'])
 const time_horizon = ref('')
 const subTypeList = [
-  { name: '全部', value: "['all']" },
-  { name: '文档', value: "['doc']" },
-  { name: '表格', value: "['sheet']" },
-  { name: '脑图', value: "['mind']" },
-  { name: '幻灯片', value: "['ppt']" },
-  { name: '文件', value: "['file']" }
+  // { name: '全部', value: "['all']" },
+  { name: '文档', value: 'doc' },
+  { name: '表格', value: 'sheet' },
+  { name: '脑图', value: 'mind' },
+  { name: '幻灯片', value: 'ppt' },
+  { name: '文件', value: 'file' }
 ]
 const timeList = [
   {
@@ -77,7 +77,7 @@ function initData() {
   time_horizon.value = ''
   scope.value = (infoStore.currentQuery?.scope as string) || ''
   scope_id.value = (infoStore.currentQuery?.scope_id as string) || ''
-  sub_type.value = "['doc']"
+  sub_type.value = ['doc']
   spaceRange.value[1].value = infoStore.currentQuery?.sid
   if (infoStore.currentQuery?.scope !== 'organization')
     spaceRange.value.push({
@@ -94,8 +94,16 @@ function getTimeLabel() {
 }
 
 function getSubTypeName() {
-  const selectedSubType = subTypeList.find((item) => item.value === sub_type.value)
-  return selectedSubType?.name
+  let selectedSubType = []
+  subTypeList.forEach((item) => {
+    sub_type.value.map((subItem) => {
+      if (item.value === subItem) {
+        selectedSubType.push(item.name)
+      }
+    })
+  })
+
+  return selectedSubType.join('、')
 }
 
 function judegeArticleType(type: string) {
@@ -123,7 +131,12 @@ const handleSpace = (val) => {
 }
 
 const handleSubType = (val) => {
-  sub_type.value = val
+  if (sub_type.value.includes(val)) {
+    if (sub_type.value.length === 1) return
+    sub_type.value = sub_type.value.filter((item) => item !== val)
+  } else {
+    sub_type.value.push(val)
+  }
   getSearch()
 }
 
@@ -135,7 +148,7 @@ const getSearch = async () => {
     type: 'content',
     scope: scope.value,
     scope_id: scope_id.value,
-    sub_type: sub_type.value,
+    sub_type: JSON.stringify(sub_type.value),
     time_horizon: time_horizon.value
   }
   scope_id.value === '0' && delete params.scope_id && (params.scope = 'all')
@@ -226,9 +239,9 @@ const toLink = (item) => {
             </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item :bg="sub_type === item.value ? '#eff0f0 ' : ''" v-for="(item, index) in subTypeList" :key="'subTypeList' + index" :command="item.value">
+                <el-dropdown-item :bg="sub_type.includes(item.value) ? '#eff0f0 ' : ''" v-for="(item, index) in subTypeList" :key="'subTypeList' + index" :command="item.value">
                   <span flex items-center justify-center mr-8px w-16px text="#585a5a" text-14px>
-                    <img w-14px h-14px :src="goIcon" alt="" v-if="sub_type === item.value" />
+                    <img w-14px h-14px :src="goIcon" alt="" v-if="sub_type.includes(item.value)" />
                   </span>
                   {{ item.name }}
                 </el-dropdown-item>

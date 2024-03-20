@@ -145,6 +145,9 @@ const toBack = () => {
     margin-left: 6px;
     :deep(.el-tree) {
       background-color: #fafafa;
+      .el-tree-node.is-current > .el-tree-node__content {
+        background-color: #eff0f0;
+      }
     }
     :deep(.el-tree-node__content) {
       height: 32px;
