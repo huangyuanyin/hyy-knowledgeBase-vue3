@@ -3,6 +3,7 @@ export interface spaceParams {
   spacekey?: string
   permusername?: string
   is_delete?: string
+  spacetype?: string
 }
 
 export interface spaceData {

@@ -14,6 +14,7 @@ const route = useRoute()
 const infoStore = useInfoStore()
 const morePopverRef = ref(null)
 const spaceName = ref('')
+const isShowAllSpaceDialog = ref(false)
 
 watchEffect(() => {
   spaceName.value = infoStore.currentSpaceType === '个人' ? '' : route.path.split('/')[1]
@@ -30,6 +31,8 @@ const toHandle = (item) => {
       path: infoStore.currentSpaceType === '个人' ? '/recycles' : `/${spaceName.value}/recycles`,
       query: infoStore.currentSpaceType === '个人' ? null : { ...query }
     })
+  } else if (item.nick === 'toShowAllSpace') {
+    isShowAllSpaceDialog.value = true
   }
 }
 </script>
@@ -58,12 +61,13 @@ const toHandle = (item) => {
           </div>
         </li>
         <li class="divider" v-else-if="item.type === 'divider'"></li>
-        <li class="operation_item" v-if="item.type === 'item'">
+        <li class="operation_item" v-if="item.type === 'item'" @click="toHandle(item)">
           <span>{{ item.label }}</span>
         </li>
       </template>
     </ul>
   </el-popover>
+  <AllSpaceDialog :isShow="isShowAllSpaceDialog" @closeDialog="isShowAllSpaceDialog = false" />
 </template>
 
 <style lang="scss" scoped>

@@ -11,6 +11,7 @@ declare module 'vue' {
     AddBookMemberDialog: typeof import('./src/components/Dialog/addBookMemberDialog.vue')['default']
     AddMemberDialog: typeof import('./src/components/Dialog/addMemberDialog.vue')['default']
     AddOperationPopver: typeof import('./src/components/Popver/AddOperationPopver.vue')['default']
+    AllSpaceDialog: typeof import('./src/components/Dialog/AllSpaceDialog.vue')['default']
     Announcement: typeof import('./src/components/Item/Announcement.vue')['default']
     ArticleOeration: typeof import('./src/components/Item/ArticleOeration.vue')['default']
     BookListDialog: typeof import('./src/components/Dialog/BookListDialog.vue')['default']
