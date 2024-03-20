@@ -3,6 +3,7 @@ import { copyArticleApi, getArticleTreeApi, moveArticleApi } from '@/api/article
 import { TreeOptionProps } from 'element-plus/es/components/tree/src/tree.type'
 import publicIcon from '@/assets/icons/library/publicIcon.svg'
 import { user } from '@/data/data'
+import { getSpacesApi } from '@/api/spaces'
 
 const props = defineProps({
   show: {
@@ -27,6 +28,7 @@ const emit = defineEmits(['closeDialog', 'recover'])
 const route = useRoute()
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
+const personalGroupId = localStorage.getItem('personalGroupId')
 const spaceId = ref(null) // 当前空间id
 const teamId = ref(null) // 团队id
 const teamIcon = ref(null) // 团队图标
@@ -37,6 +39,8 @@ const articleId = ref(null) // 文章id
 const dataSource = ref([]) // 目录树
 const selectTeamName = ref('')
 const teamList = ref([])
+const teamList2 = ref([])
+const teamId2 = ref(null)
 const bookList = ref([])
 const isDisabled = ref(false)
 const pinPosition = ref('0') // 0：置顶 1：选中 2：置底
@@ -59,14 +63,13 @@ watch(
         if (infoStore.currentSpaceType === '组织') {
           await getTeam()
         } else {
-          teamList.value = [
-            {
-              id: localStorage.getItem('personalGroupId'),
-              groupname: JSON.parse(localStorage.getItem('personalSpaceInfo')).spacename,
-              is_default: '0',
-              icon: 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('personalSpaceInfo')).icon
-            }
-          ]
+          await getSpaces()
+          teamList.value.push({
+            id: localStorage.getItem('personalGroupId'),
+            groupname: JSON.parse(localStorage.getItem('personalSpaceInfo')).spacename,
+            is_default: '0',
+            icon: 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('personalSpaceInfo')).icon
+          })
           teamId.value = localStorage.getItem('personalGroupId')
         }
         await getBook()
@@ -128,14 +131,21 @@ const closeDialog = () => {
   emit('closeDialog', false)
 }
 
-const toChange = (type) => {
+const toChange = async (type) => {
   pinPosition.value = '0'
   levelType.value = '2'
   articleId.value = null
-  if (type === 'team') {
+  if (type === 'team' && infoStore.currentSpaceType === '组织') {
     bookId.value = null
     getBook()
-  } else {
+  } else if (type === 'team' && infoStore.currentSpaceType === '个人') {
+    bookId.value = null
+    await getTeam()
+    await getBook()
+  } else if (type === 'team2') {
+    bookId.value = null
+    getBook()
+  } else if (type === 'book') {
     getArticle()
   }
 }
@@ -225,33 +235,70 @@ const getArticle = async () => {
   }
 }
 
+const getSpaces = async () => {
+  const params = {
+    is_delete: '0',
+    spacetype: 'organization',
+    permusername: user
+  }
+  let res = await getSpacesApi(params)
+  if (res.code === 1000) {
+    res.data.forEach((item) => {
+      item.groupname = item.spacename
+      item.is_default = '0'
+    })
+    teamList.value = res.data as any
+  }
+}
+
 // 获取团队列表
 const getTeam = async () => {
   const parmas = {
-    space: String(infoStore.currentSpaceInfo.id),
+    space: infoStore.currentSpaceType === '组织' ? String(infoStore.currentSpaceInfo.id) : String(teamId.value),
     permusername: user
   }
   await getTeamList(parmas)
-  teamList.value = list.value
+  if (infoStore.currentSpaceType === '组织') {
+    teamList.value = list.value
+  } else if (infoStore.currentSpaceType === '个人' && teamId.value != personalGroupId) {
+    infoStore.currentSpaceType === '个人' && (teamList2.value = list.value)
+    teamId2.value = list.value.length > 0 ? list.value[0].id : null
+  }
 }
 
 // 获取知识库列表
 const getBook = async () => {
-  useBook().getBookList(String(teamId.value), (res: any) => {
-    bookList.value = res.data
-    if (teamId.value !== Number(infoStore.currentQuery?.gid) && infoStore.currentSpaceType === '组织') {
+  if (infoStore.currentSpaceType === '个人' && teamId.value != personalGroupId) {
+    useBook().getBookList(String(teamId2.value), (res: any) => {
+      bookList.value = res.data
       bookId.value = bookList.value.length > 0 ? bookList.value[0].id : null
-    } else {
-      bookId.value = Number(infoStore.currentQuery?.lid) || props.data.book
-    }
-    if (bookId.value === null) return (dataSource.value = [])
-    getArticle()
-  })
+      if (bookId.value === null) return (dataSource.value = [])
+      getArticle()
+    })
+  } else {
+    useBook().getBookList(String(teamId.value), (res: any) => {
+      bookList.value = res.data
+      if (teamId.value !== Number(infoStore.currentQuery?.gid) && infoStore.currentSpaceType === '组织') {
+        bookId.value = bookList.value.length > 0 ? bookList.value[0].id : null
+      } else {
+        bookId.value = Number(infoStore.currentQuery?.lid) || props.data.book
+      }
+      if (bookId.value === null) return (dataSource.value = [])
+      getArticle()
+    })
+  }
 }
 </script>
 
 <template>
-  <el-dialog class="moveDialog" v-model="visible" width="600px" align-center @close="closeDialog" :append-to-body="true">
+  <el-dialog
+    class="moveDialog"
+    v-model="visible"
+    :width="infoStore.currentSpaceType === '个人' && teamId != personalGroupId ? '900px' : '600px'"
+    align-center
+    @close="closeDialog"
+    :append-to-body="true"
+  >
     <template #header="{ titleId, titleClass }">
       <div class="header">
         <h6 :id="titleId" :class="titleClass">{{ props.title }}</h6>
@@ -275,6 +322,27 @@ const getBook = async () => {
           </el-option>
         </el-select>
         <span class="line"> / </span>
+        <el-select
+          v-if="infoStore.currentSpaceType === '个人' && teamId != personalGroupId"
+          v-model="teamId2"
+          popper-class="selectList"
+          placement="bottom-start"
+          @change="toChange('team2')"
+          :placeholder="!teamList2.length ? '暂无团队' : ''"
+          no-data-text="暂无团队"
+        >
+          <template #prefix>
+            <img class="prefix-icon" src="/src/assets/icons/bookIcon.svg" />
+          </template>
+          <el-option v-for="(item, index) in teamList2" :key="'teamList2' + index" :label="item.groupname" :value="item.id">
+            <div style="display: flex; align-items: center">
+              <img class="icon" :src="item.icon || '/src/assets/icons/bookIcon.svg'" alt="" />
+              <span>{{ item.groupname }}</span>
+            </div>
+            <img ml-8px v-if="item.id === teamId2" class="selectIcon" src="@/assets/icons/selectIcon.svg" />
+          </el-option>
+        </el-select>
+        <span class="line" v-if="infoStore.currentSpaceType === '个人' && teamId != personalGroupId"> / </span>
         <el-select
           v-model="bookId"
           popper-class="selectList"
