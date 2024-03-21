@@ -17,8 +17,8 @@ const book = ref([
   {
     label: '知识库种类',
     children: [
-      { label: '文档知识库：', value: 0 },
-      { label: '文件库：', value: 0 }
+      // { label: '文档知识库：', value: 0 },
+      // { label: '文件库：', value: 0 }
     ]
   },
   {
@@ -65,8 +65,8 @@ const getTeamStatistic = async () => {
   let res: any = await getTeamStatisticApi(infoStore.currentQuery.gid)
   if (res.code === 1000) {
     teamStatistic.value = res.data
-    book.value[0].children[0].value = res.data.book_count
-    book.value[0].children[1].value = res.data.file_count || '--'
+    // book.value[0].children[0].value = res.data.book_count
+    // book.value[0].children[1].value = res.data.file_count || '--'
     book.value[1].children[0].value = res.data.public_book_count
     book.value[1].children[1].value = res.data.private_book_count
   } else {

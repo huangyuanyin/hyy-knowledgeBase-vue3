@@ -75,10 +75,11 @@ watchEffect(() => {
       memberCol: [
         { prop: 'creator', label: '成员名称', width: 200 },
         { prop: 'content_count', label: '文档数' },
-        { prop: 'read_count', label: '阅读数' },
-        { prop: 'comment_count', label: '评论数' },
-        { prop: 'like_count', label: '点赞数' },
-        { prop: 'mark_count', label: '收藏数' }
+        { prop: 'write_doc_count', label: '编辑次数' },
+        { prop: 'read_count', label: '获阅读量' },
+        { prop: 'comment_count', label: '获评论数' },
+        { prop: 'like_count', label: '获点赞数' },
+        { prop: 'mark_count', label: '获收藏数' }
       ],
       bookCol: [
         { prop: 'name', label: '知识库名称' },
@@ -86,7 +87,8 @@ watchEffect(() => {
         { prop: 'content_count', label: '文档数', width: 150 },
         { prop: 'read_count', label: '获阅读量', width: 150 },
         { prop: 'like_count', label: '获赞数', width: 150 },
-        { prop: 'comment_count', label: '评论量', width: 150 }
+        { prop: 'comment_count', label: '评论量', width: 150 },
+        { prop: 'mark_count', label: '关注数', width: 150 }
       ],
       docCol: [
         { prop: 'title', label: '文档名称', width: 200 },
@@ -110,10 +112,10 @@ watchEffect(() => {
       memberCol: [
         { prop: 'creator', label: '成员名称', width: 200 },
         { prop: 'content_count', label: '文档数' },
-        { prop: 'read_count', label: '阅读数' },
-        { prop: 'comment_count', label: '评论数' },
-        { prop: 'like_count', label: '点赞数' },
-        { prop: 'mark_count', label: '收藏数' }
+        { prop: 'read_count', label: '获阅读数' },
+        { prop: 'comment_count', label: '获评论数' },
+        { prop: 'like_count', label: '获点赞数' },
+        { prop: 'mark_count', label: '获收藏数' }
       ],
       teamCol: [
         { prop: 'name', label: '团队名称' },
@@ -203,7 +205,9 @@ const toExport = () => {
           </div>
           <div flex items-center h-56px v-else-if="column.prop === 'title'">
             <img w-20px h-20px mr-4px :src="contentType[row.type]" alt="" class="icon" />
-            <span max-w-200px overflow-hidden text-ellipsis whitespace-nowrap>{{ row.title }}</span>
+            <el-tooltip effect="light" :content="row.title" placement="bottom-start" :show-arrow="false" :hide-after="0" :show-after="1000">
+              <span max-w-200px overflow-hidden text-ellipsis whitespace-nowrap>{{ row.title }}</span>
+            </el-tooltip>
           </div>
           <div flex items-center h-56px v-else-if="column.prop === 'name'">
             <img w-24px h-24px mr-8px :src="row.icon" alt="" class="icon" />
