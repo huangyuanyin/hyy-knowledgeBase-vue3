@@ -82,6 +82,9 @@ watch(
       readData.value[1].value = (infoStore.currentArticleInfo as ArticleInfo).comments_count
       readData.value[2].value = (infoStore.currentArticleInfo as ArticleInfo).likes_count
       getOperationlog()
+      if (['sheet', 'ppt'].includes(infoStore.currentMenu)) {
+        statistic.value.shift()
+      }
     }
   }
 )
@@ -122,7 +125,40 @@ const toClick = (item: any) => {
       <div class="detail" flex>
         <div class="item" flex content-start flex-wrap p-8px rounded-8px mr-12px bg="#fafafa">
           <template v-for="(item, _index) in statistic" :key="'statistic' + _index">
-            <div :class="['it', item.label === '历史版本' ? 'it-active' : '']" flex justify-between items-center rounded-8px pt-10px pb-10px pl-8px pr-8px @click="toClick(item)">
+            <div
+              class="it it-active"
+              v-if="['sheet', 'ppt'].includes(infoStore.currentMenu) && item.label === '历史版本'"
+              flex
+              justify-between
+              items-center
+              rounded-8px
+              pt-10px
+              pb-10px
+              pl-8px
+              pr-8px
+              style="flex-basis: 100%"
+              @click="toClick(item)"
+            >
+              <div flex flex-col>
+                <span text-14px font-weight-500 font-family-PingFangSC-Medium sans-serif text="#262626" line-height-20px>{{ item.value }}</span>
+                <span text-12px mt-2px text="#8a8f8d" line-height-17px>{{ item.label }}</span>
+              </div>
+              <span v-if="item.label === '历史版本'" flex items-center justify-between><img :src="rightArrowIcon" alt="" /></span>
+            </div>
+            <div
+              v-else
+              :class="['it', item.label === '历史版本' ? 'it-active' : '']"
+              style="flex-basis: 50%"
+              flex
+              justify-between
+              items-center
+              rounded-8px
+              pt-10px
+              pb-10px
+              pl-8px
+              pr-8px
+              @click="toClick(item)"
+            >
               <div flex flex-col>
                 <span text-14px font-weight-500 font-family-PingFangSC-Medium sans-serif text="#262626" line-height-20px>{{ item.value }}</span>
                 <span text-12px mt-2px text="#8a8f8d" line-height-17px>{{ item.label }}</span>

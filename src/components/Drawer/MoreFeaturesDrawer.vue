@@ -82,6 +82,9 @@ watchEffect(() => {
     { icon: commentIcon, text: '评论数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.comments_count} 条`, type: 'label' },
     { icon: likeIcon, text: '点赞数', value: `${(infoStore.currentArticleInfo as ArticleInfo)?.likes_count} 次`, type: 'label' }
   ]
+  if (infoStore.currentMenu === 'sheet' || infoStore.currentMenu === 'ppt') {
+    infoItems.value.splice(0, 1)
+  }
   description.value = (infoStore.currentArticleInfo as ArticleInfo)?.description
   if (infoStore.currentMenu === 'file') {
     operationItems.value.splice(3, 1)

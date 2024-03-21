@@ -191,8 +191,8 @@ const initOptions = ref({
   // ...getPasteOption(),
   // ...getImageOption(),
   setup: (editor) => {
-    editor.on('init', () => {
-      //
+    editor.on('init', (res) => {
+      console.log(`output->res`, res)
     })
     // editor.ui.registry.addContextToolbar('paragraphlink', {
     //   predicate: (node) => {
