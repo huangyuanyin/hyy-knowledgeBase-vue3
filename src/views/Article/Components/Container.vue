@@ -134,10 +134,6 @@ watchEffect(() => {
             }
           ]
   }
-  if (props.isPublish) {
-    editArticle()
-    moreFeaturesDrawer.value = false
-  }
   isAlone.value && (itemList.value = itemList.value.filter((item) => item.label === '收藏'))
   if (infoStore.currentSpaceType === '个人') {
     itemList.value = itemList.value.filter((item) => item.label !== '协作')
@@ -149,6 +145,16 @@ watchEffect(() => {
     refreshStroe.setRefreshTitleTreeName(false)
   }
 })
+
+watch(
+  () => props.isPublish,
+  () => {
+    if (props.isPublish) {
+      editArticle()
+      moreFeaturesDrawer.value = false
+    }
+  }
+)
 
 watch(
   () => infoStore.currentQuery?.aid,
@@ -178,6 +184,10 @@ function editArticle() {
     book: infoStore.currentQuery?.lid,
     space: spaceId.value,
     body: props.content
+  }
+  if (infoStore.currentMenu === 'mind') {
+    params['counts'] = Number(sessionStorage.getItem('SIMPLE_MIND_MAP_WORD')) || 0
+    params['body'] = localStorage.getItem('SIMPLE_MIND_MAP_DATA') || ''
   }
   useArticle().handleEditArticle(Number(infoStore.currentQuery?.aid), params)
 }
