@@ -63,7 +63,7 @@ import { addListener, launch } from 'devtools-detector'
 
 addListener((isOpen) => (isOpen ? (location.href = 'https://www.baidu.com') : ''))
 
-// import.meta.env.MODE !== 'development' && launch()
+import.meta.env.MODE == '55' && launch()
 
 // 按需加载的方式默认是不带国际化的，自定义国际化需要自行解析占位符 '{0}'，例如：
 VXETable.setup({

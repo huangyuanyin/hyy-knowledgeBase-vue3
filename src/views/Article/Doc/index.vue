@@ -62,8 +62,8 @@ onBeforeMount(() => {
 <template>
   <div class="Doc_wrap">
     <Container :content="modelValue" :isHasPermission="typeof infoStore.currentArticleInfo === 'object'" :isShowScroll="isShowScroll" @scrollTo="isShowScroll = false">
-      <TinyMCE v-if="isUpdate && !isPreview" v-model="modelValue" :readonly="isPreview" />
-      <MavonEditor v-if="isPreview" :html="modelValue" @scroll="scroll" :scrollTop="isShowScroll ? null : 0" />
+      <TinyMCE v-if="isUpdate" v-model="modelValue" :readonly="isPreview" />
+      <!-- <MavonEditor v-if="isPreview" :html="modelValue" @scroll="scroll" :scrollTop="isShowScroll ? null : 0" /> -->
     </Container>
   </div>
 </template>

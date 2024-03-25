@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --host",
     "dev:stage": "vite --mode staging --host",
+    "dev:55": "vite --mode 55 --host",
     "build": "vue-tsc && vite build",
     "build:stage": "vite build --mode staging",
     "build:55": "vite build --mode 55",

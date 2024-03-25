@@ -1,6 +1,20 @@
 <template>
-  <div class="TinyMCE_wrap" :style="{ width: props.width }">
-    <Editor :disabled="props.readonly" v-model="editorValue" :api-key="key" :init="initOptions"></Editor>
+  <div style="position: relative">
+    <div id="sample" class="TinyMCE_wrap">
+      <Editor :disabled="props.readonly" v-model="editorValue" :api-key="key" :init="initOptions"></Editor>
+      <div id="outside-toc" class="outside-toc"></div>
+      <div id="show" class="outside-btn">
+        <button>
+          <svg t="1711011382370" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1963" width="25" height="25">
+            <path
+              d="M512 298.666667c-162.133333 0-285.866667 68.266667-375.466667 213.333333 89.6 145.066667 213.333333 213.333333 375.466667 213.333333s285.866667-68.266667 375.466667-213.333333c-89.6-145.066667-213.333333-213.333333-375.466667-213.333333z m0 469.333333c-183.466667 0-328.533333-85.333333-426.666667-256 98.133333-170.666667 243.2-256 426.666667-256s328.533333 85.333333 426.666667 256c-98.133333 170.666667-243.2 256-426.666667 256z m0-170.666667c46.933333 0 85.333333-38.4 85.333333-85.333333s-38.4-85.333333-85.333333-85.333333-85.333333 38.4-85.333333 85.333333 38.4 85.333333 85.333333 85.333333z m0 42.666667c-72.533333 0-128-55.466667-128-128s55.466667-128 128-128 128 55.466667 128 128-55.466667 128-128 128z"
+              fill="#444444"
+              p-id="1964"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -29,7 +43,12 @@ const props = defineProps({
   },
   bodyStyle: {
     type: String,
-    default: 'body { margin: 3rem 30% 3rem 15% }'
+    default: `
+         body { margin: 4rem; }
+        .mce-toc { border:0px ;right: 8%;min-width: 250px;top:20px }
+        .mce-content-body [contentEditable=false][data-mce-selected] { outline:0px }
+        .mce-content-body {width:60%}
+        `
   },
   resize: {
     type: Boolean,
@@ -71,13 +90,7 @@ const key = '3wvx4jkjmreyeiqypzs5hnwrkncklep4xi69inkwgfoipxj7'
 const isDev = import.meta.env.VITE_BASE_SETTING === 'dev'
 const editorValue = ref(modelValue.value)
 const initOptions = ref({
-  // selector: 'textarea',
-  // skin: false,
-  // menubar: false,
-  // content_css: false,
   skin_url: isDev ? '/tinymce/skins/ui/oxide' : `${environmentPrefix[import.meta.env.MODE]}tinymce/skins/ui/oxide`,
-  // skin: 'jam', //果酱图标
-  // icons: 'jam', //果酱图标
   content_style: props.bodyStyle, // 设置内容样式
   with: '100px',
   height: props.height,
@@ -153,12 +166,9 @@ const initOptions = ref({
   paste_word_inline_styles: false, // 粘贴时的内联样式
   paste_word_tab_interval: 0, // 粘贴时的间隔
   skeletonScreen: true,
-  // quickbars_insert_toolbar: false, // 禁用快速插入上下文工具栏
-  // quickbars_selection_toolbar: false, // 禁用快速选择上下文工具栏
-  // quickbars_image_toolbar: false, // 禁用快速图像上下文工具栏
-  quickbars_image_toolbar: 'alignleft aligncenter alignright | rotateleft rotateright | imageoptions', // 快速图像工具栏
-  quickbars_selection_toolbar: 'bold italic underline quicklink h2 h3 blockquote quickimage quicktable tablemergecells', // 快速工具栏
-  quickbars_insert_toolbar: 'p h2 h3 bullist numlist quickimage quicktable hr', // 快速插入工具栏
+  quickbars_image_toolbar: 'alignleft aligncenter alignright | rotateleft rotateright | imageoptions',
+  quickbars_selection_toolbar: 'bold italic underline quicklink h2 h3 blockquote quickimage quicktable tablemergecells',
+  quickbars_insert_toolbar: 'p h2 h3 bullist numlist quickimage quicktable hr',
   formats: {
     formatpainter_checklist: { selector: 'ul', classes: 'tox-checklist' },
     formatpainter_liststyletype: { selector: 'ul,ol', styles: { listStyleType: '%value' } },
@@ -188,11 +198,12 @@ const initOptions = ref({
   },
   toc_header: 'div', // 设置目录的标题
   toc_depth: 6, // 设置目录的深度
-  // ...getPasteOption(),
-  // ...getImageOption(),
   setup: (editor) => {
-    editor.on('init', (res) => {
-      console.log(`output->res`, res)
+    editor.on('keyup', (event) => {
+      editor.execCommand('mceInsertOrUpdateToc')
+    })
+    editor.on('init', (event) => {
+      editor.execCommand('mceInsertOrUpdateToc')
     })
     // editor.ui.registry.addContextToolbar('paragraphlink', {
     //   predicate: (node) => {
@@ -218,6 +229,7 @@ onBeforeMount(() => {
 
 <style lang="scss" scoped>
 .TinyMCE_wrap {
+  z-index: 99;
   :deep(.tox-tinymce) {
     border: none;
     border-radius: 0px;
@@ -282,6 +294,70 @@ onBeforeMount(() => {
 </style>
 
 <style lang="scss">
+.active {
+  font-weight: 600 !important;
+}
+.outside-btn {
+  display: none;
+  right: 10px;
+  position: absolute;
+  top: 80px;
+  overflow-y: auto;
+  padding: 10px;
+}
+.outside-toc {
+  position: absolute;
+  top: 80px;
+  right: 15px;
+  width: 280px;
+  height: 87%;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+#outside-toc {
+  h2 {
+    font-size: 14px;
+    margin-bottom: 12px;
+    padding-top: 8px;
+    padding-left: 28px;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    flex-shrink: 0;
+    margin-right: 8px;
+    color: #262626;
+  }
+}
+#outside-toc {
+  ul > div {
+    line-height: 25px;
+    border-left: 2px solid #eff0f0;
+    margin-left: -5px;
+    li {
+      list-style-type: none; /* 去除默认点 */
+      font-size: 14px;
+      color: #585a5a;
+      font-weight: 300;
+      overflow: hidden;
+      width: 80%;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      a {
+        text-decoration: none;
+        color: #585a5a;
+        cursor: pointer;
+      }
+    }
+  }
+}
+.outside-toc {
+  ul > li {
+    .active {
+      color: red;
+    }
+  }
+}
 .tox-edit-area__iframe {
   :deep(.mce-content-body) {
     background-color: red !important;
@@ -295,12 +371,30 @@ onBeforeMount(() => {
     }
   }
 }
+
 .mce-content-body {
   background-color: red !important;
 }
+.level-1 {
+  padding-left: 5%;
+}
+.level-2 {
+  padding-left: 10%;
+  margin-left: -2px;
+}
+.level-3 {
+  padding-left: 15%;
+}
+.level-4 {
+  padding-left: 20%;
+}
+.level-5 {
+  padding-left: 25%;
+}
+.level-6 {
+  padding-left: 30%;
+}
+.active3 {
+  border-left: 3px solid #00b96b !important;
+}
 </style>
-
-<!-- // 设置工具栏 toolbar: [ 'bold italic hr | fontsize forecolor backcolor | blocks blockquote removeformat | undo redo ', 'bullist table insertdatetime | link charmap emoticons
-wordcount searchreplace code | codesample visualblocks image fullscreen preview' ]
-// 设置插件 plugins: 'codesample lists advlist link autolink charmap emoticons fullscreen
-preview code searchreplace table visualblocks wordcount insertdatetime image' -->
