@@ -76,7 +76,7 @@ onMounted(async () => {
     </div>
     <div class="box">
       <el-table :data="adminData" stripe style="width: 100%">
-        <el-table-column prop="permname" label="姓名" width="350">
+        <el-table-column prop="permname" label="姓名" width="200">
           <template #default="{ row }">
             <span>
               {{ row.user.nickname }}
@@ -85,12 +85,12 @@ onMounted(async () => {
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="permusername" label="用户名" width="250" align="center">
+        <el-table-column prop="permusername" label="用户名" width="180" align="center">
           <template #default="{ row }">
             <span> {{ row.user.username }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="role" label="角色" width="250" align="center">
+        <el-table-column prop="role" label="角色" width="180" align="center">
           <template #default="">
             <span>管理员</span>
           </template>

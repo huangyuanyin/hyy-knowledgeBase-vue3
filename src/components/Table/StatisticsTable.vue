@@ -73,7 +73,7 @@ watchEffect(() => {
     ]
     tabColumns.value = {
       memberCol: [
-        { prop: 'creator', label: '成员名称', width: 200 },
+        { prop: 'creator', label: '成员名称', width: 180 },
         { prop: 'content_count', label: '文档数' },
         { prop: 'write_doc_count', label: '编辑次数' },
         { prop: 'read_count', label: '获阅读量' },
@@ -82,23 +82,23 @@ watchEffect(() => {
         { prop: 'mark_count', label: '获收藏数' }
       ],
       bookCol: [
-        { prop: 'name', label: '知识库名称' },
-        { prop: 'word_count', label: '字数', width: 150 },
-        { prop: 'content_count', label: '文档数', width: 150 },
-        { prop: 'read_count', label: '获阅读量', width: 150 },
-        { prop: 'like_count', label: '获赞数', width: 150 },
-        { prop: 'comment_count', label: '评论量', width: 150 },
-        { prop: 'mark_count', label: '关注数', width: 150 }
+        { prop: 'name', label: '知识库名称', width: 250 },
+        { prop: 'word_count', label: '字数', width: 120 },
+        { prop: 'content_count', label: '文档数', width: 120 },
+        { prop: 'read_count', label: '获阅读量', width: 120 },
+        { prop: 'like_count', label: '获赞数', width: 120 },
+        { prop: 'comment_count', label: '评论量', width: 120 },
+        { prop: 'mark_count', label: '关注数' }
       ],
       docCol: [
-        { prop: 'title', label: '文档名称', width: 200 },
+        { prop: 'title', label: '文档名称', width: 250 },
         { prop: 'creator', label: '创建者', width: 120 },
         { prop: 'create_datetime', label: '创建时间' },
         { prop: 'update_datetime', label: '更新时间' },
         { prop: 'word_count', label: '字数', width: 70 },
         { prop: 'read_count', label: '获阅读量', width: 90 },
         { prop: 'likes_count', label: '获赞数', width: 70 },
-        { prop: 'comments_count', label: '评论量', width: 70 }
+        { prop: 'comments_count', label: '评论量' }
       ]
     }
     currentTab.value = 'memberCol'
@@ -110,22 +110,23 @@ watchEffect(() => {
     ]
     tabColumns.value = {
       memberCol: [
-        { prop: 'creator', label: '成员名称', width: 200 },
+        { prop: 'creator', label: '成员名称', width: 180 },
         { prop: 'content_count', label: '文档数' },
+        { prop: 'write_count', label: '编辑次数' },
         { prop: 'read_count', label: '获阅读数' },
         { prop: 'comment_count', label: '获评论数' },
         { prop: 'like_count', label: '获点赞数' },
         { prop: 'mark_count', label: '获收藏数' }
       ],
       teamCol: [
-        { prop: 'name', label: '团队名称' },
+        { prop: 'name', label: '团队名称', width: 280 },
         { prop: 'create_datetime', label: '创建时间', width: 200 },
         { prop: 'member_count', label: '成员数', width: 100 },
         { prop: 'book_count', label: '知识库数', width: 100 },
         { prop: 'content_count', label: '文档数', width: 100 },
         { prop: 'read_count', label: '阅读量', width: 100 },
         { prop: 'like_count', label: '点赞量', width: 100 },
-        { prop: 'comment_count', label: '评论量', width: 100 }
+        { prop: 'comment_count', label: '评论量' }
       ]
     }
     currentTab.value = 'memberCol'
