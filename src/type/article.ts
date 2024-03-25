@@ -13,6 +13,8 @@ export interface ArticleInfo {
   counts: number
   views: number
   comments_count: number
+  pluginkey: string
+  pluginver: string
   like_id: number
   liked: boolean
   likes_count: number

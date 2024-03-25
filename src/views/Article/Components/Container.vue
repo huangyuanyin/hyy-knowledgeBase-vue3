@@ -410,6 +410,7 @@ const toOpenCommentDrawer = () => {
   commentDrawer.value = true
 }
 
+// @ts-ignore
 window.to = () => {
   sessionStorage.setItem('to', window.location.href)
   console.log(`output->wo`, window.history)

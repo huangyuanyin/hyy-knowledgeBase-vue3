@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { ArticleInfo } from '@/type/article'
 import Container from '../Components/Container.vue'
 
 const route = useRoute()
@@ -62,8 +63,22 @@ onBeforeMount(() => {
 <template>
   <div class="Doc_wrap">
     <Container :content="modelValue" :isHasPermission="typeof infoStore.currentArticleInfo === 'object'" :isShowScroll="isShowScroll" @scrollTo="isShowScroll = false">
-      <TinyMCE v-if="isUpdate" v-model="modelValue" :readonly="isPreview" />
-      <!-- <MavonEditor v-if="isPreview" :html="modelValue" @scroll="scroll" :scrollTop="isShowScroll ? null : 0" /> -->
+      <TinyMCE v-if="isUpdate && (infoStore.currentArticleInfo  as ArticleInfo).pluginkey === 'tinymce'" v-model="modelValue" :readonly="isPreview" />
+      <MavonEditor
+        v-if="isPreview && (infoStore.currentArticleInfo  as ArticleInfo).pluginkey === 'mavon-editor'"
+        :readonly="isPreview"
+        :html="modelValue"
+        @scroll="scroll"
+        :scrollTop="isShowScroll ? null : 0"
+      />
+      <MavonEditor
+        class="editMD"
+        v-if="!isPreview &&(infoStore.currentArticleInfo  as ArticleInfo).pluginkey === 'mavon-editor'"
+        :readonly="isPreview"
+        :html="modelValue"
+        @scroll="scroll"
+        :scrollTop="isShowScroll ? null : 0"
+      />
     </Container>
   </div>
 </template>
@@ -82,6 +97,11 @@ onBeforeMount(() => {
     }
     .v-note-show {
       padding: 0 250px 0 150px;
+    }
+  }
+  .editMD {
+    :deep(.v-note-show) {
+      padding: 0px !important;
     }
   }
 }

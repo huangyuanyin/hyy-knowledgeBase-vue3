@@ -5,7 +5,8 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
-  scrollTop: Number
+  scrollTop: Number,
+  readonly: Boolean
 })
 const emit = defineEmits(['scroll'])
 
@@ -40,11 +41,11 @@ const handleScroll = () => {
       ref="editor"
       v-model="props.html"
       defaultOpen="preview"
-      :subfield="false"
-      :toolbarsFlag="false"
-      :boxShadow="false"
+      :subfield="!props.readonly"
+      :toolbarsFlag="!props.readonly"
+      :boxShadow="!props.readonly"
       scrollStyle
-      :navigation="props.navigation"
+      :navigation="props.readonly"
       previewBackground="#fff"
       @scroll="handleScroll"
     />
