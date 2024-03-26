@@ -8,9 +8,15 @@ const props = defineProps({
   scrollTop: Number,
   readonly: Boolean
 })
-const emit = defineEmits(['scroll'])
+const emit = defineEmits(['scroll', 'updateValue'])
 
+const { html } = toRefs(props)
 const editor = ref<any>(null)
+const editorValue = ref('')
+
+watchEffect(() => {
+  editorValue.value = html.value
+})
 
 watch(
   () => props.scrollTop,
@@ -33,13 +39,20 @@ const handleScroll = () => {
   const el = editor.value.$refs.vShowContent
   emit('scroll', el.scrollTop > 1500 ? true : false)
 }
+
+watch(
+  () => editorValue.value,
+  (newVal) => {
+    emit('updateValue', newVal)
+  }
+)
 </script>
 
 <template>
   <div class="MavonEditor_wrap">
     <mavon-editor
       ref="editor"
-      v-model="props.html"
+      v-model="editorValue"
       defaultOpen="preview"
       :subfield="!props.readonly"
       :toolbarsFlag="!props.readonly"

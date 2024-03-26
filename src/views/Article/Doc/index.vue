@@ -76,6 +76,7 @@ onBeforeMount(() => {
         v-if="!isPreview &&(infoStore.currentArticleInfo  as ArticleInfo).pluginkey === 'mavon-editor'"
         :readonly="isPreview"
         :html="modelValue"
+        @updateValue="modelValue = $event"
         @scroll="scroll"
         :scrollTop="isShowScroll ? null : 0"
       />
