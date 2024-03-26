@@ -108,7 +108,7 @@ const toDelete = () => {
           <img :src="deleteIcon" alt="" />
         </span>
       </div>
-      <MavonEditor :html="bulletinValue" :navigation="false" />
+      <TinyMCE v-model="bulletinValue" :readonly="true" :resize="true" height="20vh" :toolbar="toolbar" body-style="body { margin: 1rem 2% 1rem 2% }" />
     </div>
   </div>
 </template>

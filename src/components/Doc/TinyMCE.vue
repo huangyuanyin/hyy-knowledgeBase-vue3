@@ -1,5 +1,5 @@
 <template>
-  <div style="position: relative">
+  <div style="position: relative; width: 100%">
     <div id="sample" class="TinyMCE_wrap">
       <Editor :disabled="props.readonly" v-model="editorValue" :api-key="key" :init="initOptions"></Editor>
       <div id="outside-toc" class="outside-toc"></div>
@@ -106,7 +106,7 @@ const initOptions = ref({
   block_formats: '正文=p; 标题1=h1; 标题2=h2; 标题3=h3; 标题4=h4; 标题5=h5; 标题6=h6', // 设置块格式
   line_height_formats: '1 1.2 1.4 1.6 2 2.5 3', // 设置行高格式
   readonly: props.readonly, // 设置只读
-  statusbar: true, // 是否隐藏状态栏
+  statusbar: props.readonly ? false : true, // 是否隐藏状态栏
   menubar: false, // 是否隐藏菜单栏
   branding: false, // 是否隐藏品牌
   resize: props.resize, // 是否允许调整大小

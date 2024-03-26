@@ -188,7 +188,15 @@ onMounted(() => {
             <span>知识库就像书一样，让多篇文档结构化，方便知识的创作与沉淀</span>
           </div>
         </div>
-        <MavonEditor mt-60px :html="bookBulletin" :navigation="false" v-else-if="!isEdit && bookBulletin" />
+        <TinyMCE
+          v-else-if="!isEdit && bookBulletin"
+          v-model="bookBulletin"
+          :readonly="true"
+          :resize="true"
+          height="20vh"
+          :toolbar="toolbar"
+          body-style="body { margin: 1rem 2% 1rem 2% }"
+        />
         <div mt-60px border="1px solid #e7e9e8" rounded-4px v-if="isEdit">
           <TinyMCE v-model="bookBulletin" :resize="true" height="500px" :toolbar="toolbar" body-style="body { margin: 1rem 2% 1rem 2% }" />
         </div>
