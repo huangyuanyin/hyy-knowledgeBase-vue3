@@ -70,6 +70,7 @@ const toUpload = async (file) => {
   formData.append('type', 'file')
   formData.append('title', file.file.name)
   formData.append('creator', user)
+  formData.append('public', '2')
   props.parent === null ? '' : formData.append('parent', props.parent as any)
   let res = await uploadArticleApi(formData)
   if (res.code === 1000) {

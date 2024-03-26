@@ -383,6 +383,7 @@ const toUpload = async (file) => {
   formData.append('title', file.file.name)
   formData.append('creator', user)
   formData.append('parent', infoStore.currentQuery?.aid)
+  formData.append('public', '2')
   let res = await uploadArticleApi(formData)
   if (res.code === 1000) {
     ElMessage.success('上传成功')
