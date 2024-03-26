@@ -32,3 +32,11 @@ export function editUserApi(id: number, data: UserInfo) {
 export function editPasswordApi(id: number, data: PasswordInfo) {
   return http.put(`oauth/change_password/${id}/`, data, 'login')
 }
+
+export function getCategoryApi() {
+  return http.get('product/category/', {}, 'drawer')
+}
+
+export function getProductApi() {
+  return http.get('product/provider/', {}, 'drawer')
+}

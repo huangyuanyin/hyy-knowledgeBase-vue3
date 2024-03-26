@@ -10,6 +10,7 @@ const route = useRoute()
 const infoStore = useInfoStore()
 const currentSider = ref('')
 const currentSiderName = ref('')
+const drawer = ref(false)
 
 watchEffect(() => {
   currentSider.value = route.meta.asideComponent as string
@@ -20,11 +21,12 @@ watchEffect(() => {
 <template>
   <div class="sidebarUserItem-wrap">
     <div class="left">
-      <img v-if="currentSider === 'Sidebar'" src="@/assets/favicon.ico" />
+      <img v-if="currentSider === 'Sidebar'" src="@/assets/favicon.ico" @click="drawer = true" />
       <span v-if="currentSider === 'Sidebar'">信安</span>
-      <img v-if="currentSider === 'SpaceSidebar'" :src="props.icon" />
+      <img v-if="currentSider === 'SpaceSidebar'" :src="props.icon" @click="drawer = true" />
       <span class="name" v-if="currentSider === 'SpaceSidebar'">{{ currentSiderName }}</span>
       <ChangeSpacePopver :currentSider="currentSider" />
+      <LinkDrawer style="z-index: 999" :drawer="drawer" @close="drawer = false" />
     </div>
     <div class="right">
       <el-tooltip effect="dark" content="消息中心" placement="bottom">
