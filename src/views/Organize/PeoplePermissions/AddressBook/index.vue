@@ -46,7 +46,7 @@ const deleteSpacepermissions = async (id: number) => {
 }
 
 const toExit = (data: any) => {
-  ElMessageBox.confirm(`确定删除【${data.name}】吗？删除后对方就无法再访问本团队`, '确定删除该成员？', {
+  ElMessageBox.confirm(`确定删除【${data.user.name}】吗？删除后对方就无法再访问本团队`, '确定删除该成员？', {
     confirmButtonText: '删除',
     cancelButtonText: '取消',
     customClass: 'deleteMemberDialog',
