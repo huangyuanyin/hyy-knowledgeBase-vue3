@@ -38,7 +38,7 @@ const contentType = ref({
   links: linkIcon
 })
 const headers = ref({
-  Authorization: localStorage.getItem('xinAn-token')
+  Authorization: localStorage.getItem('token')
 })
 
 watchEffect(() => {

@@ -6,7 +6,7 @@ export const useUser = () => {
   const userStore = useUserStore()
   const infoStore = useInfoStore()
   const refreshStore = useRefreshStore()
-  const userInfo = JSON.parse(localStorage.getItem('xinAn-userInfo')) || {}
+  const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {}
   const deptList = ref([])
   const postList = ref([])
 
@@ -20,7 +20,7 @@ export const useUser = () => {
     }
     let res = await getUserApi(params)
     if (res.code === 1000) {
-      const { nickname, ...info } = JSON.parse(localStorage.getItem('xinAn-userInfo') || '{}')
+      const { nickname, ...info } = JSON.parse(localStorage.getItem('userInfo') || '{}')
       const userInfo = {
         ...info,
         // avatar: res.data.avatar,

@@ -28,7 +28,7 @@ const route = useRoute()
 const routeInfo = { route, router }
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const user = JSON.parse(localStorage.getItem('xinAn-userInfo')).username || ''
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const isShowsDeleteDialog = ref(false)
 const deleteInfo = ref<{
   id?: string

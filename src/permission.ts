@@ -1,4 +1,5 @@
 import { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
+import { getPersonSpaceApi } from './api/spaces'
 
 let encryptString
 
@@ -18,6 +19,11 @@ const base64UrlDecode = (encodedData) => {
 export async function setupRouterInterceptor(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
   const infoStore = useInfoStore()
 
+  if (to.path === '/login' && localStorage.getItem('token')) {
+    next({
+      path: '/dashboard'
+    })
+  }
   if (to.meta.menu !== 'login' && Reflect.ownKeys(to.query).length > 0 && !to.query.query) {
     if (to.query.query === infoStore.currentQuery) return
     encryptString = base64UrlEncode(JSON.stringify(to.query))
@@ -41,7 +47,7 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
   if (to.path === '/login' || to.path.split('/')[1] === 'share') {
     next()
   } else {
-    let token = localStorage.getItem('xinAn-token')
+    let token = localStorage.getItem('token')
     token ? next() : next('/login')
   }
   if (to.path === '/directory/sheet/edit' && from.path === '/') {
@@ -57,6 +63,25 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
   if (to.path.includes('/search') || to.path.includes('/recycles')) {
     to.meta.asideComponent = infoStore.currentSpaceType === '个人' ? 'Sidebar' : 'SpaceSidebar'
     next()
+  }
+
+  if (
+    localStorage.getItem('isAuth') &&
+    localStorage.getItem('isAuth') == 'true' &&
+    (!localStorage.getItem('personalSpaceInfo') || JSON.parse(localStorage.getItem('personalSpaceInfo')).user.username !== JSON.parse(localStorage.getItem('userInfo')).username)
+  ) {
+    const params = {
+      permusername: JSON.parse(localStorage.getItem('userInfo')).username,
+      spacetype: 'personal'
+    }
+    let res = await getPersonSpaceApi(params)
+    if (res.code === 1000) {
+      if (res.data.length > 0) {
+        localStorage.setItem('personalSpaceInfo', JSON.stringify(res.data[0]))
+      }
+    } else {
+      ElMessage.error(res.msg)
+    }
   }
 
   infoStore.setCurrentSidebar(to.meta.asideComponent as string)

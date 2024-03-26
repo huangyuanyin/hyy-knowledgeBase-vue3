@@ -11,11 +11,11 @@ export const useUserStore = defineStore({
   actions: {
     setToken(token: string) {
       this.token = token
-      localStorage.setItem('xinAn-token', token)
+      localStorage.setItem('token', token)
     },
     setUserInfo(info: object) {
       this.userInfo = info
-      localStorage.setItem('xinAn-userInfo', JSON.stringify(info))
+      localStorage.setItem('userInfo', JSON.stringify(info))
     },
     setIsAuth(isAuth: boolean) {
       this.isAuth = isAuth

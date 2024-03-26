@@ -10,7 +10,7 @@ import favicon from '@/assets/favicon.ico'
 const route = useRoute()
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const userInfo = ref(JSON.parse(localStorage.getItem('xinAn-userInfo')) || {})
+const userInfo = ref(JSON.parse(localStorage.getItem('userInfo')) || {})
 const avatar = 'http://10.4.150.56:8032/' + userInfo.value.avatar
 const icon = ref(favicon)
 const menuList = [
@@ -38,7 +38,7 @@ watchEffect(() => {
     icon.value = favicon
   }
   if (refreshStroe.isRefreshUserInfo) {
-    userInfo.value = JSON.parse(localStorage.getItem('xinAn-userInfo') || '{}')
+    userInfo.value = JSON.parse(localStorage.getItem('userInfo') || '{}')
     console.log(`output->`, userInfo.value)
     refreshStroe.setRefreshUserInfo(false)
   }

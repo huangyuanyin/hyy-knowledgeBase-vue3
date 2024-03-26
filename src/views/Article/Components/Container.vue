@@ -75,7 +75,7 @@ const itemList = ref([
 ])
 const buttonList = ref([])
 const headers = ref({
-  Authorization: localStorage.getItem('xinAn-token')
+  Authorization: localStorage.getItem('token')
 })
 const titleList = ref([])
 const showScroll = ref(false)

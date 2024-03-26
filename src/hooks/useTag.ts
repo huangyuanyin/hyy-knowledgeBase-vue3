@@ -4,7 +4,7 @@ import { addTagApi, deleteTagApi, editTagApi, getTagApi } from '@/api/tag'
 export const useTag = () => {
   const listStroe = useListStore()
   const infoStore = useInfoStore()
-  const user = JSON.parse(localStorage.getItem('xinAn-userInfo')).username || ''
+  const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
   const tagList = ref<Array<any>>([])
 
   /**

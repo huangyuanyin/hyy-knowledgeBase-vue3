@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { deleteSpacepermissionsApi, getSpacepermissionsApi } from '@/api/spacepermissions'
 
-const nickname = JSON.parse(localStorage.getItem('xinAn-userInfo')).nickname || ''
-const avatar = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('xinAn-userInfo')).avatar || ''
+const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
+const avatar = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar || ''
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
 const searchInput = ref('')

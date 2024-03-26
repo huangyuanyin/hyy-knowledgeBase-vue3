@@ -1,4 +1,4 @@
-import { addSpaceApi, getSpacesApi } from '@/api/spaces'
+import { addSpaceApi, getPersonSpaceApi } from '@/api/spaces'
 import { useUserStore } from '@/store/user'
 import { LoginForm, UseLoginOptions } from '@/type/loginType'
 import CryptoJS from 'crypto-js'
@@ -35,6 +35,7 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
       ElMessage.success('登录成功')
       infoStore.setCurrentSpaceType('个人')
       await getSpaces()
+      handleTo()
     } else {
       showError(res.msg)
     }
@@ -72,7 +73,7 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
       permusername: loginForm.username,
       spacetype: 'personal'
     }
-    let res = await getSpacesApi(params)
+    let res = await getPersonSpaceApi(params)
     if (res.code === 1000) {
       if (res.data.length > 0) {
         localStorage.setItem('personalSpaceInfo', JSON.stringify(res.data[0]))
@@ -87,7 +88,7 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
 
   const addSpace = async () => {
     const spaceForm = {
-      icon: JSON.parse(localStorage.getItem('xinAn-userInfo')).avatar,
+      icon: JSON.parse(localStorage.getItem('userInfo')).avatar,
       spacename: `${nickname.value}个人空间`,
       spacekey: loginForm.username,
       spacetype: 'personal',

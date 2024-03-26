@@ -19,3 +19,7 @@ export function editSpacesApi(data: spaceParams, id?: number) {
 export function deleteSpacesApi(id?: number) {
   return http.delete<spacesRes>(`spaces/${id}/`, {}, 'base')
 }
+
+export function getPersonSpaceApi(params: spaceParams) {
+  return http.get<spacesRes>(`person_space/`, { params }, 'base')
+}

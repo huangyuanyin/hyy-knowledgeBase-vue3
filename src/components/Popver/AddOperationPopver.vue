@@ -16,14 +16,14 @@ const emit = defineEmits()
 
 const infoStore = useInfoStore()
 const refreshStroe = useRefreshStore()
-const user = JSON.parse(localStorage.getItem('xinAn-userInfo')).username || ''
+const user = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const spaceId = ref('')
 const bookId = ref('')
 const isShowsLibraryDialog = ref(false)
 const isShowTeamDialog = ref(false)
 const addOperationPopver = ref(null)
 const headers = ref({
-  Authorization: localStorage.getItem('xinAn-token')
+  Authorization: localStorage.getItem('token')
 })
 
 watchEffect(() => {

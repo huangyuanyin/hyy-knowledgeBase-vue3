@@ -66,7 +66,7 @@ const typeIcon = {
 
 watchEffect(() => {
   if (infoStore.currentSpaceType === '个人') {
-    icon.value = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('xinAn-userInfo')).avatar
+    icon.value = 'http://10.4.150.56:8032/' + JSON.parse(localStorage.getItem('userInfo')).avatar
   } else {
     icon.value = infoStore.currentSpaceInfo.icon
   }

@@ -20,8 +20,8 @@ interface MemberItem {
 const route = useRoute()
 const infoStore = useInfoStore()
 const refreshStore = useRefreshStore()
-const nickname = JSON.parse(localStorage.getItem('xinAn-userInfo')).nickname || ''
-const username = JSON.parse(localStorage.getItem('xinAn-userInfo')).username || ''
+const nickname = JSON.parse(localStorage.getItem('userInfo')).nickname || ''
+const username = JSON.parse(localStorage.getItem('userInfo')).username || ''
 const memberInput = ref('')
 const xTable = ref<VxeTableInstance<MemberItem>>()
 const memberList = ref<MemberItem[]>([])
