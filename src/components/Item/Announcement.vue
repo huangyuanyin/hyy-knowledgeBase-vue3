@@ -16,6 +16,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['update'])
 
+const route = useRoute()
 const isEdit = ref(false) // 是否为编辑状态
 const bulletinValue = ref('')
 const toolbar = ref('')
@@ -27,6 +28,14 @@ watch(
   },
   {
     immediate: true
+  }
+)
+
+watch(
+  () => route.query,
+  () => {
+    isEdit.value = false
+    bulletinValue.value = ''
   }
 )
 
@@ -108,7 +117,7 @@ const toDelete = () => {
           <img :src="deleteIcon" alt="" />
         </span>
       </div>
-      <TinyMCE v-model="bulletinValue" :readonly="true" :resize="true" height="20vh" :toolbar="toolbar" body-style="body { margin: 1rem 2% 1rem 2% }" />
+      <TinyMCE v-model="bulletinValue" :readonly="true" :resize="true" height="15vh" :toolbar="toolbar" body-style="body { margin: 1rem 2% 1rem 2% }" />
     </div>
   </div>
 </template>

@@ -71,11 +71,11 @@ onMounted(() => {
     </div>
     <div w-64vw>
       <div pt-24px pb-24px border-b="1px solid #f4f5f5" flex items-start v-for="(item, index) in activiteList" :key="'activiteList' + index">
-        <span w-28px h-28px><img w-28px h-28px :src="avatar" alt="" /></span>
+        <span min-w-28px w-28px h-28px><img w-28px h-28px :src="avatar" alt="" /></span>
         <div ml-20px mt-5px>
           <p text="#585a5a" text-14px>
-            <span text="#262626" text-16px font-600 mr-6px> {{ item.creator_name }}</span
-            >在
+            <span text="#262626" text-16px font-600 mr-6px> {{ item.creator_name }}</span>
+            在
             <span class="book-name" text="#262626" font-500 text-15px mr-6px @click="toLink('book', item)">{{ item.article.book_name }}</span>
             <span mr-10px>{{ operationType[item.type] }}{{ contentTypeName[item.target_type] }}</span>
             <span text="#8a8f8d" text-12px line-height-20px>{{ item.update_datetime }}</span>

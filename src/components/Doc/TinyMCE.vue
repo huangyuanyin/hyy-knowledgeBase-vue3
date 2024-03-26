@@ -94,6 +94,7 @@ const initOptions = ref({
   content_style: props.bodyStyle, // 设置内容样式
   with: '100px',
   height: props.height,
+  min_height: 100,
   placeholder: '直接输入正文...', // 设置占位符
   language_url: isDev ? '/tinymce/langs/zh-Hans.js' : `${environmentPrefix[import.meta.env.MODE]}tinymce/langs/zh-Hans.js`, // 设置本地语言，在本地的路径
   language: 'zh-Hans', // 设置本地语言
