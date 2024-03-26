@@ -201,7 +201,7 @@ onMounted(() => {
           <TinyMCE v-model="bookBulletin" :resize="true" height="500px" :toolbar="toolbar" body-style="body { margin: 1rem 2% 1rem 2% }" />
         </div>
         <div class="list" v-if="infoStore.currentArticleTreeInfo?.length">
-          <el-tree :data="infoStore.currentArticleTreeInfo" node-key="id" :props="defaultProps">
+          <el-tree :data="infoStore.currentArticleTreeInfo" node-key="id" :props="defaultProps" accordion>
             <template #default="{ node, data }">
               <span class="list-node">
                 <div class="title">

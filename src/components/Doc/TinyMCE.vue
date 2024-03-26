@@ -2,7 +2,7 @@
   <div style="position: relative; width: 100%">
     <div id="sample" class="TinyMCE_wrap">
       <Editor :disabled="props.readonly" v-model="editorValue" :api-key="key" :init="initOptions"></Editor>
-      <div id="outside-toc" class="outside-toc"></div>
+      <div v-if="!['team', 'directory'].includes(infoStore.currentMenu)" id="outside-toc" class="outside-toc"></div>
       <div id="show" class="outside-btn">
         <button>
           <svg t="1711011382370" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1963" width="25" height="25">
@@ -85,6 +85,7 @@ const props = defineProps({
   }
 })
 
+const infoStore = useInfoStore()
 const { modelValue } = toRefs(props)
 const key = '3wvx4jkjmreyeiqypzs5hnwrkncklep4xi69inkwgfoipxj7'
 const isDev = import.meta.env.VITE_BASE_SETTING === 'dev'
@@ -200,10 +201,10 @@ const initOptions = ref({
   toc_header: 'div', // 设置目录的标题
   toc_depth: 6, // 设置目录的深度
   setup: (editor) => {
-    editor.on('keyup', (event) => {
+    editor.on('keyup', () => {
       editor.execCommand('mceInsertOrUpdateToc')
     })
-    editor.on('init', (event) => {
+    editor.on('init', () => {
       editor.execCommand('mceInsertOrUpdateToc')
     })
     // editor.ui.registry.addContextToolbar('paragraphlink', {

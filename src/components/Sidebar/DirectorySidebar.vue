@@ -454,6 +454,7 @@ const handleDrop = (draggingNode, dropNode, dropType) => {
         :icon="customIcon"
         @node-click="toArticleDetail"
         draggable
+        accordion
         @node-drop="handleDrop"
       >
         <template #default="{ data }">
