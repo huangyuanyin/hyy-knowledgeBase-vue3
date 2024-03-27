@@ -19,7 +19,7 @@ const base64UrlDecode = (encodedData) => {
 export async function setupRouterInterceptor(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
   const infoStore = useInfoStore()
 
-  if (to.path === '/login' && localStorage.getItem('token')) {
+  if (to.path === '/login' && localStorage.getItem('token') && !localStorage.getItem('to')) {
     next({
       path: '/dashboard'
     })
@@ -29,7 +29,6 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
     if (to.query.query === infoStore.currentQuery) return
     encryptString = base64UrlEncode(JSON.stringify(to.query))
     infoStore.setCurrentQuery(to.query)
-    console.log(`output->当前参数`, to.query, encryptString)
     to.query = {
       query: encryptString
     }

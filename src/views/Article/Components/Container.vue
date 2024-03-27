@@ -413,8 +413,7 @@ const toOpenCommentDrawer = () => {
 
 // @ts-ignore
 window.to = () => {
-  sessionStorage.setItem('to', window.location.href)
-  console.log(`output->wo`, window.history)
+  localStorage.setItem('to', window.location.href)
   router.push({
     path: '/login'
   })

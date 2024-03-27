@@ -105,10 +105,12 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
   }
 
   const handleTo = () => {
-    if (sessionStorage.getItem('to')) {
-      let to = sessionStorage.getItem('to')
-      sessionStorage.removeItem('to')
+    if (localStorage.getItem('to')) {
+      let to = localStorage.getItem('to')
       window.open(to as string, '_self')
+      setTimeout(() => {
+        localStorage.removeItem('to')
+      }, 4000)
     } else {
       router.push({ path: '/' })
     }
