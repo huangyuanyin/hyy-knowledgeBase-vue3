@@ -26,11 +26,11 @@ const selectedIndex = ref(0)
 const listContainer = ref<HTMLElement | null>(null)
 const list = ref<any[]>([
   {
-    label: '搜索范围：知识库',
+    label: '搜索范围：团队',
     children: []
   },
   {
-    label: '搜索范围：团队',
+    label: '搜索范围：知识库',
     children: []
   },
   {
@@ -79,21 +79,21 @@ async function handleBookList() {
   const { bookList, getBookList } = useBook()
   const { user } = await useData()
   await getBookList({ space: infoStore.currentQuery?.sid, permusername: user.value })
-  list.value[0].children = bookList.value
-  if (route.path.includes('/search')) {
-    selectId.value = `${infoStore.currentQuery.scope_id}${infoStore.currentQuery.scope_name}`
-  } else {
-    selectId.value = `${bookList.value[0].id}${bookList.value[0].name}`
-  }
+  list.value[1].children = bookList.value
 }
 
 async function handleTeamList() {
   const { teamList, getTeamList } = useTeam()
   await getTeamList()
-  list.value[1].children = teamList.value.map((item) => {
+  list.value[0].children = teamList.value.map((item) => {
     const { groupname, ...rest } = item
     return { ...rest, name: groupname }
   })
+  if (route.path.includes('/search')) {
+    selectId.value = `${infoStore.currentQuery.scope_id}${infoStore.currentQuery.scope_name}`
+  } else {
+    selectId.value = `${teamList.value[1].id}${teamList.value[1].groupname}`
+  }
 }
 
 function isItemSelected(item) {
