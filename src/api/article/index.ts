@@ -32,8 +32,8 @@ export function uploadArticleApi(data: FormData) {
   return http.post<ArticleRes>(`article_file/`, data, 'base')
 }
 
-export function exportDocApi(id: Number) {
-  return http.get<ArticleRes>(`article_export/${id}/`, {}, 'base')
+export function exportDocApi(id: Number, params: any) {
+  return http.get<ArticleRes>(`article_export/${id}/`, { params }, 'base')
 }
 
 export function addArticleAttachmentsApi(data: ArticleAttachmentData) {

@@ -22,13 +22,21 @@ const initData = async () => {
         {
           label: 'Word',
           icon: 'https://gw.alipayobjects.com/zos/basement_prod/408f32c8-8385-4562-b037-c35ea82d2563.svg',
-          desc: '.docx .doc'
+          desc: '.docx .doc',
+          type: 'word'
         },
         {
-          label: 'Markdown',
-          icon: 'https://gw.alipayobjects.com/zos/basement_prod/759ce648-47b7-46a4-8d56-66247bf923fc.svg',
-          desc: '.md .mark .txt .zip...'
+          label: 'PDF',
+          icon: 'https://gw.alipayobjects.com/zos/basement_prod/59ddca13-029e-481f-ba4e-a3a30e047e24.svg',
+          desc: '.pdf',
+          type: 'pdf'
         }
+        // {
+        //   label: 'JPG',
+        //   icon: 'https://gw.alipayobjects.com/zos/bmw-prod/18cb99ea-ac22-4b36-9f5d-7e0820d81c72.svg',
+        //   desc: '.jpg',
+        //   type: 'jpg'
+        // }
       ]
       break
     case 'sheet':
@@ -54,21 +62,14 @@ watch(
 )
 
 const toHandle = (val) => {
-  switch (val.label) {
-    case 'Word':
-      handleDoc()
-      break
-    case 'Markdown':
-      ElMessage.error('暂不支持')
-      break
-    default:
-      ElMessage.error('暂不支持')
-      break
-  }
+  handleDoc(val.type)
 }
 
-const handleDoc = async () => {
-  let res = await exportDocApi(props.id)
+const handleDoc = async (type) => {
+  const params = {
+    type
+  }
+  let res = await exportDocApi(props.id, params)
   if (res.code === 1000) {
     window.open(res.data as unknown as string)
     ElMessage.success('导出成功')
