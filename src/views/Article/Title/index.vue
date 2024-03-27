@@ -45,7 +45,7 @@ watchEffect(() => {
   aid.value = Number(infoStore.currentQuery?.aid)
   // list.value = infoStore.currentArticleTreeInfo && getList(aid.value, infoStore.currentArticleTreeInfo)
   if (infoStore.currentMenu === 'title') {
-    // useArticle().getArticleDetail(aid.value)
+    useArticle().getArticleDetail(aid.value)
     nextTick(() => {
       getCategoryTree()
     })

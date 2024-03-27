@@ -631,6 +631,17 @@ onMounted(() => {
         </div>
         <div class="header_right" v-else>
           <div class="button" flex>
+            <StarPopver
+              @cancelMark="cancelMark"
+              :startId="(infoStore.currentArticleInfo as ArticleInfo)?.mark_id"
+              :tag_mark="(infoStore.currentArticleInfo as ArticleInfo )?.tag_mark"
+              :target_type="(infoStore.currentArticleInfo as ArticleInfo )?.type"
+              type="article"
+            >
+              <span min-w-32px min-h-32px mr-8px flex items-center justify-center cursor-pointer @click="toHandle({ label: '收藏' })">
+                <img w-20px h-20px :src="(infoStore.currentArticleInfo as ArticleInfo )?.marked ? startIconSelect : startIcon" alt="" />
+              </span>
+            </StarPopver>
             <el-upload :http-request="toUpload" :headers="headers" :show-file-list="false" action="">
               <el-button mr-16px>上传</el-button>
             </el-upload>

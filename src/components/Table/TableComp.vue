@@ -12,7 +12,6 @@ import privateIcon from '@/assets/icons/privateIcon.svg'
 import empty from '@/assets/img/empty.png'
 import addIcon from '@/assets/icons/addIcon.svg'
 import addIcon_hover from '@/assets/icons/addIcon_hover.svg'
-import articleIcon from '@/assets/icons/articleIcon.svg'
 import { contentType } from '@/data/data'
 import { addQuickLinksApi, deleteQuickLinksApi } from '@/api/quickLinks'
 import { ArticleInfo } from '@/type/article'
@@ -336,7 +335,7 @@ const cancelMark = () => {
         <tr class="docItem" v-for="document in (props.data as any)" :key="document.id" @mouseenter="handleMouseEnter(document.id)" @mouseleave="handleMouseLeave(document.id)">
           <td class="item-title">
             <div>
-              <img :src="document.target_type === 'book' ? document.owner_ship.book_icon : articleIcon" alt="" />
+              <img :src="document.target_type === 'book' ? document.owner_ship.book_icon : contentType[document.target_type]" alt="" />
               <div class="item-title-right" @click="toLink(document, 'star')">
                 <el-tooltip effect="light" :content="document.target_name" placement="bottom-start" :show-arrow="false" :offset="0" :show-after="1000">
                   <p max-w-20vw overflow-hidden text-ellipsis whitespace-nowrap>{{ document.target_name }}</p>
