@@ -92,3 +92,8 @@ export class downloadFile {
     document.body.removeChild(el)
   }
 }
+
+export const base64UrlEncode = (data) => {
+  const encoded = btoa(unescape(encodeURIComponent(data)))
+  return encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+}

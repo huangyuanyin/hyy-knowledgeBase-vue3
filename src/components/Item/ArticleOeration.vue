@@ -2,6 +2,7 @@
 import { articleOperationData, linkOperationData, titleOperationData, fileOperationData } from '@/data/data'
 import { useLinkHooks } from '@/hooks/useLink'
 import SparkMD5 from 'spark-md5'
+import { base64UrlEncode } from '@/utils/tool'
 
 interface ArticleData {
   id?: Number
@@ -55,6 +56,7 @@ const toCopyLink = (val) => {
     if (val.id == Number(infoStore.currentQuery?.aid)) {
       linkUrl.value = window.location.href
     } else {
+      const base = import.meta.env.VITE_URL
       if (infoStore.currentSpaceType === '个人') {
         const query = {
           sid: infoStore.currentQuery?.sid,
@@ -65,8 +67,8 @@ const toCopyLink = (val) => {
           aname: val.title
         }
         console.log(`output->query`, JSON.stringify(query))
-        const hash = SparkMD5.hash(JSON.stringify(query))
-        linkUrl.value = `${window.location.origin}/#/directory/${val.type}?query=${hash}`
+        const hash = base64UrlEncode(JSON.stringify(query))
+        linkUrl.value = `${base}/#/directory/${val.type}?query=${hash}`
       } else {
         const query = {
           sid: infoStore.currentQuery?.sid,
@@ -78,8 +80,8 @@ const toCopyLink = (val) => {
           aid: val.id,
           aname: val.title
         }
-        const hash = SparkMD5.hash(JSON.stringify(query))
-        linkUrl.value = `${window.location.origin}/#/${spaceName}/directory/${val.type}?query=${hash}`
+        const hash = base64UrlEncode(JSON.stringify(query))
+        linkUrl.value = `${base}/#/${spaceName}/directory/${val.type}?query=${hash}`
       }
     }
   }

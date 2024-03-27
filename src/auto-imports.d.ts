@@ -12,6 +12,7 @@ declare global {
   const SiderbarComp_ChangeSpacePopver: typeof import('./utils/event_name')['SiderbarComp_ChangeSpacePopver']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const articleType: typeof import('./hooks/useArticle')['articleType']
+  const base64UrlEncode: typeof import('./utils/tool')['base64UrlEncode']
   const bus: typeof import('./utils/bus')['default']
   const computed: typeof import('vue')['computed']
   const createApp: typeof import('vue')['createApp']

@@ -7,6 +7,7 @@ import shareIcon5 from '@/assets/icons/sharePopver/5.svg'
 import { editArticleApi } from '@/api/article'
 import { OperationPopoverProps } from '@/type/operationPopoverType'
 import { getArticleCollaborationsApi, getCollaborationsApi } from '@/api/collaborations'
+import { base64UrlEncode } from '@/utils/tool'
 
 const props = withDefaults(defineProps<OperationPopoverProps>(), {
   placement: 'bottom-start',
@@ -151,13 +152,13 @@ watch(
       type: 'share'
     }
     const base = import.meta.env.VITE_URL
-    copyLink.value = `${base}/#/share/directory/${type}?sid=${query.sid}&sname=${query.sname}&lid=${query.lid}&lname=${query.lname}&gid=${query.gid}&gname=${query.gname}&aid=${query.aid}&aname=${query.aname}&type=share`
+    const hash = base64UrlEncode(JSON.stringify(query))
+    copyLink.value = `${base}#/share/directory/${type}?query=${hash}`
   },
   {
     immediate: true
   }
 )
-
 watch(
   () => props.aInfo,
   (newVal) => {

@@ -24,6 +24,7 @@ export async function setupRouterInterceptor(to: RouteLocationNormalized, from: 
       path: '/dashboard'
     })
   }
+
   if (to.meta.menu !== 'login' && Reflect.ownKeys(to.query).length > 0 && !to.query.query) {
     if (to.query.query === infoStore.currentQuery) return
     encryptString = base64UrlEncode(JSON.stringify(to.query))
