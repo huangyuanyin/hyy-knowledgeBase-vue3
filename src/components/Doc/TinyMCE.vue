@@ -3,17 +3,7 @@
     <div id="sample" class="TinyMCE_wrap">
       <Editor :disabled="props.readonly" v-model="editorValue" :api-key="key" :init="initOptions"></Editor>
       <div v-if="!['team', 'directory'].includes(infoStore.currentMenu)" id="outside-toc" class="outside-toc"></div>
-      <div id="show" class="outside-btn">
-        <button>
-          <svg t="1711011382370" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1963" width="25" height="25">
-            <path
-              d="M512 298.666667c-162.133333 0-285.866667 68.266667-375.466667 213.333333 89.6 145.066667 213.333333 213.333333 375.466667 213.333333s285.866667-68.266667 375.466667-213.333333c-89.6-145.066667-213.333333-213.333333-375.466667-213.333333z m0 469.333333c-183.466667 0-328.533333-85.333333-426.666667-256 98.133333-170.666667 243.2-256 426.666667-256s328.533333 85.333333 426.666667 256c-98.133333 170.666667-243.2 256-426.666667 256z m0-170.666667c46.933333 0 85.333333-38.4 85.333333-85.333333s-38.4-85.333333-85.333333-85.333333-85.333333 38.4-85.333333 85.333333 38.4 85.333333 85.333333 85.333333z m0 42.666667c-72.533333 0-128-55.466667-128-128s55.466667-128 128-128 128 55.466667 128 128-55.466667 128-128 128z"
-              fill="#444444"
-              p-id="1964"
-            ></path>
-          </svg>
-        </button>
-      </div>
+      <div id="show" class="outside-btn"></div>
     </div>
   </div>
 </template>
@@ -22,7 +12,6 @@
 import tinymce from 'tinymce/tinymce'
 import Editor from '@tinymce/tinymce-vue'
 import { environmentPrefix } from '@/data/data'
-
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps({
   modelValue: {
@@ -54,24 +43,6 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  /**
-   * table:表格；code:源代码；preview:预览；fullscreen:全屏；emoticons:表情；wordcount:字数统计； image:图像；codesample:代码示例；
-   * searchreplace:查找替换；charmap:特殊字符；link:超链接；advlist:高级列表；anchor:锚点；autolink:自动链接；autosave:自动存稿；hr:分割线；
-   * insertdatetime:插入日期时间；lists:列表；media:插入编辑媒体；pagebreak:插入分页符；quickbars:快速工具栏；visualblocks:显示元素范围；
-   * nonbreaking:插入不间断空格；template:内容模板；visualchars:显示不可见字符；directionality:文字方向；importcss:引入css；save:保存；
-   * fontsize:字体大小；forecolor:字体颜色；backcolor:背景颜色；blockquote:块引用；removeformat:清除格式；undo:撤销；redo:重做；
-   * bold:加粗；italic:斜体；underline:下划线；strikethrough:删除线；subscript:下标；superscript:上标；alignleft:左对齐；aligncenter:居中对齐；
-   * alignright:右对齐；alignjustify:两端对齐；outdent:减少缩进；indent:增加缩进；visualaid:显示隐藏元素；print:打印；spellchecker:拼写检查；
-   * insertfile:插入文件；insertimage:插入图片；insertvideo:插入视频；inserttable:插入表格；toc:插入目录；inserthr:插入水平线；pagebreak:插入分页符；
-   * editimage :编辑图片;
-   * quickbars:快速工具栏；
-   * numlist:有序列表；
-   * toc:目录；
-   * formatpainter:格式刷；
-   * tpImportword:导入word
-   * pasteuploadimage,attachment,upfile
-   * visualblocks:显示块级元素
-   */
   plugins: {
     type: [String, Array],
     default:
@@ -254,7 +225,7 @@ onBeforeMount(() => {
             right: 0;
             width: 1px;
             height: 50%;
-            background-color: #f4f5f5; /* 竖线的颜色 */
+            background-color: #f4f5f5;
           }
         }
         .tox-tbtn {
@@ -303,25 +274,27 @@ onBeforeMount(() => {
   display: none;
   right: 10px;
   position: absolute;
-  top: 80px;
+  top: 50px;
   overflow-y: auto;
   padding: 10px;
 }
 .outside-toc {
   position: absolute;
-  top: 80px;
+  top: 101px;
   right: 15px;
-  width: 280px;
-  height: 87%;
+  width: 300px;
+  height: 86%;
   overflow-y: auto;
   padding: 10px;
+  z-index: 200;
+  background: #fff;
 }
 
 #outside-toc {
   h2 {
     font-size: 14px;
     margin-bottom: 12px;
-    padding-top: 8px;
+    padding-top: 32px;
     padding-left: 28px;
     display: flex;
     align-items: center;
@@ -339,15 +312,15 @@ onBeforeMount(() => {
     li {
       list-style-type: none; /* 去除默认点 */
       font-size: 14px;
-      color: #585a5a;
-      font-weight: 300;
+      //color: #585a5a;
+      font-weight: 260;
       overflow: hidden;
       width: 80%;
       text-overflow: ellipsis;
       white-space: nowrap;
       a {
         text-decoration: none;
-        color: #585a5a;
+        //color: #585a5a;
         cursor: pointer;
       }
     }
@@ -396,7 +369,33 @@ onBeforeMount(() => {
 .level-6 {
   padding-left: 30%;
 }
-.active3 {
+.activeBorderLeft {
   border-left: 3px solid #00b96b !important;
+}
+.activeBorderBottom {
+  border-left: 0px solid #00b96b !important;
+  border-bottom: 2px solid #00b96b !important;
+}
+.my-custom-li-class {
+  position: fixed;
+  top: 100px;
+}
+.your-class-name {
+  display: flex;
+  flex-direction: column; /* 垂直布局 */
+  align-items: flex-end; /* 元素居右对齐 */
+}
+.outside-toc::-webkit-scrollbar {
+  display: none; /* 隐藏滚动条 */
+}
+#show {
+  display: none;
+  margin-left: 10px;
+}
+#button {
+  margin-left: 10px;
+}
+.outside-toc {
+  scrollbar-width: none;
 }
 </style>

@@ -74,7 +74,7 @@ const addLibraryOperation = [
   // }
 ]
 
-const { bookList: list, getBookList } = useBook()
+// const { bookList: list, getBookList } = useBook()
 
 watch(
   () => props.group,
@@ -201,14 +201,14 @@ const deleteBookStacks = async (id) => {
   }
 }
 
-const getLibrary = async (id) => {
-  await getBookList({
-    space: spaceId.value,
-    group: groupId.value,
-    stacks: id
-  })
-  return list.value
-}
+// const getLibrary = async (id) => {
+//   await getBookList({
+//     space: spaceId.value,
+//     group: groupId.value,
+//     stacks: id
+//   })
+//   return list.value
+// }
 
 const toAddGroup = () => {
   addBookStacks()
