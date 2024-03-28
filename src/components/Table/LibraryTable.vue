@@ -82,9 +82,10 @@ watch(
     if (newVal.length) {
       nextTick(async () => {
         await Promise.all(
-          props.group.map(async (item) => {
-            const library = await getLibrary(item.id)
-            item.library = library
+          props.group.map(async (item: any) => {
+            // const library = await getLibrary(item.id)
+            // item.library = library
+            item.library = item.books
             item.library.map((it) => {
               it.is_common_id = null
               props.commonList.map((val: any) => {
@@ -137,9 +138,10 @@ watchEffect(async () => {
   await handleID()
   if (refreshStroe.isRefreshBookList) {
     await Promise.all(
-      props.group.map(async (item) => {
-        const library = await getLibrary(item.id)
-        item.library = library
+      props.group.map(async (item: any) => {
+        // const library = await getLibrary(item.id)
+        // item.library = library
+        item.library = item.books
       })
     )
     processedGroup.value = props.group
@@ -156,9 +158,10 @@ watchEffect(async () => {
     let res = await getBookStacksApi(params)
     if (res.code === 1000) {
       await Promise.all(
-        res.data.map(async (item) => {
-          const library = await getLibrary(item.id)
-          item.library = library
+        res.data.map(async (item: any) => {
+          // const library = await getLibrary(item.id)
+          // item.library = library
+          item.library = item.books
         })
       )
       processedGroup.value = res.data || ([] as any)

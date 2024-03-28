@@ -17,8 +17,12 @@ const filter = ref('') // 搜索
 
 watch(
   () => props.drawer,
-  (newVal) => {
+  async (newVal) => {
     isShowDrawer.value = newVal
+    if (newVal) {
+      await getCategory()
+      await getProduct()
+    }
   }
 )
 
@@ -71,11 +75,6 @@ const handleServerList = () => {
     })
   })
 }
-
-onMounted(async () => {
-  await getCategory()
-  await getProduct()
-})
 </script>
 
 <template>

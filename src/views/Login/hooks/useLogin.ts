@@ -70,8 +70,8 @@ export const useLogin = (loginForm: LoginForm = { username: '', password: '' }, 
 
   const getSpaces = async () => {
     const params = {
-      permusername: loginForm.username,
-      spacetype: 'personal'
+      // permusername: loginForm.username,
+      // spacetype: 'personal'
     }
     let res = await getPersonSpaceApi(params)
     if (res.code === 1000) {
